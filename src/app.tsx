@@ -11,6 +11,7 @@ import { ProgressBar } from 'src/components/progress-bar';
 import { MotionLazy } from 'src/components/animate/motion-lazy';
 import { SettingsDrawer, defaultSettings, SettingsProvider } from 'src/components/settings';
 
+import { I18nProvider } from './locales';
 import { setFavicon } from './utils/favicon';
 import { GlobalSettingsProvider, useGlobalSettingsContext } from './settings/global';
 
@@ -25,23 +26,25 @@ export default function App({ children }: AppProps) {
   useScrollToTop();
 
   return (
-    <GlobalSettingsProvider>
-      <HelmetProvider>
-        <SettingsProvider defaultSettings={defaultSettings}>
-          <ThemeProvider
-            modeStorageKey={themeConfig.modeStorageKey}
-            defaultMode={themeConfig.defaultMode}
-          >
-            <MotionLazy>
-              <FaviconUpdater />
-              <ProgressBar />
-              <SettingsDrawer defaultSettings={defaultSettings} />
-              {children}
-            </MotionLazy>
-          </ThemeProvider>
-        </SettingsProvider>
-      </HelmetProvider>
-    </GlobalSettingsProvider>
+    <I18nProvider>
+      <GlobalSettingsProvider>
+        <HelmetProvider>
+          <SettingsProvider defaultSettings={defaultSettings}>
+            <ThemeProvider
+              modeStorageKey={themeConfig.modeStorageKey}
+              defaultMode={themeConfig.defaultMode}
+            >
+              <MotionLazy>
+                <FaviconUpdater />
+                <ProgressBar />
+                <SettingsDrawer defaultSettings={defaultSettings} />
+                {children}
+              </MotionLazy>
+            </ThemeProvider>
+          </SettingsProvider>
+        </HelmetProvider>
+      </GlobalSettingsProvider>
+    </I18nProvider>
   );
 }
 

@@ -126,8 +126,8 @@ export function DashboardLayout({
           {/** @slot Language popover */}
           <LanguagePopover
             data={[
+              { value: 'cn', label: '中文', countryCode: 'CN' },
               { value: 'en', label: 'English', countryCode: 'GB' },
-              { value: 'cn', label: 'Chinese', countryCode: 'CN' },
             ]}
           />
 

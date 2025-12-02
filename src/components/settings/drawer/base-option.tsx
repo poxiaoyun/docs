@@ -1,5 +1,6 @@
 import type { ButtonBaseProps } from '@mui/material/ButtonBase';
 
+import { useTranslation } from 'react-i18next';
 import { varAlpha } from 'minimal-shared/utils';
 
 import Switch from '@mui/material/Switch';
@@ -30,6 +31,8 @@ export function BaseOption({
   onChangeOption,
   ...other
 }: BaseOptionProps) {
+  const { t } = useTranslation('theme')
+
   return (
     <ItemRoot disableRipple selected={selected} onClick={onChangeOption} sx={sx} {...other}>
       <TopContainer>
@@ -40,12 +43,12 @@ export function BaseOption({
       </TopContainer>
 
       <BottomContainer>
-        <ItemLabel>{label}</ItemLabel>
+        <ItemLabel>{t(label)}</ItemLabel>
 
         {tooltip && (
           <Tooltip
             arrow
-            title={tooltip}
+            title={t(tooltip)}
             slotProps={{ tooltip: { sx: { maxWidth: 240, mr: 0.5 } } }}
           >
             <Iconify
