@@ -1,6 +1,10 @@
+import { Buffer } from 'buffer';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Outlet, RouterProvider, createBrowserRouter } from 'react-router';
+
+// Polyfill Buffer for the browser
+globalThis.Buffer = Buffer;
 
 import App from './app';
 import { routesSection } from './routes/sections';

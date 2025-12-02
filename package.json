@@ -45,6 +45,7 @@
     "@mui/x-date-pickers": "^8.5.3",
     "@mui/x-tree-view": "^8.5.3",
     "autosuggest-highlight": "^3.3.4",
+    "buffer": "^6.0.3",
     "dayjs": "^1.11.13",
     "es-toolkit": "^1.39.3",
     "framer-motion": "^12.18.1",
