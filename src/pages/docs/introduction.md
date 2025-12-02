@@ -1,0 +1,13 @@
+# Minimal – Client & Admin Dashboard
+
+A professional React Kit that comes with plenty of ready-to-use Material-UI components that will help you to build more beautiful frontend pages.
+
+<br />
+
+<img alt="dashboard" src="/assets/illustrations/illustration-dashboard.webp" style="width: 100%; border-radius: 16px; box-shadow: 0px 24px 48px rgba(0, 0, 0, 0.16); margin-bottom: 40px;" />
+
+<br />
+
+- Built with **MUI** with two versions **Next.js | Vite**.
+- Includes a complete design component **Figma** file to extend your project development.
+- The theme is ready to change to any style you want.

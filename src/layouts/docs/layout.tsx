@@ -1,12 +1,16 @@
 import type { DashboardLayoutProps } from 'src/layouts/dashboard/layout';
 
+import { useMemo } from 'react';
+
 import { DashboardLayout } from 'src/layouts/dashboard/layout';
 
-import { docsNavData } from './nav-config-docs';
+import { generateNavData } from './nav-generator';
 
 // ----------------------------------------------------------------------
 
 export function DocsLayout({ children, slotProps, ...other }: DashboardLayoutProps) {
+  const navData = useMemo(() => generateNavData(), []);
+
   return (
     <DashboardLayout
       {...other}
@@ -14,7 +18,7 @@ export function DocsLayout({ children, slotProps, ...other }: DashboardLayoutPro
         ...slotProps,
         nav: {
           ...slotProps?.nav,
-          data: docsNavData,
+          data: navData,
         },
       }}
     >
