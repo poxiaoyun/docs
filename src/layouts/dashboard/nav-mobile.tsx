@@ -1,15 +1,19 @@
 import type { NavSectionProps } from 'src/components/nav-section';
 
 import { useEffect } from 'react';
-import { mergeClasses } from 'minimal-shared/utils';
+import { varAlpha, mergeClasses } from 'minimal-shared/utils';
 
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
+import Typography from '@mui/material/Typography';
 
 import { usePathname } from 'src/routes/hooks';
 
+import { useGlobalSettingsContext } from 'src/settings/global';
+
 import { Logo } from 'src/components/logo';
 import { Scrollbar } from 'src/components/scrollbar';
+import { useSettingsContext } from 'src/components/settings';
 import { NavSectionVertical } from 'src/components/nav-section';
 
 import { layoutClasses } from '../core';
@@ -37,6 +41,9 @@ export function NavMobile({
 }: NavMobileProps) {
   const pathname = usePathname();
 
+  const { state } = useGlobalSettingsContext();
+  const settings = useSettingsContext();
+
   useEffect(() => {
     if (open) {
       onClose();
@@ -63,8 +70,34 @@ export function NavMobile({
       }}
     >
       {slots?.topArea ?? (
-        <Box sx={{ pl: 3.5, pt: 2.5, pb: 1 }}>
+        <Box sx={{ pl: 3.5, pt: 2.5, pb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
           <Logo />
+          <Box>
+            <Typography
+              variant="h4"
+              sx={(theme) => ({
+                fontFamily: 'Pangmengzuodao-Simple',
+                color:
+                  settings.state.contrast === 'hight'
+                    ? theme.palette.common.white
+                    : 'var(--layout-nav-text-primary-color)',
+              })}
+            >
+              {state?.title}
+            </Typography>
+            <Typography
+              variant="body2"
+              sx={(theme) => ({
+                fontFamily: 'Pangmengzuodao-Simple',
+                color:
+                  settings.state.contrast === 'hight'
+                    ? varAlpha(theme.vars.palette.common.whiteChannel, 0.6)
+                    : 'var(--layout-nav-text-secondary-color)',
+              })}
+            >
+              {state?.subTitle}
+            </Typography>
+          </Box>
         </Box>
       )}
 

@@ -31,6 +31,20 @@ export default defineConfig({
       },
     ],
   },
-  server: { port: PORT, host: true },
+  server: {
+    port: 8081,
+    host: true,
+    proxy: {
+      '/api': {
+        target: 'https://rune.develop.xiaoshiai.cn',
+        changeOrigin: true,
+      },
+      '/avatars': {
+        target: 'https://rune.develop.xiaoshiai.cn',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/avatars/, '/api/iam/avatars'),
+      },
+    },
+  },
   preview: { port: PORT, host: true },
 });
