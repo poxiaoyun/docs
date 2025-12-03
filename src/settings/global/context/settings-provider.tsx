@@ -34,7 +34,7 @@ export function GlobalSettingsProvider({
 
   useEffect(() => {
     checkGlobalSettings();
-  }, []);
+  });
 
   const memoizedValue = useMemo(
     () => ({

@@ -25,14 +25,16 @@ export function NavList({
 
   const isActive = isActiveLink(pathname, data.path, data.deepMatch ?? !!data.children);
 
-  const { value: open, onFalse: onClose, onToggle } = useBoolean(isActive);
+  const { value: open, onTrue: onOpen, onFalse: onClose, onToggle } = useBoolean(isActive);
 
   useEffect(() => {
-    if (!isActive) {
+    if (isActive) {
+      onOpen();
+    } else {
       onClose();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathname]);
+  }, [isActive]);
 
   const handleToggleMenu = useCallback(() => {
     if (data.children) {

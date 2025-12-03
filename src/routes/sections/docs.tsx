@@ -29,7 +29,7 @@ const docsLayout = () => (
 
 export const docsRoutes: RouteObject[] = [
   {
-    path: 'docs',
+    path: '',
     element: docsLayout(),
     children: [
       {

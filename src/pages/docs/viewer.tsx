@@ -46,20 +46,14 @@ export default function DocsViewer() {
       setError(null);
       setMeta({});
       try {
-        // Extract relative path from pathname (e.g., /docs/introduction -> introduction)
-        const relativePath = pathname.replace(/^\/docs\/?/, '');
+        // Extract relative path from pathname (e.g., /introduction -> introduction)
+        // Remove leading slash
+        const relativePath = pathname.replace(/^\//, '');
 
         // Try to find the matching file
         let filePath = '';
 
-        // Handle root /docs -> introduction
-        if (!relativePath) {
-          // Try to find introduction file, handling potential prefixes
-          // Just force relativePath to 'introduction' and let the main logic handle it
-          // We don't need special casing here anymore as the main logic handles folder prefixes
-        }
-
-        // Logic to resolve the best file path including language suffix
+        // Handle root /docs -> default to 'introduction' if empty
         const targetCleanPath = relativePath || 'introduction';
         const cleanPathParts = targetCleanPath.split('/');
         // Determine the language folder (cn or en)

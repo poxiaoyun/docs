@@ -69,10 +69,22 @@ function loadAllTitles() {
 }
 
 // Initialize titles
-try {
-  loadAllTitles();
-} catch (error) {
-  console.error('Failed to load titles:', error);
+// try {
+//   loadAllTitles();
+// } catch (error) {
+//   console.error('Failed to load titles:', error);
+// }
+
+let titlesLoaded = false;
+
+function ensureTitlesLoaded() {
+  if (titlesLoaded) return;
+  try {
+    loadAllTitles();
+    titlesLoaded = true;
+  } catch (error) {
+    console.error('Failed to load titles:', error);
+  }
 }
 
 function getOrderAndTitle(
@@ -108,9 +120,11 @@ type NavItem = {
   icon?: React.ReactNode;
   children?: NavItem[];
   order?: number;
+  deepMatch?: boolean;
 };
 
 export function generateNavData(currentLang: string): NavSectionProps['data'] {
+  ensureTitlesLoaded();
   const files = import.meta.glob('/src/pages/docs/**/*.md');
   const filePaths = Object.keys(files);
 
@@ -140,7 +154,7 @@ export function generateNavData(currentLang: string): NavSectionProps['data'] {
 
     // Link path should be the clean path without ordering numbers
     const cleanRelativePath = parts.map((part) => part.replace(/^\d+\./, '')).join('/');
-    const linkPath = `/docs/${cleanRelativePath}`;
+    const linkPath = `/${cleanRelativePath}`.replace(/\/+/g, '/');
 
     if (parts.length === 1) {
       // Root files
@@ -149,6 +163,7 @@ export function generateNavData(currentLang: string): NavSectionProps['data'] {
         path: linkPath,
         icon: ICONS.file,
         order: fileOrder,
+        deepMatch: true,
       });
     } else {
       // Grouped files (Level 1 folders)
@@ -173,6 +188,7 @@ export function generateNavData(currentLang: string): NavSectionProps['data'] {
           path: linkPath,
           icon: ICONS.file,
           order: fileOrder,
+          deepMatch: true,
         });
       } else if (parts.length === 3) {
         // Level 2 nested folder
@@ -188,9 +204,16 @@ export function generateNavData(currentLang: string): NavSectionProps['data'] {
         );
 
         if (!subGroup) {
+          const subGroupCleanPath = parts
+            .slice(0, 2)
+            .map((part) => part.replace(/^\d+\./, ''))
+            .join('/');
+
+          const subGroupPath = `/${subGroupCleanPath}`.replace(/\/+/g, '/');
+
           subGroup = {
             title: subGroupName,
-            path: '',
+            path: subGroupPath,
             icon: ICONS.folder,
             children: [],
             order: subGroupOrder,
@@ -202,6 +225,7 @@ export function generateNavData(currentLang: string): NavSectionProps['data'] {
           title,
           path: linkPath,
           order: fileOrder,
+          deepMatch: true,
         });
       }
     }
@@ -226,7 +250,10 @@ export function generateNavData(currentLang: string): NavSectionProps['data'] {
     if (rel.startsWith('en/')) logicalPaths.add(rel.substring(3));
   });
 
-  logicalPaths.forEach((logicalPath) => {
+  // Sort paths to ensure consistent order (though generateNavData output order depends on processing)
+  const sortedLogicalPaths = Array.from(logicalPaths).sort();
+
+  sortedLogicalPaths.forEach((logicalPath) => {
     // Check if target lang exists
     const targetPath = `/src/pages/docs/${targetLang}/${logicalPath}.md`;
     if (filePaths.includes(targetPath)) {
