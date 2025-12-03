@@ -58,3 +58,7 @@ input[type='number']::-webkit-inner-spin-button {
   margin: 0;
   -webkit-appearance: none;
 }
+@font-face {
+  font-family: 'Pangmengzuodao-Simple';
+  src: url('/fonts/Pangmengzuodao-Simple.ttf');
+}

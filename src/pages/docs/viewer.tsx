@@ -8,7 +8,6 @@ import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
-import { CONFIG } from 'src/global-config';
 import { useGlobalSettingsContext } from 'src/settings/global';
 
 import { Markdown } from 'src/components/markdown';
@@ -37,8 +36,6 @@ export default function DocsViewer() {
   // Calculate display title based on current language
   // Use the title as a key if it looks like one, otherwise fallback to the raw title
   const displayTitle = meta.title ? t(meta.title) : meta.title;
-
-  const metadata = { title: `${state?.title}` };
 
   useEffect(() => {
     const loadContent = async () => {
@@ -152,10 +149,8 @@ export default function DocsViewer() {
 
   return (
     <>
-      <title>{metadata.title}</title>
-
       <Helmet>
-        <title> {displayTitle || CONFIG.appName} </title>
+        <title> {displayTitle + ' | ' + state?.title} </title>
       </Helmet>
 
       <Container maxWidth="lg" sx={{ py: 5 }}>
