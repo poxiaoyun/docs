@@ -1,6 +1,19 @@
+# Rune Docs
+
+Rune Docs is a modern, high-performance documentation site built with React, Vite, and Material UI. It features automatic navigation generation, internationalization support, and a clean, responsive design.
+
+## Features
+
+- 🚀 **High Performance**: Built on Vite and React 19.
+- 📝 **Markdown Support**: Write documentation in standard Markdown with GFM support.
+- 🌍 **Internationalization**: Built-in support for multiple languages (English and Chinese).
+- 🎨 **Material Design**: Beautiful and accessible UI components based on MUI.
+- 🌙 **Dark/Light Mode**: Seamless theme switching.
+- 📂 **Auto-generated Navigation**: Navigation menus are automatically generated from the file structure.
+
 ## Prerequisites
 
-- Node.js >=20 (Recommended)
+- Node.js >= 20
 
 ## Installation
 
@@ -8,17 +21,29 @@
 
 ```sh
 yarn install
-yarn dev
 ```
 
 **Using Npm**
 
 ```sh
-npm i
+npm install
+```
+
+## Development
+
+Start the development server:
+
+```sh
+yarn dev
+# or
 npm run dev
 ```
 
+Open [http://localhost:5173](http://localhost:5173) to view it in the browser.
+
 ## Build
+
+Build for production:
 
 ```sh
 yarn build
@@ -26,29 +51,58 @@ yarn build
 npm run build
 ```
 
-## Mock server
+## Documentation Usage
 
-By default we provide demo data from : `https://api-dev-minimal-[version].vercel.app`
+The documentation content is located in `src/pages/docs`. The site supports multiple languages, with separate directories for each language (e.g., `cn` for Chinese, `en` for English).
 
-To set up your local server:
+### Directory Structure
 
-- **Guide:** [https://docs.minimals.cc/mock-server](https://docs.minimals.cc/mock-server).
+```
+src/pages/docs/
+  ├── cn/                  # Chinese documentation
+  │   ├── 01.introduction.md
+  │   ├── 02.development/  # Grouped section
+  │   │   ├── index.md     # Metadata for the folder
+  │   │   └── ...
+  └── en/                  # English documentation
+      ├── 01.introduction.md
+      └── ...
+```
 
-- **Resource:** [Download](https://www.dropbox.com/scl/fo/bopqsyaatc8fbquswxwww/AKgu6V6ZGmxtu22MuzsL5L4?rlkey=8s55vnilwz2d8nsrcmdo2a6ci&dl=0).
+### Adding New Pages
 
-## Full version
+1.  **Create a File**: Add a `.md` file in the appropriate language directory.
+2.  **Naming Convention**: Use a number prefix to control the order (e.g., `01.getting-started.md`). The number will be stripped from the URL.
+3.  **Frontmatter**: Add a YAML frontmatter block at the top of the file to define the page title.
 
-- Create React App ([migrate to CRA](https://docs.minimals.cc/migrate-to-cra/)).
-- Next.js
-- Vite.js
-
-## Starter version
-
-- To remove unnecessary components. This is a simplified version ([https://starter.minimals.cc/](https://starter.minimals.cc/))
-- Good to start a new project. You can copy components from the full version.
-- Make sure to install the dependencies exactly as compared to the full version.
-
+```markdown
+---
+title: Introduction
 ---
 
-**NOTE:**
-_When copying folders remember to also copy hidden files like .env. This is important because .env files often contain environment variables that are crucial for the application to run correctly._
+# Welcome to Rune Docs
+
+Your content here...
+```
+
+### Creating Groups (Folders)
+
+To group related pages into a section:
+
+1.  Create a folder (e.g., `02.development`).
+2.  Inside the folder, create an `index.md` file.
+3.  In `index.md`, specify the title for the group using frontmatter.
+
+```markdown
+---
+title: Development Guide
+---
+```
+
+_Note: The `index.md` file is only used for folder metadata and does not become a visible page itself._
+
+### Internationalization (i18n)
+
+- Place English files in `src/pages/docs/en/`.
+- Place Chinese files in `src/pages/docs/cn/`.
+- The system automatically falls back to the default language (Chinese) if a translation is missing.
