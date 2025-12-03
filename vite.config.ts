@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react-swc';
 
 // ----------------------------------------------------------------------
 
-const PORT = 8081;
+const PORT = 8080;
 
 export default defineConfig({
   plugins: [
@@ -32,7 +32,7 @@ export default defineConfig({
     ],
   },
   server: {
-    port: 8081,
+    port: 8080,
     host: true,
     proxy: {
       '/api': {

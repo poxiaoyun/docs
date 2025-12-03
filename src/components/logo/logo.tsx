@@ -7,7 +7,6 @@ import { styled } from '@mui/material/styles';
 
 import { RouterLink } from 'src/routes/components';
 
-import { CONFIG } from 'src/global-config';
 import { useGlobalSettingsContext } from 'src/settings/global';
 
 import { logoClasses } from './classes';
@@ -31,15 +30,6 @@ export function Logo({
 
   const singleLogo = <img alt="Single logo" src={state?.logo || ''} width="100%" height="100%" />;
 
-  const fullLogo = (
-    <img
-      alt="Full logo"
-      src={`${CONFIG.assetsDir}/logo/logo-full.svg`}
-      width="100%"
-      height="100%"
-    />
-  );
-
   return (
     <LogoRoot
       component={RouterLink}
@@ -58,7 +48,7 @@ export function Logo({
       ]}
       {...other}
     >
-      {isSingle ? singleLogo : fullLogo}
+      {singleLogo}
     </LogoRoot>
   );
 }
