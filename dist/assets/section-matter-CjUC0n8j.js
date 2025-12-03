@@ -1,0 +1,6 @@
+import{r as O}from"./kind-of-v64bg6wO.js";import{r as E}from"./extend-shallow-BFGupRme.js";var l,m;function A(){if(m)return l;m=1;var S=O(),q=E();l=function(t,e){typeof e=="function"&&(e={parse:e});var c=b(t),M={section_delimiter:"---",parse:w},g=q({},M,e),d=g.section_delimiter,y=c.content.split(/\r?\n/),n=null,o=v(),r=[],i=[];function p(h){c.content=h,n=[],r=[]}function j(h){i.length&&(o.key=k(i[0],d),o.content=h,g.parse(o,n),n.push(o),o=v(),r=[],i=[])}for(var f=0;f<y.length;f++){var u=y[f],a=i.length,s=u.trim();if(x(s,d)){if(s.length===3&&f!==0){if(a===0||a===2){r.push(u);continue}i.push(s),o.data=r.join(`
+`),r=[];continue}n===null&&p(r.join(`
+`)),a===2&&j(r.join(`
+`)),i.push(s);continue}r.push(u)}return n===null?p(r.join(`
+`)):j(r.join(`
+`)),c.sections=n,c};function x(t,e){return!(t.slice(0,e.length)!==e||t.charAt(e.length+1)===e.slice(-1))}function b(t){if(S(t)!=="object"&&(t={content:t}),typeof t.content!="string"&&!B(t.content))throw new TypeError("expected a buffer or string");return t.content=t.content.toString(),t.sections=[],t}function k(t,e){return t?t.slice(e.length).trim():""}function v(){return{key:"",data:"",content:""}}function w(t){return t}function B(t){return t&&t.constructor&&typeof t.constructor.isBuffer=="function"?t.constructor.isBuffer(t):!1}return l}export{A as r};

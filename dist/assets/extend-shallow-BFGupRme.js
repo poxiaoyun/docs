@@ -1,0 +1,1 @@
+import{r as s}from"./is-extendable-BLZQlT7r.js";var a,f;function h(){if(f)return a;f=1;var i=s();a=function(r){i(r)||(r={});for(var e=arguments.length,t=1;t<e;t++){var u=arguments[t];i(u)&&l(r,u)}return r};function l(n,r){for(var e in r)o(r,e)&&(n[e]=r[e])}function o(n,r){return Object.prototype.hasOwnProperty.call(n,r)}return a}export{h as r};

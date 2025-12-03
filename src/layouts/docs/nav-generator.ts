@@ -125,7 +125,10 @@ type NavItem = {
 
 export function generateNavData(currentLang: string): NavSectionProps['data'] {
   ensureTitlesLoaded();
-  const files = import.meta.glob('/src/pages/docs/**/*.md');
+  const files = import.meta.glob('/src/pages/docs/**/*.md', {
+    query: '?raw',
+    import: 'default',
+  });
   const filePaths = Object.keys(files);
 
   const rootItems: NavItem[] = [];
