@@ -24,6 +24,10 @@ const NAV_LINKS: TopNavLink[] = [
 
 // ----------------------------------------------------------------------
 
+/**
+ * 全局顶部导航栏组件
+ * 在所有页面中统一使用，提供平台名称和主要导航链接
+ */
 export function GlobalTopNav() {
   const { pathname } = useLocation();
   const { t } = useTranslation();
@@ -53,18 +57,37 @@ export function GlobalTopNav() {
         display: { xs: 'none', lg: 'flex' },
         width: '100%',
         justifyContent: 'flex-start',
+        minWidth: 0, // 允许内容收缩
       }}
     >
       <Typography
-        variant="h6"
-        sx={{ fontWeight: 600, letterSpacing: '0.1em', color: 'text.primary', fontSize: '2rem' }}
+        component="span"
+        sx={{
+          fontWeight: 600,
+          letterSpacing: '0.1em',
+          color: 'text.primary',
+          fontSize: { xs: '1.25rem', md: '1.25rem' },
+          lineHeight: 1.2,
+          whiteSpace: 'nowrap',
+          flexShrink: 0,
+        }}
       >
-        {platformName}
+        文档中心
       </Typography>
 
-      <Stack direction="row" spacing={1} alignItems="center" sx={{ flexGrow: 1 }}>
+      <Stack
+        direction="row"
+        spacing={1}
+        alignItems="center"
+        sx={{
+          flexGrow: 1,
+          minWidth: 0,
+          overflow: 'hidden',
+        }}
+      >
         {NAV_LINKS.map((link) => {
-          const isActive = link.path === '/' ? pathname === link.path : pathname.startsWith(link.path);
+          const isActive =
+            link.path === '/' ? pathname === link.path : pathname.startsWith(link.path);
 
           return (
             <Button
@@ -74,6 +97,7 @@ export function GlobalTopNav() {
               component={RouterLink}
               to={link.path}
               sx={pillStyles(isActive)}
+              aria-label={t(link.label)}
             >
               {t(link.label)}
             </Button>

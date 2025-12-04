@@ -15,9 +15,6 @@ export function DocsLayout({ children, slotProps, ...other }: DashboardLayoutPro
   const { pathname } = useLocation();
   const activeProduct = useMemo(() => getProductFromPath(pathname), [pathname]);
   const navData = useMemo(() => mapDocsNavData(activeProduct), [activeProduct]);
-  const headerSlotProps = {
-    container: { maxWidth: false as const },
-  };
 
   return (
     <DashboardLayout
@@ -30,9 +27,20 @@ export function DocsLayout({ children, slotProps, ...other }: DashboardLayoutPro
         },
         header: {
           ...slotProps?.header,
+          position: 'fixed',
           slotProps: {
             ...slotProps?.header?.slotProps,
-            ...headerSlotProps,
+            container: {
+              maxWidth: false as const,
+              ...slotProps?.header?.slotProps?.container,
+            },
+          },
+        },
+        main: {
+          ...slotProps?.main,
+          sx: {
+            pt: { xs: 'var(--layout-header-mobile-height)', md: 'var(--layout-header-desktop-height)' },
+            ...slotProps?.main?.sx,
           },
         },
       }}

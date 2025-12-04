@@ -38,13 +38,14 @@ export function HeaderSection({
   disableOffset,
   disableElevation,
   layoutQuery = 'md',
+  position = 'sticky',
   ...other
 }: HeaderSectionProps) {
   const { offsetTop: isOffset } = useScrollOffsetTop();
 
   return (
     <HeaderRoot
-      position="sticky"
+      position={position}
       color="transparent"
       isOffset={isOffset}
       disableOffset={disableOffset}

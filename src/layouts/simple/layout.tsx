@@ -34,7 +34,14 @@ export function SimpleLayout({
   layoutQuery = 'md',
 }: SimpleLayoutProps) {
   const renderHeader = () => {
-    const headerSlotProps: HeaderSectionProps['slotProps'] = { container: { maxWidth: false } };
+    const headerSlotProps: HeaderSectionProps['slotProps'] = {
+      container: {
+        maxWidth: false,
+        sx: {
+          px: { md: 5 },
+        },
+      },
+    };
 
     const headerBaseSx = {
       bgcolor: 'transparent',
