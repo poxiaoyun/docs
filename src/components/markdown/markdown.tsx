@@ -1,7 +1,5 @@
 import './code-highlight-block.css';
 
-import type { Options } from 'react-markdown';
-
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
 import ReactMarkdown from 'react-markdown';
@@ -20,7 +18,9 @@ import { htmlToMarkdown, isMarkdownContent } from './html-to-markdown';
 
 // ----------------------------------------------------------------------
 
-export type MarkdownProps = React.ComponentProps<typeof MarkdownRoot> & Options;
+type ReactMarkdownProps = React.ComponentProps<typeof ReactMarkdown>;
+
+export type MarkdownProps = React.ComponentProps<typeof MarkdownRoot> & ReactMarkdownProps;
 
 export function Markdown({
   sx,
@@ -61,7 +61,7 @@ export function Markdown({
 /** **************************************
  * @rehypePlugins
  *************************************** */
-const defaultRehypePlugins: NonNullable<Options['rehypePlugins']> = [
+const defaultRehypePlugins: NonNullable<ReactMarkdownProps['rehypePlugins']> = [
   rehypeRaw,
   rehypeHighlight,
   [remarkGfm, { singleTilde: false }],
@@ -72,8 +72,8 @@ const defaultRehypePlugins: NonNullable<Options['rehypePlugins']> = [
  * Note: node is passed by react-markdown, but we intentionally omit or rename it
  * (e.g., node: _n) to prevent rendering it as [object Object] in the DOM.
  *************************************** */
-const defaultComponents: NonNullable<Options['components']> = {
-  img: ({ node: _n, onLoad: _o, ...other }) => (
+const defaultComponents: NonNullable<ReactMarkdownProps['components']> = {
+  img: ({ node: _n, onLoad: _o, ...other }: any) => (
     <Image
       className={markdownClasses.content.image}
       visibleByDefault
@@ -91,7 +91,7 @@ const defaultComponents: NonNullable<Options['components']> = {
       {...other}
     />
   ),
-  a: ({ href = '', children, node: _n, ...other }) => {
+  a: ({ href = '', children, node: _n, ...other }: any) => {
     const linkProps = isExternalLink(href)
       ? { target: '_blank', rel: 'noopener noreferrer' }
       : { component: RouterLink };
@@ -102,7 +102,7 @@ const defaultComponents: NonNullable<Options['components']> = {
       </Link>
     );
   },
-  pre: ({ children }) => (
+  pre: ({ children }: any) => (
     <div className={markdownClasses.content.codeBlock}>
       <pre>
         {Children.map(children, (child) =>
@@ -111,8 +111,7 @@ const defaultComponents: NonNullable<Options['components']> = {
       </pre>
     </div>
   ),
-  code: ({ className = '', children, node: _n, ...other }) => {
-    // @ts-expect-error: isBlock is a custom prop injected by the parent pre component
+  code: ({ className = '', children, node: _n, ...other }: any) => {
     const { isBlock, ...rest } = other;
     const hasLanguage = /language-\w+/.test(className);
 
@@ -128,7 +127,7 @@ const defaultComponents: NonNullable<Options['components']> = {
       </code>
     );
   },
-  input: ({ type, node: _n, ...other }) =>
+  input: ({ type, node: _n, ...other }: any) =>
     type === 'checkbox' ? (
       <CustomCheckbox className={markdownClasses.content.checkbox} {...other} />
     ) : (
