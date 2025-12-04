@@ -24,6 +24,9 @@ export function DocsLayout({ children, slotProps, ...other }: DashboardLayoutPro
           data: navData,
         },
       }}
+      sx={{
+        px: { md: 3 },
+      }}
     >
       {children}
     </DashboardLayout>
