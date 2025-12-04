@@ -15,7 +15,7 @@ export function useMarkdownToc(markdown: string) {
     const lines = markdown.split('\n');
     const items: TocItem[] = [];
 
-    // Simple regex to match headings. 
+    // Simple regex to match headings.
     // Note: This assumes standard markdown syntax with space after #
     // Also checking for code blocks to avoid matching # inside code
     let inCodeBlock = false;
@@ -36,8 +36,10 @@ export function useMarkdownToc(markdown: string) {
         const title = match[2].trim();
         // Remove markdown links/images from title if any for display
         // This is a basic cleanup; complex markdown in headers might need more
-        const cleanTitle = title.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1').replace(/`([^`]+)`/g, '$1');
-        
+        const cleanTitle = title
+          .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+          .replace(/`([^`]+)`/g, '$1');
+
         const id = slugger.slug(cleanTitle);
 
         items.push({
@@ -53,4 +55,3 @@ export function useMarkdownToc(markdown: string) {
 
   return toc;
 }
-

@@ -10,16 +10,15 @@ import Alert from '@mui/material/Alert';
 import { useTheme } from '@mui/material/styles';
 import { iconButtonClasses } from '@mui/material/IconButton';
 
-import { Logo } from 'src/components/logo';
 import { useSettingsContext } from 'src/components/settings';
 
 import { NavMobile } from './nav-mobile';
-import { VerticalDivider } from './content';
 import { NavVertical } from './nav-vertical';
 import { NavHorizontal } from './nav-horizontal';
 import { MenuButton } from '../components/menu-button';
 import { SettingsButton } from '../components/settings-button';
 import { LanguagePopover } from '../components/language-popover';
+import { DocsTopNavLinks } from '../components/docs-top-nav-links';
 import { dashboardLayoutVars, dashboardNavColorVars } from './css-vars';
 import { MainSection, layoutClasses, HeaderSection, LayoutSection } from '../core';
 
@@ -76,6 +75,14 @@ export function DashboardLayout({
       },
     };
 
+    const headerBaseSx = {
+      bgcolor: 'transparent',
+      borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
+      backdropFilter: 'blur(12px)',
+    };
+
+    const headerSx = slotProps?.header?.sx;
+
     const headerSlots: HeaderSectionProps['slots'] = {
       topArea: (
         <Alert severity="info" sx={{ display: 'none', borderRadius: 0 }}>
@@ -104,23 +111,9 @@ export function DashboardLayout({
             cssVars={navVars.section}
             checkPermissions={canDisplayItemByRole}
           />
-
-          {/** @slot Logo */}
-          {isNavHorizontal && (
-            <Logo
-              sx={{
-                display: 'none',
-                [theme.breakpoints.up(layoutQuery)]: { display: 'inline-flex' },
-              }}
-            />
-          )}
-
-          {/** @slot Divider */}
-          {isNavHorizontal && (
-            <VerticalDivider sx={{ [theme.breakpoints.up(layoutQuery)]: { display: 'flex' } }} />
-          )}
         </>
       ),
+      centerArea: <DocsTopNavLinks />,
       rightArea: (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0, sm: 0.75 } }}>
           {/** @slot Language popover */}
@@ -144,7 +137,7 @@ export function DashboardLayout({
         {...slotProps?.header}
         slots={{ ...headerSlots, ...slotProps?.header?.slots }}
         slotProps={merge(headerSlotProps, slotProps?.header?.slotProps ?? {})}
-        sx={slotProps?.header?.sx}
+        sx={Array.isArray(headerSx) ? [headerBaseSx, ...headerSx] : [headerBaseSx, headerSx]}
       />
     );
   };

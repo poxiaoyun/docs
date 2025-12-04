@@ -24,7 +24,7 @@ export const CONFIG: ConfigValue = {
    */
   auth: {
     skip: true,
-    redirectPath: '/introduction',
+    redirectPath: '/docs/introduction',
   },
 };
 

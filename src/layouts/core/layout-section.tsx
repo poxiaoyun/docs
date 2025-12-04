@@ -43,18 +43,18 @@ export function LayoutSection({
         sx={sx}
         {...other}
       >
+        {headerSection}
+
         {sidebarSection ? (
           <>
             {sidebarSection}
             <LayoutSidebarContainer className={layoutClasses.sidebarContainer}>
-              {headerSection}
               {children}
               {footerSection}
             </LayoutSidebarContainer>
           </>
         ) : (
           <>
-            {headerSection}
             {children}
             {footerSection}
           </>

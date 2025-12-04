@@ -1,14 +1,17 @@
 import matter from 'gray-matter';
 import rehypeSlug from 'rehype-slug';
-import { useLocation } from 'react-router';
-import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
+import { useMemo, useState, useEffect } from 'react';
+import { useLocation, Link as RouterLink } from 'react-router';
 
 import Box from '@mui/material/Box';
+import Chip from '@mui/material/Chip';
+import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
 
 import { useGlobalSettingsContext } from 'src/settings/global';
 
@@ -17,6 +20,7 @@ import { LoadingScreen } from 'src/components/loading-screen';
 
 import { Toc } from './toc';
 import { useMarkdownToc } from './use-markdown-toc';
+import { type DocsSidebarItem, DOCS_SIDEBAR_SECTIONS } from './toc';
 
 // ----------------------------------------------------------------------
 
@@ -50,9 +54,7 @@ export default function DocsViewer() {
       setError(null);
       setMeta({});
       try {
-        // Extract relative path from pathname (e.g., /introduction -> introduction)
-        // Remove leading slash
-        const relativePath = pathname.replace(/^\//, '');
+        const relativePath = normalizeDocsPath(pathname);
 
         // Try to find the matching file
         let filePath = '';
@@ -68,25 +70,32 @@ export default function DocsViewer() {
         // e.g. key: /src/pages/docs/cn/01.theme/01.colors.md
         // relativePath: theme/colors
 
+        const matchesPath = (pathParts: string[]) => {
+          const stripPrefix = (part: string) => part.replace(/^\d+\./, '');
+          // Direct file match
+          if (pathParts.length === cleanPathParts.length) {
+            return pathParts.every((part, index) => stripPrefix(part) === cleanPathParts[index]);
+          }
+
+          // Folder index.md match
+          if (
+            pathParts.length === cleanPathParts.length + 1 &&
+            pathParts[pathParts.length - 1] === 'index'
+          ) {
+            return pathParts
+              .slice(0, -1)
+              .every((part, index) => stripPrefix(part) === cleanPathParts[index]);
+          }
+
+          return false;
+        };
+
         const foundKey = Object.keys(files).find((key) => {
-          // key structure: /src/pages/docs/[lang]/[...path]
-          // Remove prefix /src/pages/docs/ and .md suffix
           const keyRelative = key.replace('/src/pages/docs/', '').replace('.md', '');
           const keyParts = keyRelative.split('/');
-
-          // First part should be the language folder
           if (keyParts[0] !== langFolder) return false;
-
-          // Remaining parts should match the requested path
           const pathParts = keyParts.slice(1);
-
-          if (pathParts.length !== cleanPathParts.length) return false;
-
-          // Check each part matches ignoring the ordering prefix
-          return pathParts.every((part, index) => {
-            const cleanPart = part.replace(/^\d+\./, '');
-            return cleanPart === cleanPathParts[index];
-          });
+          return matchesPath(pathParts);
         });
 
         if (foundKey) {
@@ -101,11 +110,7 @@ export default function DocsViewer() {
               const keyParts = keyRelative.split('/');
               if (keyParts[0] !== fallbackLang) return false;
               const pathParts = keyParts.slice(1);
-              if (pathParts.length !== cleanPathParts.length) return false;
-              return pathParts.every((part, index) => {
-                const cleanPart = part.replace(/^\d+\./, '');
-                return cleanPart === cleanPathParts[index];
-              });
+              return matchesPath(pathParts);
             });
             if (fallbackKey) {
               filePath = fallbackKey;
@@ -156,7 +161,7 @@ export default function DocsViewer() {
 
           window.scrollTo({
             top: offsetPosition,
-            behavior: 'smooth'
+            behavior: 'smooth',
           });
         }
       }, 100);
@@ -165,6 +170,15 @@ export default function DocsViewer() {
     }
     return undefined;
   }, [loading, hash]);
+
+  const breadcrumbs = useMemo(() => buildBreadcrumbs(pathname), [pathname]);
+  const productLabel = breadcrumbs.find((item) => item.productLabel)?.productLabel ?? meta.product;
+  const metaInfo = [
+    meta.updated ? `最近更新：${meta.updated}` : null,
+    meta.author ? `作者：${meta.author}` : null,
+  ]
+    .filter(Boolean)
+    .join(' · ');
 
   if (loading) {
     return <LoadingScreen />;
@@ -187,13 +201,55 @@ export default function DocsViewer() {
       </Helmet>
 
       <Container maxWidth="xl" sx={{ py: 5 }}>
+        <Stack spacing={2} sx={{ mb: 4 }}>
+          <Stack
+            direction={{ xs: 'column', md: 'row' }}
+            spacing={1.5}
+            alignItems={{ md: 'center' }}
+          >
+            <Breadcrumbs aria-label="documentation breadcrumbs" sx={{ flexGrow: 1 }}>
+              <Link component={RouterLink} to="/docs" color="inherit" underline="hover">
+                文档首页
+              </Link>
+              {breadcrumbs.map((crumb, index) => {
+                const isLast = index === breadcrumbs.length - 1;
+                return isLast ? (
+                  <Typography key={crumb.path} color="text.primary">
+                    {crumb.title}
+                  </Typography>
+                ) : (
+                  <Link
+                    key={crumb.path}
+                    component={RouterLink}
+                    to={crumb.path}
+                    underline="hover"
+                    color="inherit"
+                  >
+                    {crumb.title}
+                  </Link>
+                );
+              })}
+            </Breadcrumbs>
+
+            {productLabel && <Chip label={productLabel} size="small" color="primary" />}
+          </Stack>
+
+          <Stack spacing={1}>
+            <Typography variant="h3" sx={{ fontWeight: 600 }}>
+              {displayTitle}
+            </Typography>
+            {metaInfo && (
+              <Typography variant="caption" color="text.secondary">
+                {metaInfo}
+              </Typography>
+            )}
+          </Stack>
+        </Stack>
+
         <Stack direction="row" spacing={4} alignItems="flex-start">
           <Box sx={{ minWidth: 0, flexGrow: 1 }}>
             <Stack spacing={3}>
-              <Markdown
-                children={content}
-                rehypePlugins={[rehypeSlug]}
-              />
+              <Markdown children={content} rehypePlugins={[rehypeSlug]} />
             </Stack>
           </Box>
 
@@ -217,4 +273,76 @@ export default function DocsViewer() {
       </Container>
     </>
   );
+}
+
+function normalizeDocsPath(pathname: string) {
+  const clean = pathname.replace(/^\/+/, '');
+  if (!clean || clean === 'docs') {
+    return 'introduction';
+  }
+  if (clean.startsWith('docs/')) {
+    return clean.replace(/^docs\//, '');
+  }
+  return clean;
+}
+
+type BreadcrumbEntry = {
+  title: string;
+  path: string;
+  product?: DocsSidebarItem['product'];
+  productLabel?: string;
+};
+
+const PRODUCT_LABEL: Record<NonNullable<DocsSidebarItem['product']>, string> = {
+  rune: 'Rune',
+  boss: 'BOSS',
+  moha: '魔哈广场',
+  faq: 'F&Q',
+};
+
+function buildBreadcrumbs(pathname: string): BreadcrumbEntry[] {
+  const normalized = pathname.startsWith('/docs')
+    ? pathname.replace(/\/+$/, '') || '/docs/introduction'
+    : `/docs/${pathname.replace(/^\/+/, '') || 'introduction'}`;
+
+  for (const section of DOCS_SIDEBAR_SECTIONS) {
+    for (const item of section.items) {
+      const trail = findTrail(item, normalized);
+      if (trail.length) {
+        return trail.map((node) => ({
+          title: node.title,
+          path: node.path,
+          product: node.product,
+          productLabel: node.product ? PRODUCT_LABEL[node.product] : undefined,
+        }));
+      }
+    }
+  }
+
+  return [];
+}
+
+function findTrail(
+  item: DocsSidebarItem,
+  targetPath: string,
+  trail: DocsSidebarItem[] = []
+): DocsSidebarItem[] {
+  const cleanTarget = targetPath.replace(/\/+$/, '');
+  const nextTrail = [...trail, item];
+  if (item.path === cleanTarget || cleanTarget.startsWith(`${item.path}/`)) {
+    if (!item.children || item.path === cleanTarget) {
+      return nextTrail;
+    }
+  }
+
+  if (item.children) {
+    for (const child of item.children) {
+      const childTrail = findTrail(child, cleanTarget, nextTrail);
+      if (childTrail.length) {
+        return childTrail;
+      }
+    }
+  }
+
+  return item.path === cleanTarget || cleanTarget.startsWith(`${item.path}/`) ? nextTrail : [];
 }

@@ -31,7 +31,7 @@ export function BaseOption({
   onChangeOption,
   ...other
 }: BaseOptionProps) {
-  const { t } = useTranslation('theme')
+  const { t } = useTranslation('theme');
 
   return (
     <ItemRoot disableRipple selected={selected} onClick={onChangeOption} sx={sx} {...other}>

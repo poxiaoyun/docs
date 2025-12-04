@@ -32,7 +32,7 @@ import { NavColorOptions, NavLayoutOptions } from './nav-layout-option';
 // ----------------------------------------------------------------------
 
 export function SettingsDrawer({ sx, defaultSettings }: SettingsDrawerProps) {
-  const { t } = useTranslation('theme')
+  const { t } = useTranslation('theme');
 
   const settings = useSettingsContext();
   const { mode, setMode, colorScheme } = useColorScheme();

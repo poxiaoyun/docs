@@ -7,10 +7,10 @@ import { merge } from 'es-toolkit';
 import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 
-import { Logo } from 'src/components/logo';
-
 import { SimpleCompactContent } from './content';
 import { SettingsButton } from '../components/settings-button';
+import { LanguagePopover } from '../components/language-popover';
+import { DocsTopNavLinks } from '../components/docs-top-nav-links';
 import { MainSection, LayoutSection, HeaderSection } from '../core';
 
 // ----------------------------------------------------------------------
@@ -36,15 +36,30 @@ export function SimpleLayout({
   const renderHeader = () => {
     const headerSlotProps: HeaderSectionProps['slotProps'] = { container: { maxWidth: false } };
 
+    const headerBaseSx = {
+      bgcolor: 'transparent',
+      borderBottom: '1px solid rgba(255, 255, 255, 0.12)',
+      backdropFilter: 'blur(12px)',
+    };
+
+    const headerSx = slotProps?.header?.sx;
+
     const headerSlots: HeaderSectionProps['slots'] = {
       topArea: (
         <Alert severity="info" sx={{ display: 'none', borderRadius: 0 }}>
           This is an info Alert.
         </Alert>
       ),
-      leftArea: <Logo />,
+      leftArea: null,
+      centerArea: <DocsTopNavLinks />,
       rightArea: (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1, sm: 1.5 } }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0, sm: 0.75 } }}>
+          <LanguagePopover
+            data={[
+              { value: 'cn', label: '中文', countryCode: 'CN' },
+              { value: 'en', label: 'English', countryCode: 'GB' },
+            ]}
+          />
           {/** @slot Settings button */}
           <SettingsButton />
         </Box>
@@ -57,7 +72,7 @@ export function SimpleLayout({
         {...slotProps?.header}
         slots={{ ...headerSlots, ...slotProps?.header?.slots }}
         slotProps={merge(headerSlotProps, slotProps?.header?.slotProps ?? {})}
-        sx={slotProps?.header?.sx}
+        sx={Array.isArray(headerSx) ? [headerBaseSx, ...headerSx] : [headerBaseSx, headerSx]}
       />
     );
   };

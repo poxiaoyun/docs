@@ -14,7 +14,6 @@ import { I18nProvider } from './locales';
 import { setFavicon } from './utils/favicon';
 import { GlobalSettingsProvider, useGlobalSettingsContext } from './settings/global';
 
-
 // ----------------------------------------------------------------------
 
 type AppProps = {

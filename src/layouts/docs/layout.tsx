@@ -1,18 +1,23 @@
+import type { NavSectionProps } from 'src/components/nav-section';
 import type { DashboardLayoutProps } from 'src/layouts/dashboard/layout';
 
 import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router';
 
 import { DashboardLayout } from 'src/layouts/dashboard/layout';
+import { type DocsSidebarItem, DOCS_SIDEBAR_SECTIONS } from 'src/pages/docs/toc';
 
-import { generateNavData } from './nav-generator';
+import { icon } from './icon';
 
 // ----------------------------------------------------------------------
 
 export function DocsLayout({ children, slotProps, ...other }: DashboardLayoutProps) {
-  const { i18n } = useTranslation('navbar');
-
-  const navData = useMemo(() => generateNavData(i18n.language), [i18n.language]);
+  const { pathname } = useLocation();
+  const activeProduct = useMemo(() => getProductFromPath(pathname), [pathname]);
+  const navData = useMemo(() => mapDocsNavData(activeProduct), [activeProduct]);
+  const headerSlotProps = {
+    container: { maxWidth: false as const },
+  };
 
   return (
     <DashboardLayout
@@ -23,6 +28,13 @@ export function DocsLayout({ children, slotProps, ...other }: DashboardLayoutPro
           ...slotProps?.nav,
           data: navData,
         },
+        header: {
+          ...slotProps?.header,
+          slotProps: {
+            ...slotProps?.header?.slotProps,
+            ...headerSlotProps,
+          },
+        },
       }}
       sx={{
         px: { md: 3 },
@@ -31,4 +43,42 @@ export function DocsLayout({ children, slotProps, ...other }: DashboardLayoutPro
       {children}
     </DashboardLayout>
   );
+}
+
+function mapDocsNavData(product?: DocsSidebarItem['product']): NavSectionProps['data'] {
+  const mapItem = (item: DocsSidebarItem): NavSectionProps['data'][number]['items'][number] => ({
+    title: item.title,
+    path: item.path,
+    icon: item.icon ? icon(item.icon) : undefined,
+    deepMatch: item.deepMatch ?? true,
+    children: item.children?.map((child) => mapItem(child)),
+  });
+
+  const sections = product
+    ? DOCS_SIDEBAR_SECTIONS.filter((section) =>
+        section.items.some((item) => item.product === product)
+      )
+    : DOCS_SIDEBAR_SECTIONS;
+
+  return sections.map((section) => ({
+    subheader: section.subheader,
+    items: section.items.map((item) => mapItem(item)),
+  }));
+}
+
+function getProductFromPath(pathname: string): DocsSidebarItem['product'] | undefined {
+  const normalized = pathname.replace(/\/+/g, '/').replace(/^\/+|\/+$/g, '');
+  const segments = normalized.split('/');
+  if (segments[0] === 'docs') {
+    const target = segments[1] ?? '';
+    if (target === 'moha') return 'moha';
+    if (target === 'rune') return 'rune';
+    if (target === 'boss') return 'boss';
+  }
+
+  if (segments[0] === 'moha') return 'moha';
+  if (segments[0] === 'rune') return 'rune';
+  if (segments[0] === 'boss') return 'boss';
+
+  return undefined;
 }

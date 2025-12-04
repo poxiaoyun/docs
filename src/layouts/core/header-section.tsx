@@ -145,5 +145,7 @@ const HeaderContainer = styled(Container, {
 const HeaderCenterArea = styled('div')(() => ({
   display: 'flex',
   flex: '1 1 auto',
-  justifyContent: 'center',
+  justifyContent: 'flex-start',
+  gap: '0.5rem',
+  width: '100%',
 }));
