@@ -3,10 +3,17 @@ import type { NavSectionProps } from 'src/components/nav-section';
 
 import { varAlpha, mergeClasses } from 'minimal-shared/utils';
 
+import Box from '@mui/material/Box';
 import { styled } from '@mui/material/styles';
+import Typography from '@mui/material/Typography';
 
+import { useGlobalSettingsContext } from 'src/settings/global';
+
+import { Logo } from 'src/components/logo';
 import { Scrollbar } from 'src/components/scrollbar';
+import { useSettingsContext } from 'src/components/settings';
 import { NavSectionVertical } from 'src/components/nav-section';
+import { NavSectionMini } from 'src/components/nav-section/mini';
 
 import { layoutClasses } from '../core';
 import { NavToggleButton } from '../components/nav-toggle-button';
@@ -36,6 +43,8 @@ export function NavVertical({
   layoutQuery = 'md',
   ...other
 }: NavVerticalProps) {
+  const { state } = useGlobalSettingsContext();
+  const settings = useSettingsContext();
   const renderNavVertical = () => (
     <>
       {slots?.topArea ?? (
@@ -120,7 +129,7 @@ export function NavVertical({
         onClick={onToggleNav}
         sx={{ display: 'none !important' }}
       />
-      {renderNavVertical()}
+      {_isNavMini ? renderNavMini() : renderNavVertical()}
     </NavRoot>
   );
 }

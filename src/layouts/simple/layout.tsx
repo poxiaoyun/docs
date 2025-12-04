@@ -8,9 +8,9 @@ import Box from '@mui/material/Box';
 import Alert from '@mui/material/Alert';
 
 import { SimpleCompactContent } from './content';
+import { GlobalTopNav } from '../components/global-top-nav';
 import { SettingsButton } from '../components/settings-button';
 import { LanguagePopover } from '../components/language-popover';
-import { DocsTopNavLinks } from '../components/docs-top-nav-links';
 import { MainSection, LayoutSection, HeaderSection } from '../core';
 
 // ----------------------------------------------------------------------
@@ -51,7 +51,7 @@ export function SimpleLayout({
         </Alert>
       ),
       leftArea: null,
-      centerArea: <DocsTopNavLinks />,
+      centerArea: <GlobalTopNav />,
       rightArea: (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0, sm: 0.75 } }}>
           <LanguagePopover

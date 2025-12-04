@@ -16,9 +16,9 @@ import { NavMobile } from './nav-mobile';
 import { NavVertical } from './nav-vertical';
 import { NavHorizontal } from './nav-horizontal';
 import { MenuButton } from '../components/menu-button';
+import { GlobalTopNav } from '../components/global-top-nav';
 import { SettingsButton } from '../components/settings-button';
 import { LanguagePopover } from '../components/language-popover';
-import { DocsTopNavLinks } from '../components/docs-top-nav-links';
 import { dashboardLayoutVars, dashboardNavColorVars } from './css-vars';
 import { MainSection, layoutClasses, HeaderSection, LayoutSection } from '../core';
 
@@ -113,7 +113,7 @@ export function DashboardLayout({
           />
         </>
       ),
-      centerArea: <DocsTopNavLinks />,
+      centerArea: <GlobalTopNav />,
       rightArea: (
         <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0, sm: 0.75 } }}>
           {/** @slot Language popover */}

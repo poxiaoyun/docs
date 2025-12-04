@@ -28,8 +28,8 @@ const CAPABILITIES = [
   },
   {
     key: 'moha',
-    title: '魔哈广场',
-    description: '模型与数据集的社区广场，沉淀版本管理、数据迭代与活动运营经验。',
+    title: '魔哈仓库',
+    description: '模型与数据集的社区仓库，沉淀版本管理、数据迭代与活动运营经验。',
     highlights: ['模型版本流转', '数据集协作', '社区活动'],
     icon: 'ic-booking',
   },

@@ -296,7 +296,7 @@ type BreadcrumbEntry = {
 const PRODUCT_LABEL: Record<NonNullable<DocsSidebarItem['product']>, string> = {
   rune: 'Rune',
   boss: 'BOSS',
-  moha: '魔哈广场',
+  moha: '魔哈仓库',
   faq: 'F&Q',
 };
 

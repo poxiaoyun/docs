@@ -90,10 +90,10 @@ export const DOCS_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
     ],
   },
   {
-    subheader: '魔哈广场',
+    subheader: '魔哈仓库',
     items: [
       {
-        title: '魔哈广场',
+        title: '魔哈仓库',
         path: '/docs/moha',
         icon: 'ic-booking',
         product: 'moha',

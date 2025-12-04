@@ -54,7 +54,7 @@ export function HomeHeroSection() {
 
           <Typography variant="body1" sx={{ maxWidth: 720, opacity: 0.8 }}>
             从模型研发到平台治理，再到社区协作，一站式查阅 Rune · BOSS ·
-            魔哈广场的产品能力与最佳实践。
+            魔哈仓库的产品能力与最佳实践。
           </Typography>
 
           <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
