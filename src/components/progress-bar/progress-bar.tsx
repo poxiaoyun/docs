@@ -39,10 +39,12 @@ function useProgressBar() {
   useEffect(() => {
     // Starts the progress bar if navigating to a different URL.
     const handleNavigation = (newUrl: string) => {
+      console.log('newUrl', newUrl);
+      console.log('currentUrlRef.current', currentUrlRef.current);
       try {
         if (newUrl && !isEqualPath(newUrl, currentUrlRef.current, { deep: false })) {
           currentUrlRef.current = newUrl;
-          NProgress.start();
+          // NProgress.start();
         }
       } catch (error) {
         if (process.env.NODE_ENV === 'development') {

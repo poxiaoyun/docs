@@ -1,9 +1,11 @@
 import matter from 'gray-matter';
+import rehypeSlug from 'rehype-slug';
 import { useLocation } from 'react-router';
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 
+import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -12,6 +14,9 @@ import { useGlobalSettingsContext } from 'src/settings/global';
 
 import { Markdown } from 'src/components/markdown';
 import { LoadingScreen } from 'src/components/loading-screen';
+
+import { Toc } from './toc';
+import { useMarkdownToc } from './use-markdown-toc';
 
 // ----------------------------------------------------------------------
 
@@ -23,7 +28,7 @@ type DocMeta = {
 };
 
 export default function DocsViewer() {
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
   const { i18n } = useTranslation();
   const [content, setContent] = useState<string>('');
   const [meta, setMeta] = useState<DocMeta>({});
@@ -32,6 +37,8 @@ export default function DocsViewer() {
 
   const { state } = useGlobalSettingsContext();
   const { t } = useTranslation('navbar');
+
+  const toc = useMarkdownToc(content);
 
   // Calculate display title based on current language
   // Use the title as a key if it looks like one, otherwise fallback to the raw title
@@ -133,6 +140,32 @@ export default function DocsViewer() {
     loadContent();
   }, [pathname, i18n.language]);
 
+  // Scroll to hash after content is loaded
+  useEffect(() => {
+    if (!loading && hash) {
+      // Small timeout to ensure DOM is ready
+      const timeoutId = setTimeout(() => {
+        const id = hash.replace('#', '');
+        const element = document.getElementById(id);
+        if (element) {
+          const offset = 80; // Header offset
+          const bodyRect = document.body.getBoundingClientRect().top;
+          const elementRect = element.getBoundingClientRect().top;
+          const elementPosition = elementRect - bodyRect;
+          const offsetPosition = elementPosition - offset;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }, 100);
+
+      return () => clearTimeout(timeoutId);
+    }
+    return undefined;
+  }, [loading, hash]);
+
   if (loading) {
     return <LoadingScreen />;
   }
@@ -153,9 +186,33 @@ export default function DocsViewer() {
         <title> {displayTitle + ' | ' + state?.title} </title>
       </Helmet>
 
-      <Container maxWidth="lg" sx={{ py: 5 }}>
-        <Stack spacing={3}>
-          <Markdown children={content} />
+      <Container maxWidth="xl" sx={{ py: 5 }}>
+        <Stack direction="row" spacing={4} alignItems="flex-start">
+          <Box sx={{ minWidth: 0, flexGrow: 1 }}>
+            <Stack spacing={3}>
+              <Markdown
+                children={content}
+                rehypePlugins={[rehypeSlug]}
+              />
+            </Stack>
+          </Box>
+
+          {/* Right Sidebar: Table of Contents */}
+          {toc.length > 0 && (
+            <Box
+              component="nav"
+              sx={{
+                width: 200,
+                flexShrink: 0,
+                display: { xs: 'none', lg: 'block' }, // Hide on smaller screens
+                alignSelf: 'flex-start',
+                position: 'sticky',
+                top: 80, // Adjust as needed
+              }}
+            >
+              <Toc toc={toc} />
+            </Box>
+          )}
         </Stack>
       </Container>
     </>

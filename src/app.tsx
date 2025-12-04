@@ -7,7 +7,6 @@ import { usePathname } from 'src/routes/hooks';
 
 import { themeConfig, ThemeProvider } from 'src/theme';
 
-import { ProgressBar } from 'src/components/progress-bar';
 import { MotionLazy } from 'src/components/animate/motion-lazy';
 import { SettingsDrawer, defaultSettings, SettingsProvider } from 'src/components/settings';
 
@@ -36,7 +35,6 @@ export default function App({ children }: AppProps) {
             >
               <MotionLazy>
                 <FaviconUpdater />
-                <ProgressBar />
                 <SettingsDrawer defaultSettings={defaultSettings} />
                 {children}
               </MotionLazy>
