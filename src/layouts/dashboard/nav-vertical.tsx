@@ -49,7 +49,7 @@ export function NavVertical({
     <>
       {slots?.topArea ?? (
         <Box sx={{ pl: 3.5, pt: 2.5, pb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Logo />
+          {state?.logo ? <Logo /> : ''}
           <Box>
             <Typography
               variant="h4"
@@ -94,7 +94,7 @@ export function NavVertical({
     <>
       {slots?.topArea ?? (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 2.5 }}>
-          <Logo />
+          {state?.logo ? <Logo /> : ''}
         </Box>
       )}
 

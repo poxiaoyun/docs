@@ -3,6 +3,8 @@ import type { SettingsState, SettingsProviderProps } from '../types';
 import { useLocalStorage } from 'minimal-shared/hooks';
 import { useMemo, useEffect, useCallback } from 'react';
 
+import { API_ENDPOINT } from 'src/global-config';
+
 import { GlobalSettingsContext } from './settings-context';
 import { defaultSettings, SETTINGS_STORAGE_KEY } from '../settings-config';
 
@@ -16,7 +18,7 @@ export function GlobalSettingsProvider({
 
   const checkGlobalSettings = useCallback(async () => {
     try {
-      const settings = await fetch('/api/iam/global-config').then((res) => res.json());
+      const settings = await fetch(`${API_ENDPOINT}/api/iam/global-config`).then((res) => res.json());
 
       // 对settings进行过滤，移除为空的key
       const filteredSettings = Object.fromEntries(

@@ -5,7 +5,6 @@ export type SettingsState = {
   subTitle: string;
   language: string;
   logo: string;
-  enableBossSignup: boolean;
 };
 
 export type SettingsContextValue = {

@@ -34,29 +34,17 @@ export default defineConfig({
   server: {
     port: 8080,
     host: true,
-    proxy: {
-      '/api': {
-        target: 'https://rune.develop.xiaoshiai.cn',
-        changeOrigin: true,
-      },
-      '/avatars': {
-        target: 'https://rune.develop.xiaoshiai.cn',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/avatars/, '/api/iam/avatars'),
-      },
-    },
+    // proxy: {
+    //   '/api': {
+    //     target: 'https://rune.develop.xiaoshiai.cn',
+    //     changeOrigin: true,
+    //   },
+    //   '/avatars': {
+    //     target: 'https://rune.develop.xiaoshiai.cn',
+    //     changeOrigin: true,
+    //     rewrite: (path) => path.replace(/^\/avatars/, '/api/iam/avatars'),
+    //   },
+    // },
   },
   preview: { port: PORT, host: true },
-  // build: {
-  //   chunkSizeWarningLimit: 1024,
-  //   rollupOptions: {
-  //     output: {
-  //       manualChunks(id) {
-  //         if (id.includes('node_modules')) {
-  //           return id.toString().split('node_modules/')[1].split('/')[0].toString();
-  //         }
-  //       },
-  //     },
-  //   },
-  // },
 });

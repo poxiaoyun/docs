@@ -28,7 +28,7 @@ export function Logo({
 }: LogoProps) {
   const { state } = useGlobalSettingsContext();
 
-  const singleLogo = <img alt="Single logo" src={state?.logo || ''} width="100%" height="100%" />;
+  const singleLogo = state?.logo ? <img alt="Single logo" src={state?.logo || ''} width="100%" height="100%" /> : '';
 
   return (
     <LogoRoot
