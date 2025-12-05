@@ -68,18 +68,18 @@ const CATEGORY_CARDS: CategoryCard[] = [
     color: '#93C5FD',
   },
   {
-    title: '大模型训练与推理',
-    subtitle: '',
-    description: '基于开源框架，对大语言模型（LLM）进行灵活高效调训。',
-    href: '/docs/moha/llm-training',
-    color: '#C4B5FD',
-  },
-  {
     title: '模型接入流程',
     subtitle: '',
     description: '将模型接入到Moha仓库，方便用户通过统一的接口调用。',
     href: '/docs/moha/model-integration',
     color: '#5EEAD4',
+  },
+  {
+    title: '模型数据集加密',
+    subtitle: '',
+    description: '为模型和数据集提供加密存储和传输，保障用户数据的安全性和隐私。',
+    href: '/docs/moha/data-encryption',
+    color: '#6EE7B7',
   },
   {
     title: 'SDK教程',

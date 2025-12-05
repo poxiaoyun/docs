@@ -120,3 +120,9 @@ _Note: The `index.md` file is only used for folder metadata and does not become 
 - Place English files in `src/pages/docs/en/`.
 - Place Chinese files in `src/pages/docs/cn/`.
 - The system automatically falls back to the default language (Chinese) if a translation is missing.
+
+## Recent Documentation Updates
+
+- `src/pages/docs/toc.tsx` now imports per-product sidebar definitions from `src/pages/docs/cn/*/toc.ts`, which makes each product's navigation easier to maintain.
+- The Moha section (`src/pages/docs/cn/30.moha/`) received a full set of placeholder Markdown files aligned with the sidebar links, ensuring the site no longer exposes 404s when users navigate into the Moha tree.
+- The Moha home cards were adjusted to remove the redundant cards, update titles (`核心功能`/`SDK 教程`), and apply cold-gradient styling so the landing section matches the current product narrative.

@@ -9,7 +9,8 @@ export const MOHA_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: '首页',
         path: '/docs/moha',
-        icon: 'ic-booking',
+        icon: 'ic-dashboard',
+        deepMatch: false,
         product: 'moha',
       },
       {
@@ -19,13 +20,14 @@ export const MOHA_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         product: 'moha',
         children: [
           { title: '快速开始', path: '/docs/moha/quickstart/guide' },
-          { title: '账号设置', path: '/docs/moha/quickstart/guide' }
+          { title: '账号设置', path: '/docs/moha/quickstart/account' },
+          { title: '访问令牌', path: '/docs/moha/quickstart/token' }
         ],
       },
       {
         title: '模型广场',
-        path: '/docs/moha/models',
-        icon: 'ic-user',
+        path: '/docs/moha/models', 
+        icon: 'ic-course',
         product: 'moha',
         children: [
           { title: '模型广场介绍', path: '/docs/moha/models/intro' },
@@ -38,7 +40,7 @@ export const MOHA_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: '数据集',
         path: '/docs/moha/datasets',
-        icon: 'ic-file',
+        icon: 'ic-folder',
         product: 'moha',
         children: [
           { title: '数据集介绍', path: '/docs/moha/datasets/info' },
@@ -53,7 +55,7 @@ export const MOHA_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: '应用市场',
         path: '/docs/moha/marketplace',
-        icon: 'ic-label',
+        icon: 'ic-ecommerce',
         product: 'moha',
         children: [
           { title: '应用市场介绍', path: '/docs/moha/marketplace/intro' },
@@ -79,7 +81,7 @@ export const MOHA_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: 'SDK 教程',
         path: '/docs/moha/sdk-tutorial',
-        icon: 'ic-lock',
+        icon: 'ic-job',
         product: 'moha',
         children: [
           { title: 'SDK 介绍', path: '/docs/moha/sdk/intro' },
