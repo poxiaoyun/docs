@@ -16,30 +16,79 @@ type CodeBlockProps = {
 export function CodeBlock({ children }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = useCallback(() => {
-    // Extract text content from children
+  const handleCopy = useCallback(async () => {
     const extractText = (node: React.ReactNode): string => {
       if (typeof node === 'string') return node;
       if (typeof node === 'number') return String(node);
       if (!node) return '';
-      
+
       if (Array.isArray(node)) {
         return node.map(extractText).join('');
       }
-      
+
       if (isValidElement(node)) {
         return extractText((node.props as any).children);
       }
-      
+
       return '';
     };
 
     const text = extractText(children);
-    
-    navigator.clipboard.writeText(text).then(() => {
+
+    // Remember current scroll position to avoid focus/selection causing a jump
+    const scrollX = window.scrollX || window.pageXOffset;
+    const scrollY = window.scrollY || window.pageYOffset;
+
+    // Try modern clipboard API first, then fallback to execCommand for older/insecure contexts
+    try {
+      if (navigator?.clipboard?.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        // Fallback: create a temporary textarea, focus/select and copy
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-9999px';
+        textarea.style.top = '0';
+        document.body.appendChild(textarea);
+
+        // Try focusing without scrolling when supported
+        try {
+          (textarea as any).focus({ preventScroll: true });
+        } catch (e) {
+          textarea.focus();
+        }
+
+        textarea.select();
+        try {
+          textarea.setSelectionRange(0, textarea.value.length);
+        } catch (e) {
+          // Some browsers may throw on setSelectionRange for readonly inputs; ignore
+        }
+
+        const ok = document.execCommand('copy');
+        document.body.removeChild(textarea);
+
+        if (!ok) {
+          throw new Error('execCommand copy returned false');
+        }
+      }
+
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    });
+    } catch (err) {
+      // Silently fail but keep UX stable — could add telemetry or toast here
+      // eslint-disable-next-line no-console
+      console.warn('copy to clipboard failed', err);
+    } finally {
+      // Restore scroll position in case focus/select caused a jump
+      try {
+        window.scrollTo(scrollX, scrollY);
+      } catch (e) {
+        // ignore
+      }
+    }
   }, [children]);
 
   return (

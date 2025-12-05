@@ -69,7 +69,7 @@ export const MOHA_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: '模型接入流程',
         path: '/docs/moha/model-integration',
-        icon: 'ic-lock',
+        icon: 'ic-tour',
         product: 'moha',
         children: [
           { title: 'API 集成', path: '/docs/moha/advanced/api' },

@@ -51,7 +51,7 @@ const CATEGORY_CARDS: CategoryCard[] = [
     subtitle: 'Models',
     description: '模型库（Models）为社区各类模型进行托管各类模型的路径设施，方便模型型的存储、管理以及共享和发现。',
     href: '/docs/moha/models',
-    color: '#7DD3FC',
+    color: '#7dd4fcff',
   },
   {
     title: '数据集',
