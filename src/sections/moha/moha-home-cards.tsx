@@ -37,8 +37,8 @@ const QUICK_START_CARDS: QuickStartCard[] = [
     color: '#1890ff',
   },
   {
-    title: '在Notebook中运行模型',
-    description: '介绍如何使用notebook在线环境实现模型的调参训练和评估',
+    title: '在Rune中运行模型',
+    description: '介绍如何使用Rune实现模型的调参训练和评估',
     href: '/docs/moha/notebook-tutorial',
     icon: 'solar:file-text-bold',
     color: '#722ed1',
@@ -48,67 +48,46 @@ const QUICK_START_CARDS: QuickStartCard[] = [
 const CATEGORY_CARDS: CategoryCard[] = [
   {
     title: '模型库',
-    subtitle: 'ModelHub',
-    description: '模型库（ModelHub）为社区各类模型进行托管各类模型的路径设施，方便模型型的存储、管理以及共享和发现。',
-    href: '/docs/moha/model-hub',
-    color: '#eb2f96',
+    subtitle: 'Models',
+    description: '模型库（Models）为社区各类模型进行托管各类模型的路径设施，方便模型型的存储、管理以及共享和发现。',
+    href: '/docs/moha/models',
+    color: '#7DD3FC',
   },
   {
     title: '数据集',
-    subtitle: 'DatasetHub',
-    description: '数据集（DatasetHub）托管了最全各种概念的丰富数据集内容，涵盖自然语言处理、计算机视觉、语音等领域。',
-    href: '/docs/moha/dataset-hub',
-    color: '#13c2c2',
+    subtitle: 'Datasets',
+    description: '数据集（Datasets）托管了最全各种概念的丰富数据集内容，涵盖自然语言处理、计算机视觉、语音等领域。',
+    href: '/docs/moha/datasets',
+    color: '#93C5FD',
   },
   {
-    title: '创空间',
-    subtitle: 'Studio',
-    description: '创空间（Studio）为开发者提供了高效的上应用开发及分享平台，开发者可以基于社区模型，便捷开发展程序并用于连部署体验应用。',
-    href: '/docs/moha/studio',
-    color: '#52c41a',
-  },
-  {
-    title: 'Notebook',
-    subtitle: '',
-    description: '提供GPU/CPU/及角色的开发调用同步云上云发项目，预装ModelScope开发环境，为社区各用户开发完整的开发用使用环境。',
-    href: '/docs/moha/notebook',
-    color: '#722ed1',
-  },
-  {
-    title: 'Library教程',
-    subtitle: '',
-    description: '为开发者提供基于ModelScope生态和通用文档的的接口，支持各种预训模型和框架的统一加载和使用。',
-    href: '/docs/moha/library-tutorial',
-    color: '#fa541c',
+    title: '应用市场',
+    subtitle: 'Marketplace',
+    description: '应用市场（Marketplace）汇集了丰富的应用和服务，方便用户发现和使用各种解决方案。',
+    href: '/docs/moha/marketplace',
+    color: '#93C5FD',
   },
   {
     title: '大模型训练与推理',
     subtitle: '',
-    description: '基于SWIFT现成，对大语言模型（LLM）进行灵活高效资资调训训，。',
+    description: '基于开源框架，对大语言模型（LLM）进行灵活高效调训。',
     href: '/docs/moha/llm-training',
-    color: '#1890ff',
-  },
-  {
-    title: '模型服务',
-    subtitle: '',
-    description: '为开发者提供统一ModelScope社区模型的云上服器化和模理和训练资源。',
-    href: '/docs/moha/model-service',
-    color: '#fa8c16',
-  },
-  {
-    title: '模型介绍',
-    subtitle: '',
-    description: '社区介不同领域、支持不同任务的优质模型介绍，包括模型实如实及相关资讯。',
-    href: '/docs/moha/model-intro',
-    color: '#eb2f96',
+    color: '#C4B5FD',
   },
   {
     title: '模型接入流程',
     subtitle: '',
-    description: '将模型至提到到ModelScope社区，方便广大用户连通过统一的接口调用。',
+    description: '将模型接入到Moha仓库，方便用户通过统一的接口调用。',
     href: '/docs/moha/model-integration',
-    color: '#52c41a',
+    color: '#5EEAD4',
   },
+  {
+    title: 'SDK教程',
+    subtitle: '',
+    description: '为开发者提供基于Moha生态和通用文档的的接口，支持各种预训模型和框架的统一加载和使用。',
+    href: '/docs/moha/sdk-tutorial',
+    color: '#A5B4FC',
+  }
 ];
 
 // ----------------------------------------------------------------------
@@ -143,7 +122,7 @@ export function MohaHomeCards({ sx, ...other }: BoxProps) {
       {/* Community Section */}
       <Box>
         <Typography variant="h4" sx={{ mb: 3, fontWeight: 600 }}>
-          社区交流
+          核心功能
         </Typography>
         <Box
           sx={{
@@ -234,13 +213,14 @@ function CategoryCard({ card }: { card: CategoryCard }) {
         display: 'flex',
         flexDirection: 'column',
         textDecoration: 'none',
-        transition: theme.transitions.create(['box-shadow', 'transform']),
-        bgcolor: alpha(card.color || theme.palette.primary.main, 0.04),
-        border: `1px solid ${alpha(card.color || theme.palette.primary.main, 0.08)}`,
+        transition: theme.transitions.create(['box-shadow', 'transform', 'background']),
+        background: `linear-gradient(135deg, ${alpha(card.color || theme.palette.primary.main, 0.06)} 0%, ${alpha(card.color || theme.palette.primary.main, 0.02)} 100%)`,
+        border: 'none',
+        boxShadow: 'none',
         '&:hover': {
-          boxShadow: theme.customShadows.z8,
+          boxShadow: theme.customShadows.z4,
           transform: 'translateY(-4px)',
-          bgcolor: alpha(card.color || theme.palette.primary.main, 0.08),
+          background: `linear-gradient(135deg, ${alpha(card.color || theme.palette.primary.main, 0.12)} 0%, ${alpha(card.color || theme.palette.primary.main, 0.04)} 100%)`,
         },
       }}
     >
