@@ -1,8 +1,8 @@
 ---
-title: Rune 用户门户
+title: Rune 智算平台
 updated: '2025-12-04'
 author: Rune Docs Team
-description: Rune 用户门户覆盖推理、工作负载与镜像管理的完整操作指引。
+description: Rune 智算平台覆盖推理、工作负载与镜像管理的完整操作指引。
 tags:
   - rune
   - overview

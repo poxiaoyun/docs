@@ -1,5 +1,5 @@
 ---
-title: 开始使用 Rune
+title: 开始使用 Rune 智算平台
 updated: '2025-12-04'
 author: Rune Docs Team
 description: 引导终端用户完成环境准备、工作负载创建与推理托管。

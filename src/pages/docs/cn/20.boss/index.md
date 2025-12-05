@@ -1,5 +1,5 @@
 ---
-title: BOSS 平台管理
+title: Boss 运营平台
 updated: '2025-12-04'
 author: Rune Docs Team
 description: 面向平台管理员的治理手册，涵盖集群、租户、配额与模板。

@@ -2,6 +2,19 @@
 
 Rune Docs is a modern, high-performance documentation site built with React, Vite, and Material UI. It features automatic navigation generation, internationalization support, and a clean, responsive design.
 
+## 🎨 New Modern Homepage Design
+
+The homepage has been redesigned with a modern, engaging layout featuring:
+- ✨ **Hero Section** with gradient backgrounds and animated product cards
+- 🎯 **Capabilities Overview** showcasing three product lines with brand colors
+- 🚀 **Quick Start Guide** with step-by-step visual flow
+- 💡 **Solutions & Use Cases** with gradient card designs
+- 🔧 **Ecosystem Resources** with interactive CTAs
+- 👥 **Community Events** with timeline and registration
+- 🎉 **Call-to-Action** section with key metrics
+
+See [`HOMEPAGE_DESIGN.md`](./HOMEPAGE_DESIGN.md) for detailed design documentation.
+
 ## Features
 
 - 🚀 **High Performance**: Built on Vite and React 19.
@@ -10,6 +23,7 @@ Rune Docs is a modern, high-performance documentation site built with React, Vit
 - 🎨 **Material Design**: Beautiful and accessible UI components based on MUI.
 - 🌙 **Dark/Light Mode**: Seamless theme switching.
 - 📂 **Auto-generated Navigation**: Navigation menus are automatically generated from the file structure.
+- 🎬 **Smooth Animations**: Framer Motion powered scroll animations and transitions.
 
 ## Prerequisites
 

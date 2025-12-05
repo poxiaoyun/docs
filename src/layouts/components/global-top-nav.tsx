@@ -5,8 +5,6 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
-import { getPlatformName } from 'src/utils/platform-name';
-
 // ----------------------------------------------------------------------
 
 type TopNavLink = {
@@ -18,8 +16,8 @@ type TopNavLink = {
 const NAV_LINKS: TopNavLink[] = [
   { key: 'home', path: '/', label: '首页' },
   { key: 'moha', path: '/docs/moha', label: '魔哈仓库' },
-  { key: 'rune', path: '/docs/rune', label: 'Rune' },
-  { key: 'boss', path: '/docs/boss', label: 'BOSS' },
+  { key: 'rune', path: '/docs/rune', label: 'Rune 智算平台' },
+  { key: 'boss', path: '/docs/boss', label: 'Boss 运营平台' },
 ];
 
 // ----------------------------------------------------------------------
@@ -31,8 +29,6 @@ const NAV_LINKS: TopNavLink[] = [
 export function GlobalTopNav() {
   const { pathname } = useLocation();
   const { t } = useTranslation();
-
-  const platformName = getPlatformName();
 
   const pillStyles = (active: boolean) => ({
     opacity: active ? 1 : 0.78,

@@ -1,17 +1,14 @@
 import matter from 'gray-matter';
 import rehypeSlug from 'rehype-slug';
+import { useLocation } from 'react-router';
 import { Helmet } from 'react-helmet-async';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useMemo, useState, useEffect } from 'react';
-import { useLocation, Link as RouterLink } from 'react-router';
 
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
 
 import { useGlobalSettingsContext } from 'src/settings/global';
 
@@ -20,7 +17,9 @@ import { LoadingScreen } from 'src/components/loading-screen';
 
 import { Toc } from './toc';
 import { useMarkdownToc } from './use-markdown-toc';
-import { type DocsSidebarItem, DOCS_SIDEBAR_SECTIONS } from './toc';
+import { BossHomeCards } from '../../sections/boss/boss-home-cards';
+import { MohaHomeCards } from '../../sections/moha/moha-home-cards';
+import { RuneHomeCards } from '../../sections/rune/rune-home-cards';
 
 // ----------------------------------------------------------------------
 
@@ -171,14 +170,11 @@ export default function DocsViewer() {
     return undefined;
   }, [loading, hash]);
 
-  const breadcrumbs = useMemo(() => buildBreadcrumbs(pathname), [pathname]);
-  const productLabel = breadcrumbs.find((item) => item.productLabel)?.productLabel ?? meta.product;
-  const metaInfo = [
-    meta.updated ? `最近更新：${meta.updated}` : null,
-    meta.author ? `作者：${meta.author}` : null,
-  ]
-    .filter(Boolean)
-    .join(' · ');
+  // Check if this is a product home page
+  const isMohaHomePage = pathname === '/docs/moha' || pathname === '/docs/moha/';
+  const isRuneHomePage = pathname === '/docs/rune' || pathname === '/docs/rune/';
+  const isBossHomePage = pathname === '/docs/boss' || pathname === '/docs/boss/';
+  const isProductHomePage = isMohaHomePage || isRuneHomePage || isBossHomePage;
 
   if (loading) {
     return <LoadingScreen />;
@@ -200,61 +196,30 @@ export default function DocsViewer() {
         <title> {displayTitle + ' | ' + state?.title} </title>
       </Helmet>
 
-      <Container maxWidth="xl" sx={{ py: 5 }}>
-        <Stack spacing={2} sx={{ mb: 4 }}>
-          <Stack
-            direction={{ xs: 'column', md: 'row' }}
-            spacing={1.5}
-            alignItems={{ md: 'center' }}
+      <Container maxWidth="xl" sx={{ py: 3, pl: { md: 1 } }}>
+        <Stack direction="row" spacing={2} alignItems="flex-start">
+          <Box 
+            sx={{ 
+              minWidth: 0, 
+              flexGrow: 1,
+              bgcolor: 'grey.100',
+              borderRadius: 2,
+              p: { xs: 2, md: 2.5 },
+              boxShadow: '0 0 0 1px rgba(145, 158, 171, 0.08)',
+            }}
           >
-            <Breadcrumbs aria-label="documentation breadcrumbs" sx={{ flexGrow: 1 }}>
-              <Link component={RouterLink} to="/docs" color="inherit" underline="hover">
-                文档首页
-              </Link>
-              {breadcrumbs.map((crumb, index) => {
-                const isLast = index === breadcrumbs.length - 1;
-                return isLast ? (
-                  <Typography key={crumb.path} color="text.primary">
-                    {crumb.title}
-                  </Typography>
-                ) : (
-                  <Link
-                    key={crumb.path}
-                    component={RouterLink}
-                    to={crumb.path}
-                    underline="hover"
-                    color="inherit"
-                  >
-                    {crumb.title}
-                  </Link>
-                );
-              })}
-            </Breadcrumbs>
-
-            {productLabel && <Chip label={productLabel} size="small" color="primary" />}
-          </Stack>
-
-          <Stack spacing={1}>
-            <Typography variant="h3" sx={{ fontWeight: 600 }}>
-              {displayTitle}
-            </Typography>
-            {metaInfo && (
-              <Typography variant="caption" color="text.secondary">
-                {metaInfo}
-              </Typography>
-            )}
-          </Stack>
-        </Stack>
-
-        <Stack direction="row" spacing={4} alignItems="flex-start">
-          <Box sx={{ minWidth: 0, flexGrow: 1 }}>
             <Stack spacing={3}>
-              <Markdown children={content} rehypePlugins={[rehypeSlug]} />
+              {isMohaHomePage && <MohaHomeCards />}
+              {isRuneHomePage && <RuneHomeCards />}
+              {isBossHomePage && <BossHomeCards />}
+              {!isProductHomePage && (
+                <Markdown children={content} rehypePlugins={[rehypeSlug]} />
+              )}
             </Stack>
           </Box>
 
           {/* Right Sidebar: Table of Contents */}
-          {toc.length > 0 && (
+          {!isProductHomePage && toc.length > 0 && (
             <Box
               component="nav"
               sx={{
@@ -284,65 +249,4 @@ function normalizeDocsPath(pathname: string) {
     return clean.replace(/^docs\//, '');
   }
   return clean;
-}
-
-type BreadcrumbEntry = {
-  title: string;
-  path: string;
-  product?: DocsSidebarItem['product'];
-  productLabel?: string;
-};
-
-const PRODUCT_LABEL: Record<NonNullable<DocsSidebarItem['product']>, string> = {
-  rune: 'Rune',
-  boss: 'BOSS',
-  moha: '魔哈仓库',
-  faq: 'F&Q',
-};
-
-function buildBreadcrumbs(pathname: string): BreadcrumbEntry[] {
-  const normalized = pathname.startsWith('/docs')
-    ? pathname.replace(/\/+$/, '') || '/docs/introduction'
-    : `/docs/${pathname.replace(/^\/+/, '') || 'introduction'}`;
-
-  for (const section of DOCS_SIDEBAR_SECTIONS) {
-    for (const item of section.items) {
-      const trail = findTrail(item, normalized);
-      if (trail.length) {
-        return trail.map((node) => ({
-          title: node.title,
-          path: node.path,
-          product: node.product,
-          productLabel: node.product ? PRODUCT_LABEL[node.product] : undefined,
-        }));
-      }
-    }
-  }
-
-  return [];
-}
-
-function findTrail(
-  item: DocsSidebarItem,
-  targetPath: string,
-  trail: DocsSidebarItem[] = []
-): DocsSidebarItem[] {
-  const cleanTarget = targetPath.replace(/\/+$/, '');
-  const nextTrail = [...trail, item];
-  if (item.path === cleanTarget || cleanTarget.startsWith(`${item.path}/`)) {
-    if (!item.children || item.path === cleanTarget) {
-      return nextTrail;
-    }
-  }
-
-  if (item.children) {
-    for (const child of item.children) {
-      const childTrail = findTrail(child, cleanTarget, nextTrail);
-      if (childTrail.length) {
-        return childTrail;
-      }
-    }
-  }
-
-  return item.path === cleanTarget || cleanTarget.startsWith(`${item.path}/`) ? nextTrail : [];
 }

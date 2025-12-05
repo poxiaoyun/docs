@@ -1,6 +1,6 @@
 import type { NavSectionProps } from 'src/components/nav-section';
 
-import { useEffect } from 'react';
+import { useMemo, useEffect } from 'react';
 import { varAlpha, mergeClasses } from 'minimal-shared/utils';
 
 import Box from '@mui/material/Box';
@@ -44,6 +44,9 @@ export function NavMobile({
   const { state } = useGlobalSettingsContext();
   const settings = useSettingsContext();
 
+  // 检测是否为魔哈仓库页面
+  const isMohaPage = useMemo(() => pathname.includes('/moha'), [pathname]);
+
   useEffect(() => {
     if (open) {
       onClose();
@@ -70,35 +73,37 @@ export function NavMobile({
       }}
     >
       {slots?.topArea ?? (
-        <Box sx={{ pl: 3.5, pt: 2.5, pb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
-          {state?.logo ? <Logo /> : ''}
-          <Box>
-            <Typography
-              variant="h4"
-              sx={(theme) => ({
-                fontFamily: 'Pangmengzuodao-Simple',
-                color:
-                  settings.state.contrast === 'hight'
-                    ? theme.palette.common.white
-                    : 'var(--layout-nav-text-primary-color)',
-              })}
-            >
-              {state?.title}
-            </Typography>
-            <Typography
-              variant="body2"
-              sx={(theme) => ({
-                fontFamily: 'Pangmengzuodao-Simple',
-                color:
-                  settings.state.contrast === 'hight'
-                    ? varAlpha(theme.vars.palette.common.whiteChannel, 0.6)
-                    : 'var(--layout-nav-text-secondary-color)',
-              })}
-            >
-              {state?.subTitle}
-            </Typography>
+        !isMohaPage && (
+          <Box sx={{ pl: 3.5, pt: 2.5, pb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
+            {state?.logo ? <Logo /> : ''}
+            <Box>
+              <Typography
+                variant="h4"
+                sx={(theme) => ({
+                  fontFamily: 'Pangmengzuodao-Simple',
+                  color:
+                    settings.state.contrast === 'hight'
+                      ? theme.palette.common.white
+                      : 'var(--layout-nav-text-primary-color)',
+                })}
+              >
+                {state?.title}
+              </Typography>
+              <Typography
+                variant="body2"
+                sx={(theme) => ({
+                  fontFamily: 'Pangmengzuodao-Simple',
+                  color:
+                    settings.state.contrast === 'hight'
+                      ? varAlpha(theme.vars.palette.common.whiteChannel, 0.6)
+                      : 'var(--layout-nav-text-secondary-color)',
+                })}
+              >
+                {state?.subTitle}
+              </Typography>
+            </Box>
           </Box>
-        </Box>
+        )
       )}
 
       <Scrollbar fillContent>

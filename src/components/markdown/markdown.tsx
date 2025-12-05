@@ -2,18 +2,21 @@ import './code-highlight-block.css';
 
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
+import { useId, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
 import { mergeClasses, isExternalLink } from 'minimal-shared/utils';
-import { useId, useMemo, Children, cloneElement, isValidElement } from 'react';
 
 import Link from '@mui/material/Link';
 
 import { RouterLink } from 'src/routes/components';
 
 import { Image } from '../image';
+import { AlertBox } from './alert-box';
 import { MarkdownRoot } from './styles';
+import { CodeBlock } from './code-block';
 import { markdownClasses } from './classes';
+import { remarkAlerts } from './remark-alerts';
 import { htmlToMarkdown, isMarkdownContent } from './html-to-markdown';
 
 // ----------------------------------------------------------------------
@@ -28,6 +31,7 @@ export function Markdown({
   className,
   components,
   rehypePlugins,
+  remarkPlugins,
   ...other
 }: MarkdownProps) {
   const content = useMemo(() => {
@@ -41,11 +45,17 @@ export function Markdown({
     [rehypePlugins]
   );
 
+  const allRemarkPlugins = useMemo(
+    () => [...defaultRemarkPlugins, ...(remarkPlugins ?? [])],
+    [remarkPlugins]
+  );
+
   return (
     <MarkdownRoot className={mergeClasses([markdownClasses.root, className])} sx={sx}>
       <ReactMarkdown
         components={{ ...defaultComponents, ...components }}
         rehypePlugins={allRehypePlugins}
+        remarkPlugins={allRemarkPlugins}
         /* base64-encoded images
          * https://github.com/remarkjs/react-markdown/issues/774
          * urlTransform={(value: string) => value}
@@ -64,6 +74,13 @@ export function Markdown({
 const defaultRehypePlugins: NonNullable<ReactMarkdownProps['rehypePlugins']> = [
   rehypeRaw,
   rehypeHighlight,
+];
+
+/** **************************************
+ * @remarkPlugins
+ *************************************** */
+const defaultRemarkPlugins: NonNullable<ReactMarkdownProps['remarkPlugins']> = [
+  remarkAlerts,
   [remarkGfm, { singleTilde: false }],
 ];
 
@@ -73,6 +90,20 @@ const defaultRehypePlugins: NonNullable<ReactMarkdownProps['rehypePlugins']> = [
  * (e.g., node: _n) to prevent rendering it as [object Object] in the DOM.
  *************************************** */
 const defaultComponents: NonNullable<ReactMarkdownProps['components']> = {
+  div: ({ node, children, ...props }: any) => {
+    const alertType = props['data-alert'];
+    const alertTitle = props['data-alert-title'];
+    
+    if (alertType) {
+      return (
+        <AlertBox type={alertType} title={alertTitle || undefined}>
+          {children}
+        </AlertBox>
+      );
+    }
+    
+    return <div {...props}>{children}</div>;
+  },
   img: ({ node: _n, onLoad: _o, ...other }: any) => (
     <Image
       className={markdownClasses.content.image}
@@ -102,15 +133,7 @@ const defaultComponents: NonNullable<ReactMarkdownProps['components']> = {
       </Link>
     );
   },
-  pre: ({ children }: any) => (
-    <div className={markdownClasses.content.codeBlock}>
-      <pre>
-        {Children.map(children, (child) =>
-          isValidElement(child) ? cloneElement(child as any, { isBlock: true }) : child
-        )}
-      </pre>
-    </div>
-  ),
+  pre: ({ children }: any) => <CodeBlock>{children}</CodeBlock>,
   code: ({ className = '', children, node: _n, ...other }: any) => {
     const { isBlock, ...rest } = other;
     const hasLanguage = /language-\w+/.test(className);
