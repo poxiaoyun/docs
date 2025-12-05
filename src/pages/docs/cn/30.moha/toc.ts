@@ -33,6 +33,7 @@ export const MOHA_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
           { title: '模型广场介绍', path: '/docs/moha/models/intro' },
           { title: '模型的下载', path: '/docs/moha/models/download' },
           { title: '模型的上传', path: '/docs/moha/models/upload' },
+          { title: '模型加密', path: '/docs/moha/models/encrpt' },
           { title: '模型卡片', path: '/docs/moha/models/card' },
           { title: '模型版本', path: '/docs/moha/models/version' }
         ],
