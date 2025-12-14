@@ -69,6 +69,13 @@ npm run build
 
 The documentation content is located in `src/pages/docs`. The site supports multiple languages, with separate directories for each language (e.g., `cn` for Chinese, `en` for English).
 
+### Ecosystem Docs
+
+The new **Ecosystem Docs** entry is available at `/docs/ecosystem` and is designed to aggregate vendor ecosystems and open-source community practices.
+
+- Sidebar config: `src/pages/docs/cn/40.ecosystem/toc.ts`
+- Content (CN): `src/pages/docs/cn/40.ecosystem/`
+
 ### Directory Structure
 
 ```
@@ -124,5 +131,6 @@ _Note: The `index.md` file is only used for folder metadata and does not become 
 ## Recent Documentation Updates
 
 - `src/pages/docs/toc.tsx` now imports per-product sidebar definitions from `src/pages/docs/cn/*/toc.ts`, which makes each product's navigation easier to maintain.
+- Added Ecosystem Docs (`/docs/ecosystem`) with an independent sidebar tree and starter Markdown pages under `src/pages/docs/cn/40.ecosystem/`.
 - The Moha section (`src/pages/docs/cn/30.moha/`) received a full set of placeholder Markdown files aligned with the sidebar links, ensuring the site no longer exposes 404s when users navigate into the Moha tree.
 - The Moha home cards were adjusted to remove the redundant cards, update titles (`核心功能`/`SDK 教程`), and apply cold-gradient styling so the landing section matches the current product narrative.

@@ -18,6 +18,7 @@ const NAV_LINKS: TopNavLink[] = [
   { key: 'moha', path: '/docs/moha', label: '魔哈仓库' },
   { key: 'rune', path: '/docs/rune', label: 'Rune 智算平台' },
   { key: 'boss', path: '/docs/boss', label: 'Boss 运营平台' },
+  { key: 'ecosystem', path: '/docs/ecosystem', label: '生态文档' },
 ];
 
 // ----------------------------------------------------------------------

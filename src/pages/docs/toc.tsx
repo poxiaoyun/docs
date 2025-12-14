@@ -8,6 +8,7 @@ import Link from '@mui/material/Link';
 import { RUNE_SIDEBAR_SECTIONS } from './cn/10.rune/toc';
 import { BOSS_SIDEBAR_SECTIONS } from './cn/20.boss/toc';
 import { MOHA_SIDEBAR_SECTIONS } from './cn/30.moha/toc';
+import { ECOSYSTEM_SIDEBAR_SECTIONS } from './cn/40.ecosystem/toc';
 
 // ----------------------------------------------------------------------
 
@@ -16,7 +17,7 @@ export type DocsSidebarItem = {
   path: string;
   icon?: string;
   deepMatch?: boolean;
-  product?: 'rune' | 'boss' | 'moha' | 'faq';
+  product?: 'rune' | 'boss' | 'moha' | 'ecosystem' | 'faq';
   children?: DocsSidebarItem[];
 };
 
@@ -46,6 +47,7 @@ export const DOCS_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
   ...RUNE_SIDEBAR_SECTIONS,
   ...BOSS_SIDEBAR_SECTIONS,
   ...MOHA_SIDEBAR_SECTIONS,
+  ...ECOSYSTEM_SIDEBAR_SECTIONS,
 ];
 
 // ----------------------------------------------------------------------

@@ -44,8 +44,15 @@ export function NavMobile({
   const { state } = useGlobalSettingsContext();
   const settings = useSettingsContext();
 
-  // 检测是否为魔哈仓库页面
-  const isMohaPage = useMemo(() => pathname.includes('/moha'), [pathname]);
+  // 检测是否为产品/栏目文档页面（魔哈仓库、Rune、Boss、生态文档）
+  const isProductPage = useMemo(
+    () =>
+      pathname.includes('/moha') ||
+      pathname.includes('/rune') ||
+      pathname.includes('/boss') ||
+      pathname.includes('/ecosystem'),
+    [pathname]
+  );
 
   useEffect(() => {
     if (open) {
@@ -73,7 +80,7 @@ export function NavMobile({
       }}
     >
       {slots?.topArea ?? (
-        !isMohaPage && (
+        !isProductPage && (
           <Box sx={{ pl: 3.5, pt: 2.5, pb: 1, display: 'flex', alignItems: 'center', gap: 1 }}>
             {state?.logo ? <Logo /> : ''}
             <Box>
