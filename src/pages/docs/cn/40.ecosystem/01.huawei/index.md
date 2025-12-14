@@ -2,7 +2,7 @@
 title: 华为（昇腾 Ascend）
 updated: '2025-12-14'
 author: Rune Docs Team
-description: 华为昇腾生态的驱动与运行时、镜像环境、适配调优与排障指南。
+description: 华为昇腾生态的驱动与运行时，以及 MindCluster 组件安装指引。
 tags:
   - ecosystem
   - huawei
@@ -11,7 +11,7 @@ tags:
 
 ## 概述
 
-本章节聚焦华为昇腾生态在集群/节点侧的交付与适配：驱动与运行时、容器镜像环境、算子/框架适配与性能调优、以及常见故障排查。
+本章节聚焦华为昇腾生态在集群/节点侧的交付与适配：驱动与运行时，以及 MindCluster（集群调度组件）相关安装准备。
 
 <div data-alert="tip">
 

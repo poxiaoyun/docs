@@ -19,9 +19,17 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         product: 'ecosystem',
         children: [
           { title: '驱动与运行时', path: '/docs/ecosystem/huawei/driver-runtime' },
-          { title: '镜像与环境', path: '/docs/ecosystem/huawei/images-env' },
-          { title: '适配与调优', path: '/docs/ecosystem/huawei/porting-tuning' },
-          { title: '排障与 FAQ', path: '/docs/ecosystem/huawei/troubleshooting' },
+          {
+            title: 'MindCluster（集群调度组件）',
+            path: '/docs/ecosystem/huawei/mindcluster',
+            children: [
+              { title: '获取软件包', path: '/docs/ecosystem/huawei/mindcluster/packages' },
+              { title: 'Ascend Docker Runtime', path: '/docs/ecosystem/huawei/mindcluster/ascend-docker-runtime' },
+              { title: 'NPU Exporter', path: '/docs/ecosystem/huawei/mindcluster/npu-exporter' },
+              { title: 'Ascend Device Plugin', path: '/docs/ecosystem/huawei/mindcluster/ascend-device-plugin' },
+              { title: 'NodeD', path: '/docs/ecosystem/huawei/mindcluster/noded' },
+            ],
+          },
         ],
       },
       {
@@ -30,10 +38,26 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         icon: 'ic-file',
         product: 'ecosystem',
         children: [
-          { title: '驱动与运行时', path: '/docs/ecosystem/hygon/driver-runtime' },
-          { title: '镜像与环境', path: '/docs/ecosystem/hygon/images-env' },
-          { title: '适配与调优', path: '/docs/ecosystem/hygon/porting-tuning' },
-          { title: '排障与 FAQ', path: '/docs/ecosystem/hygon/troubleshooting' },
+          { title: '驱动安装', path: '/docs/ecosystem/hygon/driver-runtime' },
+          {
+            title: 'Kubernetes 组件',
+            path: '/docs/ecosystem/hygon/k8s-components',
+            children: [
+              { title: '概述', path: '/docs/ecosystem/hygon/overview' },
+              { title: 'DCU-Label-Node', path: '/docs/ecosystem/hygon/label-node' },
+              { title: 'DCU-Exporter', path: '/docs/ecosystem/hygon/exporter' },
+              {
+                title: 'DCU-Device-Plugin（标准模式）',
+                path: '/docs/ecosystem/hygon/device-plugin-standard',
+              },
+              {
+                title: 'DCU-Device-Plugin（MIG 模式）',
+                path: '/docs/ecosystem/hygon/device-plugin-mig',
+              },
+              { title: 'vDCU 动态切分模式', path: '/docs/ecosystem/hygon/vdcu-dynamic-splitting' },
+              { title: 'FAQ', path: '/docs/ecosystem/hygon/faq' },
+            ],
+          },
         ],
       },
       {
