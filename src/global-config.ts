@@ -17,7 +17,7 @@ export type ConfigValue = {
 export const CONFIG: ConfigValue = {
   appName: 'docs',
   appVersion: packageJson.version,
-  assetsDir: import.meta.env.VITE_ASSETS_DIR ?? '',
+  assetsDir: import.meta.env.VITE_ASSETS_DIR ?? import.meta.env.BASE_URL.replace(/\/$/, ''),
   /**
    * Auth
    * @method jwt | amplify | firebase | supabase | auth0

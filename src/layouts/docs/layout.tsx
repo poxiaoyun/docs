@@ -3,9 +3,10 @@ import type { DashboardLayoutProps } from 'src/layouts/dashboard/layout';
 
 import { useMemo } from 'react';
 import { useLocation } from 'react-router';
+import { useTranslation } from 'react-i18next';
 
 import { DashboardLayout } from 'src/layouts/dashboard/layout';
-import { type DocsSidebarItem, DOCS_SIDEBAR_SECTIONS } from 'src/pages/docs/toc';
+import { type DocsSidebarItem, getDocsSidebarSections } from 'src/pages/docs/toc';
 
 import { icon } from './icon';
 
@@ -13,8 +14,12 @@ import { icon } from './icon';
 
 export function DocsLayout({ children, slotProps, ...other }: DashboardLayoutProps) {
   const { pathname } = useLocation();
+  const { i18n } = useTranslation();
   const activeProduct = useMemo(() => getProductFromPath(pathname), [pathname]);
-  const navData = useMemo(() => mapDocsNavData(activeProduct), [activeProduct]);
+  const navData = useMemo(
+    () => mapDocsNavData(getDocsSidebarSections(i18n.language), activeProduct),
+    [activeProduct, i18n.language]
+  );
 
   return (
     <DashboardLayout
@@ -53,7 +58,10 @@ export function DocsLayout({ children, slotProps, ...other }: DashboardLayoutPro
   );
 }
 
-function mapDocsNavData(product?: DocsSidebarItem['product']): NavSectionProps['data'] {
+function mapDocsNavData(
+  sections: ReturnType<typeof getDocsSidebarSections>,
+  product?: DocsSidebarItem['product']
+): NavSectionProps['data'] {
   const mapItem = (item: DocsSidebarItem): NavSectionProps['data'][number]['items'][number] => ({
     title: item.title,
     path: item.path,
@@ -62,13 +70,13 @@ function mapDocsNavData(product?: DocsSidebarItem['product']): NavSectionProps['
     children: item.children?.map((child) => mapItem(child)),
   });
 
-  const sections = product
-    ? DOCS_SIDEBAR_SECTIONS.filter((section) =>
+  const filteredSections = product
+    ? sections.filter((section) =>
         section.items.some((item) => item.product === product)
       )
-    : DOCS_SIDEBAR_SECTIONS;
+    : sections;
 
-  return sections.map((section) => ({
+  return filteredSections.map((section) => ({
     subheader: section.subheader,
     items: section.items.map((item) => mapItem(item)),
   }));

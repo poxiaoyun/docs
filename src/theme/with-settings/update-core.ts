@@ -64,7 +64,7 @@ export function applySettingsToTheme(
     };
 
     return {
-      ...currentScheme,
+      ...(currentScheme as Record<string, unknown>),
       palette: updatedPalette,
       customShadows: updatedCustomShadows,
     };

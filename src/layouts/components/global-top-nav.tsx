@@ -10,15 +10,18 @@ import Typography from '@mui/material/Typography';
 type TopNavLink = {
   key: string;
   path: string;
-  label: string;
+  label: {
+    cn: string;
+    en: string;
+  };
 };
 
 const NAV_LINKS: TopNavLink[] = [
-  { key: 'home', path: '/', label: '首页' },
-  { key: 'moha', path: '/docs/moha', label: '魔哈仓库' },
-  { key: 'rune', path: '/docs/rune', label: 'Rune 智算平台' },
-  { key: 'boss', path: '/docs/boss', label: 'Boss 运营平台' },
-  { key: 'ecosystem', path: '/docs/ecosystem', label: '生态文档' },
+  { key: 'home', path: '/', label: { cn: '首页', en: 'Home' } },
+  { key: 'moha', path: '/docs/moha', label: { cn: '魔哈仓库', en: 'Moha' } },
+  { key: 'rune', path: '/docs/rune', label: { cn: 'Rune 智算平台', en: 'Rune AI Platform' } },
+  { key: 'boss', path: '/docs/boss', label: { cn: 'Boss 运营平台', en: 'Boss Operations Platform' } },
+  { key: 'ecosystem', path: '/docs/ecosystem', label: { cn: '生态文档', en: 'Ecosystem' } },
 ];
 
 // ----------------------------------------------------------------------
@@ -29,7 +32,9 @@ const NAV_LINKS: TopNavLink[] = [
  */
 export function GlobalTopNav() {
   const { pathname } = useLocation();
-  const { t } = useTranslation();
+  const { i18n } = useTranslation();
+  const locale = i18n.language.startsWith('en') ? 'en' : 'cn';
+  const siteTitle = locale === 'en' ? 'Docs Center' : '文档中心';
 
   const pillStyles = (active: boolean) => ({
     opacity: active ? 1 : 0.78,
@@ -69,7 +74,7 @@ export function GlobalTopNav() {
           flexShrink: 0,
         }}
       >
-        文档中心
+        {siteTitle}
       </Typography>
 
       <Stack
@@ -85,6 +90,7 @@ export function GlobalTopNav() {
         {NAV_LINKS.map((link) => {
           const isActive =
             link.path === '/' ? pathname === link.path : pathname.startsWith(link.path);
+          const label = link.label[locale];
 
           return (
             <Button
@@ -94,9 +100,9 @@ export function GlobalTopNav() {
               component={RouterLink}
               to={link.path}
               sx={pillStyles(isActive)}
-              aria-label={t(link.label)}
+              aria-label={label}
             >
-              {t(link.label)}
+              {label}
             </Button>
           );
         })}

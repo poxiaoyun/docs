@@ -19,6 +19,7 @@ import { MenuButton } from '../components/menu-button';
 import { GlobalTopNav } from '../components/global-top-nav';
 import { SettingsButton } from '../components/settings-button';
 import { LanguagePopover } from '../components/language-popover';
+import { ThemeModeButton } from '../components/theme-mode-button';
 import { dashboardLayoutVars, dashboardNavColorVars } from './css-vars';
 import { MainSection, layoutClasses, HeaderSection, LayoutSection } from '../core';
 
@@ -123,6 +124,8 @@ export function DashboardLayout({
               { value: 'en', label: 'English', countryCode: 'GB' },
             ]}
           />
+
+          <ThemeModeButton />
 
           {/** @slot Settings button */}
           <SettingsButton />

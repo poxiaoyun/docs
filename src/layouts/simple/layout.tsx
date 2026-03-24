@@ -11,6 +11,7 @@ import { SimpleCompactContent } from './content';
 import { GlobalTopNav } from '../components/global-top-nav';
 import { SettingsButton } from '../components/settings-button';
 import { LanguagePopover } from '../components/language-popover';
+import { ThemeModeButton } from '../components/theme-mode-button';
 import { MainSection, LayoutSection, HeaderSection } from '../core';
 
 // ----------------------------------------------------------------------
@@ -67,6 +68,7 @@ export function SimpleLayout({
               { value: 'en', label: 'English', countryCode: 'GB' },
             ]}
           />
+          <ThemeModeButton />
           {/** @slot Settings button */}
           <SettingsButton />
         </Box>

@@ -11,6 +11,7 @@ const MARGIN = '0.75em';
 export const MarkdownRoot = styled('div')(({ theme }) => ({
   fontFamily: theme.typography.fontFamily,
   color: theme.vars.palette.text.primary,
+  minWidth: 0,
   '> * + *': {
     marginTop: 0,
     marginBottom: MARGIN,
@@ -18,13 +19,15 @@ export const MarkdownRoot = styled('div')(({ theme }) => ({
   /**
    * @Heading & paragraph
    */
-  h1: { ...theme.typography.h3, marginTop: 40, marginBottom: 8 },
-  h2: { ...theme.typography.h4, marginTop: 40, marginBottom: 8 },
-  h3: { ...theme.typography.h5, marginTop: 24, marginBottom: 8 },
-  h4: { ...theme.typography.h6, marginTop: 24, marginBottom: 8 },
-  h5: { ...theme.typography.subtitle1, marginTop: 24, marginBottom: 8 },
-  h6: { ...theme.typography.subtitle2, marginTop: 24, marginBottom: 8 },
-  p: { ...theme.typography.body1, marginBottom: '1.25rem' },
+  h1: { ...theme.typography.h3, marginTop: 40, marginBottom: 8, color: theme.vars.palette.text.primary },
+  h2: { ...theme.typography.h4, marginTop: 40, marginBottom: 8, color: theme.vars.palette.text.primary },
+  h3: { ...theme.typography.h5, marginTop: 24, marginBottom: 8, color: theme.vars.palette.text.primary },
+  h4: { ...theme.typography.h6, marginTop: 24, marginBottom: 8, color: theme.vars.palette.text.primary },
+  h5: { ...theme.typography.subtitle1, marginTop: 24, marginBottom: 8, color: theme.vars.palette.text.primary },
+  h6: { ...theme.typography.subtitle2, marginTop: 24, marginBottom: 8, color: theme.vars.palette.text.primary },
+  p: { ...theme.typography.body1, marginBottom: '1.25rem', color: theme.vars.palette.text.primary },
+  strong: { color: theme.vars.palette.text.primary, fontWeight: theme.typography.fontWeightSemiBold },
+  li: { color: theme.vars.palette.text.primary },
 
   /**
    * @First Child
@@ -55,6 +58,8 @@ export const MarkdownRoot = styled('div')(({ theme }) => ({
     margin: 'auto auto 1.25em',
     borderRadius: Number(theme.shape.borderRadius) * 2,
     display: 'inline-block',
+    border: `1px solid ${theme.vars.palette.divider}`,
+    backgroundColor: theme.vars.palette.background.neutral,
   },
   /**
    * @List
@@ -81,6 +86,8 @@ export const MarkdownRoot = styled('div')(({ theme }) => ({
     position: 'relative',
     padding: theme.spacing(3, 3, 3, 8),
     color: theme.vars.palette.text.secondary,
+    borderRadius: Number(theme.shape.borderRadius) * 2,
+    backgroundColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
     borderLeft: `solid 8px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}`,
     [theme.breakpoints.up('md')]: { width: '100%', maxWidth: 640 },
     '& p': { margin: 0, fontSize: 'inherit', fontFamily: 'inherit' },
@@ -122,9 +129,11 @@ export const MarkdownRoot = styled('div')(({ theme }) => ({
       borderRadius: theme.shape.borderRadius,
       fontFamily: "'JetBrainsMono', monospace",
       backgroundColor: theme.vars.palette.grey[900],
+      border: `1px solid ${varAlpha(theme.vars.palette.common.blackChannel, 0.18)}`,
       '& code': { fontSize: theme.typography.body2.fontSize },
       ...theme.applyStyles('dark', {
-        backgroundColor: theme.vars.palette.grey[800],
+        backgroundColor: '#111827',
+        border: `1px solid ${varAlpha(theme.vars.palette.common.whiteChannel, 0.12)}`,
       }),
     },
   },
@@ -136,12 +145,31 @@ export const MarkdownRoot = styled('div')(({ theme }) => ({
     borderCollapse: 'collapse',
     fontSize: theme.typography.body2.fontSize,
     border: `1px solid ${theme.vars.palette.divider}`,
+    overflow: 'hidden',
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: theme.vars.palette.background.paper,
+    marginBottom: '1.5rem',
+    display: 'block',
+    overflowX: 'auto',
+    whiteSpace: 'nowrap',
     'th, td': {
       padding: theme.spacing(1),
       border: `1px solid ${theme.vars.palette.divider}`,
+      color: theme.vars.palette.text.primary,
+      backgroundClip: 'padding-box',
+    },
+    thead: {
+      backgroundColor: theme.vars.palette.background.neutral,
+    },
+    th: {
+      fontWeight: theme.typography.fontWeightSemiBold,
+      color: theme.vars.palette.text.primary,
     },
     'tbody tr:nth-of-type(odd)': {
       backgroundColor: theme.vars.palette.background.neutral,
+    },
+    'tbody tr:hover': {
+      backgroundColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
     },
   },
   /**

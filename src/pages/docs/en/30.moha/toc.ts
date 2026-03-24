@@ -1,0 +1,130 @@
+import type { DocsSidebarSection } from '../../toc';
+
+export const MOHA_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
+  {
+    subheader: 'Moha Repository',
+    items: [
+      {
+        title: 'Home',
+        path: '/docs/moha',
+        icon: 'ic-dashboard',
+        deepMatch: false,
+        product: 'moha',
+      },
+      {
+        title: 'Quick Start',
+        path: '/docs/moha/quickstart',
+        icon: 'ic-analytics',
+        product: 'moha',
+        children: [
+          { title: 'Quick Start', path: '/docs/moha/quickstart/guide' },
+          { title: 'Account Settings', path: '/docs/moha/quickstart/account' },
+          { title: 'Access Tokens', path: '/docs/moha/quickstart/token' },
+        ],
+      },
+      {
+        title: 'Home & Personal Workspace',
+        path: '/docs/moha/home',
+        icon: 'ic-tour',
+        product: 'moha',
+        children: [
+          { title: 'Overview', path: '/docs/moha/home/overview' },
+          { title: 'Created by Me', path: '/docs/moha/home/created-by-me' },
+          { title: 'Organizations', path: '/docs/moha/home/organizations' },
+          { title: 'Tokens & Announcements', path: '/docs/moha/home/token-announcements' },
+        ],
+      },
+      {
+        title: 'Model Repositories',
+        path: '/docs/moha/models',
+        icon: 'ic-course',
+        product: 'moha',
+        children: [
+          { title: 'Model Hub Overview', path: '/docs/moha/models/intro' },
+          { title: 'Download Models', path: '/docs/moha/models/download' },
+          { title: 'Upload Models', path: '/docs/moha/models/upload' },
+          { title: 'Model Cards', path: '/docs/moha/models/card' },
+          { title: 'Model Versions', path: '/docs/moha/models/version' },
+        ],
+      },
+      {
+        title: 'Datasets',
+        path: '/docs/moha/datasets',
+        icon: 'ic-folder',
+        product: 'moha',
+        children: [
+          { title: 'Dataset Overview', path: '/docs/moha/datasets/info' },
+          { title: 'Create Datasets', path: '/docs/moha/datasets/create' },
+          { title: 'Upload Datasets', path: '/docs/moha/datasets/upload' },
+          { title: 'Download Datasets', path: '/docs/moha/datasets/download' },
+          { title: 'Dataset Cards', path: '/docs/moha/datasets/card' },
+          { title: 'Dataset Maintenance', path: '/docs/moha/datasets/maintain' },
+          { title: 'Dataset File Rules', path: '/docs/moha/datasets/rules' },
+        ],
+      },
+      {
+        title: 'Image Registry',
+        path: '/docs/moha/images',
+        icon: 'ic-product',
+        product: 'moha',
+        children: [
+          { title: 'Image Registry', path: '/docs/moha/images' },
+          { title: 'Image List & Filters', path: '/docs/moha/images/gallery' },
+        ],
+      },
+      {
+        title: 'Spaces',
+        path: '/docs/moha/spaces',
+        icon: 'ic-subpaths',
+        product: 'moha',
+        children: [
+          { title: 'Spaces Overview', path: '/docs/moha/spaces' },
+          { title: 'Space List & Filters', path: '/docs/moha/spaces/list' },
+        ],
+      },
+      {
+        title: 'Collaboration',
+        path: '/docs/moha/repository',
+        icon: 'ic-file',
+        product: 'moha',
+        children: [
+          { title: 'Repository Detail Layout', path: '/docs/moha/repository/detail' },
+          { title: 'Files & Version Browsing', path: '/docs/moha/repository/files' },
+          { title: 'Discussions & Collaboration', path: '/docs/moha/repository/discussion' },
+          { title: 'Repository Settings & Publishing', path: '/docs/moha/repository/settings' },
+        ],
+      },
+      {
+        title: 'Advanced Integration',
+        path: '/docs/moha/advanced',
+        icon: 'ic-tour',
+        product: 'moha',
+        children: [
+          { title: 'API Integration', path: '/docs/moha/advanced/api' },
+          { title: 'CI/CD Workflows', path: '/docs/moha/advanced/cicd' },
+          { title: 'Performance Optimization', path: '/docs/moha/advanced/optimization' },
+          { title: 'Community Contribution', path: '/docs/moha/advanced/contribution' },
+        ],
+      },
+      {
+        title: 'SDK Tutorial',
+        path: '/docs/moha/sdk-tutorial',
+        icon: 'ic-job',
+        product: 'moha',
+        children: [
+          { title: 'Quick Start', path: '/docs/moha/sdk-tutorial/quick-start' },
+          { title: 'SDK Overview', path: '/docs/moha/sdk-tutorial/intro' },
+          { title: 'Installation & Environment', path: '/docs/moha/sdk-tutorial/install' },
+          { title: 'Authentication & Tokens', path: '/docs/moha/sdk-tutorial/authentication' },
+          { title: 'CLI Reference', path: '/docs/moha/sdk-tutorial/cli-reference' },
+          { title: 'HubClient API', path: '/docs/moha/sdk-tutorial/hub-api' },
+          { title: 'Transfer & Sync', path: '/docs/moha/sdk-tutorial/transfer' },
+          { title: 'Data Encryption', path: '/docs/moha/sdk-tutorial/encryption' },
+          { title: 'Model Loading & Inference', path: '/docs/moha/sdk-tutorial/transformers-datasets' },
+          { title: 'Training & Export', path: '/docs/moha/sdk-tutorial/training-export' },
+          { title: 'Error Handling & FAQ', path: '/docs/moha/sdk-tutorial/error-handling' },
+        ],
+      },
+    ],
+  },
+];

@@ -15,41 +15,51 @@ server {
         return 200 '{"status":"ok","timestamp":"$msec"}';
     }
     
-    location ~* \.(png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|mp4|webm|ogg)$ {
-        root /usr/src/app/dist;
-        expires 1d;
+    location = /doc {
+        return 301 $scheme://$http_host/doc/;
+    }
+
+    location = /doc/favicon.ico {
+        alias /usr/src/app/dist/favicon.ico;
+
+        include /etc/nginx/mime.types;
+
+        expires 1y;
         add_header Cache-Control "public, immutable";
+        access_log off;
+    }
+
+    location ^~ /doc/assets/ {
+        alias /usr/src/app/dist/assets/;
+
+        include /etc/nginx/mime.types;
+
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+        access_log off;
 
         gzip on;
         gzip_comp_level 6;
         gzip_static on;
     }
 
-    location ~* \.(js|css)$ {
-        root /usr/src/app/dist;
-        expires 1d;
-        add_header Cache-Control "public, immutable";
-        
-        gzip on;
-        gzip_comp_level 6;
-        gzip_static on;
-    }
+    location ^~ /doc/ {
+        alias /usr/src/app/dist/;
 
-    location ~* index\.html$ {
-        root /usr/src/app/dist;
-        expires -1;
-        add_header Cache-Control "no-store, no-cache, must-revalidate";
-    }
+        if (!-e $request_filename) {
+            rewrite ^/doc/(.*)$ /doc/index.html last;
+        }
 
-    location / {
-        root /usr/src/app/dist;
-        index index.html;
-        try_files $uri $uri/ /index.html;
+        include /etc/nginx/mime.types;
 
         add_header Cross-Origin-Opener-Policy "same-origin";
         add_header Cross-Origin-Embedder-Policy "require-corp";
         add_header X-Frame-Options "SAMEORIGIN";
         add_header X-Content-Type-Options "nosniff";
+
+        location ~ /\. {
+            deny all;
+        }
     }
 
     error_page 500 502 503 504 /50x.html;

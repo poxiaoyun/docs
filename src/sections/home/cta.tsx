@@ -22,7 +22,8 @@ export function HomeCtaSection() {
         py: { xs: 10, md: 15 },
         position: 'relative',
         overflow: 'hidden',
-        background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+        bgcolor: '#000000',
+        borderTop: `1px solid ${alpha('#ffffff', 0.05)}`,
         '&::before': {
           content: '""',
           position: 'absolute',
@@ -30,8 +31,7 @@ export function HomeCtaSection() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: `radial-gradient(circle at 30% 50%, ${alpha(theme.palette.common.white, 0.1)} 0%, transparent 50%),
-                       radial-gradient(circle at 70% 50%, ${alpha(theme.palette.primary.light, 0.2)} 0%, transparent 50%)`,
+          background: `radial-gradient(circle at 50% -20%, ${alpha(theme.palette.primary.main, 0.15)} 0%, transparent 60%)`,
           pointerEvents: 'none',
         },
       }}
@@ -42,10 +42,13 @@ export function HomeCtaSection() {
             <Typography
               variant="h2"
               sx={{
-                color: 'common.white',
                 fontWeight: 800,
                 maxWidth: 800,
-                fontSize: { xs: '2rem', md: '3rem' },
+                fontSize: { xs: '2rem', md: '3.5rem' },
+                background: 'linear-gradient(180deg, #FFFFFF 0%, rgba(255,255,255,0.5) 100%)',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text',
+                color: 'transparent',
               }}
             >
               准备好开始了吗？
@@ -56,12 +59,13 @@ export function HomeCtaSection() {
             <Typography
               variant="h5"
               sx={{
-                color: alpha(theme.palette.common.white, 0.9),
+                color: alpha('#ffffff', 0.6),
                 maxWidth: 600,
                 fontWeight: 400,
+                lineHeight: 1.6,
               }}
             >
-              立即探索 Rune Docs，开启您的 AI 平台之旅
+              立即探索 Rune、Boss 及 魔哈，开启您的 AI 平台之旅
             </Typography>
           </m.div>
 
@@ -76,13 +80,14 @@ export function HomeCtaSection() {
                   px: 5,
                   py: 2,
                   fontSize: '1.1rem',
-                  background: theme.palette.common.white,
-                  color: theme.palette.primary.main,
+                  bgcolor: 'common.white',
+                  color: 'common.black',
                   fontWeight: 600,
+                  borderRadius: 1.5,
                   '&:hover': {
-                    background: alpha(theme.palette.common.white, 0.9),
+                    bgcolor: alpha('#ffffff', 0.8),
                     transform: 'translateY(-2px)',
-                    boxShadow: theme.customShadows.z20,
+                    boxShadow: `0 8px 24px -8px ${alpha('#ffffff', 0.4)}`,
                   },
                 }}
               >
@@ -97,12 +102,14 @@ export function HomeCtaSection() {
                   px: 5,
                   py: 2,
                   fontSize: '1.1rem',
-                  borderColor: theme.palette.common.white,
-                  color: theme.palette.common.white,
+                  borderColor: alpha('#ffffff', 0.2),
+                  color: '#ffffff',
                   fontWeight: 600,
+                  borderRadius: 1.5,
+                  backdropFilter: 'blur(10px)',
                   '&:hover': {
-                    borderColor: theme.palette.common.white,
-                    background: alpha(theme.palette.common.white, 0.1),
+                    borderColor: '#ffffff',
+                    bgcolor: alpha('#ffffff', 0.05),
                     transform: 'translateY(-2px)',
                   },
                 }}
@@ -115,36 +122,36 @@ export function HomeCtaSection() {
           <m.div variants={varFade('inUp')}>
             <Stack
               direction={{ xs: 'column', sm: 'row' }}
-              spacing={4}
+              spacing={8}
               sx={{
-                mt: 4,
-                pt: 4,
-                borderTop: `1px solid ${alpha(theme.palette.common.white, 0.2)}`,
+                mt: 6,
+                pt: 6,
+                borderTop: `1px solid ${alpha('#ffffff', 0.1)}`,
               }}
             >
-              <Stack spacing={0.5} alignItems="center">
-                <Typography variant="h3" sx={{ color: 'common.white', fontWeight: 700 }}>
+              <Stack spacing={1} alignItems="center">
+                <Typography variant="h3" sx={{ color: 'common.white', fontWeight: 800 }}>
                   3
                 </Typography>
-                <Typography variant="body2" sx={{ color: alpha(theme.palette.common.white, 0.8) }}>
+                <Typography variant="body2" sx={{ color: alpha('#ffffff', 0.5), letterSpacing: 1, textTransform: 'uppercase' }}>
                   产品线
                 </Typography>
               </Stack>
 
-              <Stack spacing={0.5} alignItems="center">
-                <Typography variant="h3" sx={{ color: 'common.white', fontWeight: 700 }}>
+              <Stack spacing={1} alignItems="center">
+                <Typography variant="h3" sx={{ color: 'common.white', fontWeight: 800 }}>
                   50+
                 </Typography>
-                <Typography variant="body2" sx={{ color: alpha(theme.palette.common.white, 0.8) }}>
+                <Typography variant="body2" sx={{ color: alpha('#ffffff', 0.5), letterSpacing: 1, textTransform: 'uppercase' }}>
                   功能模块
                 </Typography>
               </Stack>
 
-              <Stack spacing={0.5} alignItems="center">
-                <Typography variant="h3" sx={{ color: 'common.white', fontWeight: 700 }}>
+              <Stack spacing={1} alignItems="center">
+                <Typography variant="h3" sx={{ color: 'common.white', fontWeight: 800 }}>
                   24/7
                 </Typography>
-                <Typography variant="body2" sx={{ color: alpha(theme.palette.common.white, 0.8) }}>
+                <Typography variant="body2" sx={{ color: alpha('#ffffff', 0.5), letterSpacing: 1, textTransform: 'uppercase' }}>
                   社区支持
                 </Typography>
               </Stack>

@@ -1,6 +1,8 @@
 import type { BoxProps } from '@mui/material/Box';
 import type { IconifyName } from 'src/components/iconify/register-icons';
 
+import { useTranslation } from 'react-i18next';
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
@@ -28,80 +30,154 @@ type CategoryCard = {
   color?: string;
 };
 
-const QUICK_START_CARDS: QuickStartCard[] = [
-  {
-    title: '环境安装指南',
-    description: '介绍本地开发所需要的环境要求和步骤，支持离线在本地下载使用',
-    href: '/docs/moha/environment-setup',
-    icon: 'solar:download-bold',
-    color: '#1890ff',
+const MOHA_HOME_CONTENT = {
+  cn: {
+    quickStartTitle: '快速开始',
+    quickStartDescription: '介绍如何快速上手，包括各种操作、环境安装、代码应用等信息',
+    featuresTitle: '核心功能',
+    quickStartCards: [
+      {
+        title: '环境安装指南',
+        description: '介绍本地开发所需要的环境要求和步骤，支持离线在本地下载使用',
+        href: '/docs/moha/environment-setup',
+        icon: 'solar:download-bold',
+        color: '#1890ff',
+      },
+      {
+        title: '在Rune中运行模型',
+        description: '介绍如何使用Rune实现模型的调参训练和评估',
+        href: '/docs/moha/notebook-tutorial',
+        icon: 'solar:file-text-bold',
+        color: '#722ed1',
+      },
+    ] satisfies QuickStartCard[],
+    categoryCards: [
+      {
+        title: '模型库',
+        subtitle: 'Models',
+        description: '模型库（Models）为社区各类模型进行托管各类模型的路径设施，方便模型型的存储、管理以及共享和发现。',
+        href: '/docs/moha/models',
+        color: '#7dd4fcff',
+      },
+      {
+        title: '数据集',
+        subtitle: 'Datasets',
+        description: '数据集（Datasets）托管了最全各种概念的丰富数据集内容，涵盖自然语言处理、计算机视觉、语音等领域。',
+        href: '/docs/moha/datasets',
+        color: '#93C5FD',
+      },
+      {
+        title: '应用市场',
+        subtitle: 'Marketplace',
+        description: '应用市场（Marketplace）汇集了丰富的应用和服务，方便用户发现和使用各种解决方案。',
+        href: '/docs/moha/marketplace',
+        color: '#93C5FD',
+      },
+      {
+        title: '模型接入流程',
+        subtitle: '',
+        description: '将模型接入到Moha仓库，方便用户通过统一的接口调用。',
+        href: '/docs/moha/model-integration',
+        color: '#5EEAD4',
+      },
+      {
+        title: '模型数据集加密',
+        subtitle: '',
+        description: '为模型和数据集提供加密存储和传输，保障用户数据的安全性和隐私。',
+        href: '/docs/moha/data-encryption',
+        color: '#6EE7B7',
+      },
+      {
+        title: 'SDK教程',
+        subtitle: '',
+        description: '为开发者提供基于Moha生态和通用文档的的接口，支持各种预训模型和框架的统一加载和使用。',
+        href: '/docs/moha/sdk-tutorial',
+        color: '#A5B4FC',
+      },
+    ] satisfies CategoryCard[],
   },
-  {
-    title: '在Rune中运行模型',
-    description: '介绍如何使用Rune实现模型的调参训练和评估',
-    href: '/docs/moha/notebook-tutorial',
-    icon: 'solar:file-text-bold',
-    color: '#722ed1',
+  en: {
+    quickStartTitle: 'Quick Start',
+    quickStartDescription: 'Get started quickly with setup, core workflows, and code integration guidance.',
+    featuresTitle: 'Core Features',
+    quickStartCards: [
+      {
+        title: 'Environment Setup Guide',
+        description: 'Learn the local environment requirements and setup steps, with support for offline download and local usage.',
+        href: '/docs/moha/environment-setup',
+        icon: 'solar:download-bold',
+        color: '#1890ff',
+      },
+      {
+        title: 'Run Models in Rune',
+        description: 'Learn how to use Rune for model tuning, training, and evaluation.',
+        href: '/docs/moha/notebook-tutorial',
+        icon: 'solar:file-text-bold',
+        color: '#722ed1',
+      },
+    ] satisfies QuickStartCard[],
+    categoryCards: [
+      {
+        title: 'Model Hub',
+        subtitle: 'Models',
+        description: 'The Models section hosts community models and makes them easier to store, manage, share, and discover.',
+        href: '/docs/moha/models',
+        color: '#7dd4fcff',
+      },
+      {
+        title: 'Datasets',
+        subtitle: 'Datasets',
+        description: 'The Datasets section hosts a broad collection of datasets across NLP, computer vision, speech, and more.',
+        href: '/docs/moha/datasets',
+        color: '#93C5FD',
+      },
+      {
+        title: 'Marketplace',
+        subtitle: 'Marketplace',
+        description: 'The Marketplace brings together a rich set of applications and services so users can discover and use solutions quickly.',
+        href: '/docs/moha/marketplace',
+        color: '#93C5FD',
+      },
+      {
+        title: 'Model Integration',
+        subtitle: '',
+        description: 'Integrate models into the Moha repository so users can access them through a unified interface.',
+        href: '/docs/moha/model-integration',
+        color: '#5EEAD4',
+      },
+      {
+        title: 'Model and Dataset Encryption',
+        subtitle: '',
+        description: 'Protect models and datasets with encrypted storage and transfer to improve data security and privacy.',
+        href: '/docs/moha/data-encryption',
+        color: '#6EE7B7',
+      },
+      {
+        title: 'SDK Tutorial',
+        subtitle: '',
+        description: 'Provide developers with Moha SDK guidance and common APIs for loading and using pretrained models across frameworks.',
+        href: '/docs/moha/sdk-tutorial',
+        color: '#A5B4FC',
+      },
+    ] satisfies CategoryCard[],
   },
-];
-
-const CATEGORY_CARDS: CategoryCard[] = [
-  {
-    title: '模型库',
-    subtitle: 'Models',
-    description: '模型库（Models）为社区各类模型进行托管各类模型的路径设施，方便模型型的存储、管理以及共享和发现。',
-    href: '/docs/moha/models',
-    color: '#7dd4fcff',
-  },
-  {
-    title: '数据集',
-    subtitle: 'Datasets',
-    description: '数据集（Datasets）托管了最全各种概念的丰富数据集内容，涵盖自然语言处理、计算机视觉、语音等领域。',
-    href: '/docs/moha/datasets',
-    color: '#93C5FD',
-  },
-  {
-    title: '应用市场',
-    subtitle: 'Marketplace',
-    description: '应用市场（Marketplace）汇集了丰富的应用和服务，方便用户发现和使用各种解决方案。',
-    href: '/docs/moha/marketplace',
-    color: '#93C5FD',
-  },
-  {
-    title: '模型接入流程',
-    subtitle: '',
-    description: '将模型接入到Moha仓库，方便用户通过统一的接口调用。',
-    href: '/docs/moha/model-integration',
-    color: '#5EEAD4',
-  },
-  {
-    title: '模型数据集加密',
-    subtitle: '',
-    description: '为模型和数据集提供加密存储和传输，保障用户数据的安全性和隐私。',
-    href: '/docs/moha/data-encryption',
-    color: '#6EE7B7',
-  },
-  {
-    title: 'SDK教程',
-    subtitle: '',
-    description: '为开发者提供基于Moha生态和通用文档的的接口，支持各种预训模型和框架的统一加载和使用。',
-    href: '/docs/moha/sdk-tutorial',
-    color: '#A5B4FC',
-  }
-];
+} as const;
 
 // ----------------------------------------------------------------------
 
 export function MohaHomeCards({ sx, ...other }: BoxProps) {
+  const { i18n } = useTranslation();
+  const content = i18n.language.startsWith('en') ? MOHA_HOME_CONTENT.en : MOHA_HOME_CONTENT.cn;
+
   return (
     <Box sx={{ py: 3, ...sx }} {...other}>
       {/* Quick Start Section */}
       <Box sx={{ mb: 6 }}>
         <Typography variant="h4" sx={{ mb: 3, fontWeight: 600 }}>
-          快速开始
+          {content.quickStartTitle}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          介绍如何快速上手，包括各种操作、环境安装、代码应用等信息
+          {content.quickStartDescription}
         </Typography>
         <Box
           sx={{
@@ -113,7 +189,7 @@ export function MohaHomeCards({ sx, ...other }: BoxProps) {
             },
           }}
         >
-          {QUICK_START_CARDS.map((card) => (
+          {content.quickStartCards.map((card) => (
             <QuickStartCard key={card.title} card={card} />
           ))}
         </Box>
@@ -122,7 +198,7 @@ export function MohaHomeCards({ sx, ...other }: BoxProps) {
       {/* Community Section */}
       <Box>
         <Typography variant="h4" sx={{ mb: 3, fontWeight: 600 }}>
-          核心功能
+          {content.featuresTitle}
         </Typography>
         <Box
           sx={{
@@ -134,7 +210,7 @@ export function MohaHomeCards({ sx, ...other }: BoxProps) {
             },
           }}
         >
-          {CATEGORY_CARDS.map((card) => (
+          {content.categoryCards.map((card) => (
             <CategoryCard key={card.title} card={card} />
           ))}
         </Box>

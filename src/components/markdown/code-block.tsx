@@ -56,14 +56,14 @@ export function CodeBlock({ children }: CodeBlockProps) {
         // Try focusing without scrolling when supported
         try {
           (textarea as any).focus({ preventScroll: true });
-        } catch (e) {
+        } catch {
           textarea.focus();
         }
 
         textarea.select();
         try {
           textarea.setSelectionRange(0, textarea.value.length);
-        } catch (e) {
+        } catch {
           // Some browsers may throw on setSelectionRange for readonly inputs; ignore
         }
 
@@ -79,13 +79,12 @@ export function CodeBlock({ children }: CodeBlockProps) {
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       // Silently fail but keep UX stable — could add telemetry or toast here
-      // eslint-disable-next-line no-console
       console.warn('copy to clipboard failed', err);
     } finally {
       // Restore scroll position in case focus/select caused a jump
       try {
         window.scrollTo(scrollX, scrollY);
-      } catch (e) {
+      } catch {
         // ignore
       }
     }

@@ -2,9 +2,9 @@ import './code-highlight-block.css';
 
 import rehypeRaw from 'rehype-raw';
 import remarkGfm from 'remark-gfm';
-import { useId, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
+import { useId, useMemo, Children, isValidElement } from 'react';
 import { mergeClasses, isExternalLink } from 'minimal-shared/utils';
 
 import Link from '@mui/material/Link';
@@ -17,6 +17,7 @@ import { MarkdownRoot } from './styles';
 import { CodeBlock } from './code-block';
 import { markdownClasses } from './classes';
 import { remarkAlerts } from './remark-alerts';
+import { MermaidBlock } from './mermaid-block';
 import { htmlToMarkdown, isMarkdownContent } from './html-to-markdown';
 
 // ----------------------------------------------------------------------
@@ -66,6 +67,16 @@ export function Markdown({
       </ReactMarkdown>
     </MarkdownRoot>
   );
+}
+
+const APP_BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+function resolveAssetPath(url?: string) {
+  if (!url) return url;
+  if (url.startsWith('/assets/')) {
+    return `${APP_BASE_PATH}${url}`;
+  }
+  return url;
 }
 
 /** **************************************
@@ -120,6 +131,7 @@ const defaultComponents: NonNullable<ReactMarkdownProps['components']> = {
         },
       }}
       {...other}
+      src={resolveAssetPath(other.src)}
     />
   ),
   a: ({ href = '', children, node: _n, ...other }: any) => {
@@ -133,10 +145,25 @@ const defaultComponents: NonNullable<ReactMarkdownProps['components']> = {
       </Link>
     );
   },
-  pre: ({ children }: any) => <CodeBlock>{children}</CodeBlock>,
+  pre: ({ children }: any) => {
+    // Skip CodeBlock wrapper for mermaid diagrams
+    const child = Children.only(children);
+    if (isValidElement(child) && (child.props as any)?.className?.includes('language-mermaid')) {
+      const text = (child.props as any)?.children;
+      const chart = Array.isArray(text) ? text.join('') : String(text ?? '');
+      return <MermaidBlock chart={chart} />;
+    }
+    return <CodeBlock>{children}</CodeBlock>;
+  },
   code: ({ className = '', children, node: _n, ...other }: any) => {
     const { isBlock, ...rest } = other;
     const hasLanguage = /language-\w+/.test(className);
+
+    // Render mermaid diagrams
+    if (className.includes('language-mermaid') && isBlock) {
+      const chart = Array.isArray(children) ? children.join('') : String(children ?? '');
+      return <MermaidBlock chart={chart} />;
+    }
 
     let appliedClass = className;
 

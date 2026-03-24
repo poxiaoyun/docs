@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
+import { alpha } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
@@ -30,6 +31,19 @@ type DocMeta = {
   [key: string]: any;
 };
 
+const PRODUCT_HOME_TITLES = {
+  cn: {
+    rune: 'Rune 智算平台',
+    moha: '魔哈仓库',
+    boss: 'Boss 运营平台',
+  },
+  en: {
+    rune: 'Rune AI Platform',
+    moha: 'Moha',
+    boss: 'Boss Operations Platform',
+  },
+} as const;
+
 export default function DocsViewer() {
   const { pathname, hash } = useLocation();
   const { i18n } = useTranslation();
@@ -39,19 +53,30 @@ export default function DocsViewer() {
   const [error, setError] = useState<string | null>(null);
 
   const { state } = useGlobalSettingsContext();
-  const { t } = useTranslation('navbar');
 
   const toc = useMarkdownToc(content);
 
+  const productHome = getProductHomeType(pathname);
+  const locale = i18n.language.startsWith('en') ? 'en' : 'cn';
+
   // Calculate display title based on current language
-  // Use the title as a key if it looks like one, otherwise fallback to the raw title
-  const displayTitle = meta.title ? t(meta.title) : meta.title;
+  const displayTitle =
+    meta.title ||
+    (productHome ? PRODUCT_HOME_TITLES[locale][productHome] : undefined);
 
   useEffect(() => {
     const loadContent = async () => {
       setLoading(true);
       setError(null);
       setMeta({});
+
+      // Product home pages render card-based content and do not require markdown files.
+      if (productHome) {
+        setContent('');
+        setLoading(false);
+        return;
+      }
+
       try {
         const relativePath = normalizeDocsPath(pathname);
 
@@ -63,7 +88,7 @@ export default function DocsViewer() {
         const cleanPathParts = targetCleanPath.split('/');
         // Determine the language folder (cn or en)
         // Default to 'cn' if not 'en' (assuming only two supported languages for now, or map appropriately)
-        const langFolder = i18n.language === 'en' ? 'en' : 'cn';
+        const langFolder = i18n.language.startsWith('en') ? 'en' : 'cn';
 
         // Find key that matches this pattern
         // e.g. key: /src/pages/docs/cn/01.theme/01.colors.md
@@ -142,7 +167,7 @@ export default function DocsViewer() {
     };
 
     loadContent();
-  }, [pathname, i18n.language]);
+  }, [pathname, i18n.language, productHome]);
 
   // Scroll to hash after content is loaded
   useEffect(() => {
@@ -171,9 +196,9 @@ export default function DocsViewer() {
   }, [loading, hash]);
 
   // Check if this is a product home page
-  const isMohaHomePage = pathname === '/docs/moha' || pathname === '/docs/moha/';
-  const isRuneHomePage = pathname === '/docs/rune' || pathname === '/docs/rune/';
-  const isBossHomePage = pathname === '/docs/boss' || pathname === '/docs/boss/';
+  const isMohaHomePage = productHome === 'moha';
+  const isRuneHomePage = productHome === 'rune';
+  const isBossHomePage = productHome === 'boss';
   const isProductHomePage = isMohaHomePage || isRuneHomePage || isBossHomePage;
 
   if (loading) {
@@ -193,19 +218,27 @@ export default function DocsViewer() {
   return (
     <>
       <Helmet>
-        <title> {displayTitle + ' | ' + state?.title} </title>
+        <title>{displayTitle ? `${displayTitle} | ${state?.title}` : state?.title}</title>
       </Helmet>
 
       <Container maxWidth="xl" sx={{ py: 3, pl: { md: 1 } }}>
         <Stack direction="row" spacing={2} alignItems="flex-start">
           <Box 
-            sx={{ 
-              minWidth: 0, 
+            sx={{
+              minWidth: 0,
               flexGrow: 1,
-              bgcolor: 'grey.100',
+              color: 'text.primary',
+              bgcolor: 'background.paper',
               borderRadius: 2,
               p: { xs: 2, md: 2.5 },
-              boxShadow: '0 0 0 1px rgba(145, 158, 171, 0.08)',
+              border: (theme) =>
+                `1px solid ${alpha(theme.palette.divider, theme.palette.mode === 'dark' ? 0.9 : 1)}`,
+              boxShadow: (theme) =>
+                theme.palette.mode === 'dark'
+                  ? `0 16px 40px ${alpha('#000', 0.28)}`
+                  : '0 0 0 1px rgba(145, 158, 171, 0.08)',
+              transition: (theme) =>
+                theme.transitions.create(['background-color', 'border-color', 'box-shadow']),
             }}
           >
             <Stack spacing={3}>
@@ -249,4 +282,14 @@ function normalizeDocsPath(pathname: string) {
     return clean.replace(/^docs\//, '');
   }
   return clean;
+}
+
+function getProductHomeType(pathname: string): 'rune' | 'moha' | 'boss' | null {
+  const normalized = pathname.replace(/\/+$/, '') || '/';
+
+  if (normalized === '/docs/rune') return 'rune';
+  if (normalized === '/docs/moha') return 'moha';
+  if (normalized === '/docs/boss') return 'boss';
+
+  return null;
 }

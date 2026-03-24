@@ -20,7 +20,9 @@ const router = createBrowserRouter([
     errorElement: <ErrorBoundary />,
     children: routesSection,
   },
-]);
+], {
+  basename: import.meta.env.BASE_URL,
+});
 
 const root = createRoot(document.getElementById('root')!);
 

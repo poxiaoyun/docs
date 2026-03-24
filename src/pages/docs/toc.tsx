@@ -5,10 +5,16 @@ import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Link from '@mui/material/Link';
 
-import { RUNE_SIDEBAR_SECTIONS } from './cn/10.rune/toc';
-import { BOSS_SIDEBAR_SECTIONS } from './cn/20.boss/toc';
-import { MOHA_SIDEBAR_SECTIONS } from './cn/30.moha/toc';
-import { ECOSYSTEM_SIDEBAR_SECTIONS } from './cn/40.ecosystem/toc';
+import { RUNE_SIDEBAR_SECTIONS as RUNE_SIDEBAR_SECTIONS_EN } from './en/10.rune/toc';
+import { BOSS_SIDEBAR_SECTIONS as BOSS_SIDEBAR_SECTIONS_EN } from './en/20.boss/toc';
+import { MOHA_SIDEBAR_SECTIONS as MOHA_SIDEBAR_SECTIONS_EN } from './en/30.moha/toc';
+import { RUNE_SIDEBAR_SECTIONS as RUNE_SIDEBAR_SECTIONS_CN } from './cn/10.rune/toc';
+import { BOSS_SIDEBAR_SECTIONS as BOSS_SIDEBAR_SECTIONS_CN } from './cn/20.boss/toc';
+import { MOHA_SIDEBAR_SECTIONS as MOHA_SIDEBAR_SECTIONS_CN } from './cn/30.moha/toc';
+import { ECOSYSTEM_SIDEBAR_SECTIONS as ECOSYSTEM_SIDEBAR_SECTIONS_EN } from './en/40.ecosystem/toc';
+import { REFERENCE_SIDEBAR_SECTIONS as REFERENCE_SIDEBAR_SECTIONS_EN } from './en/50.reference/toc';
+import { ECOSYSTEM_SIDEBAR_SECTIONS as ECOSYSTEM_SIDEBAR_SECTIONS_CN } from './cn/40.ecosystem/toc';
+import { REFERENCE_SIDEBAR_SECTIONS as REFERENCE_SIDEBAR_SECTIONS_CN } from './cn/50.reference/toc';
 
 // ----------------------------------------------------------------------
 
@@ -27,7 +33,7 @@ export type DocsSidebarSection = {
 };
 
 // 概览部分
-const OVERVIEW_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
+const OVERVIEW_SIDEBAR_SECTIONS_CN: DocsSidebarSection[] = [
   {
     subheader: '概览',
     items: [
@@ -37,18 +43,77 @@ const OVERVIEW_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         icon: 'ic-dashboard',
         deepMatch: true,
       },
+      {
+        title: '快速指南',
+        path: '/docs/guide',
+        icon: 'ic-analytics',
+        children: [
+          { title: '快速上手', path: '/docs/guide/quick-start' },
+          { title: '平台架构', path: '/docs/guide/architecture' },
+          { title: '术语表', path: '/docs/guide/glossary' },
+        ],
+      },
+      {
+        title: '账号与权限',
+        path: '/docs/account',
+        icon: 'ic-lock',
+        children: [
+          { title: '认证服务', path: '/docs/account/auth' },
+          { title: '个人中心', path: '/docs/account/iam' },
+        ],
+      },
     ],
   },
 ];
 
-// 汇总所有产品的侧边栏配置
-export const DOCS_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
-  ...OVERVIEW_SIDEBAR_SECTIONS,
-  ...RUNE_SIDEBAR_SECTIONS,
-  ...BOSS_SIDEBAR_SECTIONS,
-  ...MOHA_SIDEBAR_SECTIONS,
-  ...ECOSYSTEM_SIDEBAR_SECTIONS,
+const OVERVIEW_SIDEBAR_SECTIONS_EN: DocsSidebarSection[] = [
+  {
+    subheader: 'Overview',
+    items: [
+      {
+        title: 'Product Overview',
+        path: '/docs/introduction',
+        icon: 'ic-dashboard',
+        deepMatch: true,
+      },
+      {
+        title: 'Quick Guide',
+        path: '/docs/guide',
+        icon: 'ic-analytics',
+        children: [
+          { title: 'Quick Start', path: '/docs/guide/quick-start' },
+          { title: 'Architecture', path: '/docs/guide/architecture' },
+          { title: 'Glossary', path: '/docs/guide/glossary' },
+        ],
+      },
+      {
+        title: 'Account & Access',
+        path: '/docs/account',
+        icon: 'ic-lock',
+        children: [
+          { title: 'Authentication', path: '/docs/account/auth' },
+          { title: 'Personal Center', path: '/docs/account/iam' },
+        ],
+      },
+    ],
+  },
 ];
+
+export function getDocsSidebarSections(lang?: string): DocsSidebarSection[] {
+  const isEnglish = lang === 'en';
+
+  return [
+    ...(isEnglish ? OVERVIEW_SIDEBAR_SECTIONS_EN : OVERVIEW_SIDEBAR_SECTIONS_CN),
+    ...(isEnglish ? RUNE_SIDEBAR_SECTIONS_EN : RUNE_SIDEBAR_SECTIONS_CN),
+    ...(isEnglish ? BOSS_SIDEBAR_SECTIONS_EN : BOSS_SIDEBAR_SECTIONS_CN),
+    ...(isEnglish ? MOHA_SIDEBAR_SECTIONS_EN : MOHA_SIDEBAR_SECTIONS_CN),
+    ...(isEnglish ? ECOSYSTEM_SIDEBAR_SECTIONS_EN : ECOSYSTEM_SIDEBAR_SECTIONS_CN),
+    ...(isEnglish ? REFERENCE_SIDEBAR_SECTIONS_EN : REFERENCE_SIDEBAR_SECTIONS_CN),
+  ];
+}
+
+// Default export keeps existing imports working in non-hook contexts.
+export const DOCS_SIDEBAR_SECTIONS: DocsSidebarSection[] = getDocsSidebarSections('cn');
 
 // ----------------------------------------------------------------------
 

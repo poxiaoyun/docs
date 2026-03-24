@@ -1,12 +1,11 @@
 import { m } from 'framer-motion';
 
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
+import { alpha } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import { alpha, useTheme } from '@mui/material/styles';
 
 import { CONFIG } from 'src/global-config';
 
@@ -15,133 +14,179 @@ import { varFade, MotionViewport } from 'src/components/animate';
 
 // ----------------------------------------------------------------------
 
-const CAPABILITIES = [
-  {
-    key: 'rune',
-    title: 'Rune 智算平台',
-    description: '覆盖模型开发、推理、工作负载、镜像、配额与存储卷的全栈操作指引。',
-    highlights: ['推理托管', '工作负载调度', '镜像/模板管理'],
-    icon: 'ic-dashboard',
-    color: '#1877F2',
-  },
-  {
-    key: 'boss',
-    title: 'Boss 运营平台',
-    description: '面向平台管理员的治理手册，聚焦集群、租户、系统模板与网关审核。',
-    highlights: ['集群/租户治理', '配额策略', '服务注册'],
-    icon: 'ic-params',
-    color: '#7635DC',
-  },
-  {
-    key: 'moha',
-    title: '魔哈仓库',
-    description: '模型与数据集的社区仓库，沉淀版本管理、数据迭代与活动运营经验。',
-    highlights: ['模型版本流转', '数据集协作', '社区活动'],
-    icon: 'ic-booking',
-    color: '#00A76F',
-  },
-];
-
-// ----------------------------------------------------------------------
-
 export function HomeCapabilitiesSection() {
-  const theme = useTheme();
-
   return (
-    <Container component={MotionViewport} maxWidth="lg" sx={{ py: { xs: 8, md: 12 } }}>
-      <Stack spacing={2} sx={{ textAlign: 'center', mb: 6 }}>
-        <m.div variants={varFade('inDown')}>
-          <Typography variant="overline" color="text.secondary">
-            产品能力一览
-          </Typography>
-        </m.div>
-        <m.div variants={varFade('inDown')}>
-          <Typography variant="h3">三大产品线 · 一套体验范式</Typography>
-        </m.div>
-        <m.div variants={varFade('inDown')}>
-          <Typography variant="body1" color="text.secondary">
-            对齐 ModelScope Docs 的卡片化信息密度，快速定位对应的任务场景。
-          </Typography>
-        </m.div>
-      </Stack>
+    <Box sx={{ bgcolor: '#000000', color: 'common.white', py: { xs: 8, md: 12 } }}>
+      <Container component={MotionViewport} maxWidth="lg">
+        <Stack spacing={2} sx={{ textAlign: 'center', mb: { xs: 6, md: 8 } }}>
+          <m.div variants={varFade('inDown')}>
+            <Typography variant="overline" sx={{ color: alpha('#ffffff', 0.5), letterSpacing: 2 }}>
+              CORE PLATFORM
+            </Typography>
+          </m.div>
+          <m.div variants={varFade('inDown')}>
+            <Typography variant="h2" sx={{ fontWeight: 800 }}>一切皆为现代化 AI 服务</Typography>
+          </m.div>
+          <m.div variants={varFade('inDown')}>
+            <Typography variant="body1" sx={{ color: alpha('#ffffff', 0.6), maxWidth: 640, mx: 'auto' }}>
+              强大的基座服务协同生态管理与高效运营，提供面向未来生产的算力、模型和集群管理体验。
+            </Typography>
+          </m.div>
+        </Stack>
 
-      <Box
-        sx={{
-          display: 'grid',
-          gap: { xs: 2, md: 3 },
-          gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' },
-        }}
-      >
-        {CAPABILITIES.map((capability, index) => (
-          <m.div key={capability.key} variants={varFade('inUp')}>
-            <Card
-              sx={{
+        <Box
+          sx={{
+            display: 'grid',
+            gap: { xs: 2, md: 3 },
+            gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' },
+            gridAutoRows: { xs: 'auto', md: 'minmax(240px, auto)' },
+          }}
+        >
+          {/* Rune: Main Bento Box */}
+          <Box
+            component={m.div}
+            variants={varFade('inUp')}
+            sx={{
+              gridColumn: { xs: 'span 1', md: 'span 2' },
+              gridRow: { xs: 'span 1', md: 'span 2' },
+              borderRadius: 3,
+              p: 5,
+              position: 'relative',
+              overflow: 'hidden',
+              bgcolor: '#0a0a0a',
+              border: `1px solid ${alpha('#ffffff', 0.1)}`,
+              display: 'flex',
+              flexDirection: 'column',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
                 height: '100%',
-                p: 4,
+                background: `radial-gradient(ellipse at bottom left, ${alpha('#1877F2', 0.15)} 0%, transparent 60%)`,
+                pointerEvents: 'none',
+              },
+            }}
+          >
+            <Box
+              sx={{
+                width: 48,
+                height: 48,
+                borderRadius: 1.5,
                 display: 'flex',
-                flexDirection: 'column',
-                gap: 2,
-                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                position: 'relative',
-                overflow: 'hidden',
-                '&::before': {
-                  content: '""',
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  background: `linear-gradient(135deg, ${alpha(capability.color, 0.02)} 0%, transparent 100%)`,
-                  pointerEvents: 'none',
-                },
-                '&:hover': {
-                  transform: 'translateY(-4px)',
-                  boxShadow: theme.customShadows.z16,
-                },
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: alpha('#1877F2', 0.1),
+                mb: 4,
               }}
             >
-              <Box
-                sx={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: 1.5,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  background: alpha(capability.color, 0.08),
-                }}
-              >
-                <SvgColor
-                  src={`${CONFIG.assetsDir}/assets/icons/navbar/${capability.icon}.svg`}
-                  sx={{ width: 28, height: 28, color: capability.color }}
+              <SvgColor src={`${CONFIG.assetsDir}/assets/icons/navbar/ic-dashboard.svg`} sx={{ width: 24, height: 24, color: '#1877F2' }} />
+            </Box>
+            <Typography variant="h3" sx={{ fontWeight: 700, mb: 2 }}>Rune 智算平台</Typography>
+            <Typography variant="h6" sx={{ color: alpha('#ffffff', 0.6), fontWeight: 400, mb: 4, maxWidth: 400 }}>
+              大规模 AI 推理与工作负载调度。无缝管理实例、镜像与存储计算一体化配额资源。
+            </Typography>
+            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 'auto', zIndex: 1 }}>
+              {['推理托管', '工作负载调度', '镜像管理', '共享存储配置'].map((highlight) => (
+                <Chip
+                  key={highlight}
+                  label={highlight}
+                  variant="outlined"
+                  sx={{ borderColor: alpha('#1877F2', 0.3), color: '#1877F2', bgcolor: alpha('#1877F2', 0.05), fontWeight: 600 }}
                 />
+              ))}
+            </Stack>
+          </Box>
+
+          {/* Moha Box */}
+          <Box
+            component={m.div}
+            variants={varFade('inLeft')}
+            sx={{
+              gridColumn: { xs: 'span 1', md: 'span 1' },
+              gridRow: { xs: 'span 1', md: 'span 1' },
+              borderRadius: 3,
+              p: 4,
+              position: 'relative',
+              overflow: 'hidden',
+              bgcolor: '#0a0a0a',
+              border: `1px solid ${alpha('#ffffff', 0.1)}`,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                width: '100%',
+                height: '100%',
+                background: `radial-gradient(circle at top right, ${alpha('#00A76F', 0.15)} 0%, transparent 70%)`,
+                pointerEvents: 'none',
+              },
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+              <Box sx={{ width: 40, height: 40, borderRadius: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'center', background: alpha('#00A76F', 0.1) }}>
+                <SvgColor src={`${CONFIG.assetsDir}/assets/icons/navbar/ic-booking.svg`} sx={{ width: 20, height: 20, color: '#00A76F' }} />
               </Box>
+              <Typography variant="h5" sx={{ fontWeight: 700 }}>魔哈仓库</Typography>
+            </Box>
+            <Typography variant="body2" sx={{ color: alpha('#ffffff', 0.6), mb: 3 }}>
+              模型与数据集的社区仓库体系。实现优雅的版本流转与开源协作。
+            </Typography>
+            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 'auto', zIndex: 1 }}>
+              <Chip size="small" label="版本流转" variant="outlined" sx={{ borderColor: alpha('#00A76F', 0.3), color: '#00A76F' }} />
+              <Chip size="small" label="社区活动" variant="outlined" sx={{ borderColor: alpha('#00A76F', 0.3), color: '#00A76F' }} />
+            </Stack>
+          </Box>
 
-              <Stack spacing={1.5}>
-                <Typography variant="h5">{capability.title}</Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {capability.description}
-                </Typography>
-              </Stack>
+          {/* Boss Box */}
+          <Box
+            component={m.div}
+            variants={varFade('inLeft')}
+            sx={{
+              gridColumn: { xs: 'span 1', md: 'span 1' },
+              gridRow: { xs: 'span 1', md: 'span 1' },
+              borderRadius: 3,
+              p: 4,
+              position: 'relative',
+              overflow: 'hidden',
+              bgcolor: '#0a0a0a',
+              border: `1px solid ${alpha('#ffffff', 0.1)}`,
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                bottom: 0,
+                right: 0,
+                width: '100%',
+                height: '100%',
+                background: `radial-gradient(circle at bottom right, ${alpha('#7635DC', 0.15)} 0%, transparent 70%)`,
+                pointerEvents: 'none',
+              },
+            }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
+              <Box sx={{ width: 40, height: 40, borderRadius: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'center', background: alpha('#7635DC', 0.1) }}>
+                <SvgColor src={`${CONFIG.assetsDir}/assets/icons/navbar/ic-params.svg`} sx={{ width: 20, height: 20, color: '#7635DC' }} />
+              </Box>
+              <Typography variant="h5" sx={{ fontWeight: 700 }}>Boss 运营平台</Typography>
+            </Box>
+            <Typography variant="body2" sx={{ color: alpha('#ffffff', 0.6), mb: 3 }}>
+              专为平台管理员设计，实现跨集群治理、租户网关审核和强效策略分发。
+            </Typography>
+            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 'auto', zIndex: 1 }}>
+              <Chip size="small" label="集群治理" variant="outlined" sx={{ borderColor: alpha('#7635DC', 0.3), color: '#7635DC' }} />
+              <Chip size="small" label="配额隔离" variant="outlined" sx={{ borderColor: alpha('#7635DC', 0.3), color: '#7635DC' }} />
+            </Stack>
+          </Box>
 
-              <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                {capability.highlights.map((highlight) => (
-                  <Chip
-                    key={highlight}
-                    label={highlight}
-                    variant="outlined"
-                    size="small"
-                    sx={{
-                      borderColor: alpha(capability.color, 0.24),
-                      color: capability.color,
-                    }}
-                  />
-                ))}
-              </Stack>
-            </Card>
-          </m.div>
-        ))}
-      </Box>
-    </Container>
+        </Box>
+      </Container>
+    </Box>
   );
 }

@@ -7,7 +7,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "start": "vite preview",
+    "start": "node scripts/preview-docs.mjs",
+    "start:vite": "vite preview",
     "build": "tsc && vite build",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint:fix": "eslint --fix \"src/**/*.{js,jsx,ts,tsx}\"",
@@ -54,6 +55,7 @@
     "i18next": "^25.7.1",
     "i18next-browser-languagedetector": "^8.2.0",
     "i18next-resources-to-backend": "^1.2.1",
+    "mermaid": "^11.13.0",
     "minimal-shared": "^1.0.15",
     "nprogress": "^0.2.0",
     "react": "^19.1.0",

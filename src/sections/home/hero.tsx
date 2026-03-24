@@ -2,45 +2,13 @@ import { m } from 'framer-motion';
 import { Link as RouterLink } from 'react-router';
 
 import Box from '@mui/material/Box';
-import Card from '@mui/material/Card';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import CardContent from '@mui/material/CardContent';
 import { alpha, useTheme } from '@mui/material/styles';
-import CardActionArea from '@mui/material/CardActionArea';
 
-import { CONFIG } from 'src/global-config';
-
-import { SvgColor } from 'src/components/svg-color';
 import { varFade, MotionViewport } from 'src/components/animate';
-
-// ----------------------------------------------------------------------
-
-const PRODUCTS = [
-  {
-    title: 'Rune 智算平台',
-    description: '用户操作指南，覆盖模型开发、推理、工作负载、实例、镜像、模板、配额、存储卷等能力。',
-    path: '/docs/rune',
-    icon: 'ic-dashboard',
-    color: '#1877F2',
-  },
-  {
-    title: '魔哈仓库',
-    description: '服务 AI 开发者的社区门户，提供模型版本管理、数据集协作与活动运营模块。',
-    path: '/docs/moha',
-    icon: 'ic-booking',
-    color: '#00A76F',
-  },
-  {
-    title: 'Boss 运营平台',
-    description: '平台管理门户，面向平台管理员，聚焦集群、租户、配额、规格、系统模板、网关审核等运营动作。',
-    path: '/docs/boss',
-    icon: 'ic-params',
-    color: '#7635DC',
-  },
-];
 
 // ----------------------------------------------------------------------
 
@@ -51,13 +19,13 @@ export function HomeHeroSection() {
     <Box
       component="section"
       sx={{
-        minHeight: 'calc(100vh - 72px)',
+        minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
-        py: { xs: 8, md: 12 },
+        py: { xs: 10, md: 15 },
         position: 'relative',
         overflow: 'hidden',
-        background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.02)} 0%, ${alpha(theme.palette.primary.main, 0.08)} 100%)`,
+        bgcolor: '#000000',
         '&::before': {
           content: '""',
           position: 'absolute',
@@ -65,157 +33,181 @@ export function HomeHeroSection() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: `radial-gradient(circle at 20% 50%, ${alpha(theme.palette.primary.main, 0.1)} 0%, transparent 50%), 
-                       radial-gradient(circle at 80% 80%, ${alpha(theme.palette.secondary.main, 0.08)} 0%, transparent 50%)`,
+          // A modern grid background overlaid on black
+          backgroundImage: `linear-gradient(${alpha('#ffffff', 0.05)} 1px, transparent 1px), linear-gradient(90deg, ${alpha('#ffffff', 0.05)} 1px, transparent 1px)`,
+          backgroundSize: '40px 40px',
+          backgroundPosition: 'center center',
+          maskImage: 'linear-gradient(to bottom, #000000, transparent)',
+          WebkitMaskImage: 'linear-gradient(to bottom, #000000, transparent)',
           pointerEvents: 'none',
         },
+        '&::after': {
+          content: '""',
+          position: 'absolute',
+          top: '-20%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '80%',
+          height: '50%',
+          background: `radial-gradient(circle, ${alpha(theme.palette.primary.main, 0.15)} 0%, transparent 70%)`,
+          pointerEvents: 'none',
+        }
       }}
     >
-      <Container maxWidth="lg" component={MotionViewport}>
-        <Stack spacing={6} alignItems="center" textAlign="center">
-          {/* 标题 */}
+      <Container maxWidth="lg" component={MotionViewport} sx={{ position: 'relative', zIndex: 1 }}>
+        <Stack spacing={8} alignItems="center" textAlign="center">
+          {/* Text Content */}
           <Stack spacing={3} alignItems="center">
+            <m.div variants={varFade('inDown')}>
+              <Box
+                sx={{
+                  px: 2,
+                  py: 0.75,
+                  borderRadius: 2,
+                  bgcolor: alpha(theme.palette.primary.main, 0.1),
+                  border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                  color: theme.palette.primary.light,
+                  typography: 'caption',
+                  fontWeight: 700,
+                  mb: 3,
+                }}
+              >
+                v2.0 Documentation Open Source
+              </Box>
+            </m.div>
+
             <m.div variants={varFade('inDown')}>
               <Typography
                 variant="h1"
                 sx={{
-                  fontWeight: 800,
+                  fontWeight: 900,
                   maxWidth: 900,
-                  fontSize: { xs: '2.5rem', md: '3.5rem' },
-                  background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.secondary.main})`,
+                  fontSize: { xs: '3rem', md: '4.5rem', lg: '5.5rem' },
+                  lineHeight: 1.1,
+                  background: 'linear-gradient(180deg, #FFFFFF 0%, rgba(255,255,255,0.5) 100%)',
                   backgroundClip: 'text',
                   WebkitBackgroundClip: 'text',
                   color: 'transparent',
-                  mb: 2,
                 }}
               >
-                产品文档中心
+                连接开发、运营与社区的 AI 平台
               </Typography>
             </m.div>
 
             <m.div variants={varFade('inDown')}>
-              <Typography variant="h5" sx={{ color: 'text.secondary', maxWidth: 600, fontWeight: 400 }}>
-                连接开发、运营与社区 
+              <Typography 
+                variant="h6" 
+                sx={{ 
+                  color: alpha('#ffffff', 0.6), 
+                  maxWidth: 680, 
+                  fontWeight: 400,
+                  lineHeight: 1.6 
+                }}
+              >
+                Rune 智算平台提供模型开发、推理与工作负载管理能力；配合 Boss 平台实现精细化运营，魔哈仓库打造开放的社区底座，全方位提升 AI 应用构建效能。
               </Typography>
             </m.div>
 
             <m.div variants={varFade('inUp')}>
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mt: 2 }}>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mt: 4 }}>
                 <Button
                   variant="contained"
                   size="large"
                   component={RouterLink}
                   to="/docs/rune"
                   sx={{
+                    bgcolor: 'common.white',
+                    color: 'common.black',
                     px: 4,
                     py: 1.5,
-                    fontSize: '1rem',
-                    boxShadow: theme.customShadows.z8,
+                    fontSize: '1.125rem',
+                    fontWeight: 600,
+                    borderRadius: 1.5,
                     '&:hover': {
-                      boxShadow: theme.customShadows.z16,
+                      bgcolor: alpha('#ffffff', 0.8),
                     },
                   }}
                 >
-                  查看文档
+                  开始使用
                 </Button>
                 <Button
                   variant="outlined"
                   size="large"
                   component={RouterLink}
                   to="/docs/moha"
-                  sx={{ px: 4, py: 1.5, fontSize: '1rem' }}
+                  sx={{ 
+                    color: 'common.white',
+                    borderColor: alpha('#ffffff', 0.2),
+                    px: 4, 
+                    py: 1.5, 
+                    fontSize: '1.125rem',
+                    borderRadius: 1.5,
+                    backdropFilter: 'blur(10px)',
+                    '&:hover': {
+                      bgcolor: alpha('#ffffff', 0.05),
+                      borderColor: '#ffffff',
+                    }
+                  }}
                 >
-                  参与贡献
+                  探索魔哈模型库
                 </Button>
               </Stack>
             </m.div>
           </Stack>
 
-          {/* 产品卡片 */}
-          <Box
-            sx={{
-              width: '100%',
-              display: 'grid',
-              gap: 3,
-              gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' },
-              mt: 4,
-            }}
-          >
-            {PRODUCTS.map((product, index) => (
-              <m.div key={product.title} variants={varFade('inUp')}>
-                <Card
-                  component={RouterLink}
-                  to={product.path}
-                  sx={{
-                    height: '100%',
-                    textDecoration: 'none',
-                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                    position: 'relative',
-                    overflow: 'hidden',
-                    '&::before': {
-                      content: '""',
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      height: '4px',
-                      background: product.color,
-                      transform: 'scaleX(0)',
-                      transformOrigin: 'left',
-                      transition: 'transform 0.3s ease',
-                    },
-                    '&:hover': {
-                      transform: 'translateY(-8px)',
-                      boxShadow: theme.customShadows.z20,
-                      '&::before': {
-                        transform: 'scaleX(1)',
-                      },
-                    },
-                  }}
-                >
-                  <CardActionArea sx={{ height: '100%', p: 0 }}>
-                    <CardContent
-                      sx={{
-                        p: 4,
-                        height: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 2,
-                      }}
-                    >
-                      <Stack direction="row" spacing={2} alignItems="center">
-                        <Box
-                          sx={{
-                            width: 56,
-                            height: 56,
-                            borderRadius: 2,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            background: alpha(product.color, 0.08),
-                            flexShrink: 0,
-                          }}
-                        >
-                          <SvgColor
-                            src={`${CONFIG.assetsDir}/assets/icons/navbar/${product.icon}.svg`}
-                            sx={{ width: 32, height: 32, color: product.color }}
-                          />
-                        </Box>
-
-                        <Typography variant="h4" sx={{ fontWeight: 600 }}>
-                          {product.title}
-                        </Typography>
-                      </Stack>
-
-                      <Typography variant="body2" sx={{ color: 'text.secondary', flexGrow: 1 }}>
-                        {product.description}
-                      </Typography>
-                    </CardContent>
-                  </CardActionArea>
-                </Card>
-              </m.div>
-            ))}
-          </Box>
+          {/* Terminal Mockup */}
+          <m.div variants={varFade('inUp')} style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+            <Box
+              sx={{
+                width: '100%',
+                maxWidth: 800,
+                borderRadius: 2,
+                overflow: 'hidden',
+                bgcolor: '#0a0a0a',
+                border: `1px solid ${alpha('#ffffff', 0.1)}`,
+                boxShadow: `0 20px 40px -10px ${alpha('#000', 0.5)}, 0 0 40px 0 ${alpha(theme.palette.primary.main, 0.15)}`,
+                textAlign: 'left',
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', px: 2, py: 1.5, borderBottom: `1px solid ${alpha('#ffffff', 0.05)}`, bgcolor: '#111111' }}>
+                <Stack direction="row" spacing={1}>
+                  <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: '#FF5F56' }} />
+                  <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: '#FFBD2E' }} />
+                  <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: '#27C93F' }} />
+                </Stack>
+                <Typography variant="caption" sx={{ color: alpha('#ffffff', 0.3), ml: 2, flexGrow: 1, textAlign: 'center', mr: 5 }}>
+                  ~ /rune-ai
+                </Typography>
+              </Box>
+              <Box sx={{ p: 3, fontFamily: 'monospace', color: alpha('#ffffff', 0.8), fontSize: '0.875rem', lineHeight: 1.6 }}>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <span style={{ color: theme.palette.primary.light }}>$</span>
+                  <span style={{ color: '#fff' }}>pip install xiaoshiai-hub</span>
+                </Box>
+                <Box sx={{ color: alpha('#ffffff', 0.4), mt: 1, mb: 2 }}>
+                  Successfully installed xiaoshiai-hub
+                </Box>
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                  <span style={{ color: theme.palette.primary.light }}>$</span>
+                  <span style={{ color: '#fff' }}>moha login</span>
+                </Box>
+                <Box sx={{ color: '#27C93F', mt: 1 }}>
+                  ✔ Successfully logged in to Moha Hub
+                </Box>
+                <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+                  <span style={{ color: theme.palette.primary.light }}>$</span>
+                  <Box component="span" sx={{ 
+                    color: '#fff', 
+                    borderRight: '2px solid transparent', 
+                    animation: 'blink 1s step-end infinite',
+                    '@keyframes blink': { '50%': { borderColor: '#fff' } }
+                  }}>
+                    moha upload -t models -e --encryption-password &quot;your-password&quot; -a SM4  deepseek-ai/DeepSeek-V3
+                  </Box>
+                </Box>
+              </Box>
+            </Box>
+          </m.div>
         </Stack>
       </Container>
     </Box>

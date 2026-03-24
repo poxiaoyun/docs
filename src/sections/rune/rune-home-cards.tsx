@@ -1,6 +1,8 @@
 import type { BoxProps } from '@mui/material/Box';
 import type { IconifyName } from 'src/components/iconify/register-icons';
 
+import { useTranslation } from 'react-i18next';
+
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
@@ -28,66 +30,128 @@ type CategoryCard = {
   color?: string;
 };
 
-const QUICK_START_CARDS: QuickStartCard[] = [
-  {
-    title: '快速入门',
-    description: '了解 Rune 智算平台的基本概念和核心功能，快速上手使用',
-    href: '/docs/rune/guide',
-    icon: 'solar:play-circle-bold',
-    color: '#1877F2',
+const RUNE_HOME_CONTENT = {
+  cn: {
+    quickStartTitle: '快速开始',
+    quickStartDescription: '快速了解 Rune 智算平台，开始您的 AI 开发之旅',
+    featuresTitle: '核心功能',
+    featuresDescription: '探索平台的各项能力，满足您的 AI 开发需求',
+    quickStartCards: [
+      {
+        title: '快速入门',
+        description: '了解 Rune 智算平台的基本概念和核心功能，快速上手使用',
+        href: '/docs/rune/guide',
+        icon: 'solar:play-circle-bold',
+        color: '#1877F2',
+      },
+      {
+        title: '环境准备',
+        description: '配置开发环境、准备必要的资源和权限，开始您的第一个工作负载',
+        href: '/docs/rune/guide/prerequisites',
+        icon: 'solar:settings-bold',
+        color: '#00A76F',
+      },
+    ] satisfies QuickStartCard[],
+    categoryCards: [
+      {
+        title: '工作负载',
+        subtitle: 'Workloads',
+        description: '创建和管理训练任务、推理服务等各类工作负载，支持分布式训练和弹性调度。',
+        href: '/docs/rune/guide/workloads',
+        color: '#1877F2',
+      },
+      {
+        title: '推理服务',
+        subtitle: 'Inference',
+        description: '部署模型推理服务，支持在线推理、批量推理，提供自动扩缩容能力。',
+        href: '/docs/rune/guide/inference',
+        color: '#7635DC',
+      },
+      {
+        title: '模板管理',
+        subtitle: 'Templates',
+        description: '使用预定义模板快速创建工作负载，支持自定义模板和模板共享。',
+        href: '/docs/rune/resources/templates',
+        color: '#00A76F',
+      },
+      {
+        title: '配额管理',
+        subtitle: 'Quotas',
+        description: '查看和管理资源配额，了解 GPU/CPU 资源使用情况和限制。',
+        href: '/docs/rune/resources/quotas',
+        color: '#FFAB00',
+      },
+    ] satisfies CategoryCard[],
   },
-  {
-    title: '环境准备',
-    description: '配置开发环境、准备必要的资源和权限，开始您的第一个工作负载',
-    href: '/docs/rune/guide/prerequisites',
-    icon: 'solar:settings-bold',
-    color: '#00A76F',
+  en: {
+    quickStartTitle: 'Quick Start',
+    quickStartDescription: 'Get familiar with Rune AI Platform and begin your AI development journey.',
+    featuresTitle: 'Core Features',
+    featuresDescription: 'Explore the platform capabilities that support your AI development workflow.',
+    quickStartCards: [
+      {
+        title: 'Getting Started',
+        description: 'Learn the basic concepts and core capabilities of Rune AI Platform and get productive quickly.',
+        href: '/docs/rune/guide',
+        icon: 'solar:play-circle-bold',
+        color: '#1877F2',
+      },
+      {
+        title: 'Environment Setup',
+        description: 'Prepare your development environment, required resources, and permissions before launching your first workload.',
+        href: '/docs/rune/guide/prerequisites',
+        icon: 'solar:settings-bold',
+        color: '#00A76F',
+      },
+    ] satisfies QuickStartCard[],
+    categoryCards: [
+      {
+        title: 'Workloads',
+        subtitle: 'Workloads',
+        description: 'Create and manage training jobs, inference services, and other workloads with distributed training and elastic scheduling support.',
+        href: '/docs/rune/guide/workloads',
+        color: '#1877F2',
+      },
+      {
+        title: 'Inference Services',
+        subtitle: 'Inference',
+        description: 'Deploy model inference services with support for online inference, batch inference, and automatic scaling.',
+        href: '/docs/rune/guide/inference',
+        color: '#7635DC',
+      },
+      {
+        title: 'Template Management',
+        subtitle: 'Templates',
+        description: 'Use predefined templates to create workloads quickly, and support custom templates and template sharing.',
+        href: '/docs/rune/resources/templates',
+        color: '#00A76F',
+      },
+      {
+        title: 'Quota Management',
+        subtitle: 'Quotas',
+        description: 'View and manage resource quotas, including current GPU and CPU usage and platform limits.',
+        href: '/docs/rune/resources/quotas',
+        color: '#FFAB00',
+      },
+    ] satisfies CategoryCard[],
   },
-];
-
-const CATEGORY_CARDS: CategoryCard[] = [
-  {
-    title: '工作负载',
-    subtitle: 'Workloads',
-    description: '创建和管理训练任务、推理服务等各类工作负载，支持分布式训练和弹性调度。',
-    href: '/docs/rune/guide/workloads',
-    color: '#1877F2',
-  },
-  {
-    title: '推理服务',
-    subtitle: 'Inference',
-    description: '部署模型推理服务，支持在线推理、批量推理，提供自动扩缩容能力。',
-    href: '/docs/rune/guide/inference',
-    color: '#7635DC',
-  },
-  {
-    title: '模板管理',
-    subtitle: 'Templates',
-    description: '使用预定义模板快速创建工作负载，支持自定义模板和模板共享。',
-    href: '/docs/rune/resources/templates',
-    color: '#00A76F',
-  },
-  {
-    title: '配额管理',
-    subtitle: 'Quotas',
-    description: '查看和管理资源配额，了解 GPU/CPU 资源使用情况和限制。',
-    href: '/docs/rune/resources/quotas',
-    color: '#FFAB00',
-  },
-];
+} as const;
 
 // ----------------------------------------------------------------------
 
 export function RuneHomeCards({ sx, ...other }: BoxProps) {
+  const { i18n } = useTranslation();
+  const content = i18n.language.startsWith('en') ? RUNE_HOME_CONTENT.en : RUNE_HOME_CONTENT.cn;
+
   return (
     <Box sx={{ py: 3, ...sx }} {...other}>
       {/* Quick Start Section */}
       <Box sx={{ mb: 6 }}>
         <Typography variant="h4" sx={{ mb: 1, fontWeight: 600 }}>
-          快速开始
+          {content.quickStartTitle}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          快速了解 Rune 智算平台，开始您的 AI 开发之旅
+          {content.quickStartDescription}
         </Typography>
         <Box
           sx={{
@@ -99,7 +163,7 @@ export function RuneHomeCards({ sx, ...other }: BoxProps) {
             },
           }}
         >
-          {QUICK_START_CARDS.map((card) => (
+          {content.quickStartCards.map((card) => (
             <QuickStartCard key={card.title} card={card} />
           ))}
         </Box>
@@ -108,10 +172,10 @@ export function RuneHomeCards({ sx, ...other }: BoxProps) {
       {/* Features Section */}
       <Box>
         <Typography variant="h4" sx={{ mb: 1, fontWeight: 600 }}>
-          核心功能
+          {content.featuresTitle}
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          探索平台的各项能力，满足您的 AI 开发需求
+          {content.featuresDescription}
         </Typography>
         <Box
           sx={{
@@ -124,7 +188,7 @@ export function RuneHomeCards({ sx, ...other }: BoxProps) {
             },
           }}
         >
-          {CATEGORY_CARDS.map((card) => (
+          {content.categoryCards.map((card) => (
             <CategoryCard key={card.title} card={card} />
           ))}
         </Box>
