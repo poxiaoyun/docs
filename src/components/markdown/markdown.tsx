@@ -26,7 +26,11 @@ import { htmlToMarkdown, isMarkdownContent } from './html-to-markdown';
 
 type ReactMarkdownProps = React.ComponentProps<typeof ReactMarkdown>;
 
-export type MarkdownProps = React.ComponentProps<typeof MarkdownRoot> & ReactMarkdownProps;
+export type MarkdownProps = React.ComponentProps<typeof MarkdownRoot> & 
+  ReactMarkdownProps & {
+    isIndex?: boolean;
+    currentPath?: string;
+  };
 
 export function Markdown({
   sx,
@@ -35,6 +39,8 @@ export function Markdown({
   components,
   rehypePlugins,
   remarkPlugins,
+  isIndex = false,
+  currentPath = '',
   ...other
 }: MarkdownProps) {
   const content = useMemo(() => {
@@ -53,10 +59,62 @@ export function Markdown({
     [remarkPlugins]
   );
 
+  const memoizedComponents = useMemo(() => ({
+    ...defaultComponents,
+    ...components,
+    a: ({ href = '', children: aChildren, node: _n, ...aProps }: any) => {
+      const isExternalURL = isExternalLink(href);
+      
+      let processedHref = href;
+      if (!isExternalURL && !href.startsWith('#') && !href.startsWith('/')) {
+        // Separate hash fragment before processing
+        const hashIdx = href.indexOf('#');
+        const hashPart = hashIdx >= 0 ? href.slice(hashIdx) : '';
+        const pathPart = hashIdx >= 0 ? href.slice(0, hashIdx) : href;
+
+        // Compute the base directory from currentPath:
+        //   - Index page represents the directory itself (e.g. 'rune/guide')
+        //   - Leaf page: drop the last segment (e.g. 'rune/guide/workloads' → 'rune/guide')
+        const pathSegments = currentPath.split('/').filter(Boolean);
+        const baseParts = isIndex ? [...pathSegments] : pathSegments.slice(0, -1);
+
+        // Resolve each segment of the relative href against baseParts
+        for (const raw of pathPart.split('/')) {
+          const clean = raw.replace(/^\d+\./, '').replace(/\.md$/, '');
+          if (clean === '.' || clean === '') {
+            continue;
+          } else if (clean === '..') {
+            baseParts.pop();
+          } else {
+            baseParts.push(clean);
+          }
+        }
+
+        // Remove trailing 'index' (e.g. dir/index → dir)
+        if (baseParts.length > 0 && baseParts[baseParts.length - 1] === 'index') {
+          baseParts.pop();
+        }
+
+        // Build absolute path so React Router splat-route resolution is avoided
+        processedHref = `/${baseParts.join('/')}${hashPart}`;
+      }
+
+      const linkProps = isExternalURL
+        ? { target: '_blank', rel: 'noopener noreferrer' }
+        : { component: RouterLink };
+
+      return (
+        <Link {...linkProps} href={processedHref} className={markdownClasses.content.link} {...aProps}>
+          {aChildren}
+        </Link>
+      );
+    }
+  }), [components, isIndex, currentPath]);
+
   return (
     <MarkdownRoot className={mergeClasses([markdownClasses.root, className])} sx={sx}>
       <ReactMarkdown
-        components={{ ...defaultComponents, ...components }}
+        components={memoizedComponents}
         rehypePlugins={allRehypePlugins}
         remarkPlugins={allRemarkPlugins}
         /* base64-encoded images
@@ -134,17 +192,6 @@ const defaultComponents: NonNullable<ReactMarkdownProps['components']> = {
       src={resolveAssetPath(other.src)}
     />
   ),
-  a: ({ href = '', children, node: _n, ...other }: any) => {
-    const linkProps = isExternalLink(href)
-      ? { target: '_blank', rel: 'noopener noreferrer' }
-      : { component: RouterLink };
-
-    return (
-      <Link {...linkProps} href={href} className={markdownClasses.content.link} {...other}>
-        {children}
-      </Link>
-    );
-  },
   pre: ({ children }: any) => {
     // Skip CodeBlock wrapper for mermaid diagrams
     const child = Children.only(children);

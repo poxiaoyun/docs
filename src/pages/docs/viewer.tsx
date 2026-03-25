@@ -1,9 +1,9 @@
 import matter from 'gray-matter';
 import rehypeSlug from 'rehype-slug';
-import { useLocation } from 'react-router';
-import { Helmet } from 'react-helmet-async';
 import { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
+import { useParams, useLocation } from 'react-router';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -45,10 +45,13 @@ const PRODUCT_HOME_TITLES = {
 } as const;
 
 export default function DocsViewer() {
-  const { pathname, hash } = useLocation();
+  const { '*' : splat } = useParams();
+  const { hash } = useLocation();
+  const pathname = splat || '';
   const { i18n } = useTranslation();
   const [content, setContent] = useState<string>('');
   const [meta, setMeta] = useState<DocMeta>({});
+  const [isIndex, setIsIndex] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -69,6 +72,7 @@ export default function DocsViewer() {
       setLoading(true);
       setError(null);
       setMeta({});
+      setIsIndex(false);
 
       // Product home pages render card-based content and do not require markdown files.
       if (productHome) {
@@ -82,6 +86,7 @@ export default function DocsViewer() {
 
         // Try to find the matching file
         let filePath = '';
+        let matchedIndex = false;
 
         // Handle root /docs -> default to 'introduction' if empty
         const targetCleanPath = relativePath || 'introduction';
@@ -98,7 +103,9 @@ export default function DocsViewer() {
           const stripPrefix = (part: string) => part.replace(/^\d+\./, '');
           // Direct file match
           if (pathParts.length === cleanPathParts.length) {
-            return pathParts.every((part, index) => stripPrefix(part) === cleanPathParts[index]);
+            return pathParts.every(
+              (part, index) => stripPrefix(part) === stripPrefix(cleanPathParts[index])
+            );
           }
 
           // Folder index.md match
@@ -106,9 +113,11 @@ export default function DocsViewer() {
             pathParts.length === cleanPathParts.length + 1 &&
             pathParts[pathParts.length - 1] === 'index'
           ) {
-            return pathParts
+            const isMatch = pathParts
               .slice(0, -1)
-              .every((part, index) => stripPrefix(part) === cleanPathParts[index]);
+              .every((part, index) => stripPrefix(part) === stripPrefix(cleanPathParts[index]));
+            if (isMatch) matchedIndex = true;
+            return isMatch;
           }
 
           return false;
@@ -124,6 +133,7 @@ export default function DocsViewer() {
 
         if (foundKey) {
           filePath = foundKey;
+          setIsIndex(matchedIndex);
         } else {
           // Fallback: try to find in the other language (e.g. fallback to cn if en missing)
           // Optional: If strict mode is desired, throw error. Here we can try fallback.
@@ -138,6 +148,7 @@ export default function DocsViewer() {
             });
             if (fallbackKey) {
               filePath = fallbackKey;
+              setIsIndex(matchedIndex);
             } else {
               // Ultimate fallback
               filePath = `/src/pages/docs/${langFolder}/${targetCleanPath}.md`;
@@ -246,7 +257,7 @@ export default function DocsViewer() {
               {isRuneHomePage && <RuneHomeCards />}
               {isBossHomePage && <BossHomeCards />}
               {!isProductHomePage && (
-                <Markdown children={content} rehypePlugins={[rehypeSlug]} />
+                <Markdown isIndex={isIndex} currentPath={pathname} children={content} rehypePlugins={[rehypeSlug]} />
               )}
             </Stack>
           </Box>
@@ -274,12 +285,9 @@ export default function DocsViewer() {
 }
 
 function normalizeDocsPath(pathname: string) {
-  const clean = pathname.replace(/^\/+/, '');
-  if (!clean || clean === 'docs') {
+  const clean = pathname.replace(/^\/+/, '').replace(/\/+$/, '');
+  if (!clean) {
     return 'introduction';
-  }
-  if (clean.startsWith('docs/')) {
-    return clean.replace(/^docs\//, '');
   }
   return clean;
 }
@@ -287,9 +295,9 @@ function normalizeDocsPath(pathname: string) {
 function getProductHomeType(pathname: string): 'rune' | 'moha' | 'boss' | null {
   const normalized = pathname.replace(/\/+$/, '') || '/';
 
-  if (normalized === '/docs/rune') return 'rune';
-  if (normalized === '/docs/moha') return 'moha';
-  if (normalized === '/docs/boss') return 'boss';
+  if (normalized === 'rune') return 'rune';
+  if (normalized === 'moha') return 'moha';
+  if (normalized === 'boss') return 'boss';
 
   return null;
 }
