@@ -7,7 +7,7 @@ enabled: true
 image:
   registry: registry.cn-hangzhou.aliyuncs.com
   repository: xiaoshiai/rune-docs
-  tag: ""
+  tag: "latest"
   pullPolicy: IfNotPresent
   pullSecrets: []
 replicaCount: 1

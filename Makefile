@@ -21,6 +21,9 @@ build:
 	yarn build --mode production
 
 FULL_IMAGE_NAME?=$(IMAGE_REGISTRY)/$(IMAGE_REPOSITORY)/$(IMAGE_NAME):$(GIT_VERSION)
+ifeq ($(GIT_BRANCH), main)
+	FULL_IMAGE_NAME=$(IMAGE_REGISTRY)/$(IMAGE_REPOSITORY)/$(IMAGE_NAME):latest
+endif
 BUILDX_PLATFORMS?=linux/amd64,linux/arm64
 release-image:
 	docker buildx build --platform=${BUILDX_PLATFORMS} --push -t ${FULL_IMAGE_NAME} -f Dockerfile .
