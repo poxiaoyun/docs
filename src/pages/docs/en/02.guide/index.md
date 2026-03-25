@@ -12,9 +12,9 @@ This chapter helps you quickly understand the overall architecture, core termino
 
 ## Chapter Navigation
 
-- [Quick Start](/docs/guide/quick-start) — Complete first deployment process in 30 minutes
-- [Platform Architecture](/docs/guide/architecture) — Detailed explanation of front-end and back-end architecture, dual control planes, and multi-tenant hierarchy
-- [Glossary](/docs/guide/glossary) — A quick look at the core concepts and terminology of the platform
+- [Quick Start](/guide/quick-start) — Complete first deployment process in 30 minutes
+- [Platform Architecture](/guide/architecture) — Detailed explanation of front-end and back-end architecture, dual control planes, and multi-tenant hierarchy
+- [Glossary](/guide/glossary) — A quick look at the core concepts and terminology of the platform
 
 ## Recommended reading order
 

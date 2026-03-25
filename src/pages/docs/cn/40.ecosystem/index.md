@@ -24,5 +24,5 @@ tags:
 
 ## 目录说明
 
-- 文档路径与目录结构一一对应，例如：`/docs/ecosystem/huawei/driver-runtime`
+- 文档路径与目录结构一一对应，例如：`/ecosystem/huawei/driver-runtime`
 - 页面建议遵循：**概述 → 前置条件 → 操作步骤 → 验证方法 → 常见问题**

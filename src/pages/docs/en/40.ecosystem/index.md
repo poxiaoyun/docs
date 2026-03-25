@@ -23,5 +23,5 @@ This column gives priority to providing "version matrix + operation steps + know
 
 ## Directory description
 
-- The document path corresponds to the directory structure one-to-one, for example: `/docs/ecosystem/huawei/driver-runtime`
+- The document path corresponds to the directory structure one-to-one, for example: `/ecosystem/huawei/driver-runtime`
 - It is recommended to follow the page: **Overview → Prerequisites → Operation Steps → Verification Method → FAQ**

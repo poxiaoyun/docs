@@ -39,27 +39,27 @@ const OVERVIEW_SIDEBAR_SECTIONS_CN: DocsSidebarSection[] = [
     items: [
       {
         title: '平台总览',
-        path: '/docs/introduction',
+        path: '/introduction',
         icon: 'ic-dashboard',
         deepMatch: true,
       },
       {
         title: '快速指南',
-        path: '/docs/guide',
+        path: '/guide',
         icon: 'ic-analytics',
         children: [
-          { title: '快速上手', path: '/docs/guide/quick-start' },
-          { title: '平台架构', path: '/docs/guide/architecture' },
-          { title: '术语表', path: '/docs/guide/glossary' },
+          { title: '快速上手', path: '/guide/quick-start' },
+          { title: '平台架构', path: '/guide/architecture' },
+          { title: '术语表', path: '/guide/glossary' },
         ],
       },
       {
         title: '账号与权限',
-        path: '/docs/account',
+        path: '/account',
         icon: 'ic-lock',
         children: [
-          { title: '认证服务', path: '/docs/account/auth' },
-          { title: '个人中心', path: '/docs/account/iam' },
+          { title: '认证服务', path: '/account/auth' },
+          { title: '个人中心', path: '/account/iam' },
         ],
       },
     ],
@@ -72,27 +72,27 @@ const OVERVIEW_SIDEBAR_SECTIONS_EN: DocsSidebarSection[] = [
     items: [
       {
         title: 'Product Overview',
-        path: '/docs/introduction',
+        path: '/introduction',
         icon: 'ic-dashboard',
         deepMatch: true,
       },
       {
         title: 'Quick Guide',
-        path: '/docs/guide',
+        path: '/guide',
         icon: 'ic-analytics',
         children: [
-          { title: 'Quick Start', path: '/docs/guide/quick-start' },
-          { title: 'Architecture', path: '/docs/guide/architecture' },
-          { title: 'Glossary', path: '/docs/guide/glossary' },
+          { title: 'Quick Start', path: '/guide/quick-start' },
+          { title: 'Architecture', path: '/guide/architecture' },
+          { title: 'Glossary', path: '/guide/glossary' },
         ],
       },
       {
         title: 'Account & Access',
-        path: '/docs/account',
+        path: '/account',
         icon: 'ic-lock',
         children: [
-          { title: 'Authentication', path: '/docs/account/auth' },
-          { title: 'Personal Center', path: '/docs/account/iam' },
+          { title: 'Authentication', path: '/account/auth' },
+          { title: 'Personal Center', path: '/account/iam' },
         ],
       },
     ],

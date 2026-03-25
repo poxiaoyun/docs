@@ -25,7 +25,7 @@ Depending on the resource type, the details page displays some of the following 
 
 ## Recommended reading
 
-- [Repository details page structure](/docs/moha/repository/detail)
-- [File browsing and version viewing](/docs/moha/repository/files)
-- [Discussion and collaboration](/docs/moha/repository/discussion)
-- [Repository settings and publishing](/docs/moha/repository/settings)
+- [Repository details page structure](/moha/repository/detail)
+- [File browsing and version viewing](/moha/repository/files)
+- [Discussion and collaboration](/moha/repository/discussion)
+- [Repository settings and publishing](/moha/repository/settings)

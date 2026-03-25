@@ -13,7 +13,7 @@ The authentication pages are the first stop for new and returning users. They co
 
 ## Common Tasks
 
-- Sign in from [Login](/docs/account/auth/login) and switch to the right tenant when you belong to more than one.
-- Use [Register](/docs/account/auth/register) and [Reset Password](/docs/account/auth/reset-password) during first-time onboarding or recovery.
-- Enable [MFA](/docs/account/auth/mfa) for stronger protection on administrator and developer accounts.
-- Review [Roles](/docs/account/auth/roles) and [Select Tenant](/docs/account/auth/select-tenant) when access depends on tenant-scoped permissions.
+- Sign in from [Login](/account/auth/login) and switch to the right tenant when you belong to more than one.
+- Use [Register](/account/auth/register) and [Reset Password](/account/auth/reset-password) during first-time onboarding or recovery.
+- Enable [MFA](/account/auth/mfa) for stronger protection on administrator and developer accounts.
+- Review [Roles](/account/auth/roles) and [Select Tenant](/account/auth/select-tenant) when access depends on tenant-scoped permissions.

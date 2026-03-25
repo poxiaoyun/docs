@@ -14,9 +14,9 @@ The Moha console is the model repository operation interface embedded in the Bos
 
 | Module | Description |
 |------|------|
-| [Model Management](/docs/boss/moha-console/model) | Upload, publish and manage models |
-| [Dataset](/docs/boss/moha-console/dataset) | Upload and manage datasets |
-| [Space Management](/docs/boss/moha-console/space) | Create and manage organizational Spaces |
-| [Image Management](/docs/boss/moha-console/image) | Manage container image resources |
-| [Organization Management](/docs/boss/moha-console/organization) | Manage organization members and permissions |
-| [Token Access](/docs/boss/moha-console/token) | Manage API Token and Access Permissions |
+| [Model Management](/boss/moha-console/model) | Upload, publish and manage models |
+| [Dataset](/boss/moha-console/dataset) | Upload and manage datasets |
+| [Space Management](/boss/moha-console/space) | Create and manage organizational Spaces |
+| [Image Management](/boss/moha-console/image) | Manage container image resources |
+| [Organization Management](/boss/moha-console/organization) | Manage organization members and permissions |
+| [Token Access](/boss/moha-console/token) | Manage API Token and Access Permissions |

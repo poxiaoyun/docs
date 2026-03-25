@@ -26,7 +26,7 @@ tags:
 
 ## 推荐阅读
 
-- [仓库详情页结构](/docs/moha/repository/detail)
-- [文件浏览与版本查看](/docs/moha/repository/files)
-- [讨论与协作](/docs/moha/repository/discussion)
-- [仓库设置与发布](/docs/moha/repository/settings)
+- [仓库详情页结构](/moha/repository/detail)
+- [文件浏览与版本查看](/moha/repository/files)
+- [讨论与协作](/moha/repository/discussion)
+- [仓库设置与发布](/moha/repository/settings)

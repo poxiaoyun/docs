@@ -13,9 +13,9 @@ tags:
 
 ## 章节导航
 
-- [快速开始](/docs/guide/quick-start) — 30 分钟完成首次部署的完整流程
-- [平台架构](/docs/guide/architecture) — 前后端架构、双控制面、多租户层级详解
-- [术语表](/docs/guide/glossary) — 平台核心概念与术语速查
+- [快速开始](/guide/quick-start) — 30 分钟完成首次部署的完整流程
+- [平台架构](/guide/architecture) — 前后端架构、双控制面、多租户层级详解
+- [术语表](/guide/glossary) — 平台核心概念与术语速查
 
 ## 推荐阅读顺序
 

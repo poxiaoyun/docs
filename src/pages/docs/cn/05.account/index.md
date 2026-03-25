@@ -20,12 +20,12 @@ tags:
 
 | 功能 | 说明 |
 |------|------|
-| [登录](/docs/account/auth/login) | 用户名/密码登录，支持验证码与 MFA |
-| [注册](/docs/account/auth/register) | 新用户自助注册（需管理员开启） |
-| [MFA 认证](/docs/account/auth/mfa) | 多因素认证绑定与验证 |
-| [密码重置](/docs/account/auth/reset-password) | 通过邮箱或管理员重置密码 |
-| [角色与权限](/docs/account/auth/roles) | 平台角色体系与权限说明 |
-| [选择租户](/docs/account/auth/select-tenant) | 多租户环境下选择工作租户 |
+| [登录](/account/auth/login) | 用户名/密码登录，支持验证码与 MFA |
+| [注册](/account/auth/register) | 新用户自助注册（需管理员开启） |
+| [MFA 认证](/account/auth/mfa) | 多因素认证绑定与验证 |
+| [密码重置](/account/auth/reset-password) | 通过邮箱或管理员重置密码 |
+| [角色与权限](/account/auth/roles) | 平台角色体系与权限说明 |
+| [选择租户](/account/auth/select-tenant) | 多租户环境下选择工作租户 |
 
 ### 👤 个人中心
 
@@ -33,12 +33,12 @@ tags:
 
 | 功能 | 说明 |
 |------|------|
-| [个人资料](/docs/account/iam/profile) | 头像、昵称、邮箱等基本信息 |
-| [安全设置](/docs/account/iam/security) | 密码修改与 MFA 管理 |
-| [主题偏好](/docs/account/iam/theme) | 界面语言与主题切换 |
-| [API Key](/docs/account/iam/api-key) | API 访问令牌的创建与管理 |
-| [租户管理](/docs/account/iam/tenant) | 查看所属租户与切换 |
-| [SSH Key](/docs/account/iam/ssh-key) | SSH 公钥管理 |
+| [个人资料](/account/iam/profile) | 头像、昵称、邮箱等基本信息 |
+| [安全设置](/account/iam/security) | 密码修改与 MFA 管理 |
+| [主题偏好](/account/iam/theme) | 界面语言与主题切换 |
+| [API Key](/account/iam/api-key) | API 访问令牌的创建与管理 |
+| [租户管理](/account/iam/tenant) | 查看所属租户与切换 |
+| [SSH Key](/account/iam/ssh-key) | SSH 公钥管理 |
 
 ## 权限模型
 
@@ -55,5 +55,5 @@ tags:
 - **工作空间级**：工作空间成员（WorkspaceMember）在授权的工作空间内操作
 
 :::info
-详细的权限矩阵与设计文档请参阅 [权限设计](/docs/reference/permissions)。
+详细的权限矩阵与设计文档请参阅 [权限设计](/reference/permissions)。
 :::

@@ -48,6 +48,6 @@ Register the inference service with the LLM gateway and access it through the un
 
 ## Related documents
 
-- [Inference service deployment](/docs/cn/10.rune/inference)
-- [LLM Gateway](/docs/cn/20.boss/02.gateway/)
-- [SDK Tutorial](../07.sdk-tutorial/)
+- [Inference service deployment](../10.rune/inference)
+- [LLM Gateway](../20.boss/02.gateway/)
+- [SDK Tutorial](../sdk-tutorial/)

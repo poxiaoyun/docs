@@ -28,5 +28,5 @@ Path: `/moha/Spaces`
 
 ## Recommended reading
 
-- [Space list and filter](/docs/moha/Spaces/list)
-- [Collaboration](/docs/moha/repository)
+- [Space list and filter](/moha/Spaces/list)
+- [Collaboration](/moha/repository)

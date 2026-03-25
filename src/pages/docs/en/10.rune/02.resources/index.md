@@ -22,9 +22,9 @@ The `Resource Management` column corresponds to the "shared resources and govern
 
 | Page | Description |
 | --- | --- |
-| [Instance templates and reuse](/docs/rune/resources/templates) | Save existing instances as templates and reuse them in new deployment tasks |
-| [Quotas and Policies](/docs/rune/resources/quotas) | View tenant quotas and understand how workspace quotas are allocated hierarchically |
-| [Compute flavors](/docs/rune/resources/flavors) | View the resource specifications that the current tenant can use in the specified cluster |
+| [Instance templates and reuse](/rune/resources/templates) | Save existing instances as templates and reuse them in new deployment tasks |
+| [Quotas and Policies](/rune/resources/quotas) | View tenant quotas and understand how workspace quotas are allocated hierarchically |
+| [Compute flavors](/rune/resources/flavors) | View the resource specifications that the current tenant can use in the specified cluster |
 
 ## Recommended reading order
 

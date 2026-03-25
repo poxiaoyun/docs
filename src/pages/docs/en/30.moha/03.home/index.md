@@ -24,7 +24,7 @@ Moha's homepage is not a simple landing page, but a set of workbench centered ar
 
 ## Recommended reading
 
-- [Home Overview](/docs/moha/home/overview)
-- [Resources created by me](/docs/moha/home/created-by-me)
-- [Organization Space](/docs/moha/home/organizations)
-- [Access Tokens and Announcements](/docs/moha/home/token-announcements)
+- [Home Overview](/moha/home/overview)
+- [Resources created by me](/moha/home/created-by-me)
+- [Organization Space](/moha/home/organizations)
+- [Access Tokens and Announcements](/moha/home/token-announcements)

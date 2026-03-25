@@ -23,9 +23,9 @@ tags:
 
 | 页面 | 说明 |
 | --- | --- |
-| [实例模板与复用](/docs/rune/resources/templates) | 将已有实例沉淀成模板，复用到新的部署任务 |
-| [配额与策略](/docs/rune/resources/quotas) | 查看租户配额，并理解工作空间配额如何逐级分配 |
-| [算力规格](/docs/rune/resources/flavors) | 查看当前租户在指定集群中可使用的资源规格 |
+| [实例模板与复用](/rune/resources/templates) | 将已有实例沉淀成模板，复用到新的部署任务 |
+| [配额与策略](/rune/resources/quotas) | 查看租户配额，并理解工作空间配额如何逐级分配 |
+| [算力规格](/rune/resources/flavors) | 查看当前租户在指定集群中可使用的资源规格 |
 
 ## 推荐阅读顺序
 

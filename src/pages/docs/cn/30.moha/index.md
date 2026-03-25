@@ -18,12 +18,12 @@ tags:
 
 | 模块 | 作用 | 典型入口 |
 | --- | --- | --- |
-| 首页与个人工作台 | 查看推荐资源、公告、访问令牌、我创建的资源和我收藏的资源 | `/docs/moha/home` |
-| 模型仓库 | 浏览和维护模型资源 | `/docs/moha/models` |
-| 数据集 | 浏览和维护数据集资源 | `/docs/moha/datasets` |
-| 镜像仓库 | 管理镜像类资源 | `/docs/moha/images` |
-| Space 工作空间 | 浏览和部署可交互应用类资源 | `/docs/moha/spaces` |
-| 协作 | 查看概览、文件、讨论、标签与设置 | `/docs/moha/repository` |
+| 首页与个人工作台 | 查看推荐资源、公告、访问令牌、我创建的资源和我收藏的资源 | `/moha/home` |
+| 模型仓库 | 浏览和维护模型资源 | `/moha/models` |
+| 数据集 | 浏览和维护数据集资源 | `/moha/datasets` |
+| 镜像仓库 | 管理镜像类资源 | `/moha/images` |
+| Space 工作空间 | 浏览和部署可交互应用类资源 | `/moha/spaces` |
+| 协作 | 查看概览、文件、讨论、标签与设置 | `/moha/repository` |
 
 ## 典型使用流程
 
@@ -35,10 +35,10 @@ tags:
 
 ## 推荐阅读
 
-- [快速开始](/docs/moha/quickstart)
-- [首页与个人工作台](/docs/moha/home)
-- [模型仓库](/docs/moha/models)
-- [数据集](/docs/moha/datasets)
-- [镜像仓库](/docs/moha/images)
-- [Space 工作空间](/docs/moha/spaces)
-- [协作](/docs/moha/repository)
+- [快速开始](/moha/quickstart)
+- [首页与个人工作台](/moha/home)
+- [模型仓库](/moha/models)
+- [数据集](/moha/datasets)
+- [镜像仓库](/moha/images)
+- [Space 工作空间](/moha/spaces)
+- [协作](/moha/repository)

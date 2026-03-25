@@ -17,12 +17,12 @@ According to the `xiaoshi-rune-console` front-end implementation, Moha’s main 
 
 | Module | Function | Typical entrance |
 | --- | --- | --- |
-| Home page and personal workbench | View recommended resources, announcements, access tokens, resources I created and my favorites | `/docs/moha/home` |
-| Model Repository | Browse and maintain model resources | `/docs/moha/models` |
-| Datasets | Browse and maintain dataset resources | `/docs/moha/datasets` |
-| Image repository | Manage image resources | `/docs/moha/images` |
-| Space workspace | Browse and deploy interactive application resources | `/docs/moha/Spaces` |
-| Collaborate | View overview, files, discussions, tags and settings | `/docs/moha/repository` |
+| Home page and personal workbench | View recommended resources, announcements, access tokens, resources I created and my favorites | `/moha/home` |
+| Model Repository | Browse and maintain model resources | `/moha/models` |
+| Datasets | Browse and maintain dataset resources | `/moha/datasets` |
+| Image repository | Manage image resources | `/moha/images` |
+| Space workspace | Browse and deploy interactive application resources | `/moha/Spaces` |
+| Collaborate | View overview, files, discussions, tags and settings | `/moha/repository` |
 
 ## Typical usage process
 
@@ -34,10 +34,10 @@ According to the `xiaoshi-rune-console` front-end implementation, Moha’s main 
 
 ## Recommended reading
 
-- [Quickstart](/docs/moha/quickstart)
-- [Homepage and Personal Workbench](/docs/moha/home)
-- [Model Repository](/docs/moha/models)
-- [Datasets](/docs/moha/datasets)
-- [Image repository](/docs/moha/images)
-- [Space workspace](/docs/moha/Spaces)
-- [Collaboration](/docs/moha/repository)
+- [Quickstart](/moha/quickstart)
+- [Homepage and Personal Workbench](/moha/home)
+- [Model Repository](/moha/models)
+- [Datasets](/moha/datasets)
+- [Image repository](/moha/images)
+- [Space workspace](/moha/Spaces)
+- [Collaboration](/moha/repository)

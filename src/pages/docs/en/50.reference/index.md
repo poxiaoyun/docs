@@ -11,6 +11,6 @@ This chapter collects technical reference materials for the platform, including 
 
 ## Chapter Navigation
 
-- [API Overview](/docs/reference/api-overview) — 5 major backend service domains, authentication process and request architecture
-- [Permission Design](/docs/reference/permissions) — Three-level scope, permission expression, role matrix and front-end permission structure
-- [FAQ](/docs/reference/faq) — FAQ classified by functional modules
+- [API Overview](/reference/api-overview) — 5 major backend service domains, authentication process and request architecture
+- [Permission Design](/reference/permissions) — Three-level scope, permission expression, role matrix and front-end permission structure
+- [FAQ](/reference/faq) — FAQ classified by functional modules

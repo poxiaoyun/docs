@@ -48,6 +48,6 @@ tokenizer = AutoTokenizer.from_pretrained("ai-lab/qwen2-7b")
 
 ## 相关文档
 
-- [推理服务部署](/docs/cn/10.rune/inference)
-- [LLM 网关](/docs/cn/20.boss/02.gateway/)
+- [推理服务部署](../10.rune/inference)
+- [LLM 网关](../20.boss/02.gateway/)
 - [SDK 教程](../07.sdk-tutorial/)

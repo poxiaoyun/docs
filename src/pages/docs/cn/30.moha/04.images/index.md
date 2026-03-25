@@ -27,5 +27,5 @@ tags:
 
 ## 推荐阅读
 
-- [镜像列表与筛选](/docs/moha/images/gallery)
-- [协作](/docs/moha/repository)
+- [镜像列表与筛选](/moha/images/gallery)
+- [协作](/moha/repository)

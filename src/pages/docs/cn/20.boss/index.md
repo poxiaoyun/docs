@@ -16,13 +16,13 @@ Boss 是整套产品的管理中枢，负责账号与租户治理、集群资源
 
 | 模块 | 作用 | 典型入口 |
 | --- | --- | --- |
-| 仪表盘 | 查看平台整体运营状态与关键统计 | `/docs/boss` |
-| IAM 身份管理 | 管理用户、租户及成员关系 | `/docs/boss/iam` |
-| 平台治理 | 从平台层面管理集群、租户与网关治理流程 | `/docs/boss/operations` |
-| LLM 网关 | 配置 API Key、模型服务、审核和审计能力 | `/docs/boss/gateway` |
-| Rune 智算管理 | 管理集群、资源池、规格、系统镜像与租户资源分配 | `/docs/boss/rune-admin` |
-| Moha 管理 | 审核模型、数据集、镜像、Space 以及仓库运营内容 | `/docs/boss/moha-admin` |
-| 系统设置 | 维护平台、Rune、Moha、ChatApp 和许可证配置 | `/docs/boss/settings` |
+| 仪表盘 | 查看平台整体运营状态与关键统计 | `/boss` |
+| IAM 身份管理 | 管理用户、租户及成员关系 | `/boss/iam` |
+| 平台治理 | 从平台层面管理集群、租户与网关治理流程 | `/boss/operations` |
+| LLM 网关 | 配置 API Key、模型服务、审核和审计能力 | `/boss/gateway` |
+| Rune 智算管理 | 管理集群、资源池、规格、系统镜像与租户资源分配 | `/boss/rune-admin` |
+| Moha 管理 | 审核模型、数据集、镜像、Space 以及仓库运营内容 | `/boss/moha-admin` |
+| 系统设置 | 维护平台、Rune、Moha、ChatApp 和许可证配置 | `/boss/settings` |
 
 ## 典型管理员路径
 
@@ -34,8 +34,8 @@ Boss 是整套产品的管理中枢，负责账号与租户治理、集群资源
 
 ## 推荐阅读
 
-- [平台仪表盘](/docs/boss)
-- [IAM 身份管理](/docs/boss/iam)
-- [LLM 网关](/docs/boss/gateway)
-- [Rune 智算管理](/docs/boss/rune-admin)
-- [系统设置](/docs/boss/settings)
+- [平台仪表盘](/boss)
+- [IAM 身份管理](/boss/iam)
+- [LLM 网关](/boss/gateway)
+- [Rune 智算管理](/boss/rune-admin)
+- [系统设置](/boss/settings)

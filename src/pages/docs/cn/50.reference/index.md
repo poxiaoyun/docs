@@ -12,6 +12,6 @@ tags:
 
 ## 章节导航
 
-- [API 概览](/docs/reference/api-overview) — 5 大后端服务域、认证流程与请求架构
-- [权限设计](/docs/reference/permissions) — 三级作用域、权限表达式、角色矩阵与前端权限架构
-- [常见问题](/docs/reference/faq) — 按功能模块分类的 FAQ
+- [API 概览](/reference/api-overview) — 5 大后端服务域、认证流程与请求架构
+- [权限设计](/reference/permissions) — 三级作用域、权限表达式、角色矩阵与前端权限架构
+- [常见问题](/reference/faq) — 按功能模块分类的 FAQ

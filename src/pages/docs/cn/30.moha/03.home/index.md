@@ -25,7 +25,7 @@ tags:
 
 ## 推荐阅读
 
-- [首页概览](/docs/moha/home/overview)
-- [我创建的资源](/docs/moha/home/created-by-me)
-- [组织空间](/docs/moha/home/organizations)
-- [访问令牌与公告](/docs/moha/home/token-announcements)
+- [首页概览](/moha/home/overview)
+- [我创建的资源](/moha/home/created-by-me)
+- [组织空间](/moha/home/organizations)
+- [访问令牌与公告](/moha/home/token-announcements)

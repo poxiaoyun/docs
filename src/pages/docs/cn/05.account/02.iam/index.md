@@ -13,9 +13,9 @@ tags:
 
 ## 章节导航
 
-- [个人资料](/docs/account/iam/profile) — 头像、昵称、邮箱等基本信息
-- [安全设置](/docs/account/iam/security) — 密码修改与 MFA 管理
-- [主题偏好](/docs/account/iam/theme) — 界面语言与主题切换
-- [API Key](/docs/account/iam/api-key) — API 访问令牌的创建与管理
-- [租户管理](/docs/account/iam/tenant) — 查看所属租户与切换
-- [SSH Key](/docs/account/iam/ssh-key) — SSH 公钥管理
+- [个人资料](/account/iam/profile) — 头像、昵称、邮箱等基本信息
+- [安全设置](/account/iam/security) — 密码修改与 MFA 管理
+- [主题偏好](/account/iam/theme) — 界面语言与主题切换
+- [API Key](/account/iam/api-key) — API 访问令牌的创建与管理
+- [租户管理](/account/iam/tenant) — 查看所属租户与切换
+- [SSH Key](/account/iam/ssh-key) — SSH 公钥管理

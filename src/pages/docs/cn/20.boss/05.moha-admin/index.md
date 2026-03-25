@@ -15,8 +15,8 @@ Moha 仓库管理是 Boss 运营平台中用于维护 Moha 模型仓库的模块
 
 | 模块 | 说明 |
 |------|------|
-| [模型统一管理](/docs/boss/moha-admin/models) | 查看和管理平台内所有模型资源 |
-| [数据集统一管理](/docs/boss/moha-admin/datasets) | 查看和管理平台内所有数据集 |
-| [镜像统一管理](/docs/boss/moha-admin/images) | 查看和管理平台内所有容器镜像 |
-| [空间审核与管理](/docs/boss/moha-admin/spaces) | 审核和管理用户创建的组织空间 |
-| [镜像源配置](/docs/boss/moha-admin/mirrors) | 配置外部镜像源（HuggingFace、ModelScope 等） |
+| [模型统一管理](/boss/moha-admin/models) | 查看和管理平台内所有模型资源 |
+| [数据集统一管理](/boss/moha-admin/datasets) | 查看和管理平台内所有数据集 |
+| [镜像统一管理](/boss/moha-admin/images) | 查看和管理平台内所有容器镜像 |
+| [空间审核与管理](/boss/moha-admin/spaces) | 审核和管理用户创建的组织空间 |
+| [镜像源配置](/boss/moha-admin/mirrors) | 配置外部镜像源（HuggingFace、ModelScope 等） |

@@ -15,9 +15,9 @@ tags:
 
 | 模块 | 说明 |
 |------|------|
-| [平台设置](/docs/boss/settings/platform) | 平台名称、Logo、全局参数等基础配置 |
-| [Rune 设置](/docs/boss/settings/rune) | 智算平台功能开关与默认参数 |
-| [Moha 设置](/docs/boss/settings/moha) | 模型仓库功能开关与配置 |
-| [ChatApp 设置](/docs/boss/settings/chatapp) | 对话应用功能开关与配置 |
-| [动态仪表盘](/docs/boss/settings/dynamic-dashboard) | 自定义 Dashboard 面板配置 |
-| [成员管理](/docs/boss/settings/members) | 平台级管理员和运维人员管理 |
+| [平台设置](/boss/settings/platform) | 平台名称、Logo、全局参数等基础配置 |
+| [Rune 设置](/boss/settings/rune) | 智算平台功能开关与默认参数 |
+| [Moha 设置](/boss/settings/moha) | 模型仓库功能开关与配置 |
+| [ChatApp 设置](/boss/settings/chatapp) | 对话应用功能开关与配置 |
+| [动态仪表盘](/boss/settings/dynamic-dashboard) | 自定义 Dashboard 面板配置 |
+| [成员管理](/boss/settings/members) | 平台级管理员和运维人员管理 |

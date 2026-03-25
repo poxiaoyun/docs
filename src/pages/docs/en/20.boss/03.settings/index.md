@@ -14,9 +14,9 @@ System settings are the global configuration center of the Boss operating platfo
 
 | Module | Description |
 |------|------|
-| [Platform Settings](/docs/boss/settings/platform) | Basic configuration such as platform name, logo, global parameters, etc. |
-| [Rune Settings](/docs/boss/settings/rune) | Intelligent computing platform function switches and default parameters |
-| [Moha Settings](/docs/boss/settings/moha) | Model repository function switch and configuration |
-| [ChatApp Settings](/docs/boss/settings/chatapp) | Conversation application function switch and configuration |
-| [Dynamic Dashboard](/docs/boss/settings/dynamic-dashboard) | Custom Dashboard panel configuration |
-| [Member Management](/docs/boss/settings/members) | Platform-level administrator and operation and maintenance personnel management |
+| [Platform Settings](/boss/settings/platform) | Basic configuration such as platform name, logo, global parameters, etc. |
+| [Rune Settings](/boss/settings/rune) | Intelligent computing platform function switches and default parameters |
+| [Moha Settings](/boss/settings/moha) | Model repository function switch and configuration |
+| [ChatApp Settings](/boss/settings/chatapp) | Conversation application function switch and configuration |
+| [Dynamic Dashboard](/boss/settings/dynamic-dashboard) | Custom Dashboard panel configuration |
+| [Member Management](/boss/settings/members) | Platform-level administrator and operation and maintenance personnel management |

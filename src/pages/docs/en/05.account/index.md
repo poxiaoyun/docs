@@ -13,5 +13,5 @@ Account & Access covers the identity-related pages that every user depends on: s
 
 ## Included Areas
 
-- Use [Authentication](/docs/account/auth) for login, registration, password reset, role selection, and tenant selection.
-- Use [Personal Center](/docs/account/iam) for profile updates, security settings, API keys, SSH keys, tenant membership, and theme preferences.
+- Use [Authentication](/account/auth) for login, registration, password reset, role selection, and tenant selection.
+- Use [Personal Center](/account/iam) for profile updates, security settings, API keys, SSH keys, tenant membership, and theme preferences.

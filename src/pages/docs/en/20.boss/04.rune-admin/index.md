@@ -14,10 +14,10 @@ Rune intelligent computing management is a module in the Boss operation platform
 
 | Module | Description |
 |------|------|
-| [Cluster Management](/docs/boss/rune-admin/clusters) | Access and manage K8s computing clusters |
-| [Resource Pool Management](/docs/boss/rune-admin/resource-pools) | Divide resource pools in the cluster and associate nodes |
-| [Tenants and Quotas](/docs/boss/rune-admin/tenants) | Allocate resource pools and GPU/CPU quotas to tenants |
-| [Compute flavor management](/docs/boss/rune-admin/flavors) | Define and maintain optional compute flavor templates |
-| [Private Image](/docs/boss/rune-admin/templates) | Tenant custom image management |
-| [System Image Market](/docs/boss/rune-admin/system-market) | Public system image market management |
-| [Built-in system image](/docs/boss/rune-admin/systems) | Platform preset basic image maintenance |
+| [Cluster Management](/boss/rune-admin/clusters) | Access and manage K8s computing clusters |
+| [Resource Pool Management](/boss/rune-admin/resource-pools) | Divide resource pools in the cluster and associate nodes |
+| [Tenants and Quotas](/boss/rune-admin/tenants) | Allocate resource pools and GPU/CPU quotas to tenants |
+| [Compute flavor management](/boss/rune-admin/flavors) | Define and maintain optional compute flavor templates |
+| [Private Image](/boss/rune-admin/templates) | Tenant custom image management |
+| [System Image Market](/boss/rune-admin/system-market) | Public system image market management |
+| [Built-in system image](/boss/rune-admin/systems) | Platform preset basic image maintenance |

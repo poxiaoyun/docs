@@ -13,8 +13,8 @@ The Personal Center groups the settings that users manage for themselves after s
 
 ## Included Settings
 
-- Update personal details from [Profile](/docs/account/iam/profile).
-- Control password, MFA, and account protections from [Security](/docs/account/iam/security).
-- Create developer-facing credentials from [API Keys](/docs/account/iam/api-key) and [SSH Keys](/docs/account/iam/ssh-key).
-- Review tenant membership and switching behavior from [Tenant Membership](/docs/account/iam/tenant).
-- Adjust appearance and language preferences from [Theme](/docs/account/iam/theme).
+- Update personal details from [Profile](/account/iam/profile).
+- Control password, MFA, and account protections from [Security](/account/iam/security).
+- Create developer-facing credentials from [API Keys](/account/iam/api-key) and [SSH Keys](/account/iam/ssh-key).
+- Review tenant membership and switching behavior from [Tenant Membership](/account/iam/tenant).
+- Adjust appearance and language preferences from [Theme](/account/iam/theme).

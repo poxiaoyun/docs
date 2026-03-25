@@ -14,8 +14,8 @@ Moha repository management is a module in the Boss operation platform used to ma
 
 | Module | Description |
 |------|------|
-| [Unified model management](/docs/boss/moha-admin/models) | View and manage all model resources in the platform |
-| [Unified management of datasets](/docs/boss/moha-admin/datasets) | View and manage all datasets in the platform |
-| [Unified image management](/docs/boss/moha-admin/images) | View and manage all container images in the platform |
-| [Space Audit and Management](/docs/boss/moha-admin/Spaces) | Audit and manage user-created organizational Spaces |
-| [Mirror source configuration](/docs/boss/moha-admin/mirrors) | Configure external mirror sources (HuggingFace, ModelScope, etc.) |
+| [Unified model management](/boss/moha-admin/models) | View and manage all model resources in the platform |
+| [Unified management of datasets](/boss/moha-admin/datasets) | View and manage all datasets in the platform |
+| [Unified image management](/boss/moha-admin/images) | View and manage all container images in the platform |
+| [Space Audit and Management](/boss/moha-admin/Spaces) | Audit and manage user-created organizational Spaces |
+| [Mirror source configuration](/boss/moha-admin/mirrors) | Configure external mirror sources (HuggingFace, ModelScope, etc.) |

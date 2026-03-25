@@ -21,6 +21,6 @@ The Rune dashboard is the landing view for the selected cluster and workspace. I
 
 ## Related Pages
 
-- [Workspaces](/docs/rune/console/workspace)
-- [Quota Management](/docs/rune/console/quota)
-- [Run Logs](/docs/rune/console/logging)
+- [Workspaces](/rune/console/workspace)
+- [Quota Management](/rune/console/quota)
+- [Run Logs](/rune/console/logging)

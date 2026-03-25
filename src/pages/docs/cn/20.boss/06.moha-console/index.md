@@ -15,9 +15,9 @@ Moha 控制台是 Boss 运营平台中内嵌的模型仓库操作界面，管理
 
 | 模块 | 说明 |
 |------|------|
-| [模型管理](/docs/boss/moha-console/model) | 上传、发布和管理模型 |
-| [数据集](/docs/boss/moha-console/dataset) | 上传和管理数据集 |
-| [空间管理](/docs/boss/moha-console/space) | 创建和管理组织空间 |
-| [镜像管理](/docs/boss/moha-console/image) | 管理容器镜像资源 |
-| [组织管理](/docs/boss/moha-console/organization) | 管理组织成员与权限 |
-| [Token 访问](/docs/boss/moha-console/token) | 管理 API Token 与访问权限 |
+| [模型管理](/boss/moha-console/model) | 上传、发布和管理模型 |
+| [数据集](/boss/moha-console/dataset) | 上传和管理数据集 |
+| [空间管理](/boss/moha-console/space) | 创建和管理组织空间 |
+| [镜像管理](/boss/moha-console/image) | 管理容器镜像资源 |
+| [组织管理](/boss/moha-console/organization) | 管理组织成员与权限 |
+| [Token 访问](/boss/moha-console/token) | 管理 API Token 与访问权限 |

@@ -15,13 +15,13 @@ Boss is the management center of the entire product suite. It is responsible for
 
 | Module | Function | Typical entrance |
 | --- | --- | --- |
-| Dashboard | View the overall operating status and key statistics of the platform | `/docs/boss` |
-| IAM Identity Management | Manage users, tenants, and membership relationships | `/docs/boss/iam` |
-| Platform governance | Manage cluster, tenant and gateway governance processes from the platform level | `/docs/boss/operations` |
-| LLM Gateway | Configure API keys, model services, review workflows, and audit capabilities | `/docs/boss/gateway` |
-| Rune AI Computing Management | Manage clusters, resource pools, compute flavors, system images, and tenant resource allocation | `/docs/boss/rune-admin` |
-| Moha Management | Review models, datasets, images, Spaces, and repository operation content | `/docs/boss/moha-admin` |
-| System Settings | Maintain platform, Rune, Moha, ChatApp, and license configuration | `/docs/boss/settings` |
+| Dashboard | View the overall operating status and key statistics of the platform | `/boss` |
+| IAM Identity Management | Manage users, tenants, and membership relationships | `/boss/iam` |
+| Platform governance | Manage cluster, tenant and gateway governance processes from the platform level | `/boss/operations` |
+| LLM Gateway | Configure API keys, model services, review workflows, and audit capabilities | `/boss/gateway` |
+| Rune AI Computing Management | Manage clusters, resource pools, compute flavors, system images, and tenant resource allocation | `/boss/rune-admin` |
+| Moha Management | Review models, datasets, images, Spaces, and repository operation content | `/boss/moha-admin` |
+| System Settings | Maintain platform, Rune, Moha, ChatApp, and license configuration | `/boss/settings` |
 
 ## Typical administrator path
 
@@ -33,8 +33,8 @@ Boss is the management center of the entire product suite. It is responsible for
 
 ## Recommended reading
 
-- [Platform Dashboard](/docs/boss)
-- [IAM Identity Management](/docs/boss/iam)
-- [LLM Gateway](/docs/boss/gateway)
-- [Rune AI Computing Management](/docs/boss/rune-admin)
-- [System Settings](/docs/boss/settings)
+- [Platform Dashboard](/boss)
+- [IAM Identity Management](/boss/iam)
+- [LLM Gateway](/boss/gateway)
+- [Rune AI Computing Management](/boss/rune-admin)
+- [System Settings](/boss/settings)

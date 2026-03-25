@@ -12,5 +12,5 @@ The IAM (Identity and Access Management) identity management module is the core 
 
 ## Chapter Navigation
 
-- [User Management](/docs/boss/iam/users) — View, create, edit and disable platform users
-- [Tenant Management](/docs/boss/iam/tenants) — Create tenants, allocate resource quotas, and manage tenant life cycles
+- [User Management](/boss/iam/users) — View, create, edit and disable platform users
+- [Tenant Management](/boss/iam/tenants) — Create tenants, allocate resource quotas, and manage tenant life cycles

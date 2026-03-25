@@ -26,5 +26,5 @@ Path: `/moha/images`
 
 ## Recommended reading
 
-- [Image list and filter](/docs/moha/images/gallery)
-- [Collaboration](/docs/moha/repository)
+- [Image list and filter](/moha/images/gallery)
+- [Collaboration](/moha/repository)

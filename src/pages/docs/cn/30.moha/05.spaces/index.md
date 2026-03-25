@@ -29,5 +29,5 @@ Space 用于承载可交互的应用或演示界面，是魔哈中最接近“�
 
 ## 推荐阅读
 
-- [Space 列表与筛选](/docs/moha/spaces/list)
-- [协作](/docs/moha/repository)
+- [Space 列表与筛选](/moha/spaces/list)
+- [协作](/moha/repository)

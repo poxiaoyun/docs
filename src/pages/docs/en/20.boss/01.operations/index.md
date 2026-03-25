@@ -11,6 +11,6 @@ tags:
 The platform governance process revolves around "cluster → tenant → gateway" to ensure the safe isolation of the compute pool, controllable tenant permissions, and provide a unified audit mechanism.
 
 ## Chapter Navigation
-- [Cluster Management](./01.clusters)
-- [Tenants and Quotas](./02.tenants)
-- [Gateway Review](./03.gateway)
+- [Cluster Management](./clusters)
+- [Tenants and Quotas](./tenants)
+- [Gateway Review](./gateway)

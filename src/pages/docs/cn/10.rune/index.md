@@ -18,10 +18,10 @@ Rune 是面向模型开发、训练调优、推理部署与应用交付的一体
 
 | 模块 | 作用 | 典型入口 |
 | --- | --- | --- |
-| 开始使用 | 了解平台基础概念、准备资源和创建第一个工作负载 | `/docs/rune/guide` |
-| 控制台 | 日常使用的核心工作台，覆盖仪表盘、推理、微调、开发环境、应用、实验与评测 | `/docs/rune/console` |
-| 对话应用 | 提供模型体验、多模型对比、参数调试与 Token 估算 | `/docs/rune/chatapp` |
-| 资源管理 | 查看模板、配额与平台侧资源策略 | `/docs/rune/resources` |
+| 开始使用 | 了解平台基础概念、准备资源和创建第一个工作负载 | `/rune/guide` |
+| 控制台 | 日常使用的核心工作台，覆盖仪表盘、推理、微调、开发环境、应用、实验与评测 | `/rune/console` |
+| 对话应用 | 提供模型体验、多模型对比、参数调试与 Token 估算 | `/rune/chatapp` |
+| 资源管理 | 查看模板、配额与平台侧资源策略 | `/rune/resources` |
 
 ## 典型用户路径
 
@@ -33,10 +33,10 @@ Rune 是面向模型开发、训练调优、推理部署与应用交付的一体
 
 ## 推荐阅读
 
-- [开始使用](/docs/rune/guide)
-- [Rune 控制台](/docs/rune/console)
-- [对话应用（ChatApp）](/docs/rune/chatapp)
-- [资源管理](/docs/rune/resources)
+- [开始使用](/rune/guide)
+- [Rune 控制台](/rune/console)
+- [对话应用（ChatApp）](/rune/chatapp)
+- [资源管理](/rune/resources)
 
 ## 角色视角
 

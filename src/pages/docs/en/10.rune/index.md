@@ -17,10 +17,10 @@ The current front-end product mainly consists of the following parts:
 
 | Module | Function | Typical entrance |
 | --- | --- | --- |
-| Getting started | Understand basic platform concepts, prepare resources, and create your first workload | `/docs/rune/guide` |
-| Console | The core workbench for daily use, covering dashboards, inference, fine-tuning, development environment, applications, experiments and evaluation | `/docs/rune/console` |
-| Dialogue application | Provides model experience, multi-model comparison, parameter debugging and Token estimation | `/docs/rune/chatapp` |
-| Resource Management | View templates, quotas and platform-side resource policies | `/docs/rune/resources` |
+| Getting started | Understand basic platform concepts, prepare resources, and create your first workload | `/rune/guide` |
+| Console | The core workbench for daily use, covering dashboards, inference, fine-tuning, development environment, applications, experiments and evaluation | `/rune/console` |
+| Dialogue application | Provides model experience, multi-model comparison, parameter debugging and Token estimation | `/rune/chatapp` |
+| Resource Management | View templates, quotas and platform-side resource policies | `/rune/resources` |
 
 ## Typical user path
 
@@ -32,10 +32,10 @@ The current front-end product mainly consists of the following parts:
 
 ## Recommended reading
 
-- [Get started](/docs/rune/guide)
-- [Rune console](/docs/rune/console)
-- [ChatApp](/docs/rune/chatapp)
-- [Resource Management](/docs/rune/resources)
+- [Get started](/rune/guide)
+- [Rune console](/rune/console)
+- [ChatApp](/rune/chatapp)
+- [Resource Management](/rune/resources)
 
 ## Character perspective
 
