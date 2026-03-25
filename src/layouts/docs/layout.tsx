@@ -85,13 +85,6 @@ function mapDocsNavData(
 function getProductFromPath(pathname: string): DocsSidebarItem['product'] | undefined {
   const normalized = pathname.replace(/\/+/g, '/').replace(/^\/+|\/+$/g, '');
   const segments = normalized.split('/');
-  if (segments[0] === 'docs') {
-    const target = segments[1] ?? '';
-    if (target === 'moha') return 'moha';
-    if (target === 'rune') return 'rune';
-    if (target === 'boss') return 'boss';
-    if (target === 'ecosystem') return 'ecosystem';
-  }
 
   if (segments[0] === 'moha') return 'moha';
   if (segments[0] === 'rune') return 'rune';

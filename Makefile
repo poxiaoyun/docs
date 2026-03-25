@@ -9,9 +9,11 @@ IMAGE_REGISTRY?=registry.cn-hangzhou.aliyuncs.com
 IMAGE_REPOSITORY?=xiaoshiai
 IMAGE_NAME?=rune-docs
 
+DOCS_BASE_URL?=/docs
 
 build:
 	yarn install
+	VITE_BASE_URL=${DOCS_BASE_URL} \
 	BUILD_DATE=${BUILD_DATE} \
 	GIT_VERSION=${GIT_VERSION} \
 	GIT_COMMIT=${GIT_COMMIT} \
@@ -22,6 +24,18 @@ FULL_IMAGE_NAME?=$(IMAGE_REGISTRY)/$(IMAGE_REPOSITORY)/$(IMAGE_NAME):$(GIT_VERSI
 BUILDX_PLATFORMS?=linux/amd64,linux/arm64
 release-image:
 	docker buildx build --platform=${BUILDX_PLATFORMS} --push -t ${FULL_IMAGE_NAME} -f Dockerfile .
+
+package-helm:
+	@mkdir -p ${BIN_DIR}/charts
+	helm package --version ${VERSION} --app-version ${GIT_VERSION} --destination ${BIN_DIR}/charts deploy/rune-docs
+
+HELM_OCI_REGISTRY?=registry.xiaoshiai.cn
+release-helm: package-helm
+	helm push ${BIN_DIR}/charts/rune-docs-${VERSION}.tgz oci://${HELM_OCI_REGISTRY}/charts
+
+login:
+	docker login ${IMAGE_REGISTRY} -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD}
+	helm registry login ${HELM_OCI_REGISTRY} -u ${REGISTRY_USERNAME} -p ${REGISTRY_PASSWORD}
 
 release: release-image
 

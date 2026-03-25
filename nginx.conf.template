@@ -7,55 +7,47 @@ server {
     listen ${LISTEN_PORT};
     server_name _;
 
-    access_log /dev/stdout main;
-    error_log /dev/stderr;
-    
+    root /usr/src/app/dist;
+
+    add_header Cross-Origin-Opener-Policy "same-origin";
+    add_header Cross-Origin-Embedder-Policy "require-corp";
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-Content-Type-Options "nosniff";
+
+    gzip on;
+    gzip_static on;
+    gzip_vary on;
+    gzip_comp_level 6;
+    gzip_types text/plain text/css application/json application/javascript text/xml application/xml application/xml+rss text/javascript image/svg+xml;
+
     location /healthz {
         default_type application/json;
         return 200 '{"status":"ok","timestamp":"$msec"}';
     }
-    
-    location = /doc {
-        return 301 $scheme://$http_host/doc/;
-    }
 
-    location = /doc/favicon.ico {
-        alias /usr/src/app/dist/favicon.ico;
-
+    location = /favicon.ico {
         include /etc/nginx/mime.types;
-
         expires 1y;
         add_header Cache-Control "public, immutable";
         access_log off;
     }
 
-    location ^~ /doc/assets/ {
-        alias /usr/src/app/dist/assets/;
-
+    location ^~ /assets/ {
         include /etc/nginx/mime.types;
-
         expires 1y;
         add_header Cache-Control "public, immutable";
         access_log off;
-
-        gzip on;
-        gzip_comp_level 6;
-        gzip_static on;
     }
 
-    location ^~ /doc/ {
+    location ${DOCS_BASE_URL}/ {
         alias /usr/src/app/dist/;
-
-        if (!-e $request_filename) {
-            rewrite ^/doc/(.*)$ /doc/index.html last;
-        }
-
+        try_files $uri $uri/ /index.html;
         include /etc/nginx/mime.types;
+    }
 
-        add_header Cross-Origin-Opener-Policy "same-origin";
-        add_header Cross-Origin-Embedder-Policy "require-corp";
-        add_header X-Frame-Options "SAMEORIGIN";
-        add_header X-Content-Type-Options "nosniff";
+    location / {
+        try_files $uri $uri/ /index.html;
+        include /etc/nginx/mime.types;
 
         location ~ /\. {
             deny all;

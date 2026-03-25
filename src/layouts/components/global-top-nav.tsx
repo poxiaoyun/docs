@@ -18,10 +18,10 @@ type TopNavLink = {
 
 const NAV_LINKS: TopNavLink[] = [
   { key: 'home', path: '/', label: { cn: '首页', en: 'Home' } },
-  { key: 'moha', path: '/docs/moha', label: { cn: '魔哈仓库', en: 'Moha' } },
-  { key: 'rune', path: '/docs/rune', label: { cn: 'Rune 智算平台', en: 'Rune AI Platform' } },
-  { key: 'boss', path: '/docs/boss', label: { cn: 'Boss 运营平台', en: 'Boss Operations Platform' } },
-  { key: 'ecosystem', path: '/docs/ecosystem', label: { cn: '生态文档', en: 'Ecosystem' } },
+  { key: 'moha', path: '/moha', label: { cn: '魔哈仓库', en: 'Moha' } },
+  { key: 'rune', path: '/rune', label: { cn: 'Rune 智算平台', en: 'Rune AI Platform' } },
+  { key: 'boss', path: '/boss', label: { cn: 'Boss 运营平台', en: 'Boss Operations Platform' } },
+  { key: 'ecosystem', path: '/ecosystem', label: { cn: '生态文档', en: 'Ecosystem' } },
 ];
 
 // ----------------------------------------------------------------------

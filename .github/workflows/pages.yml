@@ -39,7 +39,7 @@ jobs:
 
       - name: Build for GitHub Pages
         # GitHub Pages for repo "poxiaoyun/docs" is served at /docs/
-        # Use --base to override the default /doc/ base in vite.config.ts
+        # Our vite.config.ts defaults to /docs/, but we enforce it here just in case.
         run: |
           npx tsc --noEmit
           npx vite build --mode production --base /docs/

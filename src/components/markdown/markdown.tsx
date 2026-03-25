@@ -11,6 +11,8 @@ import Link from '@mui/material/Link';
 
 import { RouterLink } from 'src/routes/components';
 
+import { baseUri } from 'src/global-config';
+
 import { Image } from '../image';
 import { AlertBox } from './alert-box';
 import { MarkdownRoot } from './styles';
@@ -69,12 +71,10 @@ export function Markdown({
   );
 }
 
-const APP_BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
-
 function resolveAssetPath(url?: string) {
   if (!url) return url;
   if (url.startsWith('/assets/')) {
-    return `${APP_BASE_PATH}${url}`;
+    return baseUri(url);
   }
   return url;
 }

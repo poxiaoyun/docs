@@ -1,0 +1,46 @@
+global:
+  imageRegistry: ""
+  imagePullSecrets: []
+  storageClass: ""
+
+enabled: true
+image:
+  registry: registry.cn-hangzhou.aliyuncs.com
+  repository: xiaoshiai/rune-docs
+  tag: ""
+  pullPolicy: IfNotPresent
+  pullSecrets: []
+replicaCount: 1
+containerPorts:
+  http: 8080
+service:
+  type: ClusterIP
+  ports:
+    http: 80
+  nodePorts:
+    http: ""
+  annotations: {}
+resources:
+  limits: {}
+  requests: {}
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 5
+  periodSeconds: 60
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 5
+  timeoutSeconds: 1
+  periodSeconds: 5
+  failureThreshold: 5
+  successThreshold: 1
+nodeSelector: {}
+tolerations: []
+affinity: {}
+podAnnotations: {}
+podLabels: {}
+extraEnvVars: []
+podSecurityContext: {}
+containerSecurityContext: {}
+extraVolumes: []
+extraVolumeMounts: []

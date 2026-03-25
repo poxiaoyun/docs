@@ -4,6 +4,8 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Outlet, RouterProvider, createBrowserRouter } from 'react-router';
 
+import { BASE_URL } from 'src/global-config';
+
 import App from './app';
 import { routesSection } from './routes/sections';
 import { ErrorBoundary } from './routes/components';
@@ -21,7 +23,7 @@ const router = createBrowserRouter([
     children: routesSection,
   },
 ], {
-  basename: import.meta.env.BASE_URL,
+  basename: BASE_URL,
 });
 
 const root = createRoot(document.getElementById('root')!);

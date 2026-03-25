@@ -14,17 +14,23 @@ export type ConfigValue = {
 
 // ----------------------------------------------------------------------
 
+export const BASE_URL = import.meta.env.BASE_URL;
+
+export const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+export const baseUri = (path: string) => `${BASE_PATH}/${path.replace(/^\/+/, '')}`;
+
 export const CONFIG: ConfigValue = {
   appName: 'docs',
   appVersion: packageJson.version,
-  assetsDir: import.meta.env.VITE_ASSETS_DIR ?? import.meta.env.BASE_URL.replace(/\/$/, ''),
+  assetsDir: import.meta.env.VITE_ASSETS_DIR ?? BASE_PATH,
   /**
    * Auth
    * @method jwt | amplify | firebase | supabase | auth0
    */
   auth: {
     skip: true,
-    redirectPath: '/docs/introduction',
+    redirectPath: '/introduction',
   },
 };
 

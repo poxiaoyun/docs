@@ -75,7 +75,7 @@ export function HomeCtaSection() {
                 variant="contained"
                 size="large"
                 component={RouterLink}
-                to="/docs/rune"
+                to="/rune"
                 sx={{
                   px: 5,
                   py: 2,
@@ -97,7 +97,7 @@ export function HomeCtaSection() {
                 variant="outlined"
                 size="large"
                 component={RouterLink}
-                to="/docs/moha"
+                to="/moha"
                 sx={{
                   px: 5,
                   py: 2,

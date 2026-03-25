@@ -114,7 +114,7 @@ export function HomeHeroSection() {
                   variant="contained"
                   size="large"
                   component={RouterLink}
-                  to="/docs/rune"
+                  to="/rune"
                   sx={{
                     bgcolor: 'common.white',
                     color: 'common.black',
@@ -134,7 +134,7 @@ export function HomeHeroSection() {
                   variant="outlined"
                   size="large"
                   component={RouterLink}
-                  to="/docs/moha"
+                  to="/moha"
                   sx={{ 
                     color: 'common.white',
                     borderColor: alpha('#ffffff', 0.2),

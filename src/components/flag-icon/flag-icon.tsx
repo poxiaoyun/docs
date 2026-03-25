@@ -2,6 +2,8 @@ import { mergeClasses } from 'minimal-shared/utils';
 
 import { styled } from '@mui/material/styles';
 
+import { baseUri } from 'src/global-config';
+
 import { flagIconClasses } from './classes';
 
 // ----------------------------------------------------------------------
@@ -20,7 +22,7 @@ export function FlagIcon({ code, className, sx, ...other }: FlagIconProps) {
       <FlagImg
         loading="lazy"
         alt={code}
-        src={`https://purecatamphetamine.github.io/country-flag-icons/3x2/${code?.toUpperCase()}.svg`}
+        src={baseUri(`/assets/icons/flags/${code?.toUpperCase()}.svg`)}
         className={flagIconClasses.img}
       />
     </FlagRoot>
