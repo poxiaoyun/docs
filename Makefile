@@ -9,7 +9,7 @@ IMAGE_REGISTRY?=registry.cn-hangzhou.aliyuncs.com
 IMAGE_REPOSITORY?=xiaoshiai
 IMAGE_NAME?=rune-docs
 
-DOCS_BASE_URL?=/docs
+DOCS_BASE_URL?=/
 
 build:
 	yarn install

@@ -3,7 +3,7 @@ import checker from 'vite-plugin-checker';
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 
-const DOCS_BASE_URL = process.env.VITE_BASE_URL || '/docs';
+const DOCS_BASE_URL = process.env.VITE_BASE_URL || '/';
 const DOCS_BASE_PREFIX = DOCS_BASE_URL.replace(/\/$/, '');
 
 // SPA fallback for vite preview mode

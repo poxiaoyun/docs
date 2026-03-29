@@ -3,7 +3,7 @@ name: Deploy GitHub Pages
 on:
   push:
     branches:
-      - main
+      - page
   workflow_dispatch:
 
 # Required for GitHub Pages deployment
@@ -38,11 +38,9 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Build for GitHub Pages
-        # GitHub Pages for repo "poxiaoyun/docs" is served at /docs/
-        # Our vite.config.ts defaults to /docs/, but we enforce it here just in case.
         run: |
-          npx tsc --noEmit
-          npx vite build --mode production --base /docs/
+          VITE_BASE_URL=/ npx tsc --noEmit
+          VITE_BASE_URL=/ npx vite build --mode production
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
