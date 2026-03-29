@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import path from 'path';
 import checker from 'vite-plugin-checker';
 import { defineConfig, type Plugin } from 'vite';
@@ -34,6 +35,24 @@ function spaFallback(): Plugin {
   };
 }
 
+function githubPagesSpaFallback(): Plugin {
+  return {
+    name: 'github-pages-spa-fallback',
+    apply: 'build',
+    writeBundle(options) {
+      const outDir = options.dir ? path.resolve(options.dir) : path.resolve('dist');
+      const indexPath = path.join(outDir, 'index.html');
+      const fallbackPath = path.join(outDir, '404.html');
+
+      if (!fs.existsSync(indexPath)) {
+        return;
+      }
+
+      fs.copyFileSync(indexPath, fallbackPath);
+    },
+  };
+}
+
 // ----------------------------------------------------------------------
 
 const PORT = 8080;
@@ -55,6 +74,7 @@ export default defineConfig({
       },
     }),
     spaFallback(),
+    githubPagesSpaFallback(),
   ],
   resolve: {
     alias: [
