@@ -141,20 +141,23 @@ IAM Authentication Configuration controls the platform's identity authentication
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/api/iam/global-config` | `PUT` | Save all platform configurations (title, header config, IAM config) |
+| `/api/iam/public-configurations/global` | `GET` | Read the public platform configuration value anonymously |
+| `/api/iam/namespaces/system/configurations/global` | `PUT` | Save the complete platform configuration with administrator authorization |
 | `/api/iam/logo/avatar` | `POST` | Upload platform Logo file (form upload) |
 
 ### Request Example
 
 ```json
-// PUT /api/iam/global-config
+// PUT /api/iam/namespaces/system/configurations/global
 {
-  "title": "AI Platform",
-  "subTitle": "Smart Computing",
-  "documentUrl": "https://docs.example.com",
-  "enableLanguageSwitch": true,
-  "enableNavbarIndex": true,
-  "enableBossSignup": false
+  "value": {
+    "title": "AI Platform",
+    "subTitle": "Smart Computing",
+    "documentUrl": "https://docs.example.com",
+    "enableLanguageSwitch": true,
+    "enableNavbarIndex": true,
+    "enableBossSignup": false
+  }
 }
 ```
 
@@ -174,7 +177,7 @@ sequenceDiagram
     BOSS->>API: POST /api/iam/logo/avatar
     API-->>BOSS: Logo uploaded successfully
     Admin->>BOSS: Click "Save"
-    BOSS->>API: PUT /api/iam/global-config
+    BOSS->>API: PUT /api/iam/namespaces/system/configurations/global
     API-->>BOSS: Configuration saved successfully
     API->>Users: New configuration takes effect immediately
     Note over Users: Users will see the new Logo<br/>and title after refreshing the page

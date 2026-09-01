@@ -146,17 +146,27 @@ IAM 认证配置控制平台的身份认证相关策略。
 
 ---
 
+## API 接口
+
+| 接口 | 方法 | 说明 |
+|------|------|------|
+| `/api/iam/public-configurations/global` | `GET` | 匿名读取平台公开配置值 |
+| `/api/iam/namespaces/system/configurations/global` | `PUT` | 保存完整平台配置，需要管理员权限 |
+| `/api/iam/logo/avatar` | `POST` | 上传平台 Logo 文件 |
+
 ### 请求示例
 
 ```json
-// PUT /api/iam/global-config
+// PUT /api/iam/namespaces/system/configurations/global
 {
-  "title": "AI 平台",
-  "subTitle": "智能计算",
-  "documentUrl": "https://docs.example.com",
-  "enableLanguageSwitch": true,
-  "enableNavbarIndex": true,
-  "enableBossSignup": false
+  "value": {
+    "title": "AI 平台",
+    "subTitle": "智能计算",
+    "documentUrl": "https://docs.example.com",
+    "enableLanguageSwitch": true,
+    "enableNavbarIndex": true,
+    "enableBossSignup": false
+  }
 }
 ```
 
@@ -176,7 +186,7 @@ sequenceDiagram
     BOSS->>API: POST /api/iam/logo/avatar
     API-->>BOSS: Logo 上传成功
     Admin->>BOSS: 点击"保存"
-    BOSS->>API: PUT /api/iam/global-config
+    BOSS->>API: PUT /api/iam/namespaces/system/configurations/global
     API-->>BOSS: 配置保存成功
     API->>Users: 新配置即时生效
     Note over Users: 用户刷新页面后<br/>可看到新 Logo 和标题

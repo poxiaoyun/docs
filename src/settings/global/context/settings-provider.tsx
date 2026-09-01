@@ -21,13 +21,13 @@ export function GlobalSettingsProvider({
 
     // 1. Try to fetch from API
     try {
-      settings = await fetch('/api/iam/global-config').then((res) => {
+      settings = await fetch('/api/iam/public-configurations/global').then((res) => {
         if (!res.ok) throw new Error(`API error: ${res.status}`);
         return res.json();
       });
     } catch (apiError) {
-      console.warn('API global-config failed, falling back to static file:', apiError);
-      
+      console.warn('Public configuration API failed, falling back to static file:', apiError);
+
       // 2. Fallback to static JSON file
       try {
         settings = await fetch(baseUri('/global-config.json')).then((res) => {
