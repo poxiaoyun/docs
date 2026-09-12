@@ -38,11 +38,22 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Build for GitHub Pages
-        # GitHub Pages for repo "poxiaoyun/docs" is served at /docs/
-        # Our vite.config.ts defaults to /docs/, but we enforce it here just in case.
+        # 自定义域名 docs.poxiaoshi.cn 把站点发布在域名根路径，所以 base 必须是 "/"。
+        # vite.config.ts 的默认值 "/docs" 是给容器部署用的
+        # （Dockerfile 的 DOCS_BASE_URL + nginx.conf.template 的 location ${DOCS_BASE_URL}/），
+        # 不要改那个默认值，只在这里覆盖。
+        env:
+          VITE_BASE_URL: "/"
         run: |
           npx tsc --noEmit
-          npx vite build --mode production --base /docs/
+          npx vite build --mode production
+          # 守卫：base 写错时 CI 绿、部署绿、HTTP 也返回 200，只有浏览器白屏，
+          # 所以必须在这里拦下来。dist/index.html 里不允许出现 /docs 前缀。
+          if grep -qE '(src|href)="/docs/' dist/index.html; then
+            echo "::error::dist/index.html 仍引用 /docs/ 前缀 —— VITE_BASE_URL 配置有误"
+            grep -oE '(src|href)="/docs/[^"]*"' dist/index.html
+            exit 1
+          fi
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

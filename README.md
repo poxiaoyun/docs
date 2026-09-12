@@ -65,6 +65,22 @@ yarn build
 npm run build
 ```
 
+## Deployment
+
+The same build is published to **two targets that use different path prefixes**, so the Vite `base` must match the target:
+
+| Target | URL | Path prefix | Required `base` | Driven by |
+| --- | --- | --- | --- | --- |
+| GitHub Pages | `https://docs.poxiaoshi.cn/` | domain root | `/` | `.github/workflows/pages.yml` (`VITE_BASE_URL=/`) |
+| Docker / Kubernetes | ingress path | `/docs/` | `/docs` | `make build` (`DOCS_BASE_URL?=/docs`) + `nginx.conf.template` |
+
+`vite.config.ts` defaults to `/docs` for the container target. **Do not change that default** — override it in the Pages workflow instead.
+
+When `base` does not match the target the failure is completely silent: CI passes, the deployment succeeds, and the server returns HTTP 200 — but `index.html` points at `/docs/assets/*.js` while the files actually live at `/assets/*.js`. Every asset 404s and the page renders blank. The Pages workflow therefore asserts that `dist/index.html` contains no `/docs` prefix.
+
+- `public/CNAME` pins the custom domain to `docs.poxiaoshi.cn`.
+- The build also emits `dist/404.html` (a copy of `index.html`) for the GitHub Pages SPA fallback. Without it, deep links opened or refreshed directly get GitHub's own 404 page instead of the app.
+
 ## Documentation Usage
 
 The documentation content is located in `src/pages/docs`. The site supports multiple languages, with separate directories for each language (e.g., `cn` for Chinese, `en` for English).
