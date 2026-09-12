@@ -1,201 +1,83 @@
 ---
-title: '全局平台设置'
-updated: '2026-03-23'
+title: '平台设置'
+updated: '2026-09-12'
+description: '平台品牌与登录页展示配置——标题、Logo、副标题、页头导航与访问管理。'
+tags:
+  - boss
+  - settings
 ---
 
 ## 功能简介
 
-全局平台设置是 BOSS 管理门户的核心配置页面，管理员可以在此自定义平台的品牌展示（Logo、名称、副标题）、页头导航行为、IAM 认证策略等全局参数。所有设置保存后将立即作用于整个平台的所有用户界面。
+平台设置维护平台在控制台与登录页中展示的品牌信息，以及页头导航与访问管理相关的开关。所有配置写入平台全局配置，保存后作用于整个平台界面。
 
-:::tip
-平台设置的修改会影响所有用户的界面体验，请在修改前确认变更方案，部分配置可能需要用户刷新页面才能看到效果。
-:::
+本页对应 BOSS 控制台「平台管理 → **平台设置**」（菜单文案取自 `navbar.platform_setting`）。
 
 ## 进入路径
 
-BOSS → 平台设置 → **平台设置**
+BOSS 控制台 → 平台管理 → **平台设置**
 
-路径：`/boss/settings/platform`
+前端真实路由：`/settings/platform`
 
-## 设置结构总览
+## 页面结构
 
-```mermaid
-graph TD
-    A[全局平台设置] --> B[Logo 与标题配置]
-    A --> C[页头导航配置]
-    A --> D[IAM 认证配置]
-    
-    B --> B1[平台 Logo]
-    B --> B2[平台名称]
-    B --> B3[平台副标题]
-    
-    C --> C1[文档链接 URL]
-    C --> C2[语言切换开关]
-    C --> C3[导航首页开关]
-    
-    D --> D1[BOSS 自助注册开关]
-```
+页面由三张配置卡自上而下组成：
 
-## 页面说明
+| 卡片 | 组件 | i18n 标题 |
+|------|------|----------|
+| 标题与 Logo | `LogoAndTitleConfig` | `title_and_logo` = 标题与Logo |
+| 平台头部栏配置 | `HeaderConfig` | `header_config` = 平台头部栏配置 |
+| 访问管理配置 | `IamConfig` | `iam_config` = 访问管理配置 |
 
-![平台设置](/assets/screenshots/boss/settings-platform.png)
+每张卡片都有独立的 **确认** 按钮；保存成功后提示「更新成功,请刷新页面」。
 
----
+## 标题与 Logo
 
-## Logo 与标题配置（LogoAndTitleConfig）
+| 字段 | 标识 | 类型 | 校验 |
+|------|------|------|------|
+| 平台标题 | `title` | 文本 | 最大 **10 个字符** |
+| Logo | `logo` | 图片上传 | 最大 **3 MB**，仅 **PNG / SVG** |
+| 副标题 | `subTitle` | 文本 | 最大 **20 个字符** |
 
-Logo 与标题配置控制平台的品牌展示，包括登录页、导航栏和浏览器标签页中展示的内容。
+> ⚠️ 注意: `subTitle` 的上限是 **20 个字符**，不是 10 个。
 
-### 平台 Logo
+Logo 上传行为：
 
-| 属性 | 说明 |
-|------|------|
-| 文件大小限制 | 最大 **3MB** |
-| 支持格式 | **PNG**、**SVG** |
-| 上传方式 | 点击上传区域选择文件，支持裁剪（Crop）调整 |
+1. 选择 PNG 或 SVG 文件（不超过 3 MB）
+2. 上传即刻发生（`POST /api/iam/logo/avatar`，表单字段名 `avatar`），成功后可获得新的 Logo 地址
+3. 裁剪时保持原始宽高比（`preserveAspectRatio`）
+4. 点击卡片底部的 **确认** 才会把 Logo 地址一并保存到全局配置
 
-操作步骤：
+> 💡 提示: 上传成功后只是拿到图片地址；配置本身仍需点「确认」保存。
 
-1. 点击 Logo 上传区域
-2. 选择本地 PNG 或 SVG 文件（不超过 3MB）
-3. 在裁剪对话框中调整 Logo 显示区域
-4. 确认裁剪后点击 **保存**
+## 平台头部栏配置
 
-![Logo 上传](/assets/screenshots/boss/settings-platform-logo.png)
+| 字段 | 标识 | 类型 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| 显示文档入口 | `enableDocument` | 开关 | 开启 | 关闭后不显示文档入口 |
+| 文档地址 | `documentUrl` | 文本 | 空 | 仅在「显示文档入口」开启时出现 |
+| 启用语言切换 | `enableLanguageSwitch` | 开关 | 开启 | 控制页头的语言切换入口 |
 
-:::warning
-Logo 建议使用透明背景的 PNG 或 SVG 格式，以确保在不同主题（亮色/暗色）下均有良好的显示效果。
-:::
+> ⚠️ 注意: schema 与默认值中还定义了 `enableNavbarIndex`（默认开启），但界面上的对应开关**已被注释隐藏**，当前无法通过页面修改。
 
-### 平台名称
+## 访问管理配置
 
-| 属性 | 说明 |
-|------|------|
-| 字段名 | `title` |
-| 最大长度 | **10 个字符** |
-| 用途 | 显示在导航栏 Logo 旁边，以及浏览器标签页标题 |
+| 字段 | 标识 | 类型 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| 启用BOSS平台注册 | `enableBossSignup` | 开关 | 关闭 | 是否允许用户自助注册 |
 
-### 平台副标题
+> ⚠️ 注意: 在企业私有化部署场景下建议保持关闭，由管理员手动创建账号。
 
-| 属性 | 说明 |
-|------|------|
-| 字段名 | `subTitle` |
-| 最大长度 | **10 个字符** |
-| 用途 | 显示在登录页面 Logo 下方的说明文字 |
-
-:::tip
-名称和副标题的字符限制为 10 个字符，中文字符同样算 1 个字符。请确保名称简洁有力。
-:::
-
----
-
-## 页头导航配置（HeaderConfig）
-
-页头导航配置控制平台顶部导航栏的行为和功能开关。
-
-### 文档链接 URL
-
-| 属性 | 说明 |
-|------|------|
-| 字段名 | `documentUrl` |
-| 类型 | URL 文本输入 |
-| 用途 | 设置导航栏 **帮助文档** 按钮点击后跳转的地址 |
-
-用户点击导航栏的文档/帮助图标时，将在新标签页中打开此 URL。留空则隐藏帮助按钮。
-
-### 语言切换开关
-
-| 属性 | 说明 |
-|------|------|
-| 字段名 | `enableLanguageSwitch` |
-| 类型 | 开关（Switch） |
-| 默认值 | 开启 |
-| 用途 | 控制导航栏是否显示语言切换按钮（中文/英文） |
-
-:::tip
-如果平台仅面向中文用户，可以关闭语言切换以简化界面。
-:::
-
-### 导航首页开关
-
-| 属性 | 说明 |
-|------|------|
-| 字段名 | `enableNavbarIndex` |
-| 类型 | 开关（Switch） |
-| 默认值 | 开启 |
-| 用途 | 控制导航栏是否显示返回首页（Index）入口 |
-
----
-
-## IAM 认证配置（IamConfig）
-
-IAM 认证配置控制平台的身份认证相关策略。
-
-### BOSS 自助注册开关
-
-| 属性 | 说明 |
-|------|------|
-| 字段名 | `enableBossSignup` |
-| 类型 | 开关（Switch） |
-| 默认值 | 关闭 |
-| 用途 | 控制是否允许用户通过注册页面自助注册账号 |
-
-:::warning
-在企业私有化部署场景下，建议关闭自助注册功能，改为由管理员手动创建用户账号以确保安全可控。
-:::
-
----
-
-## API 接口
+## 接口
 
 | 接口 | 方法 | 说明 |
 |------|------|------|
-| `/api/iam/public-configurations/global` | `GET` | 匿名读取平台公开配置值 |
-| `/api/iam/namespaces/system/configurations/global` | `PUT` | 保存完整平台配置，需要管理员权限 |
-| `/api/iam/logo/avatar` | `POST` | 上传平台 Logo 文件 |
+| `/api/iam/global-config` | `GET` | 读取平台全局配置 |
+| `/api/iam/global-config` | `PUT` | 保存平台全局配置（每次保存都会合并当前配置） |
+| `/api/iam/logo/avatar` | `POST` | 上传 Logo（`multipart/form-data`，字段名 `avatar`） |
 
-### 请求示例
-
-```json
-// PUT /api/iam/namespaces/system/configurations/global
-{
-  "value": {
-    "title": "AI 平台",
-    "subTitle": "智能计算",
-    "documentUrl": "https://docs.example.com",
-    "enableLanguageSwitch": true,
-    "enableNavbarIndex": true,
-    "enableBossSignup": false
-  }
-}
-```
-
----
-
-## 应用变更流程
-
-```mermaid
-sequenceDiagram
-    participant Admin as 管理员
-    participant BOSS as BOSS 管理端
-    participant API as 后端 API
-    participant Users as 用户端
-
-    Admin->>BOSS: 修改平台配置
-    Admin->>BOSS: 上传新 Logo（如需）
-    BOSS->>API: POST /api/iam/logo/avatar
-    API-->>BOSS: Logo 上传成功
-    Admin->>BOSS: 点击"保存"
-    BOSS->>API: PUT /api/iam/namespaces/system/configurations/global
-    API-->>BOSS: 配置保存成功
-    API->>Users: 新配置即时生效
-    Note over Users: 用户刷新页面后<br/>可看到新 Logo 和标题
-```
+> ⚠️ 注意: 三张卡片各自提交时都会执行 `{ ...当前配置, ...表单值 }` 的合并保存，因此只改一项也会整体回写一次全局配置。
 
 ## 权限要求
 
-需要 **系统管理员** 角色才能访问全局平台设置页面。
-
-:::tip
-平台设置会影响所有子系统（Rune、Moha、ChatApp）的公共部分。各子系统的专属配置请在对应的模块设置中管理。
-:::
+需要 **系统管理员** 角色。

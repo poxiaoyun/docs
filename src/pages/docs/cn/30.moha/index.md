@@ -1,7 +1,6 @@
 ---
 title: 魔哈仓库
-updated: '2026-03-24'
-author: Rune Docs Team
+updated: '2026-09-12'
 description: 面向模型、数据集、镜像与 Space 协作的魔哈仓库用户文档，覆盖首页、仓库浏览、协作讨论、文件管理与设置发布。
 tags:
   - moha
@@ -14,7 +13,7 @@ tags:
 
 ## 当前产品信息架构
 
-根据 `xiaoshi-rune-console` 前端实现，魔哈的主要用户入口包括：
+根据前端实现，魔哈的主要用户入口包括：
 
 | 模块 | 作用 | 典型入口 |
 | --- | --- | --- |
@@ -23,7 +22,8 @@ tags:
 | 数据集 | 浏览和维护数据集资源 | `/moha/datasets` |
 | 镜像仓库 | 管理镜像类资源 | `/moha/images` |
 | Space 工作空间 | 浏览和部署可交互应用类资源 | `/moha/spaces` |
-| 协作 | 查看概览、文件、讨论、标签与设置 | `/moha/repository` |
+| 组织空间 | 从团队视角浏览某个组织的资源 | `/moha/organizations/:organization` |
+| 协作 | 查看内容、文件、版本冻结、讨论与设置 | `/moha/repository` |
 
 ## 典型使用流程
 
@@ -37,8 +37,11 @@ tags:
 
 - [快速开始](/moha/quickstart)
 - [首页与个人工作台](/moha/home)
+- [我创建的资源](/moha/home/created-by-me)
+- [我的收藏](/moha/home/liked-by-me)
 - [模型仓库](/moha/models)
 - [数据集](/moha/datasets)
 - [镜像仓库](/moha/images)
 - [Space 工作空间](/moha/spaces)
-- [协作](/moha/repository)
+- [仓库详情页结构](/moha/repository/detail)
+- [版本冻结](/moha/repository/freezes)

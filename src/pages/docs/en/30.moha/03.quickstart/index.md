@@ -1,38 +1,34 @@
 ---
-title: 'quick start'
-updated: '2025-12-04'
-author: Rune Docs Team
-description: 'Quickly get started with the basic functions of Moha Repository.'
+title: 'Quick Start'
+updated: '2026-09-12'
+description: 'Get started with Moha repositories.'
 tags:
   - moha
   - quickstart
 ---
-## Quick start
 
-Help you quickly get started with the core functions of Moha Repository.
+# Quick Start
 
-## Preparation
+## Before you start
 
-Before using Moha Repository, please confirm:
+1. **Account** — sign in, or ask an administrator to create one.
+2. **Tenant / organization** — resources belong to an organization; select or create one.
+3. **Access token** — used for Git operations and API calls.
 
-1. **Have a platform account** — Contact the administrator to create an account or register yourself
-2. **Join the organization** — Models and datasets belong to the organization, and you need to join or create the organization first
-3. **Create Access Token** — used for authentication for Git operations and API calls
-
-## Quick start process
+## Flow
 
 ```mermaid
 flowchart LR
-    A["注册/登录"] --> B["加入组织"]
-    B --> C["创建令牌"]
-    C --> D["上传模型/数据集"]
-    D --> E["协作分享"]
+    A["Sign in"] --> B["Select tenant/org"]
+    B --> C["Get access token"]
+    C --> D["Create repository and upload files"]
+    D --> E["Load resources or deploy a Space"]
 ```
 
-## Related documents
+## Pages
 
-| Documentation | Description |
-|------|------|
-| [Beginner's Guide](./01.guide) | Complete operation process from scratch |
-| [Account Settings](./02.account) | Configure personal information and preferences |
-| [Access Token](./03.token) | Create and manage authentication tokens |
+| Page | Description |
+| --- | --- |
+| [Quick Start](/moha/quickstart/guide) | End-to-end walkthrough |
+| [Account Settings](/moha/quickstart/account) | Account, security and credentials (IAM) |
+| [Access Tokens](/moha/quickstart/token) | View and use the access token |

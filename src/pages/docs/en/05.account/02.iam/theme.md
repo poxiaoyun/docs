@@ -1,55 +1,72 @@
 ---
 title: 'Theme & Preferences'
-updated: '2026-03-23'
+updated: '2026-09-12'
+description: Appearance preferences with automatic save.
 ---
 
 ## Overview
 
-The Theme & Preferences page lets you customize the visual appearance and behavior of Rune Console.
+The Theme page maintains the current account's appearance preferences. Every change is **auto-saved to the server** — there is no Save button.
+
+- Route: `/iam/account/theme`
+- View: `src/pages/iam/account/theme.tsx`
 
 ## Navigation
 
-**IAM → Theme** (or top-right avatar → Theme)
+Top-right avatar → Settings → top Tab "Theme"
 
-## Theme Options
+## Configurable Options
 
-![Theme Settings](/assets/screenshots/console/iam-theme.png)
+Only the following five groups are rendered:
 
-### Color Mode
+| Option | Key | Values |
+|--------|-----|--------|
+| Color mode | `mode` | Light / Dark (shows a `System` label when following the system) |
+| Contrast | `contrast` | `default` / `hight` |
+| Compact layout | `compactLayout` | On / Off |
+| Primary color | `primaryColor` | `default`, `preset1` – `preset5` (6 swatches) |
+| Font family | `fontFamily` | 4 options (below) |
+| Font size | `fontSize` | Slider, range 12–20, step 1 |
 
-| Option | Description |
-|--------|-------------|
-| **Light** | White background with dark text |
-| **Dark** | Dark background with light text (recommended for low-light environments) |
-| **System** | Automatically follows your OS dark/light mode preference |
+> ⚠️ Note: The `visibility` object also computes `navLayout`, `navColor`, and `direction`, but the render code does **not** use them (`theme.tsx:69-79`). Therefore this page has **no** "Nav Layout", "Nav Color", or "Direction" sections.
 
-Click the desired mode to apply it immediately — no page reload required.
+### Font Family
 
-### Language
+The 4 `fontFamily` options (`theme.tsx:190-195`):
 
-Switch the interface language:
+1. `themeConfig.fontFamily.primary` (default primary font)
+2. `Inter Variable`
+3. `DM Sans Variable`
+4. `Nunito Sans Variable`
 
-| Language | Code |
-|----------|------|
-| Simplified Chinese | `zh-CN` |
-| English | `en` |
+The `Variable` suffix is stripped in the UI.
 
-The language preference is saved to your account and applies across all devices.
+### Defaults
 
-### Layout Preferences
+Defaults come from `src/settings/user/settings-config.ts:10-21`:
 
-| Preference | Options | Description |
-|------------|---------|-------------|
-| Sidebar | Expanded / Collapsed | Default state of the left navigation |
-| Density | Comfortable / Compact | Table and list row height |
-| Date Format | ISO / US / EU | How dates are displayed throughout the UI |
-| Timezone | Select from list | Timezone used for displaying timestamps |
+| Option | Default |
+|--------|---------|
+| `contrast` | `default` |
+| `compactLayout` | `false` |
+| `primaryColor` | `preset1` |
+| `fontSize` | `16` |
+| `fontFamily` | `themeConfig.fontFamily.primary` |
+| `mode` | `themeConfig.defaultMode` |
 
-## Saving Preferences
+> ⚠️ Note: The `mode` default ultimately depends on `themeConfig.defaultMode`, whose concrete value is not expanded here.
 
-Preferences are saved automatically when you change them. Changes take effect immediately.
+## Auto-Save
+
+| Item | Description |
+|------|-------------|
+| Read | `GET` current user settings (`getCurrentUserSettings`) |
+| Save | Each change auto-calls `setCurrentUserSettings` with the current settings |
+
+> ⚠️ Note: The exact save endpoint path is defined in `src/services/setting.ts`; the response shape is not expanded field by field here.
 
 ## Notes
 
-- Theme preferences are stored per-user in the platform and synchronized across browsers.
-- System-level font size respects your browser's accessibility font size settings.
+- Changes are saved immediately; there is no Save button
+- Nav layout / nav color / direction are not part of this page
+- Font size is a slider from 12 to 20px

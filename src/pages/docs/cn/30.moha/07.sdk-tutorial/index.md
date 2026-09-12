@@ -1,6 +1,6 @@
 ---
 title: SDK 教程
-updated: '2026-03-24'
+updated: '2026-09-12'
 author: Rune Docs Team
 description: Moha SDK 教程与 API 参考，涵盖 CLI、Python SDK 和 Transformers/Datasets 集成。
 tags:

@@ -30,8 +30,9 @@ export const MOHA_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         children: [
           { title: '首页概览', path: '/moha/home/overview' },
           { title: '我创建的资源', path: '/moha/home/created-by-me' },
-          { title: '组织空间', path: '/moha/home/organizations' },
-          { title: '访问令牌与公告', path: '/moha/home/token-announcements' }
+          { title: '我的收藏', path: '/moha/home/liked-by-me' },
+          { title: '访问令牌与公告', path: '/moha/home/token-announcements' },
+          { title: '组织空间', path: '/moha/home/organizations' }
         ],
       },
       {
@@ -54,7 +55,7 @@ export const MOHA_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         product: 'moha',
         children: [
           { title: '数据集介绍', path: '/moha/datasets/info' },
-          { title: '数据集的创建', path: '/moha/datasets/create' },
+          { title: '数据集创建', path: '/moha/datasets/create' },
           { title: '数据集的上传', path: '/moha/datasets/upload' },
           { title: '数据集的下载', path: '/moha/datasets/download' },
           { title: '数据集卡片', path: '/moha/datasets/card' },
@@ -92,10 +93,11 @@ export const MOHA_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
           { title: '文件浏览与版本查看', path: '/moha/repository/files' },
           { title: '讨论与协作', path: '/moha/repository/discussion' },
           { title: '仓库设置与发布', path: '/moha/repository/settings' },
+          { title: '版本冻结', path: '/moha/repository/freezes' },
         ],
       },
       {
-        title: '进阶集成',
+        title: '高阶使用',
         path: '/moha/advanced',
         icon: 'ic-tour',
         product: 'moha',
@@ -112,17 +114,17 @@ export const MOHA_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         icon: 'ic-job',
         product: 'moha',
         children: [
-          { title: '快速开始', path: '/moha/sdk-tutorial/quick-start' },
-          { title: 'SDK 概述', path: '/moha/sdk-tutorial/intro' },
+          { title: '5 分钟快速开始', path: '/moha/sdk-tutorial/quick-start' },
+          { title: 'SDK 介绍', path: '/moha/sdk-tutorial/intro' },
           { title: '安装与环境配置', path: '/moha/sdk-tutorial/install' },
           { title: '认证与 Token 管理', path: '/moha/sdk-tutorial/authentication' },
-          { title: 'CLI 工具参考', path: '/moha/sdk-tutorial/cli-reference' },
-          { title: 'HubClient API', path: '/moha/sdk-tutorial/hub-api' },
-          { title: '上传下载与同步', path: '/moha/sdk-tutorial/transfer' },
-          { title: '数据加密', path: '/moha/sdk-tutorial/encryption' },
-          { title: '模型加载与推理', path: '/moha/sdk-tutorial/transformers-datasets' },
-          { title: '模型训练与导出', path: '/moha/sdk-tutorial/training-export' },
-          { title: '错误处理与 FAQ', path: '/moha/sdk-tutorial/error-handling' },
+          { title: 'CLI 工具完整参考', path: '/moha/sdk-tutorial/cli-reference' },
+          { title: 'HubClient API 详解', path: '/moha/sdk-tutorial/hub-api' },
+          { title: '上传、下载与文件同步', path: '/moha/sdk-tutorial/transfer' },
+          { title: '数据加密与安全传输', path: '/moha/sdk-tutorial/encryption' },
+          { title: '与 Transformers & Datasets 集成', path: '/moha/sdk-tutorial/transformers-datasets' },
+          { title: '模型训练与导出工作流', path: '/moha/sdk-tutorial/training-export' },
+          { title: '错误处理与常见问题', path: '/moha/sdk-tutorial/error-handling' },
         ],
       }
     ],

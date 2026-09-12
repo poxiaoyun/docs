@@ -5,7 +5,7 @@ export const RUNE_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
     subheader: 'Rune AI Platform',
     items: [
       {
-        title: 'Home',
+        title: 'Overview',
         path: '/rune',
         icon: 'ic-tour',
         product: 'rune',
@@ -21,50 +21,65 @@ export const RUNE_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
           { title: 'Inference Hosting', path: '/rune/guide/inference' },
         ],
       },
+    ],
+  },
+  {
+    // Order and labels follow the real console sidebar (src/routes/navs/rune.tsx):
+    // Home → Marketplace / Workbench (Inference, Training & Fine-tuning, Runebox, Apps,
+    // Templates, Storage) / Observability (Metrics, Logs, Evaluations)
+    subheader: 'Rune Console',
+    items: [
       {
-        title: 'Console',
+        title: 'Console Overview',
         path: '/rune/console',
         icon: 'ic-dashboard',
         product: 'rune',
-        children: [
-          { title: 'Dashboard', path: '/rune/console/dashboard' },
-          { title: 'Workspaces', path: '/rune/console/workspace' },
-          { title: 'Dev Environments', path: '/rune/console/devenv' },
-          { title: 'Fine-tuning', path: '/rune/console/finetune' },
-          { title: 'Experiments', path: '/rune/console/experiment' },
-          { title: 'Inference Services', path: '/rune/console/inference' },
-          { title: 'Applications', path: '/rune/console/app' },
-          { title: 'App Market', path: '/rune/console/app-market' },
-          { title: 'Evaluations', path: '/rune/console/evaluation' },
-          { title: 'Run Logs', path: '/rune/console/logging' },
-          { title: 'Storage Volumes', path: '/rune/console/storage' },
-          { title: 'Quota Management', path: '/rune/console/quota' },
-          { title: 'Flavors', path: '/rune/console/flavor' },
-        ],
       },
+      { title: 'Home', path: '/rune/console/dashboard' },
+      { title: 'Marketplace', path: '/rune/console/app-market' },
+      { title: 'Inference', path: '/rune/console/inference' },
+      { title: 'Training & Fine-tuning', path: '/rune/console/finetune' },
+      { title: 'Development', path: '/rune/console/devenv' },
+      { title: 'Apps', path: '/rune/console/app' },
+      { title: 'Storage', path: '/rune/console/storage' },
+      { title: 'Metrics', path: '/rune/console/experiment' },
+      { title: 'Logs', path: '/rune/console/logging' },
+      { title: 'Evaluations', path: '/rune/console/evaluation' },
+      { title: 'AI Diagnostics Assistant', path: '/rune/console/diagnostics' },
+    ],
+  },
+  {
+    // Maps to the "Templates" menu and the tenant tabs (Overview / Members / Quota / Flavor / Workspace)
+    subheader: 'Resources & Quotas',
+    items: [
       {
-        title: 'ChatApp',
-        path: '/rune/chatapp',
-        icon: 'ic-chat',
-        product: 'rune',
-        children: [
-          { title: 'Model Experience', path: '/rune/chatapp/experience' },
-          { title: 'Model Comparison', path: '/rune/chatapp/compare' },
-          { title: 'Parameter Debugging', path: '/rune/chatapp/debug' },
-          { title: 'Token Calculator', path: '/rune/chatapp/token' },
-        ],
-      },
-      {
-        title: 'Resource Management',
+        title: 'Resources Overview',
         path: '/rune/resources',
         icon: 'ic-file',
         product: 'rune',
-        children: [
-          { title: 'Instance Templates', path: '/rune/resources/templates' },
-          { title: 'Quotas & Policies', path: '/rune/resources/quotas' },
-          { title: 'Compute Flavors', path: '/rune/resources/flavors' },
-        ],
       },
+      { title: 'Templates', path: '/rune/resources/templates' },
+      { title: 'Quota', path: '/rune/console/quota' },
+      { title: 'Flavor', path: '/rune/console/flavor' },
+      { title: 'Workspaces', path: '/rune/console/workspace' },
+    ],
+  },
+  {
+    // Header links: Models / Playground / Comparison / API Keys / Usage analysis
+    subheader: 'ChatApp',
+    items: [
+      {
+        title: 'Overview',
+        path: '/rune/chatapp',
+        icon: 'ic-chat',
+        product: 'rune',
+      },
+      { title: 'Models', path: '/rune/chatapp/marketplace' },
+      { title: 'Playground', path: '/rune/chatapp/experience' },
+      { title: 'Comparison', path: '/rune/chatapp/compare' },
+      { title: 'API Keys', path: '/rune/chatapp/token' },
+      { title: 'Usage analysis', path: '/rune/chatapp/usage-statistics' },
+      { title: 'Parameter Tuning', path: '/rune/chatapp/debug' },
     ],
   },
 ];

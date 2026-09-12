@@ -1,81 +1,79 @@
 ---
-title: 'Debug Console'
-updated: '2026-03-23'
+title: 'Parameter Tuning'
+updated: '2026-09-12'
+description: 'Entry points, fields and ranges of the ChatApp parameter popover (ChatParamsPopover).'
 ---
 
-## Overview
+## Note: this is not a standalone page
 
-The Debug Console provides a developer-focused interface for testing model APIs, tuning parameters, and inspecting raw request/response data. It is designed for prompt engineering and integration development.
+ChatApp has **no standalone "Debug" page**, and the top navigation has no such entry. What used to be called "parameter debugging" is really **the parameter popover at the top of the Experience page (and the Comparison page)** — `ChatParamsPopover` (`src/pages/chatapp/components/chat-params-popover.tsx`), which renders the parameter form `ChatParams` (`chat-params.tsx`).
 
-## Navigation
+| Fact | Evidence |
+|------|----------|
+| The top navigation has 5 items and no `debug` | `layout.tsx:24-50` |
+| There is no `/chatapp/debug` route | `routes/paths.ts:71-85` — `paths.chatapp` only contains experience / marketplace / contrast / analysis / docs / token |
+| Parameter popover components | `components/chat-params-popover.tsx`, `components/chat-params.tsx` |
 
-**ChatApp → Debug**
+> ⚠️ **Note**: This page exists to keep the URL `/rune/chatapp/debug` alive; it documents the parameter popover, not a standalone page.
 
-## Interface Overview
+## How to open it
 
-![Debug Console](/assets/screenshots/console/chatapp-debug.png)
+| Page | Entry | Evidence |
+|------|-------|----------|
+| **Experience** | The **parameter settings** icon in the top info bar (a popover below `xl`; the right-hand "parameters" panel at `xl` and above) | `chat.tsx:602-614`, `components/model-inspector-panel.tsx:184` |
+| **Comparison** | A parameter icon in each column header; the two sides are independent | `contrast.tsx:582,632` |
 
-The debug console consists of:
+The popover is an overlay: click the icon to open it and click outside to close. Edits are written back to the parent state **immediately** and take effect on the next message; already-sent messages are unaffected.
 
-- **System Prompt area**: Set the `system` role message
-- **Messages area**: Build a multi-turn conversation manually
-- **Parameters panel**: Fine-grained control over all generation parameters
-- **Raw API view**: Toggle to see the exact JSON sent to and received from the API
-- **Run button**: Send the configured request
+## Available fields
 
-## Request Configuration
+| Field | Control | Default | Range | Step |
+|-------|---------|---------|-------|------|
+| **System** (`systemPrompt`) | Multiline text area | `""` (empty) | Free text | — |
+| **Top P** (`topP`) | Slider + number input | `0.8` | 0.1 ~ 1.0 | 0.1 |
+| **Temperature** (`temperature`) | Slider + number input | `0.7` | 0 ~ 1.999 | 0.1 |
+| **Max Tokens** (`maxTokens`) | Slider + number input | `4096` | 0 ~ 32768 | 10 |
+| **Stop** (`stop`) | Multiline text area | `""` (empty) | Free text | — |
 
-### System Prompt
+- When System or Stop is non-empty a clear button appears on the right.
+- The number inputs reject scientific notation (`e`/`E`/`+`/`-`/`.`).
+- `Max Tokens = 0` means unlimited.
 
-Enter instructions for the model's behavior at the top of the conversation. Example:
+> 💡 **Tip**: On the same page (Experience or Comparison) the two entry points — the top popover and the right-hand panel at `xl` — are bound to the same parameter state, so editing one updates the other.
 
+## How parameters reach the request
+
+The parameters are written into the Chat Completions request body (`chat.tsx:159-173`):
+
+```json
+{
+  "messages": [ ... ],
+  "stream": true,
+  "model": "<model id>",
+  "temperature": 0.7,
+  "max_tokens": 4096,
+  "top_p": 0.8,
+  "reasoning_effort": "high",
+  "stop": null
+}
 ```
-You are a helpful customer service agent for XiaoShi AI. 
-Always respond in a professional tone and escalate unresolved 
-issues to a human representative.
-```
 
-### Multi-turn Messages
+| UI field | Request field | Note |
+|----------|---------------|------|
+| System | `messages[0]` (`role: "system"`) | Inserted only when non-empty |
+| Temperature | `temperature` | |
+| Top P | `top_p` | |
+| Max Tokens | `max_tokens` | |
+| Stop | `stop` | `["<value>"]` when non-empty, `null` when empty |
 
-Build a manual conversation thread:
+## Tuning suggestions
 
-1. Click **Add Message**.
-2. Select the role: **User** or **Assistant**.
-3. Enter the message content.
-4. Add more turns as needed.
-5. Click **Run**.
+| Scenario | Suggestion |
+|----------|-----------|
+| Factual Q&A / FAQ | Low Temperature (0.1 ~ 0.3) and a moderately lower Top P |
+| Code generation | Temperature 0.2 ~ 0.4, with a System Prompt specifying language and style |
+| Creative writing / brainstorming | Temperature 0.8 ~ 1.2 |
+| Output truncated | Increase Max Tokens |
+| Reproducing upstream output | Use `stop` to set a stop sequence, or inspect the usage log on the token detail page |
 
-### Parameter Controls
-
-| Parameter | Range | Description |
-|-----------|-------|-------------|
-| Model | — | Select the target LLM Gateway channel |
-| Temperature | 0.0 – 2.0 | Response randomness |
-| Max Tokens | 1 – 16384 | Maximum tokens in the response |
-| Top-P | 0.0 – 1.0 | Nucleus sampling |
-| Top-K | 1 – 100 | Top-K sampling |
-| Frequency Penalty | -2.0 – 2.0 | Token repetition penalty |
-| Presence Penalty | -2.0 – 2.0 | Topic repetition penalty |
-| Stop Sequences | Text list | Tokens that stop generation |
-| Stream | Toggle | Enable/disable streaming |
-
-## Raw API View
-
-Toggle **Show Raw** to display:
-
-- **Request JSON**: The exact payload sent to `/v1/chat/completions`
-- **Response JSON**: The raw API response (or streamed chunks)
-- **Latency**: Time to first token (TTFT) and total response time
-- **Token Usage**: Prompt tokens, completion tokens, total tokens
-
-This is useful for building integrations and understanding exactly what the model receives.
-
-## Saving Prompts
-
-Click **Save as Template** to save the current configuration (system prompt, messages, parameters) as a reusable template for future debugging sessions.
-
-## Permissions
-
-| Action | Required Role |
-|--------|--------------|
-| Use debug console | Developer or Admin |
+> ⚠️ **Note**: The ranges here match the back-end contract, but how much each model actually honours these parameters is decided by the upstream channel; the front end adds no further constraint, so this documentation cannot confirm the behaviour of every model.

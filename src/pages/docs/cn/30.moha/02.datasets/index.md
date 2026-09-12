@@ -1,20 +1,30 @@
 ---
 title: 数据集
-updated: '2025-12-04'
-author: Rune Docs Team
-description: 构建、管理和共享高质量的训练数据集。
+updated: '2026-09-12'
+description: 介绍魔哈数据集的浏览、创建、上传下载、卡片与维护。
 tags:
   - moha
   - datasets
 ---
 
-## 概述
+# 数据集
 
-构建、管理和共享高质量的训练数据集，支持多种数据格式和治理规范。
+数据集用于托管、版本化和共享训练/评测数据，与模型仓库共享同一套仓库框架：文件、讨论、冻结与设置。
 
-## 主要功能
+## 进入路径
 
-- [数据集创建](./create)：创建和上传数据集
-- [数据治理](./governance)：数据质量管理和版本控制
-- [数据标注](./annotation)：标注工具和协作流程
-- [数据安全](./security)：访问控制和隐私保护
+魔哈顶部导航 -> **数据集**，路由 `/moha/datasets`。
+
+## 本模块内容
+
+| 页面 | 说明 |
+| --- | --- |
+| [数据集介绍](/moha/datasets/info) | 列表页的搜索、筛选、卡片与收藏 |
+| [数据集的创建](/moha/datasets/create) | 创建表单字段与校验规则 |
+| [数据集的上传](/moha/datasets/upload) | Web、Git 与 SDK 上传方式 |
+| [数据集的下载](/moha/datasets/download) | Web、Git 与选择性下载 |
+| [数据集卡片](/moha/datasets/card) | 详情页 README 与元数据展示 |
+| [数据集的维护](/moha/datasets/maintain) | 分支/标签、更新与回滚 |
+| [数据集文件规范](/moha/datasets/rules) | 命名、目录结构与许可证建议 |
+
+> ⚠️ 注意: 前端代码中没有数据集「标注」与「数据安全」独立模块，相关内容已从文档中移除。

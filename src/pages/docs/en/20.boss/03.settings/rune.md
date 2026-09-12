@@ -1,129 +1,74 @@
 ---
-title: 'Rune Settings'
-updated: '2026-03-23'
+title: AI Platform Settings
+updated: '2026-09-12'
+description: 'Rune display settings — logo, product title, description and the Moha / KMS addresses.'
+tags:
+  - boss
+  - settings
 ---
 
-## Feature Overview
+## Feature overview
 
-Rune Settings is used to customize the branding of the **Rune AI Workbench** subsystem, including the module Logo, navigation bar title, and module description. Configuration is saved under the `config.rune` namespace and changes are immediately reflected in the Rune module's navigation bar and entry page.
+Rune settings maintain the display information for the Rune intelligent computing platform: logo, product title, product description, and the Moha and KMS service addresses; the page also has a second **development-service idle monitor** card. The display values are written into the `rune` field and top-level address fields of the platform global configuration.
 
-> 💡 Tip: Rune Settings is independent from Global Platform Settings. Global settings control the branding for the entire platform, while Rune Settings only affects the Rune AI Workbench module itself.
+This page corresponds to **Platform management → AI Platform Settings** in the Boss console (menu label from `navbar.rune_setting`).
 
-## Access Path
+## Access path
 
-BOSS → Platform Settings → **Rune Settings**
+Boss console → Platform management → **AI Platform Settings**
 
-Path: `/boss/settings/rune`
+Console route: `/settings/rune`
 
-## Page Description
+## Settings
 
-![Rune Settings](/assets/screenshots/boss/settings-rune.png)
+| UI label | Field | Type | Constraint | Notes |
+|----------|-------|------|-----------|-------|
+| (Logo upload) | `rune.logo` | Image upload | Max **128 KB**, **PNG / SVG** | Stored as Base64 |
+| Product title | `rune.title` | Text | Max **10 characters** | Navbar title |
+| Product description | `rune.description` | Multiline | Max **100 characters**, 4 rows | Product summary |
+| Moha address | `mohaAddress` | Text | — | Moha service address |
+| KMS address | `kmsAddress` | Text | — | KMS service address |
 
-## Configuration Items
+> ⚠️ Note: the field name for "product title" is **`rune.title`** (the UI label is `navbar_title`), not a `navbar_title` field.
 
-### Module Logo
+> ⚠️ Note: the logo limit (128 KB) is much smaller than the platform logo (3 MB) because it is embedded in the configuration as Base64.
 
-| Property | Description |
-|----------|-------------|
-| Field Name | `logo` |
-| File Size Limit | Maximum **128KB** |
-| Encoding | **Base64** encoded storage |
-| Supported Formats | **PNG**, **SVG** |
-| Purpose | Displayed in the Rune module's navigation bar and entry page |
+## Development-service idle monitor
 
-Steps:
+Below the display-settings card there is a second card, "Development-service idle monitor", which automatically suspends a development service when its GPU / vGPU utilization stays at 0% for a continuous period. It saves independently into `rune.idleMonitor.im`.
 
-1. Click the Logo upload area
-2. Select a local PNG or SVG file (no larger than 128KB)
-3. Preview the Logo effect
-4. Confirm and click **Save**
+| UI label | Field | Type | Constraint | Default |
+|----------|-------|------|-----------|---------|
+| Enable automatic suspension of idle development services | `rune.idleMonitor.im.enabled` | Switch | — | Off |
+| Idle duration (minutes) | `rune.idleMonitor.im.idleMinutes` | Number | Integer, **1–10080** minutes | **30** |
 
-> ⚠️ Note: The Rune module Logo size limit (128KB) is much smaller than the global platform Logo (3MB), because the module Logo is stored directly in the configuration database as Base64. Overly large files will affect configuration loading performance.
+- The "idle duration" field is disabled while the switch is off.
+- Submitting writes `rune.idleMonitor.im.{enabled, idleMinutes}` and shows the same "Updated, please refresh the page" message on success.
 
-### Navigation Bar Title
+## Save behaviour
 
-| Property | Description |
-|----------|-------------|
-| Field Name | `navbar_title` |
-| Maximum Length | **10 characters** |
-| Purpose | Title text displayed next to the Logo in the Rune module navigation bar |
+- **Logo upload**: triggers a save immediately (writing `rune.logo`, `rune.title`, `rune.description`, `mohaAddress` and `kmsAddress` together)
+- **Confirm**: saves all form fields
 
-The default value is "Rune". Administrators can customize it to match the organization or product name, such as "AI Compute Platform", "Smart Computing Center", etc.
-
-### Module Description
-
-| Property | Description |
-|----------|-------------|
-| Field Name | `description` |
-| Maximum Length | **100 characters** |
-| Input Rows | **4-row** text area |
-| Purpose | Introductory text displayed on the Rune module's entry page or about page |
-
-The description text explains the Rune module's purpose and functionality to users.
-
-## Configuration Storage
-
-All Rune settings are saved under the `config.rune` namespace:
+Written structure:
 
 ```yaml
-# config.rune namespace
-logo: "data:image/png;base64,iVBORw0KGgo..."   # Base64 encoded Logo
-navbar_title: "Rune"                             # Navigation bar title
-description: "Rune AI Workbench provides..."     # Module description
+mohaAddress: "https://moha.example.com"
+kmsAddress: "https://kms.example.com"
+rune:
+  logo: "data:image/png;base64,iVBORw0KGgo..."
+  title: "Rune"
+  description: "Product summary"
 ```
 
-## Settings Effect Preview
+A successful save shows "Updated, please refresh the page".
 
-After saving, the following locations in the Rune module are affected:
+## Requests
 
-| Display Location | Affected Configuration |
-|------------------|----------------------|
-| Top-left of navigation bar | Logo + Navigation bar title |
-| Module entry page | Logo + Description |
-| Browser tab | Navigation bar title (as tab prefix) |
+| Request | Method | Notes |
+|---------|--------|-------|
+| `/api/iam/global-config` | `PUT` | Save the global configuration (Rune settings live in `rune`) |
 
-![Rune Settings Effect Preview](/assets/screenshots/boss/settings-rune-preview.png)
+## Permissions
 
-> 💡 Tip: After saving changes, users who already have the Rune module open need to refresh the page to see the latest configuration. Users opening the page anew will see the updated content directly.
-
-## Steps
-
-1. Navigate to BOSS → Platform Settings → Rune Settings
-2. Modify the Logo, title, and description as needed
-3. Preview the changes on the page
-4. Click the **Save** button to submit changes
-5. Confirm changes have taken effect (refresh the Rune module page to verify)
-
-> ⚠️ Note: If the uploaded Logo file exceeds 128KB, the system will display an error and reject the upload. Please compress the image in advance or use SVG vector format to control file size.
-
-## Configuration Structure Overview
-
-```mermaid
-graph TD
-    A[Rune Settings] --> B[Module Logo]
-    A --> C[Navigation Bar Title]
-    A --> D[Module Description]
-    
-    B --> B1[128KB Limit]
-    B --> B2[PNG / SVG Format]
-    B --> B3[Base64 Encoded Storage]
-    
-    C --> C1[Max 10 Characters]
-    C --> C2[Displayed in Navigation Bar]
-    
-    D --> D1[Max 100 Characters]
-    D --> D2[4-Row Text Area]
-    D --> D3[Displayed on Entry Page]
-```
-
-## FAQ
-
-| Issue | Solution |
-|-------|----------|
-| Logo upload failed | Check if file size exceeds 128KB and if the format is PNG or SVG |
-| Title truncated | Reduce character count to 10 or fewer |
-| Changes not taking effect | Confirm you clicked Save, then refresh the Rune module page |
-
-## Permission Requirements
-
-Requires the **System Administrator** role to access the Rune Settings page.
+Requires the **system administrator** role.

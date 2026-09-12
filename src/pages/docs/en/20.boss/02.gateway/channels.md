@@ -1,249 +1,121 @@
 ---
-title: 'Model Channel Management'
-updated: '2026-03-23'
+title: Channel Management
+updated: '2026-09-12'
+description: 'Configure upstream model channels — provider, endpoint, upstream keys, visibility and rate limits.'
+tags:
+  - boss
+  - gateway
 ---
 
-## Feature Overview
-
-Model Channels are a core concept of the LLM Gateway — each channel represents an **upstream model service endpoint**, which can be an external API provider (such as OpenAI, Alibaba Cloud DashScope), a third-party platform, or an internally deployed inference service. The gateway intelligently distributes user API requests to appropriate channels for processing based on routing strategies.
+## Feature overview
 
-The channel management page allows system administrators to configure and manage all upstream model channels, including adding, editing, enabling/disabling, visibility control, and routing priority settings.
+A channel represents one **upstream model service endpoint** and is the gateway's access configuration for external or internal inference services. The gateway routes client requests to matching channels based on visibility and priority.
 
-> 💡 Tip: Channels are the bridge connecting client requests to upstream inference services. Properly configuring multiple channels enables load balancing, fault tolerance, and unified multi-model access.
+This page corresponds to **LLM gateway → Model service → Channels** in the Boss console (menu label from `navbar.model_list`).
 
-## Access Path
-
-BOSS → LLM Gateway → **Model List**
-
-Path: `/boss/gateway/channels`
-
-## Channel Routing Architecture
+## Access path
 
-```mermaid
-flowchart LR
-    Client["Client Request<br/>model: gpt-4"] -->|API Key| Gateway["LLM Gateway"]
-    
-    Gateway -->|"1. Auth Verification"| Auth["Token Verification"]
-    Auth -->|"2. Content Moderation"| Mod["Content Moderation"]
-    Mod -->|"3. Route Matching"| Router["Smart Router"]
-    
-    Router -->|"Priority 1"| Ch1["Channel A<br/>OpenAI Official<br/>visibility: public"]
-    Router -->|"Priority 2"| Ch2["Channel B<br/>Azure OpenAI<br/>visibility: public"]
-    Router -->|"Priority 3"| Ch3["Channel C<br/>Local vLLM<br/>visibility: tenant"]
-    
-    Router -.->|"Disabled"| Ch4["Channel D<br/>Disabled"]
-    
-    Gateway -->|"4. Audit Record"| Audit["Audit Log"]
-    
-    style Ch4 fill:#ccc,stroke:#999
-```
+Boss console → LLM gateway → Model service → **Channels**
 
-## Channel List
+| Action | Console route |
+|--------|--------------|
+| List | `/service-registrations` |
+| Create | `/service-registrations/new` |
+| Edit | `/service-registrations/:id/edit` |
 
-![Channel List](/assets/screenshots/boss/gateway-channels.png)
+> ⚠️ Note: these are the real console routes from `src/routes/paths.ts`, not docs-site URLs.
 
-| Column | Field | Description | Notes |
-|--------|-------|-------------|-------|
-| Visibility + Name | `visibility` + `name` | Channel name with colored visibility label prefix | Label colors: `public`=green(success), `tenant`=orange(warning), `private`=default |
-| Provider + API URL | `provider` + `apiBase` | Model provider name and API base URL | — |
-| Supported Models | `supportedModels` | List of models supported by the channel | Displayed using `CollapseItem` folding for multiple models |
-| RPM | `rateLimitRPM` | Requests per minute limit | 0 means unlimited |
-| TPM | `rateLimitTPM` | Tokens per minute limit | 0 means unlimited |
-| Enabled Status | `enabled` | Whether the channel is enabled | Displayed using `Label` component |
-| Tenant/Workspace | `tenant` / `workspace` | Associated tenant and workspace | Only has values for tenant/private visibility |
-| Creator | `owner` | Channel creator | — |
-| Created At | `createdAt` | Channel creation time | Timestamp format |
-| Actions | — | Enable/Disable, Change Visibility, Edit, Delete | — |
+## Channel list
 
-### Visibility Label Colors
+| Column | Field | Description |
+|--------|-------|-------------|
+| Name | `name` | Channel name |
+| Provider / endpoint | `provider` + `apiBase` | Provider id on the first line, API base URL on the second |
+| Visibility | `visibility` | Label color: `public`=success, `tenant`=warning, `private`=default |
+| Supported models | `supportedModels` | Collapsed list, `-` when empty |
+| Priority | `priority` | Shown as an info label when `> 0` |
+| RPM / TPM | `rateLimitRPM` / `rateLimitTPM` | `0` renders as an infinity icon; TPM is shown in `K` |
+| Status | `enabled` | Enabled / disabled icon |
+| Tenant / workspace | `tenant` / `workspace` | Only for tenant or private channels |
+| Owner | `owner` | Channel creator |
+| Created at | `createdAt` | Date-time |
 
-| Visibility | Label Color | Meaning |
-|------------|-------------|---------|
-| `public` | 🟢 Green (success) | Public channel, available to all users |
-| `tenant` | 🟠 Orange (warning) | Tenant-level channel, available only to specified tenant |
-| `private` | ⚪ Default | Private channel, available only to specified workspace |
+The list supports multi-select and a refresh button.
 
-## Filter Conditions
+### Filters
 
-The page provides the following filters to quickly locate target channels:
+| Filter | Values |
+|--------|--------|
+| Visibility | `public` / `private` / `tenant` |
+| Provider | see "Supported providers" |
 
-| Filter | Description | Options |
-|--------|-------------|---------|
-| Visibility | Filter by visibility level | `public` / `tenant` / `private` |
-| Provider | Filter by model provider | See supported list below |
+> ⚠️ Note: the provider filter lists only **9** values (no `deepseek`) while the create/edit form offers **10** (including `deepseek`). The two differ in the source (`list.tsx` filters vs `service-registration-new-edit-form.tsx` select); this document follows the form.
 
-## Supported Model Providers
+## Supported providers
 
-The platform has built-in support for the following 9 model providers:
+The create/edit form ships 10 providers; selecting one fills in its default API base (edit mode does not overwrite existing values):
 
-| Provider | Identifier | Description | API Format |
-|----------|-----------|-------------|------------|
-| **OpenAI** | `openai` | OpenAI official API | OpenAI standard |
-| **OpenAI Compatible** | `openai-compatible` | Third-party services compatible with OpenAI format | OpenAI standard |
-| **Alibaba Cloud DashScope** | `dashscope` | Alibaba Cloud large model service | DashScope |
-| **Baidu ERNIE** | `baidu` | Baidu ERNIE Bot API | Baidu proprietary |
-| **Moonshot** | `moonshot` | Kimi large model API | OpenAI compatible |
-| **Zhipu AI** | `zhipu` | Zhipu GLM series API | Zhipu proprietary |
-| **SiliconFlow** | `siliconflow` | SiliconFlow inference platform | OpenAI compatible |
-| **OpenRouter** | `openrouter` | OpenRouter aggregation platform | OpenAI compatible |
-| **Volcengine (Doubao)** | `doubao` | ByteDance Doubao large model | Volcengine |
+| Select label | `provider` | Default `apiBase` | Chat path |
+|--------------|-----------|------------------|-----------|
+| openai | `openai` | `https://api.openai.com` | `/v1/chat/completions` |
+| openai-compatible | `openai-compatible` | (empty, fill manually) | `/chat/completions` |
+| dashscope (通义千问) | `dashscope` | `https://dashscope.aliyuncs.com/compatible-mode/v1` | `/chat/completions` |
+| baidu (百度千帆) | `baidu` | `https://qianfan.baidubce.com/v2` | `/chat/completions` |
+| moonshot (月之暗面) | `moonshot` | `https://api.moonshot.cn/v1` | `/chat/completions` |
+| zhipu (智谱) | `zhipu` | `https://open.bigmodel.cn/api/paas/v4` | `/chat/completions` |
+| siliconflow (硅基流动) | `siliconflow` | `https://api.siliconflow.cn/v1` | `/chat/completions` |
+| openrouter | `openrouter` | `https://openrouter.ai/api/v1` | `/chat/completions` |
+| doubao (豆包) | `doubao` | `https://ark.cn-beijing.volces.com/api/v3` | `/chat/completions` |
+| deepseek (DeepSeek) | `deepseek` | `https://api.deepseek.com/v1` | `/chat/completions` |
 
-> 💡 Tip: For inference services deployed within the platform (such as vLLM, TGI), typically select the `openai-compatible` provider type, as these services generally provide OpenAI-compatible API interfaces.
+The endpoint field shows the resulting Chat URL live: `{apiBase}{chat path}`.
 
-## Create Channel
+> 💡 Tip: for self-hosted inference services (vLLM, TGI, …) pick `openai-compatible` and fill in the base URL manually.
 
-Click the **Add Channel** button to open the creation form:
+## Create / edit a channel
 
-![Create Channel](/assets/screenshots/boss/gateway-channel-create.png)
+Use **Create channel** in the top-right corner or **Edit** in a row action. Both share the same form.
 
-### Basic Information
+| Field | Key | Type | Required | Notes |
+|-------|-----|------|----------|-------|
+| Tenant | `tenantId` | Tenant select | ✅ | Searchable; disabled tenants cannot be selected |
+| Workspace | `workspace` | Text | — | Workspace id |
+| Name | `name` | Text | ✅ | Channel name |
+| Provider | `provider` | Select | ✅ | 10 providers, default `openai` |
+| Endpoint | `apiBase` | Text | ✅ | Default `https://api.openai.com` |
+| Visibility | `visibility` | Select | ✅ | `public` / `tenant` / `private`, default `public` |
+| Priority | `priority` | Number | ✅ | Min `0`, default `0`; higher wins |
+| Enabled | `enabled` | Switch | ✅ | On by default |
+| RPM | `rateLimitRPM` | Number | — | `0`–`10000`; empty means unlimited |
+| TPM(K) | `rateLimitTPM` | Number | — | `0`–`100000`; empty means unlimited |
+| Upstream API keys | `apiKeys` | Multiline | — | One key per line, split on submit |
+| Supported models | `supportedModels` | Multiline | — | One model per line, split on submit |
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| Name | Text | ✅ | Unique channel name |
-| Description | Textarea | — | Channel description |
-| Provider | Select | ✅ | Model provider (9 options) |
-| API URL | URL | ✅ | Inference service API base URL |
-| API Keys | Password List | — | Upstream service API Keys (supports multiple, used in round-robin) |
+> 💡 Tip: a value of `0` (or an empty field) is submitted as `0`, meaning unlimited.
 
-### Visibility & Ownership
+### Fields defined but not exposed
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| Visibility | Select | ✅ | `public` / `tenant` / `private` |
-| Tenant | Tenant Selector | Conditional | Required when visibility is `tenant` or `private` |
-| Workspace | Workspace Selector | Conditional | Required when visibility is `private` |
-| Enabled | Toggle | ✅ | Whether to enable immediately after creation |
-| Priority | Number | — | Routing priority (higher number = higher priority) |
+The `Channel` type also defines `description`, `modelAliasMap`, `modelMetadata` (`supportsThinking`, `maxContextTokens`, …), `engine` and `adapters`, and i18n keys exist for them, but the current form renders **no controls** for them.
 
-### Model Configuration
+> ⚠️ Note: these fields have no UI entry and no other editing surface in this repo; their server behaviour is unconfirmed and not documented here.
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| Supported Models | Tag Input | ✅ | List of model names supported by the channel |
-| Model Alias Mapping | Key-Value Table | — | Map requested model names to actual model names |
+## Channel actions
 
-**Model Alias Mapping** (`modelAliasMap`) example:
+| Action | Description |
+|--------|-------------|
+| Enable / disable | Toggles `enabled` then refreshes |
+| Update visibility | Dialog that submits **only** `visibility` (`public` / `tenant` / `private`) |
+| Edit | Navigates to `/service-registrations/:id/edit` |
+| Delete | Requires typing the channel name to confirm |
 
-```json
-{
-  "gpt-4": "gpt-4-turbo-preview",
-  "claude-3": "claude-3-opus-20240229"
-}
-```
+> ⚠️ Note: the visibility dialog does not adjust tenant or workspace; narrowing visibility immediately blocks users who previously could route to the channel.
 
-When a user requests `gpt-4`, the gateway maps it to `gpt-4-turbo-preview` before sending to the upstream channel.
+## Relations to other modules
 
-### Model Metadata
+- Billing, rate limiting, auditing and moderation are governed by global switches in [Gateway config](/boss/gateway/config).
+- Context length and prices live in [Model metadata](/boss/gateway/model-metadata), separate from a channel's `supportedModels`.
+- Requests handled by channels can be inspected in [Call logs](/boss/gateway/audit) and [Operations overview](/boss/gateway/operations).
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `supportsThinking` | Boolean | Whether the model supports chain-of-thought (Thinking/Reasoning) |
-| `maxContextTokens` | Number | Maximum context Token count for the model |
+## Permissions
 
-### Rate Limiting
-
-| Field | Type | Description |
-|-------|------|-------------|
-| RPM | Number | Maximum requests per minute for the channel (0 = unlimited) |
-| TPM | Number | Maximum Tokens per minute for the channel (0 = unlimited) |
-
-> ⚠️ Note: Channel RPM/TPM limits protect upstream services from overload and are independent from API Key rate limiting — they form two separate rate limiting layers.
-
-### Advanced Configuration
-
-| Field | Type | Description |
-|-------|------|-------------|
-| Engine | Text | Inference engine identifier |
-| Adapters | List | Request/response adapter configuration |
-
-## Channel Operations
-
-### Enable / Disable
-
-Click the enable/disable toggle in the list to quickly control channel availability:
-
-- **Disable**: The channel will no longer receive routed requests; in-progress requests are not affected
-- **Enable**: The channel resumes receiving routed requests
-
-> 💡 Tip: When temporarily maintaining upstream services, disable the corresponding channel first, then re-enable after maintenance completes to avoid routing user requests to unavailable services.
-
-### Change Visibility
-
-Click **Change Visibility** in the action menu to open a selection dialog for switching the channel's visibility level:
-
-- **public → tenant**: From public to tenant-level, requires specifying the associated tenant
-- **tenant → private**: From tenant-level to private, requires specifying the associated workspace
-- **private → public**: From private to public
-
-> ⚠️ Note: After narrowing the visibility scope, users who could previously use the channel will no longer be able to route to it.
-
-### Edit
-
-Modify all editable fields of the channel, including API URL, API Keys, model list, etc.
-
-### Delete
-
-Delete the channel after confirming in the dialog.
-
-> ⚠️ Note: After deleting a channel, requests using that channel's models may fail because there are no available channels. Before deleting, confirm that other channels can provide service for the same models.
-
-## Channel Data Structure
-
-The complete Channel object contains the following fields:
-
-```typescript
-interface Channel {
-  id: string;                    // Channel unique ID
-  name: string;                  // Channel name
-  description: string;           // Description
-  provider: string;              // Model provider
-  apiBase: string;               // API base URL
-  apiKeys: string[];             // API Key list (round-robin)
-  owner: string;                 // Creator
-  tenant: string;                // Associated tenant
-  workspace: string;             // Associated workspace
-  visibility: 'public' | 'tenant' | 'private'; // Visibility
-  priority: number;              // Routing priority
-  enabled: boolean;              // Whether enabled
-  supportedModels: string[];     // Supported models list
-  modelAliasMap: Record<string, string>; // Model alias mapping
-  modelMetadata: {               // Model metadata
-    supportsThinking: boolean;
-    maxContextTokens: number;
-  };
-  rateLimitRPM: number;          // RPM limit
-  rateLimitTPM: number;          // TPM limit
-  engine: string;                // Inference engine
-  adapters: any[];               // Adapter list
-}
-```
-
-## Best Practices
-
-### Multi-Channel Redundancy
-
-Configure multiple channels for critical models, leveraging the gateway's [fault tolerance mechanism](./config.md#fault-tolerance-configuration) for automatic failover:
-
-```mermaid
-flowchart TD
-    Request["Request: model=gpt-4"] --> Router["Router"]
-    Router -->|"Priority 1"| Primary["Primary Channel<br/>OpenAI Official"]
-    Router -->|"Priority 2"| Backup1["Backup Channel 1<br/>Azure OpenAI"]
-    Router -->|"Priority 3"| Backup2["Backup Channel 2<br/>Local Compatible Service"]
-    
-    Primary -->|"Failure → Fallback"| Backup1
-    Backup1 -->|"Failure → Fallback"| Backup2
-```
-
-### Internal/External Channel Distribution
-
-Use visibility and priority to achieve reasonable distribution between internal and external services:
-
-- **Public Channels**: For all users, using external APIs (e.g., OpenAI)
-- **Tenant Channels**: For specific tenants, using tenant-dedicated inference services
-- **Private Channels**: For specific workspaces, using internally deployed inference instances
-
-## Permission Requirements
-
-Requires the **System Administrator** role. System administrators can create and manage all channels. Channels created via inference service registration (from the Console side) also appear in this list.
+Requires the **system administrator** role.

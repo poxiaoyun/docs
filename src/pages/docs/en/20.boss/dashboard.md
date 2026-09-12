@@ -1,223 +1,199 @@
 ---
-title: 'Platform Dashboard'
-updated: '2026-03-23'
+title: Home
+updated: '2026-09-12'
+description: 'The three cards on the BOSS dashboard (Moha resources, LLM Gateway, platform management) with their real metrics and data sources.'
 ---
 
 ## Feature Overview
 
-The BOSS Dashboard is the **landing page** that system administrators see upon entering the admin portal, providing platform-wide operational awareness. The dashboard presents the most critical operational data through three themed cards — **Moha Resource Card**, **LLM Gateway Card**, and **Platform Management Card** — helping administrators quickly grasp resource usage, gateway operational status, and overall platform health.
+The BOSS Dashboard is the **landing page** administrators see when entering the admin portal. It presents key operational data through three cards:
+
+| Card | Component | Grid width | Core content |
+|------|-----------|------------|--------------|
+| Moha Resource Card | `MohaCard` | 12 columns (own row) | Model / dataset / Space / image counts, storage usage, visibility distribution, trending resources |
+| LLM Gateway Card | `GatewayCard` | 8 columns | Requests / average latency / total tokens / error rate, 24h trend, Top 5 models |
+| Platform Management Card | `ManagementCard` | 4 columns | Tenant / cluster / user counts, platform snapshot, attention items |
+
+The grid sizes are defined in `src/pages/boss/home/dashboard.tsx:26-38`.
+
+> 💡 Tip: All three cards fetch from real backend endpoints (via `useCacheFetch`). There is no mock or sample data. When an endpoint fails, the card shows a skeleton or a warning instead of fake numbers.
 
 ## Access Path
 
 BOSS → Home / Dashboard
 
-Path: `/boss/dashboard`
+Console routes `/` (index) and `/dashboard` render the same page (`src/routes/sections/boss.tsx:223-224`).
 
 ## Page Layout
 
-![BOSS Dashboard](/assets/screenshots/boss/dashboard.png)
-
-The dashboard uses a responsive grid layout with three cards distributed by column width:
+The three cards use a responsive grid: the Moha card spans all 12 columns, while the gateway card takes 8 columns and the management card takes 4.
 
 ```mermaid
-graph LR
-    subgraph DashboardLayout["📊 BOSS Dashboard (24-Column Grid)"]
-        direction TB
-        A["🗂️ Moha Resource Card<br/>12 Columns<br/>Resource Stats / Trends / Distribution"]
-        B["🔑 LLM Gateway Card<br/>8 Columns<br/>KPIs / Trend Charts / Top Models"]
-        C["🏢 Platform Management Card<br/>4 Columns<br/>Stats / Health / To-Do Items"]
-    end
+graph TB
+    Moha["Moha Resource Card (12 columns)"]
+    Gateway["LLM Gateway Card (8 columns)"]
+    Mgmt["Platform Management Card (4 columns)"]
+    Moha --> Row["Second row"]
+    Row --> Gateway
+    Row --> Mgmt
 ```
-
-| Card | Column Width | Position | Core Content |
-|------|-------------|----------|--------------|
-| Moha Resource Card | 12 Columns | Left | Model/Dataset/Workspace/Image stats, trending lists, public/private distribution |
-| LLM Gateway Card | 8 Columns | Center | Total requests/avg latency/total tokens/error rate, 24h trend chart, Top 5 models |
-| Platform Management Card | 4 Columns | Right | Tenant/cluster/user counts, resource health, pending items |
-
-> 💡 Tip: The current dashboard data is **mock data** (simulated data) used to demonstrate the dashboard's layout and interaction design. Future versions will connect to real backend APIs, at which point all metrics will update in real time.
 
 ---
 
 ## Moha Resource Card
 
-![Moha Resource Card](/assets/screenshots/boss/dashboard-moha-card.png)
+Data comes from `getMohaDashboard` (`src/services/moha`), using the `assetStatistics`, `distribution` and `trendingNow` fields.
 
-The Moha Resource Card occupies **12 columns** (the left half of the page) and is the largest card on the dashboard, providing a comprehensive view of Moha data repository resources.
+### Asset Totals
 
-### Resource Total Statistics
+The left side shows four counters, with storage usage in the header:
 
-The top of the card displays four counters showing core resource totals:
+| Metric | Field | Description |
+|--------|-------|-------------|
+| **Models** | `assetStatistics.models` | Total model repositories |
+| **Datasets** | `assetStatistics.datasets` | Total datasets |
+| **Spaces** | `assetStatistics.spaces` | Total workspaces |
+| **Images** | `assetStatistics.images` | Total images |
+| **Storage** | `assetStatistics.storage` | Formatted with `fData` |
 
-| Metric | Icon | Description |
-|--------|------|-------------|
-| **Model Count** | 🤖 | Total number of all model repositories on the platform |
-| **Dataset Count** | 📊 | Total number of all datasets on the platform |
-| **Workspace Count** | 💻 | Total number of all Space workspaces |
-| **Image Count** | 🐳 | Total number of images in the image registry |
+### Visibility Distribution
 
-Each counter shows the **public count** and **private count** for that resource type, providing an intuitive view of resource openness.
+A three-segment bar with a percentage caption on the right:
 
-### Trending Resource Lists
+| Field | Meaning |
+|-------|---------|
+| `distribution.public` | Public |
+| `distribution.internal` | Internal |
+| `distribution.private` | Private |
 
-The middle section of the card displays **trending resource rankings** for each resource category, sorted by recent downloads, visits, or citations:
+Percentages are computed against the sum of the three; when the total is 0, a "no data" state is shown. Note there are **three** segments (public / internal / private), not two.
 
-- **Trending Models** — Models most used or downloaded by users recently
-- **Trending Datasets** — Datasets most cited or downloaded recently
-- **Trending Spaces** — Space applications with the highest recent traffic
+### Trending Now
 
-Each trending item includes the resource name, owning organization, trend arrow (↑/↓), and change magnitude.
+The right side lists trending resources (`trendingNow`):
 
-### Public/Private Distribution
+| Item | Field |
+|------|-------|
+| Name | `alias` (preferred) or `name`; tooltip shows `organization/name` |
+| Type label | `type`: `model` / `dataset` / `space` / `image` |
+| Size | `size` (formatted with `fData`, may be empty) |
+| Downloads | `downloads` |
 
-The bottom of the card uses a distribution bar or pie chart to show the **public vs. private** ratio for each resource type, helping administrators understand the platform's resource openness:
-
-```mermaid
-pie title Resource Visibility Distribution (Example)
-    "Public Resources" : 65
-    "Private Resources" : 35
-```
-
-> 💡 Tip: If the proportion of private resources is too high, it may indicate that the platform's resource-sharing culture needs improvement; conversely, if there are too many public resources, data security compliance should be monitored.
+An empty state is shown when the list is empty.
 
 ---
 
 ## LLM Gateway Card
 
-![LLM Gateway Operations Card](/assets/screenshots/boss/dashboard-gateway-card.png)
-
-The LLM Gateway Card occupies **8 columns** and focuses on displaying real-time operational data for the LLM Gateway, helping administrators monitor model service availability and performance.
+Data comes from `getUsageDashboard` (`src/services/usage`) with parameters `interval: 'hour'`, `seriesLimit: 24`, `topN: 5`.
 
 ### Four Core KPIs
 
-The top of the card displays four indicator cards showing core gateway operational metrics, each with a **trend arrow** (compared to the previous period):
+| KPI | Field | Change-rate field | Trend |
+|-----|-------|-------------------|-------|
+| **Requests** | `summary.requestCount` | `requestCountChangeRate` | Up is positive |
+| **Average latency** | `summary.averageLatencyMillis` | `averageLatencyChangeRate` | Down is positive |
+| **Total tokens** | `summary.totalTokens` | `totalTokensChangeRate` | Up is positive |
+| **Error rate** | `summary.errorRate` | `errorRateChangeRate` | Down is positive |
 
-| KPI Metric | Unit | Trend | Description |
-|------------|------|-------|-------------|
-| **Total Requests** | Count | ↑/↓ | Total API request count within the statistical period |
-| **Average Latency** | ms | ↑/↓ | Average response latency across all requests |
-| **Total Tokens** | Count | ↑/↓ | Total tokens consumed within the statistical period |
-| **Error Rate** | % | ↑/↓ | Percentage of requests returning non-2xx responses |
+Trend rules (`getTrendDisplay`):
 
-Trend arrow color guide:
-- 🟢 **Green up arrow**: Request/token volume growth (indicates increased usage, positive)
-- 🔴 **Red up arrow**: Latency/error rate increase (indicates quality degradation, requires attention)
-- 🟢 **Green down arrow**: Latency/error rate decrease (indicates quality improvement)
+- An absolute rate < 0.0001 is treated as `flat` and shown as `0%`
+- Metrics where lower is better (latency, error rate) pass `lowerIsBetter = true`
+- Improvement is green, degradation is red; increases are prefixed `+`, decreases `-`
 
-### 24-Hour Trend Chart
+### Traffic Trend Chart
 
-The middle section displays an **area chart** showing request volume distribution over a 24-hour time axis. Through the trend chart, administrators can:
+An area chart using `timeseries` with **two series**:
 
-- Identify **peak request periods** (e.g., weekday mornings 9-11 AM)
-- Discover **abnormal request spikes** (e.g., sudden large volumes of requests)
-- Assess whether **service capacity** meets peak demand
+- Requests `requestCount`
+- Tokens `totalTokens`
 
-### Top 5 Popular Models
+X-axis labels are formatted by `interval`: `hour` → `HH:mm`, `day` → `MM-DD`. An empty state is shown when there is no data.
 
-The bottom of the card displays the top **5 models** ranked by request volume:
+### Top 5 Models
 
-| Rank | Display Field | Description |
-|------|--------------|-------------|
-| 1-5 | Model Name | The model identifier being called |
-| — | Request Share | Percentage of total requests for this model |
-| — | Progress Bar | Visual representation of request share |
+The right side lists `topModels` (up to 5) by request count:
 
-> ⚠️ Note: The gateway card currently uses mock data. After connecting to real data, KPI metrics and trend charts will support custom time range filtering.
+| Item | Field |
+|------|-------|
+| Model name | `displayName` |
+| Requests | `requestCount` |
+| Share progress bar | `requestCount / summary.requestCount` |
+| Extra info | Shortened `totalTokens` and `requestCount` |
+
+### Error State
+
+On failure the card renders `Alert severity="error"` with the error message and shows no metrics.
 
 ---
 
 ## Platform Management Card
 
-![Platform Management Card](/assets/screenshots/boss/dashboard-management-card.png)
+Data comes from three list endpoints: `listTenants`, `listUsers`, `listClusters` (`src/services/tenant`, `src/services/user`, `src/services/cloud`) with `{ page: 1, size: 1000 }`.
 
-The Platform Management Card occupies **4 columns** (far right of the page), displaying platform infrastructure and management status in a compact format.
+### Platform Counts
 
-### Platform Statistics
+Three totals at the top of the card:
 
-The top of the card displays three core platform entity counts:
+| Metric | Source |
+|--------|--------|
+| **Tenants** | Tenant list `total` |
+| **Clusters** | Cluster list `total` |
+| **Users** | User list `total` |
 
-| Metric | Description |
-|--------|-------------|
-| **Tenant Count** | Total number of tenants created on the platform |
-| **Cluster Count** | Total number of connected Kubernetes clusters |
-| **User Count** | Total number of registered users on the platform |
+### Platform Snapshot
 
-### Resource Health
+Once a list is fully loaded (`total <= items.length`), these snapshot items appear; an item is omitted when its data source fails:
 
-The middle section uses progress bars or gauge displays to show the health of key infrastructure metrics:
+| Snapshot item | Condition |
+|---------------|-----------|
+| **Enabled tenants** | `tenant.enabled === true` |
+| **Connected clusters** | `cluster.status.connected === true`, else `status.phase === 'connected'` |
+| **Published clusters** | `cluster.published === true` |
+| **MFA-enabled users** | `user.mfa?.enabled === true` |
 
-| Metric | Healthy Range | Warning Range | Critical Range |
-|--------|--------------|---------------|----------------|
-| **CPU Usage** | 0%-60% | 60%-85% | >85% |
-| **Memory Usage** | 0%-70% | 70%-90% | >90% |
-| **Resource Capacity** | 0%-75% | 75%-90% | >90% |
+### Attention Items
 
-Health status is displayed with color coding:
-- 🟢 **Green**: Healthy status, resources are sufficient
-- 🟡 **Yellow**: Warning status, requires attention
-- 🔴 **Red**: Critical status, requires immediate action
+The bottom section lists only items with a count greater than 0; each shows a name summary and a "Detail" link:
 
-### Pending Items
+| Attention item | Target |
+|----------------|--------|
+| Disabled tenants (`!tenant.enabled`) | `/iam/tenants` |
+| Disconnected clusters (`!isClusterConnected`) | `/rune/clusters` |
+| Unpublished clusters (`!cluster.published`) | `/rune/clusters` |
 
-The bottom of the card lists items currently awaiting administrator action, such as:
+When evaluation is possible and there are no attention items, a green "all clear" block is shown.
 
-- Pending tenant approval requests
-- Clusters with connection errors
-- Tenants approaching quota limits
-- Expired API Keys
+### Data Source Failure
 
-> 💡 Tip: Pending items are clickable and navigate directly to the corresponding management pages, helping administrators respond quickly.
+If any source fails, a warning banner lists the unavailable sources (tenant / user / cluster).
+
+> ⚠️ Note: This card does **not** contain CPU / memory / capacity health thresholds, nor any to-do list for approvals, quota warnings, or expired API keys — none of these exist in the console source. The real attention items are the table above.
 
 ---
 
-## Dashboard Data Architecture
+## Data Refresh
 
-```mermaid
-flowchart TB
-    subgraph Frontend["Dashboard Frontend"]
-        MohaCard["Moha Resource Card"]
-        GatewayCard["LLM Gateway Card"]
-        MgmtCard["Platform Management Card"]
-    end
-    
-    subgraph DataSources["Backend Data Sources"]
-        MohaAPI["Moha API<br/>Model/Dataset/Image Counts"]
-        GatewayAPI["Gateway API<br/>Request Stats/Latency/Tokens"]
-        IAMAPI["IAM API<br/>User/Tenant Counts"]
-        RuneAPI["Rune API<br/>Cluster Status/Resource Usage"]
-    end
-    
-    MohaCard --> MohaAPI
-    GatewayCard --> GatewayAPI
-    MgmtCard --> IAMAPI
-    MgmtCard --> RuneAPI
-    
-    subgraph Mock["Current Status"]
-        MockData["⚠️ Using Mock Data<br/>Real APIs in future versions"]
-    end
-    
-    MohaAPI -.-> MockData
-    GatewayAPI -.-> MockData
-    IAMAPI -.-> MockData
-    RuneAPI -.-> MockData
-```
+- All three cards use `useCacheFetch`, fetching on demand and caching client-side.
+- The page exposes no manual refresh button or refresh interval; the Moha and gateway cards fetch independently, while the management card fetches tenants / users / clusters in one pass.
 
 ## FAQ
 
-### Why isn't the dashboard data real-time?
+### Is the dashboard data real-time?
 
-The current version of the dashboard uses mock (simulated) data for display purposes, to validate the dashboard's layout design and interaction experience. Future versions will gradually connect to real backend APIs, at which point data will automatically update according to the configured refresh interval.
+Card data comes from real endpoints, not mocks. Data is fetched and cached when the page loads; the page itself does not poll or offer a custom refresh interval.
 
 ### Can the cards be customized?
 
-The layout and content of the current three cards are fixed. The **Dynamic Dashboard** feature in platform settings can be used to create more flexible custom monitoring panels, supporting the free addition and arrangement of chart components.
+The layout and content of the three cards are fixed; there is no drag-and-drop or add/remove component. Cluster-level custom monitoring lives on the separate cluster dynamic dashboard page (`/rune/clusters/:cluster/dynamic-dashboard`), not here.
 
-### How to determine if the platform is healthy?
+### How do I judge platform health?
 
-Focus on the following signals:
-1. **Resource health** indicators are all green
-2. **Gateway error rate** is below 1%
-3. **Average latency** is within a reasonable range (recommended < 500ms)
-4. **Pending items** count is 0
+Watch these signals:
 
-> ⚠️ Note: Even if the dashboard shows everything is normal, it is recommended to regularly visit each management module for in-depth checks. The dashboard shows summary information and cannot cover all details.
+1. The management card shows **no attention items** ("all clear")
+2. Gateway **error rate is 0 or near 0**
+3. Gateway **average latency** is in a reasonable range
+
+> ⚠️ Note: The dashboard only summarizes counts and cannot cover every detail. Use the corresponding modules for in-depth checks.

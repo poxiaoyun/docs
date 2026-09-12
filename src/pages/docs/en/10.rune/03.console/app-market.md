@@ -1,212 +1,75 @@
 ---
 title: 'App Market'
-updated: '2026-03-23'
+updated: '2026-09-12'
+description: 'Template browsing, category tabs, search, recommended carousel, and one-click deployment in App Market.'
+tags:
+  - rune
+  - console
 ---
 
-## Feature Overview
+# App Market
 
-The App Market is the template center of the Rune platform, providing a rich collection of pre-built product templates covering various scenarios including inference deployment, fine-tuning training, dev environments, experiment management, and general applications. Users can browse, search, and filter templates, view detailed documentation and version information, and jump to the deployment page with one click.
+The App Market is Rune's template center. It provides product templates covering inference, fine-tuning, dev environments, experiments, applications, and other scenarios. Users can browse, search, view template details and versions, and jump to the deployment page with one click.
 
-### Core Capabilities
+Path: `/rune/app-market`
 
-- **Multi-Dimensional Filtering**: Supports locating templates through category, tag, and keyword multi-dimensional filtering
-- **Responsive Card Display**: Templates are displayed in intuitive card grid layout, adaptive to screen width
-- **Detailed Documentation**: Each template provides complete README.md documentation, version list, and changelog
-- **One-Click Deployment**: Jump directly from the template detail page to the deployment page, automatically carrying product ID and version information
+## Browsing Templates
 
-## Navigation Path
-
-Rune Workbench → Left Navigation → **App Market**
-
----
-
-## Browse Templates
-
-![App Market](/assets/screenshots/console/rune-app-market.png)
-
-The App Market uses the **ProductListView** component for display, providing an intuitive template browsing experience.
+App Market uses the product list component to display templates.
 
 ### Template Cards
 
-Each template is displayed as a card containing the following information:
+Each card shows the template icon, name, summary, category, and version information; the card grid adapts to the window width.
 
-| Field | Description |
-|-------|-------------|
-| Icon | Template icon/logo |
-| Name | Template product name |
-| Summary | Brief template description (1-2 lines) |
-| Category | Classification label (e.g., inference, fine-tuning, etc.) |
-| Tags | Technical tags (e.g., PyTorch, vLLM, etc.) |
-| Version | Latest version number |
+### Category Tabs
 
-### Category Filtering
+The top of the page provides category tabs (`FilterTabs`), each with a count, whose values come from the template category configuration:
 
-Click the category tabs at the top of the page to filter templates by product category:
+| Category identifier | Description |
+| --- | --- |
+| `inference` | Inference deployment templates |
+| `tune` | Fine-tuning templates |
+| `im` | Interactive dev environment templates |
+| `experiment` | Experiment tracking templates |
+| `app` | General application templates |
 
-| Category | Identifier | Description | Typical Templates |
-|----------|-----------|-------------|-------------------|
-| Inference | `inference` | Model inference deployment templates | vLLM, TGI, Triton |
-| Fine-tuning | `tune` | Model fine-tuning training templates | LLaMA-Factory, Swift |
-| Dev Environment | `im` | Interactive dev environment templates | JupyterLab, VSCode Server |
-| Experiment | `experiment` | Experiment management and evaluation templates | MLflow, WandB |
-| Application | `app` | General application templates | ChatBot, API Service |
-
-> 💡 Tip: Category filtering and tag filtering can be used in combination. For example, select the "Inference" category + "vLLM" tag to quickly locate vLLM inference-related templates.
-
-### Tag Filtering
-
-Further refine filtering through technical tags:
-
-| Tag Category | Available Values | Description |
-|-------------|-----------------|-------------|
-| Language | Python, Java, Go, Node.js | Programming language used by the template |
-| Framework | PyTorch, TensorFlow, vLLM, Transformers | Dependent AI framework |
-| OS | Ubuntu, CentOS, Debian | Base image operating system |
-| Tool | JupyterLab, VSCode, Terminal | Included development tools |
+> ⚠️ Note: The category identifier for dev environments is `im`, not `devenv`.
 
 ### Keyword Search
 
-Enter keywords in the search box for real-time template name and description search:
+The search box performs a fuzzy search over template names and descriptions and has a built-in **500 ms debounce** (`useDebounce(searchQuery, 500)`, see `src/business/components/product/list-view.tsx`).
 
-- Search supports fuzzy matching
-- Built-in **500ms debounce** to reduce unnecessary requests
-- Search scope covers template names and description text
+> ⚠️ Note: The App Market currently has **no filtering by language / framework / OS / tool tags**. The "tag filtering" from the old documentation has been removed; to locate a template, use "category tabs + keyword search", or open the detail page to read the README.
 
-> 💡 Tip: Search keywords can be model names (e.g., "llama"), tool names (e.g., "jupyter"), or purpose descriptions (e.g., "inference"), etc.
+### Recommended Carousel and Pagination
 
-### Pagination and Responsive Layout
+- A **recommended products carousel** (`RecommendedProducts`) at the top of the page sorts by recommendation priority and time, auto-rotates every 10 seconds, and shows left/right buttons on hover.
+- **Pagination** controls are provided below the list; the toolbar provides a **refresh** button.
 
-- Template cards use responsive grid layout, automatically adjusting the number of cards per row based on browser window width
-- Supports paginated browsing with pagination controls at the bottom
+## Template Detail
 
----
+Click a template card to open the detail page (`/rune/app-market/:product`), which uses the product detail layout and contains:
 
-## Template Details
-
-Click any template card to enter the detail page. The detail page uses the **ProductDetailLayout** layout component.
-
-![Template Details](/assets/screenshots/console/app-market-detail.png)
-
-### Page Structure
-
-The detail page contains the following areas:
-
-#### Product Information Card
-
-Located at the top or side of the page, displaying:
-
-| Field | Description |
-|-------|-------------|
-| Icon and Name | Template logo and full name |
-| Description | Detailed template description |
-| Category | Product category |
-| Tag List | All technical tags |
-| Latest Version | Current latest version number |
-| Maintainer | Template maintenance team or author |
-
-#### README.md Rendering
-
-The main content area of the detail page renders the template's README.md document, typically including:
-
-- Template feature introduction
-- Prerequisites and dependency requirements
-- Configuration parameter descriptions
-- Usage examples
-- Frequently asked questions
-- Reference links
-
-> 💡 Tip: README rendering supports complete Markdown syntax, including headings, lists, tables, code blocks, images, and links.
-
-#### Version List and Switching
-
-You can view and switch template versions through the **VersionPopover** component:
-
-- Click the dropdown arrow next to the current version number to expand the version list
-- Version list is sorted in reverse chronological order
-- After selecting a different version, the README and deployment configuration switch to the corresponding version
-
-#### Changelog
-
-Displays update notes for each version, helping users understand differences and improvements between versions.
-
----
+| Area | Content |
+| --- | --- |
+| Introduction / Note tabs | Two tabs, `introduction` and `note` |
+| Product info card | Name, description, category, creation time |
+| Version selection | Switch versions through the version popover |
+| Deployment entry | The deploy button in the upper-right of the detail page |
 
 ## One-Click Deployment
 
-### Deployment Flow
+1. On the template detail page, select a version and click **Deploy**.
+2. The frontend navigates to the instance list path of the corresponding category, carrying `action=deploy`, the product ID (`product`), and the version (`version`) (once a workspace context is resolved this becomes `.../clusters/:cluster/workspaces/:workspace/<category>s?action=deploy`, where that route renders the deploy form):
+   - `inference` → `/rune/tenants/:tenant/inferences?action=deploy&product=<id>&version=<version>`
+   - `tune` → `/rune/tenants/:tenant/tunes?action=deploy&product=<id>&version=<version>`
+   - `im` → `/rune/tenants/:tenant/ims?action=deploy&product=<id>&version=<version>`
+   - `experiment` → `/rune/tenants/:tenant/experiments?action=deploy&product=<id>&version=<version>`
+   - `app` → `/rune/tenants/:tenant/apps?action=deploy&product=<id>&version=<version>`
+3. The deploy form renders parameters from that version's Schema; fill in the basic information and parameters, then submit.
 
-```mermaid
-flowchart LR
-    A["Browse App Market"] --> B["Select Template"]
-    B --> C["View Details/README"]
-    C --> D["Select Version"]
-    D --> E["Click Deploy Button"]
-    E --> F["Redirect to Deploy Page<br/>Carrying productID + version"]
-    F --> G["Configure Parameters and Submit"]
-```
-
-### Steps
-
-1. Click the **Deploy** button on the template detail page
-2. The system automatically redirects to the corresponding resource creation page based on the template's category:
-   - `inference` category → Inference service creation page
-   - `tune` category → Fine-tuning service creation page
-   - `im` category → Dev environment creation page
-   - `experiment` category → Experiment creation page
-   - `app` category → Application creation page
-3. Product ID and version number are automatically filled in, template configuration auto-loads
-4. Users only need to supplement basic information (name, description) and select compute flavor
-5. Confirm configuration and submit deployment
-
-> 💡 Tip: One-click deployment automatically carries the selected product ID and version information to the deployment page. SchemaForm will render the configuration form based on that version's `values.schema.json`, with no need to manually select the template.
-
----
-
-## Version Management
-
-Each template may contain multiple versions. Version management helps users select the appropriate template version.
-
-### Version Selection Recommendations
-
-| Scenario | Recommendation |
-|----------|---------------|
-| Production Deployment | Select the latest stable version (non-beta/rc) |
-| Testing and Evaluation | Can try the latest pre-release version |
-| Compatibility Requirements | Select a specific version matching the existing environment |
-| Existing Instance Upgrade | Refer to Changelog to confirm inter-version compatibility |
-
-> ⚠️ Note: Different versions of a template may contain different Schema parameter definitions. When upgrading versions, please check for configuration parameter changes to avoid incompatibility issues.
-
----
-
-## How to Find the Right Template
-
-Based on your use case, use the following strategies to quickly locate templates:
-
-### By Use Case
-
-| I Want To... | Recommended Category | Recommended Keywords |
-|-------------|---------------------|---------------------|
-| Deploy a large language model for API service | Inference | vLLM, TGI, OpenAI |
-| Fine-tune a model for business scenarios | Fine-tuning (tune) | LLaMA-Factory, SFT, LoRA |
-| Launch Jupyter for data analysis | Dev Environment (im) | JupyterLab, Notebook |
-| Use VSCode for remote development | Dev Environment (im) | VSCode, SSH, IDE |
-| Deploy a chat interface application | Application (app) | ChatBot, WebUI |
-
-### Filtering Tips
-
-1. **Select Category First**: Choose the major category based on need (inference/fine-tuning/dev environment, etc.)
-2. **Then Select Tags**: Use technical tags to narrow scope (e.g., framework, tool)
-3. **Finally Search**: Use model name or tool name for precise search
-4. **Read README**: Enter the detail page to carefully read the documentation and confirm the template meets requirements
-5. **Check Version**: Select the appropriate version for deployment
-
----
+> 💡 Tip: The deploy form has only three fixed fields — `id` / `name` / `description`; all other parameters are determined by the selected version's Schema.
 
 ## Permission Requirements
 
-| Operation | Required Role |
-|-----------|--------------|
-| Browse App Market | ADMIN / DEVELOPER |
-| View template details | ADMIN / DEVELOPER |
-| One-click deployment | ADMIN / DEVELOPER |
+App Market belongs to the Dashboard group and can be browsed within a workspace context; the actual deployment action is constrained by the module permission of the selected template category.

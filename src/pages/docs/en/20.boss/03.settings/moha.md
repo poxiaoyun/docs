@@ -1,131 +1,80 @@
 ---
-title: 'Moha Settings'
-updated: '2026-03-23'
+title: Moha Hub Settings
+updated: '2026-09-12'
+description: 'Moha display settings and space settings — logo, title, description, base domain and TLS certificates.'
+tags:
+  - boss
+  - settings
 ---
 
-## Feature Overview
+## Feature overview
 
-Moha Settings is used to customize the branding of the **Moha Model Hub** subsystem, including the module Logo, navigation bar title, and module description. Its configuration structure is identical to Rune Settings. Configuration is saved under the `config.moha` namespace and changes are immediately reflected in the Moha module's navigation bar and entry page.
+Moha settings maintain the display information for Moha Hub and the Moha space domain and TLS configuration. The page has two cards: **Moha Hub config** and **Space config**.
 
-> 💡 Tip: Moha Settings, Rune Settings, and ChatApp Settings share the same configuration structure but are saved in separate namespaces without affecting each other.
+This page corresponds to **Platform management → Moha settings** in the Boss console (menu label from `navbar.moha_setting`).
 
-## Access Path
+## Access path
 
-BOSS → Platform Settings → **Moha Settings**
+Boss console → Platform management → **Moha settings**
 
-Path: `/boss/settings/moha`
+Console route: `/settings/moha`
 
-## Page Description
+## Moha Hub config
 
-![Moha Settings](/assets/screenshots/boss/settings-moha.png)
+| UI label | Field | Type | Constraint | Notes |
+|----------|-------|------|-----------|-------|
+| (Logo upload) | `moha.logo` | Image upload | Max **128 KB**, **PNG / SVG** | Stored as Base64 |
+| Product title | `moha.title` | Text | Max **10 characters** | Navbar title |
+| Product description | `moha.description` | Multiline | Max **100 characters**, 4 rows | Product summary |
 
-## Configuration Items
+> ⚠️ Note: the field name for "product title" is **`moha.title`** (the UI label is `navbar_title`).
 
-### Module Logo
-
-| Property | Description |
-|----------|-------------|
-| Field Name | `logo` |
-| File Size Limit | Maximum **128KB** |
-| Encoding | **Base64** encoded storage |
-| Supported Formats | **PNG**, **SVG** |
-| Purpose | Displayed in the Moha module's navigation bar and entry page |
-
-Steps:
-
-1. Click the Logo upload area
-2. Select a local PNG or SVG file (no larger than 128KB)
-3. Preview the Logo effect
-4. Confirm and click **Save**
-
-> ⚠️ Note: The module Logo is stored directly in the configuration database as Base64 with a 128KB size limit. Please use SVG vector format or compressed PNG to control file size.
-
-### Navigation Bar Title
-
-| Property | Description |
-|----------|-------------|
-| Field Name | `navbar_title` |
-| Maximum Length | **10 characters** |
-| Purpose | Title text displayed next to the Logo in the Moha module navigation bar |
-
-The default value is "Moha". Administrators can customize it to match the organization or product name, such as "Model Hub", "AI Asset Library", etc.
-
-### Module Description
-
-| Property | Description |
-|----------|-------------|
-| Field Name | `description` |
-| Maximum Length | **100 characters** |
-| Input Rows | **4-row** text area |
-| Purpose | Introductory text displayed on the Moha module's entry page or about page |
-
-The description text explains the Moha module's purpose, for example: "Moha Model Hub provides enterprise-grade model, dataset, and image hosting services..."
-
-## Configuration Storage
-
-All Moha settings are saved under the `config.moha` namespace:
+Written structure:
 
 ```yaml
-# config.moha namespace
-logo: "data:image/svg+xml;base64,PHN2ZyB..."    # Base64 encoded Logo
-navbar_title: "Moha"                              # Navigation bar title
-description: "Moha Model Hub provides..."         # Module description
+moha:
+  logo: "data:image/svg+xml;base64,PHN2ZyB..."
+  title: "Moha"
+  description: "Product summary"
 ```
 
-## Settings Effect Preview
+Request: `PUT /api/iam/global-config`.
 
-After saving, the following locations in the Moha module are affected:
+## Space config
 
-| Display Location | Affected Configuration |
-|------------------|----------------------|
-| Top-left of navigation bar | Logo + Navigation bar title |
-| Module entry homepage | Logo + Description |
-| Browser tab | Navigation bar title (as tab prefix) |
-| Platform module switch menu | Logo + Navigation bar title |
+Space config is separate from display settings and is saved to the Moha global configuration (`PUT /api/moha/global-config`).
 
-![Moha Settings Effect Preview](/assets/screenshots/boss/settings-moha-preview.png)
+| UI label | Field | Type | Required | Default | Notes |
+|----------|-------|------|----------|---------|-------|
+| Base domain | `space.base` | Text | ✅ | empty | e.g. `develop.xiaoshiai.cn` |
+| Enable TLS | `space.tlsEnabled` | Switch | — | off | Requires both certificate and key |
+| TLS certificate | `space.tlsCert` | Multiline | conditional | empty | PEM certificate |
+| TLS private key | `space.tlsKey` | Multiline | conditional | empty | PEM key |
 
-> 💡 Tip: After saving changes, users who already have the Moha module open need to refresh the page to see the latest configuration.
+Validation:
 
-## Steps
+- `base` must be non-empty after trimming
+- With TLS on, both certificate and key are required
+- Certificate and key must be **provided together or both empty**; providing only one is an error
+- All values are trimmed before submit
 
-1. Navigate to BOSS → Platform Settings → Moha Settings
-2. Modify the Logo, title, and description as needed
-3. Preview the changes on the page
-4. Click the **Save** button to submit changes
-5. Confirm changes have taken effect (refresh the Moha module page to verify)
-
-> ⚠️ Note: Logo files exceeding 128KB will be rejected. SVG format is recommended as it is typically only a few KB in size and displays clearly at all resolutions.
-
-## Configuration Structure Overview
-
-```mermaid
-graph TD
-    A[Moha Settings] --> B[Module Logo]
-    A --> C[Navigation Bar Title]
-    A --> D[Module Description]
-    
-    B --> B1[128KB Limit]
-    B --> B2[PNG / SVG Format]
-    B --> B3[Base64 Encoded Storage]
-    
-    C --> C1[Max 10 Characters]
-    C --> C2[Displayed in Navigation Bar]
-    
-    D --> D1[Max 100 Characters]
-    D --> D2[4-Row Text Area]
-    D --> D3[Displayed on Entry Page]
+```yaml
+space:
+  base: "develop.xiaoshiai.cn"
+  tlsEnabled: true
+  tlsCert: "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----"
+  tlsKey: "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
 ```
 
-## FAQ
+> ⚠️ Note: the two cards save independently.
 
-| Issue | Solution |
-|-------|----------|
-| Logo upload failed | Check if file size exceeds 128KB and if the format is PNG or SVG |
-| Title truncated | Reduce character count to 10 or fewer |
-| Changes not taking effect | Confirm you clicked Save, then refresh the Moha module page |
-| Logo appears blurry | Consider using SVG vector format instead of PNG |
+## Requests
 
-## Permission Requirements
+| Request | Method | Notes |
+|---------|--------|-------|
+| `/api/iam/global-config` | `PUT` | Save the Moha Hub display config |
+| `/api/moha/global-config` | `GET` / `PUT` | Read / save space config |
 
-Requires the **System Administrator** role to access the Moha Settings page.
+## Permissions
+
+Requires the **system administrator** role.

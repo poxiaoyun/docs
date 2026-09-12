@@ -1,5 +1,5 @@
 ---
-title: 'System Members Management'
+title: System Member
 updated: '2026-03-23'
 ---
 
@@ -44,8 +44,6 @@ graph TD
 
 ## Page Description
 
-![System Members Management](/assets/screenshots/boss/settings-members.png)
-
 ### Member List Table
 
 | Column | Description | Details |
@@ -53,7 +51,7 @@ graph TD
 | Name | Member username | Displays user avatar and username |
 | Email | Member email | The email address used during registration |
 | Role | System role | Role name is displayed with i18n translation via the `role:` namespace |
-| Joined At | Time of becoming a system member | Corresponds to the `creationTimestamp` (`joinedAt`) field |
+| Joined At | Time of becoming a system member | Corresponds to the `creationTimestamp` field (a read-only column in the list) |
 | Actions | Management buttons | Edit role, Remove member |
 
 > 💡 Tip: The Role column displays translated role names. For example, the `system-admin` role in the system is translated to the localized display name via the `role:` namespace.
@@ -68,8 +66,6 @@ Click the **Add Member** button and operate in the popup dialog:
 2. **Select User**: Choose the user to add from the search results
 3. **Assign Role**: Select a system role for the user
 4. **Confirm**: Click confirm to complete the addition
-
-![Add System Member](/assets/screenshots/boss/settings-members-add.png)
 
 > ⚠️ Note: Only users already registered on the platform can be added as system members. To add a new user, first create a user account through BOSS → IAM → User Management.
 

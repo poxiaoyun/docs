@@ -25,8 +25,10 @@ ifeq ($(GIT_BRANCH), main)
 	FULL_IMAGE_NAME=$(IMAGE_REGISTRY)/$(IMAGE_REPOSITORY)/$(IMAGE_NAME):latest
 endif
 BUILDX_PLATFORMS?=linux/amd64,linux/arm64
+# 阿里云 ACR 不识别 buildx 默认生成的 OCI attestation（application/vnd.oci.empty.v1+json），
+# 会导致 `--push` 报 denied: unknown manifest class，故显式关闭 provenance / sbom。
 release-image:
-	docker buildx build --platform=${BUILDX_PLATFORMS} --push -t ${FULL_IMAGE_NAME} -f Dockerfile .
+	docker buildx build --platform=${BUILDX_PLATFORMS} --provenance=false --sbom=false --push -t ${FULL_IMAGE_NAME} -f Dockerfile .
 
 package-helm:
 	@mkdir -p ${BIN_DIR}/charts

@@ -1,206 +1,121 @@
 ---
-title: 'Audit Logs'
-updated: '2026-03-23'
+title: Call Logs
+updated: '2026-09-12'
+description: 'Query gateway call records by time, user, token, channel and model, and open call details.'
+tags:
+  - boss
+  - gateway
 ---
 
-## Feature Overview
+## Feature overview
 
-Audit Logs are the LLM Gateway's **core security and compliance feature**, providing a complete record of detailed information for every API request passing through the gateway, including requester identity, model used, Token consumption, processing results, and complete request/response payloads. Audit logs provide reliable data support for security reviews, troubleshooting, compliance audits, and usage analysis.
+Call logs record every request forwarded through the gateway, including the requester, channel, model, latency, tokens and billing data, plus optional request/response payloads and moderation reports. The page is used for troubleshooting, usage reconciliation and sensitive-content tracing.
 
-> 💡 Tip: The audit feature is controlled by the `auditEnabled` switch in [Gateway Configuration](./config). It is recommended to keep the audit feature enabled at all times in production environments to meet security compliance requirements.
+This page corresponds to **LLM gateway → User management → Call logs** in the Boss console (menu label from `navbar.call_logs`).
 
-## Access Path
+## Access path
 
-BOSS → LLM Gateway → **Audit Logs**
+Boss console → LLM gateway → User management → **Call logs**
 
-Path: `/boss/gateway/audit`
+| Action | Console route |
+|--------|--------------|
+| Record list | `/gateway/audit` |
+| Standalone detail page | `/gateway/audit/:id` |
 
-API base path: `/api/airouter/v1/audit`
+> ⚠️ Note: clicking the time column opens a **dialog** (`AuditDetailDialog`) rather than navigating to `/gateway/audit/:id`. The standalone route is registered but the list provides no entry point to it.
 
-## Audit Data Flow
+## Filters
 
-```mermaid
-flowchart LR
-    subgraph Request["API Request Processing"]
-        Client["Client"] -->|"API Request"| Gateway["LLM Gateway"]
-        Gateway -->|"Route"| Channel["Upstream Channel"]
-        Channel -->|"Response"| Gateway
-        Gateway -->|"Return"| Client
-    end
-
-    Gateway -->|"Async Write"| AuditDB["Audit Log Storage"]
-
-    subgraph AuditUI["Audit Management"]
-        AuditDB --> List["Log List"]
-        AuditDB --> Detail["Request Details"]
-        AuditDB --> Cleanup["Data Cleanup"]
-    end
-```
-
-## Filter Conditions
-
-The top of the page provides multi-dimensional filters for precisely locating target audit records:
-
-![Audit Log Filters](/assets/screenshots/boss/gateway-audit-filters.png)
+The filter bar supports range presets and a custom range:
 
 | Filter | Type | Description |
 |--------|------|-------------|
-| User | Dropdown | Filter by requesting user |
-| Token | Dropdown | Filter by API Token used |
-| Provider | Dropdown | Filter by upstream model provider |
-| Model | Dropdown | Filter by requested model name |
-| Time Range | Date Range Picker | Filter by request occurrence time |
-| Result | Dropdown | Filter by processing result: `success` / `error` |
+| Time range | Preset | Today / Yesterday / Last 3 days / Last week / Custom |
+| Start date, end date | Date picker | Only used with "Custom" |
+| User | Text | Fuzzy match on username |
+| Token | Text | Match on token |
+| Channel | Select | Options come from the channel list (`channelName`), with "All" |
+| Model | Text | Fuzzy match on model name |
 
-> 💡 Tip: When troubleshooting specific user issues, it is recommended to combine the "User" and "Time Range" filters to quickly locate all request records for that user within the specified period.
+The bar also offers **Refresh** and **Reset** (reset restores the range to "Today").
 
-## Audit Record List
+> ⚠️ Note: there is **no "Result" filter** in the UI. The backend query supports `result`, but it is not exposed; the "tenant" filter string in i18n is likewise unused.
 
-![Audit Log List](/assets/screenshots/boss/gateway-audit.png)
+## Record list
 
-| Column | Field Name | Description | Notes |
-|--------|-----------|-------------|-------|
-| Request ID | `requestId` | Unique request identifier | Click to navigate to details page; requests with sensitive information show a ⚠️ warning icon |
-| Request Time | `requestStarted` | Request timestamp | Precise to milliseconds |
-| Username/User ID | `username` / `userId` | Request initiator | Shows both username and ID |
-| Token ID | `tokenId` | API Token used | Truncated display (first 8 characters only) |
-| Tenant ID | `tenantId` | Associated tenant identifier | — |
-| Channel Name | `channelName` | Channel name routed to | — |
-| Model | `model` | Requested model name | — |
-| Result | `result` | Request processing result | Color-coded label |
-| Total Tokens | `totalTokens` | Total Tokens consumed by this request | Prompt + Completion |
-| Actions | — | View Details | — |
+| Column | Field | Description |
+|--------|-------|-------------|
+| Time | `requestStarted` | Click to open the detail dialog |
+| Channel | `channelName` | Channel the request was routed to |
+| User | `username` | Requesting user |
+| Token | `tokenId` | Token id used |
+| Model | `model` | Requested model |
+| Duration | `latencyMillis` | End-to-end latency (ms) |
+| Tokens | `totalTokens` | Total tokens consumed |
+| Cost | `billedTokens` | Billed tokens, rendered with the currency setting |
+| Standard | `modelPriceStandard` | Standard price from the model price table |
 
-### Result Status Color Coding
+Rows whose result is not `success` show a red bar in the sticky column.
 
-| Result | Color | Enum Value | Description |
-|--------|-------|------------|-------------|
-| Success | 🟢 Green | `success` | Request processed successfully and returned results |
-| Error | 🔴 Red | `error` | Error occurred during request processing |
-| Blocked | 🟠 Orange | `blocked` | Blocked by content moderation policy |
-| Quota Exceeded | 🔴 Red | `quota_exceeded` | Exceeded Token usage quota |
+The list disables the search box and toolbar and uses its own pagination.
 
-### Sensitive Content Warning
+## Call details
 
-When request content triggers [Content Moderation](./moderation) policy detection, a ⚠️ warning icon appears next to the audit record's Request ID, alerting administrators that the request involves sensitive content.
+Clicking the Time column opens a dialog with these tabs:
 
-> ⚠️ Note: A sensitive content marker does not mean the request was necessarily blocked. Depending on the moderation policy's Action configuration (log/replace/block), some requests may only have logs recorded or content replaced before being allowed through.
+| Tab | Content |
+|-----|---------|
+| Basic info | See the table below |
+| Request data | Request payload (read-only JSON editor) |
+| Response data | Response payload (read-only JSON editor) |
+| Metadata | Metadata (read-only JSON editor) |
+| Moderation | Sensitive-content report (only when `sensitiveDetected` is true) |
 
-## Audit Details Page
+Empty tabs show "No data".
 
-Click the Request ID to enter the details page and view complete information for the request:
+### Basic info fields
 
-![Audit Details](/assets/screenshots/boss/gateway-audit-detail.png)
+| Field | Key |
+|-------|-----|
+| Numeric id | `id` |
+| Request id | `requestId` |
+| Trace id | `traceId` |
+| Token id / name / value | `tokenId` / `tokenName` / `tokenValue` |
+| Tenant | `tenantId` |
+| User id / username | `userId` / `username` |
+| Channel id / name | `channelId` / `channelName` |
+| Workspace | `workspace` |
+| Provider | `provider` |
+| Model | `model` |
+| Method / endpoint | `method` / `endpoint` |
+| Request / response time | `requestStarted` / `responseEnded` |
+| Duration | `latencyMillis` |
+| Status code | `statusCode` |
+| Result | `result` (`success` green, otherwise red) |
+| Error message | `errorMessage` (only on failure) |
+| Prompt / completion / total tokens | `promptTokens` / `completionTokens` / `totalTokens` |
+| Billed tokens | `billedTokens` |
+| Streaming | `isStream` |
+| Sensitive | `sensitiveDetected` |
+| Moderation decision | `moderationDecision` (only when sensitive) |
 
-### Basic Information
+## Result values
 
-| Field | Description |
-|-------|-------------|
-| Request ID | Unique identifier |
-| User | Requesting user (username + ID) |
-| Token | API Token used (full ID) |
-| Tenant | Associated tenant |
-| Channel | Channel used for routing |
-| Model | Requested model |
-| Result | Processing result (color-coded label) |
-| Request Time | Request start time |
-| Response Time | Response completion time |
-| Latency | End-to-end latency (milliseconds) |
+| Result | Meaning |
+|--------|---------|
+| `success` | Succeeded |
+| `error` | Failed |
+| `blocked` | Blocked |
+| `quota_exceeded` | Quota exceeded |
 
-### Token Statistics
+> ⚠️ Note: these values come from the audit i18n bundle; the list only distinguishes `success` from everything else by colour. The full set returned by the server is unconfirmed.
 
-| Field | Description |
-|-------|-------------|
-| Prompt Tokens | Input Token count |
-| Completion Tokens | Output Token count |
-| Total Tokens | Total Token count |
+## About data cleanup
 
-### Request Payload
+The service layer exposes a cleanup request `cleanupAuditRecords(before)` (`DELETE /api/airouter/v1/audit/cleanup?before=...`) and the i18n bundle has cleanup dialog strings, but **no page calls it** (a repo-wide search for `cleanupAuditRecords` only hits its definition).
 
-Displays the complete API request body, typically containing:
+> ⚠️ Note: there is **no cleanup entry in the UI**. Availability and permissions must follow the backend contract.
 
-```json
-{
-  "model": "gpt-4",
-  "messages": [
-    {"role": "system", "content": "You are a helpful assistant."},
-    {"role": "user", "content": "...user's complete input..."}
-  ],
-  "temperature": 0.7,
-  "max_tokens": 2048
-}
-```
+## Permissions
 
-### Response Payload
-
-Displays the complete API response body, including the model's output content and usage statistics.
-
-> ⚠️ Note: Request and response payloads may contain user privacy information or sensitive content. Ensure that only authorized personnel can access the audit details page and follow data security policies.
-
-## Data Cleanup
-
-Over time, audit log data will continue to grow. Administrators can periodically clean up expired audit records to free storage space.
-
-**API Endpoint**: `DELETE /api/airouter/v1/audit/cleanup?before=<ISO8601DateTime>`
-
-**Parameters**:
-
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `before` | ISO 8601 Date | Clean up all audit records before this time |
-
-**Example**:
-
-```bash
-# Clean up audit records older than 90 days
-DELETE /api/airouter/v1/audit/cleanup?before=2025-11-27T00:00:00Z
-```
-
-> ⚠️ Note: Data cleanup operations are irreversible. It is recommended to export audit data that needs to be retained before cleanup. According to compliance requirements, audit logs typically need to be retained for 180 days or more.
-
-## Audit Flow
-
-```mermaid
-sequenceDiagram
-    participant Client as Client
-    participant GW as LLM Gateway
-    participant Auth as Auth Module
-    participant Mod as Content Moderation
-    participant Channel as Upstream Channel
-    participant AuditDB as Audit Storage
-
-    Client->>GW: API Request (Bearer Token)
-    GW->>Auth: Verify Token
-    Auth-->>GW: User Info
-    
-    GW->>Mod: Content Moderation Check
-    alt Moderation Failed
-        Mod-->>GW: blocked
-        GW->>AuditDB: Record(result=blocked)
-        GW-->>Client: 403 Forbidden
-    else Moderation Passed
-        Mod-->>GW: pass
-        GW->>Channel: Forward Request
-        alt Request Succeeded
-            Channel-->>GW: 200 + Response
-            GW->>AuditDB: Record(result=success, tokens, latency)
-            GW-->>Client: 200 + Response
-        else Request Failed
-            Channel-->>GW: 5xx Error
-            GW->>AuditDB: Record(result=error)
-            GW-->>Client: 502 Bad Gateway
-        end
-    end
-```
-
-## API Reference
-
-| Operation | Method | Endpoint | Description |
-|-----------|--------|----------|-------------|
-| Query Audit Records | GET | `/api/airouter/v1/audit/records` | Paginated query with multi-condition filtering |
-| Get Record Details | GET | `/api/airouter/v1/audit/records/:id` | Get complete details of a single record |
-| Cleanup History | DELETE | `/api/airouter/v1/audit/cleanup?before=` | Batch cleanup records before specified date |
-
-## Permission Requirements
-
-Requires the **System Administrator** role. Audit logs contain users' complete request and response data, which is highly sensitive information viewable only by system administrators.
+Requires the **system administrator** role. Call details may contain private and sensitive data; restrict access accordingly.

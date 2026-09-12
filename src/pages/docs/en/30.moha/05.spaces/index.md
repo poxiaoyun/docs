@@ -1,32 +1,51 @@
 ---
-title: 'Space work space'
-updated: '2026-03-24'
-author: Rune Docs Team
-description: 'Introducing the Space list, filtering, details and deployment entrance in Moha.'
+title: 'Spaces'
+updated: '2026-09-12'
+description: 'Space list, filters, detail, lifecycle and deployment entry.'
 tags:
   - moha
   - spaces
 ---
-#Space workspace
 
-Space is used to host interactive applications or demonstration interfaces. It is the resource type closest to "runnable products" in Moha.
+# Spaces
 
-## Enter path
+Spaces host interactive applications or demos — the closest thing to a runnable artefact in Moha.
 
-Moha top navigation -> Space
+## Entry
 
-Path: `/moha/Spaces`
+Top navigation -> Space
 
-## Core Competencies
+Route: `/moha/spaces`
 
-| Capabilities | Description |
+## Capabilities
+
+| Capability | Description |
 | --- | --- |
-| List filtering | Supports public/private switching, search, sorting and filtering |
-| Repository details | View overview, documentation, discussions, and settings |
-| Deployment portal | Configure automatic deployment or linkage with Rune for Space on the settings page |
-| Team collaboration | Collaboration through members, discussions, and file changes |
+| List filters | Featured section, visibility switch, search, sorting and `domain` / `scene` filters |
+| Detail | Overview, files, version freezes, discussions and settings |
+| Deployment | Configure deploy parameters in settings; saving restarts automatically |
+| Lifecycle | "Online" when not deployed; "Stop / Restart / Logs" once deployed |
+| Collaboration | Members, discussions and file changes |
 
-## Recommended reading
+## Create a Space
 
-- [Space list and filter](/moha/Spaces/list)
+Besides basic info (organization, name, visibility, description, `license`, `domain`, `scene`), the form requires `spaceMetadata`:
+
+| Field | Description |
+| --- | --- |
+| `cluster` | Target cluster |
+| `namespace` | Namespace |
+| `flavorID` | Runtime flavor |
+| `product` | Product template (`{ id, name }`) |
+| `gitAddress` | Code repository URL (defaults to this repository) |
+| `gitUsername` / `gitPassword` | Credentials for pulling code (default to the current user and token) |
+| `baseDomain` | Base domain |
+| `env` | Runtime environment variables |
+
+> 💡 Tip: Space repositories have no Tags tab; tags are for image repositories.
+
+## See also
+
+- [Space List & Filters](/moha/spaces/list)
 - [Collaboration](/moha/repository)
+- [Version Freezes](/moha/repository/freezes)

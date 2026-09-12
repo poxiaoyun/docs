@@ -1,13 +1,13 @@
 ---
 title: 'Rune intelligent computing platform'
-updated: '2026-03-24'
+updated: '2026-09-12'
 author: Rune Docs Team
 description: 'Rune intelligent computing platform user documentation for developers and algorithm engineers, covering workspace, inference, fine-tuning, development environment, experimental evaluation and resource management.'
 tags:
   - rune
   - overview
 ---
-#Rune Intelligent Computing Platform
+# Rune Intelligent Computing Platform
 
 Rune is an integrated AI workbench for model development, training and tuning, inference deployment and application delivery. Users enter the platform through a unified tenant, cluster, and workspace context, and complete resource preparation, instance creation, operation observation, and service release in the same console.
 

@@ -1,6 +1,6 @@
 ---
 title: 镜像仓库
-updated: '2026-03-24'
+updated: '2026-09-12'
 author: Rune Docs Team
 description: 介绍魔哈镜像仓库的浏览、筛选和仓库维护方式。
 tags:

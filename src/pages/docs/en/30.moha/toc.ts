@@ -30,8 +30,9 @@ export const MOHA_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         children: [
           { title: 'Overview', path: '/moha/home/overview' },
           { title: 'Created by Me', path: '/moha/home/created-by-me' },
-          { title: 'Organizations', path: '/moha/home/organizations' },
+          { title: 'My Favorites', path: '/moha/home/liked-by-me' },
           { title: 'Tokens & Announcements', path: '/moha/home/token-announcements' },
+          { title: 'Organizations', path: '/moha/home/organizations' },
         ],
       },
       {
@@ -92,6 +93,7 @@ export const MOHA_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
           { title: 'Files & Version Browsing', path: '/moha/repository/files' },
           { title: 'Discussions & Collaboration', path: '/moha/repository/discussion' },
           { title: 'Repository Settings & Publishing', path: '/moha/repository/settings' },
+          { title: 'Version Freezes', path: '/moha/repository/freezes' },
         ],
       },
       {
@@ -120,7 +122,7 @@ export const MOHA_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
           { title: 'HubClient API', path: '/moha/sdk-tutorial/hub-api' },
           { title: 'Transfer & Sync', path: '/moha/sdk-tutorial/transfer' },
           { title: 'Data Encryption', path: '/moha/sdk-tutorial/encryption' },
-          { title: 'Model Loading & Inference', path: '/moha/sdk-tutorial/transformers-datasets' },
+          { title: 'Transformers & Datasets Integration', path: '/moha/sdk-tutorial/transformers-datasets' },
           { title: 'Training & Export', path: '/moha/sdk-tutorial/training-export' },
           { title: 'Error Handling & FAQ', path: '/moha/sdk-tutorial/error-handling' },
         ],

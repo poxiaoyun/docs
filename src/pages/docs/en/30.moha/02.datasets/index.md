@@ -1,19 +1,30 @@
 ---
-title: 'Dataset'
-updated: '2025-12-04'
-author: Rune Docs Team
-description: 'Build, manage and share high-quality training datasets.'
+title: 'Datasets'
+updated: '2026-09-12'
+description: 'Overview of Moha datasets: browse, create, transfer, cards and maintenance.'
 tags:
   - moha
   - datasets
 ---
-## Overview
 
-Build, manage and share high-quality training datasets, supporting multiple data formats and governance specifications.
+# Datasets
 
-## Main functions
+Datasets host, version and share training/evaluation data. They reuse the same repository framework as models: files, discussions, freezes and settings.
 
-- [Dataset Creation](./create): Create and upload datasets
-- [Data Governance](./governance): Data quality management and version control
-- [Data Annotation](./annotation): Annotation tools and collaboration processes
-- [Data Security](./security): Access control and privacy protection
+## Entry
+
+Top navigation -> **Datasets**, route `/moha/datasets`.
+
+## Pages in this section
+
+| Page | Description |
+| --- | --- |
+| [Dataset Overview](/moha/datasets/info) | Search, filters, cards and favourites |
+| [Create Datasets](/moha/datasets/create) | Form fields and validation rules |
+| [Upload Datasets](/moha/datasets/upload) | Web, Git and SDK upload |
+| [Download Datasets](/moha/datasets/download) | Web, Git and selective download |
+| [Dataset Cards](/moha/datasets/card) | README and metadata rendering |
+| [Dataset Maintenance](/moha/datasets/maintain) | Branches, updates and rollback |
+| [Dataset File Rules](/moha/datasets/rules) | Naming, layout and license guidance |
+
+> ⚠️ Note: The frontend has no standalone annotation or dataset-security module; those pages have been removed.

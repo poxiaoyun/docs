@@ -1,326 +1,199 @@
 ---
 title: 'Tenant Management'
-updated: '2026-03-23'
+updated: '2026-09-12'
+description: 'Create, edit, enable/disable tenants, configure image push, and manage tenant members in BOSS.'
 ---
 
 ## Feature Overview
 
-A Tenant is the **organizational isolation unit** of the Rune platform and serves as the foundational boundary for resource allocation, permission management, and billing. Each tenant has its own member system, resource quotas, and workspaces. System administrators manage the full lifecycle of all tenants through the BOSS Tenant Management module, including **creating tenants**, **editing information**, **managing members**, **enabling/disabling**, and more.
+A Tenant is the **organizational isolation unit** of the platform and the base boundary for resource allocation, permission management, and billing. Each tenant has its own member system, resource quotas, and workspaces. Administrators use the BOSS tenant module to **create tenants**, **edit information**, **enable / disable**, **configure image push**, and **manage members**.
 
 ## Access Path
 
 BOSS → Account Center → **Tenant Management**
 
-Path: `/boss/iam/tenants`
-
-## Tenant Lifecycle
-
-```mermaid
-stateDiagram-v2
-    [*] --> Creating: Administrator creates tenant
-    Creating --> Enabled: Creation successful
-    Enabled --> Disabled: Administrator disables
-    Disabled --> Enabled: Administrator re-enables
-    Enabled --> QuotaAllocated: Allocate resource quota
-    QuotaAllocated --> MembersAdded: Add tenant members
-    MembersAdded --> InOperation: Members start using
-    InOperation --> Disabled: Administrator disables
-    Disabled --> [*]: Administrator deletes
-```
-
----
+Console route: `/iam/tenants`
 
 ## Tenant List
 
-![Tenant Management List](/assets/screenshots/boss/iam-tenants.png)
+Column definitions: `src/pages/boss/iam/tenants/list.tsx:65-106`.
 
-The tenant list displays summary information for all tenants on the platform in a table format.
+| Column | Field | Display | Description |
+|--------|-------|---------|-------------|
+| **Name** | `name` | Avatar + name (link) + tenant ID | Click the name to open the overview page; the grey caption below is `id` |
+| **Email** | `email` | Text | Administrative contact email |
+| **Members** | `userCount` | Integer | Total members |
+| **Status** | `enabled` | Label (Enabled / Disabled) | Green when enabled, red when disabled |
+| **Created At** | `creationTimestamp` | Formatted time | Tenant creation time |
 
-### Column Descriptions
+Row actions:
 
-| Column | Field Name | Display | Description |
-|--------|-----------|---------|-------------|
-| **Name** | `name` | Avatar + Tenant Name (Link) | Displays tenant avatar and name. Click the name to enter the tenant detail page. Tenant ID is shown below the name |
-| **Email** | `email` | Text | Tenant's administrative contact email |
-| **Members** | `userCount` | Number | Total number of members in the tenant |
-| **Created At** | `creationTimestamp` | Formatted Time | Tenant creation time |
-| **Actions** | — | Action Buttons | Edit, View Details |
+| Action | Description |
+|--------|-------------|
+| **Enable / Disable** | Toggle with a second confirmation dialog (see below) |
+| **Edit** | Navigate to `/iam/tenants/:tenant?action=edit` |
 
-> 💡 Tip: Click the link in the tenant name column to jump directly to that tenant's detail overview page to quickly view member distribution and resource usage.
+> ⚠️ Note: The tenant list has **no delete entry**. `deleteTenant` exists in `src/services/tenant.ts`, but the console UI does not expose it.
 
 ---
 
 ## Create Tenant
 
-![Create Tenant Form](/assets/screenshots/boss/iam-tenants-create.png)
+Console route: `/iam/tenants?action=create`.
 
-### Steps
+1. Click **Create Tenant** at the top right of the list.
+2. Fill in the basic information.
+3. Click **Confirm** to submit (`POST /api/iam/tenants`).
 
-1. On the tenant list page, click the **Create Tenant** button in the upper right corner
-2. Fill in the tenant information in the popup creation form
-3. Click the **Create** button to submit
+Form fields and validation (`src/pages/boss/iam/tenants/components/form.tsx:49-63`):
 
-### Form Fields
+| Field | Field name | Type | Required | Validation | Description |
+|-------|-----------|------|----------|-----------|-------------|
+| **Name** | `name` | Text | ✅ | Non-empty | Tenant display name |
+| **Tenant ID** | `id` | IdField | ✅ | Non-empty; format checked by `validateId` | Unique identifier; **editable on create, disabled on edit** |
+| **Email** | `email` | Text | ✅ | Non-empty + email format | Administrative contact email |
+| **Phone** | `phone` | Text | ✅ | Non-empty + regex `\d{6,16}` | Administrative contact phone |
+| **Description** | `description` | Textarea (4 rows) | — | None | Supplementary description |
 
-| Field | Field Name | Type | Required | Validation Rules | Description |
-|-------|-----------|------|----------|-----------------|-------------|
-| **Avatar** | `avatar` | Image Upload | — | Max 3MB, supports cropping | Tenant's avatar icon. After upload, the display area can be adjusted in the crop dialog |
-| **Tenant ID** | `id` | IdField | ✅ | Uniqueness check, only lowercase letters, numbers, and hyphens | Tenant's unique identifier, **cannot be modified after creation**, used for API calls and internal system references |
-| **Email** | `email` | Email Input | ✅ | Must conform to standard email format | Tenant's administrative contact email |
-| **Phone** | `phone` | Phone Input | ✅ | 6-16 digit number (regex: `^\d{6,16}$`) | Tenant's administrative contact phone |
-| **Description** | `description` | Textarea (4 rows) | — | No special restrictions | Supplementary description, such as organization type, business focus, etc. |
+`name` and `id` are rendered by the same `IdField` component (`src/business/components/id-field`): typing `name` auto-generates `id`, and you can override `id` manually in a popover; when not overridden, `id` follows `name`.
 
-### Avatar Upload Notes
+> ⚠️ Note: **Avatar upload only appears on the edit page.** The create form does not render the avatar control (`tenant && ...` at `form.tsx:156`), and neither does the image push config. Create the tenant first, then configure these on the edit page.
 
-- Supports JPG / PNG / GIF formats
-- File size must not exceed **3MB**
-- After upload, a **cropping tool** will appear to adjust the avatar display area and scale
-- If no avatar is uploaded, the system will use a default tenant icon
+### Post-Creation Guide
 
-![Avatar Cropping Tool](/assets/screenshots/boss/iam-tenants-avatar-crop.png)
-
-### Post-Creation Actions
-
-After successful tenant creation, the system will display a **follow-up action guide** with three quick options:
+On success the form is replaced by a result page with up to three quick actions (`src/pages/boss/iam/tenants/create.tsx:61-98`):
 
 ```mermaid
 flowchart LR
-    A["✅ Tenant Created Successfully"] --> B{"Choose Next Action"}
-    B --> C["📦 Allocate Quota<br/>Assign compute resources to tenant"]
-    B --> D["👥 Add Members<br/>Invite users to join tenant"]
-    B --> E["↩️ Return to List<br/>Configure later"]
+    A["Tenant created"] --> B{"Choose next step"}
+    B --> C["Allocate quota"]
+    B --> D["Add members"]
+    B --> E["Back to list"]
 ```
 
-| Option | Description |
-|--------|-------------|
-| **Allocate Quota** | Navigate to tenant resources page to allocate CPU / GPU / memory quotas for the new tenant |
-| **Add Members** | Navigate to tenant member management page to invite users and assign roles |
-| **Return to List** | Return to the tenant list page for later configuration |
-
-> 💡 Tip: Newly created tenants have no resource quotas or members by default. It is recommended to immediately allocate quotas and add at least one tenant administrator after creation, otherwise tenant members will be unable to use any compute resources.
-
-### Corresponding API
-
-```
-POST /api/iam/tenant-register
-```
+| Option | Condition | Target |
+|--------|-----------|--------|
+| **Allocate quota** | Only when at least one cluster exists | `/rune/tenants/:tenant/clusters/:cluster/quotas?action=create` (first cluster) |
+| **Add members** | Always | `/iam/tenants/:tenant/members?action=create` |
+| **Back to list** | Always | `/iam/tenants` |
 
 ---
 
 ## Edit Tenant
 
-### Steps
+Console route: `/iam/tenants/:tenant?action=edit`.
 
-1. Find the target tenant in the tenant list
-2. Click the **Edit** button on that tenant's row
-3. Modify information in the popup edit form
-4. Click the **Save** button to submit changes
+The edit page loads both the tenant and its config (`getTenant` + `getTenantConfig`) and submits via `updateTenant` and `updateTenantConfig`.
 
-### Editable Fields
+### Basic Information
 
 | Field | Editable | Description |
 |-------|----------|-------------|
-| **Avatar** | ✅ | Can re-upload and crop avatar |
-| **Tenant ID** | ❌ Not editable | Locked after creation |
-| **Email** | ✅ | Can modify administrative contact email |
-| **Phone** | ✅ | Can modify administrative contact phone |
-| **Description** | ✅ | Can modify tenant description |
+| **Avatar** | ✅ | Edit page only; croppable, single file up to 3MB (`maxSize = 3145728`) |
+| **Name** (`name`) | ✅ | Rendered by IdField, editable |
+| **Tenant ID** (`id`) | ❌ | Locked in edit mode; the edit button next to the ID is hidden |
+| **Email** (`email`) | ✅ | Email format |
+| **Phone** (`phone`) | ✅ | `\d{6,16}` |
+| **Description** (`description`) | ✅ | Textarea |
 
-### Avatar Update API
+> 💡 Tip: The overview page also supports inline editing of `name` / `email` / `phone`, equivalent to the edit page.
 
-```
-PUT /api/iam/tenants/:id/avatar
-```
+### Image Push Configuration
 
-> ⚠️ Note: The Tenant ID is the tenant's unique identifier. Once set at creation time, it cannot be changed. To change the Tenant ID, the tenant must be deleted and recreated, which will result in the loss of all member relationships and resource allocations under the original tenant.
+The edit page renders an extra "Image Push" card below the basic info (`form.tsx:223-260`, only when both tenant and tenant config are available). It maps to backend `tenantConfig.image`:
+
+| Field | Control | Default | Description |
+|-------|---------|---------|-------------|
+| `allowCreateOnPush` | Switch | `true` | Whether pushing an image may auto-create an image record |
+| `defaultVisibility` | Radio group | `private` | Default visibility for pushed images |
+
+`defaultVisibility` values:
+
+| Value | Meaning |
+|-------|---------|
+| `private` | Private |
+| `internal` | Internal |
+| `public` | Public |
+
+On submit the config is saved via `updateTenantConfig(tenantId, { image: { allowCreateOnPush, defaultVisibility } })`.
 
 ---
 
 ## Enable / Disable Tenant
 
-Administrators can temporarily disable a tenant. After disabling, all members under that tenant will be unable to access the tenant's resources.
+Enable/disable is implemented (`src/pages/boss/iam/tenants/list.tsx:108-134`): use the row action, which opens a **second confirmation dialog** before calling:
 
-| Operation | Effect | Corresponding API |
-|-----------|--------|-------------------|
-| **Disable** | All members under the tenant cannot access tenant resources; in-progress tasks are not affected | `PUT /api/iam/tenants/:id/disable` |
-| **Enable** | Restore tenant access permissions | `PUT /api/iam/tenants/:id/enable` |
+| Operation | API | Effect |
+|-----------|-----|--------|
+| **Disable** | `POST /api/iam/tenants/:id:disable` | Tenant disabled |
+| **Enable** | `POST /api/iam/tenants/:id:enable` | Tenant restored |
 
-> ⚠️ Note: In the current version, the tenant enable/disable feature is **under development**, and the corresponding buttons may not yet be displayed in the interface. This feature will be officially available in a future version.
+> ⚠️ Note: The exact effect of disabling on existing tasks, sessions, and resource access is a backend policy the frontend does not surface. Not confirmed.
 
 ---
 
-## Tenant Detail Page
+## Tenant Overview Page
 
-Click the tenant name to enter the tenant detail page. The detail page uses a multi-area layout to display comprehensive tenant information.
+Console route: `/iam/tenants/:tenant/overview`.
 
-Path: `/boss/iam/tenants/:id`
+Layout (`src/pages/boss/iam/tenants/overview/overview.tsx`): a 3-column tenant info card on the left, and a 9-column area on the right with member stats on top and the member list below.
 
-![Tenant Detail Page](/assets/screenshots/boss/iam-tenants-detail.png)
+### Tenant Info (TenantInfo)
 
-### Page Layout
+| Item | Inline editable | Field |
+|------|-----------------|-------|
+| Avatar | ✅ (upload + crop) | `avatar` |
+| Tenant name | ✅ | `name` |
+| Email | ✅ | `email` |
+| Phone | ✅ | `phone` |
+| Created At | — | `creationTimestamp` |
 
-The detail page is divided into three main areas:
+> ⚠️ Note: The overview info card does **not** show tenant ID, description, or enabled status. Those appear in the list column, the edit page, and tenant config respectively.
 
-```mermaid
-graph TB
-    subgraph TenantDetail["Tenant Detail Page Layout"]
-        direction TB
-        subgraph Upper["Upper Area"]
-            TenantInfo["📋 Tenant Info<br/>3 Columns<br/>Basic Information"]
-            MemberStats["📊 Member Statistics<br/>Statistical Charts"]
-        end
-        subgraph Lower["Lower Area"]
-            Members["👥 Tenant Member List<br/>9 Columns<br/>Member Table"]
-        end
-    end
-```
+### Member Stats and Member List
 
-### Tenant Info Area (TenantInfo)
-
-Located on the upper left (3 columns), displays basic tenant information:
-
-| Display Item | Description |
-|-------------|-------------|
-| Tenant Avatar | Large avatar display |
-| Tenant Name | Tenant display name |
-| Tenant ID | Tenant unique identifier |
-| Email | Administrative contact email |
-| Phone | Administrative contact phone |
-| Description | Tenant description |
-| Created At | Tenant creation time |
-| Status | Current enabled/disabled status |
-
-### Member Statistics Area (TenantMemberStats)
-
-Located on the upper right, displays member count distribution by role in chart form:
-
-- **Administrator** count
-- **Regular Member** count
-- Role distribution chart (e.g., pie or donut chart)
-
-### Tenant Member List (TenantMembers)
-
-Located in the lower area (9 columns), displays all members in the tenant in table format:
-
-| Column | Field Name | Display | Description |
-|--------|-----------|---------|-------------|
-| **Name** | `name` | Avatar + Display Name | Member's username, with avatar icon |
-| **Email** | `email` | Text | Member's registered email |
-| **Role** | `role` | Translated Label | Role in the tenant (translated to current language) |
-| **Joined At** | `joinedAt` | Formatted Time | Time the member joined the tenant |
-| **Actions** | — | Action Buttons | Edit Role, Remove Member |
+- **TenantMemberStats**: member-count cards by role; roles are `admin` / `member` / `developer` (`TenantRole`, `src/types/tenant.ts:18-22`), aggregated client-side.
+- **TenantMembers**: the embedded table shows only three columns — Member (`userInfo.name`, falls back to `user`), Email (`userInfo.email`), Role (`role`, translated) — plus a "view more" link to the members page.
 
 ---
 
 ## Tenant Member Management
 
-Path: `/boss/iam/tenants/:id/members`
+Console route: `/iam/tenants/:tenant/members`.
 
-![Tenant Member Management](/assets/screenshots/boss/iam-tenants-members.png)
+| Column | Field | Description |
+|--------|-------|-------------|
+| **Member** | `name` | Avatar + user identifier |
+| **Email** | `userInfo.email` | — |
+| **Role** | `role` | Translated role label |
+| **Joined At** | `creationTimestamp` | Formatted time |
+
+Row actions: edit role (`/iam/tenants/:tenant/members/:member?action=edit`) and remove member (with a confirmation dialog; multi-select batch delete supported).
 
 ### Add Member
 
-1. In the member list area of the tenant detail page, click the **Add Member** button
-2. Search for and select the user to add in the popup dialog
-3. Assign a role within that tenant for the user
-4. Click **Confirm** to complete the addition
+Click **Add Member**, pick a user and assign a role (`src/pages/boss/iam/tenants/members/components/form.tsx`); submit calls `PUT /api/iam/tenants/:tenant/members/:user`.
 
-| Field | Description |
-|-------|-------------|
-| User | Search and select from the platform user list; supports search by username or email |
-| Role | Select the user's role within the tenant (e.g., Tenant Administrator, Regular Member) |
+| Field | Field name | Required | Description |
+|-------|-----------|----------|-------------|
+| **User** | `user` | ✅ | Async user selector with search; disabled when editing |
+| **Role** | `role` | ✅ | Options come from `GET /api/iam/tenants/:tenant/roles`, **returned dynamically by the backend**; not hardcoded in the frontend |
 
-> 💡 Tip: A user can belong to multiple tenants simultaneously and can have different roles in different tenants.
-
-### Edit Member Role
-
-1. Find the target member in the member list
-2. Click the **Edit Role** button
-3. Modify the role in the popup selection box
-4. Click **Save** to confirm changes
-
-### Remove Member
-
-1. Find the member to remove in the member list
-2. Click the **Delete** button
-3. Confirm the removal in the confirmation dialog
-
-> ⚠️ Note: Removing a member will immediately revoke that user's access to all resources under the tenant. If the member is the only administrator in the tenant, the system will block the deletion and prompt you to designate another administrator first.
-
----
-
-## Complete Tenant Creation Flow
-
-```mermaid
-flowchart TD
-    Start["Start"] --> Create["1. Create Tenant<br/>Fill in basic info"]
-    Create --> Avatar{"Upload avatar?"}
-    Avatar -->|Yes| Upload["Upload and crop avatar"]
-    Avatar -->|No| Skip["Use default avatar"]
-    Upload --> Submit["Submit creation"]
-    Skip --> Submit
-    Submit --> PostCreate{"Choose next action"}
-    
-    PostCreate --> Quota["2. Allocate Quota<br/>Set resource limits"]
-    PostCreate --> AddMember["3. Add Members<br/>Invite users"]
-    PostCreate --> Return["Return to list"]
-    
-    Quota --> AllocCPU["Allocate CPU quota"]
-    AllocCPU --> AllocGPU["Allocate GPU quota"]
-    AllocGPU --> AllocMem["Allocate memory quota"]
-    AllocMem --> AddMember
-    
-    AddMember --> SetRole["Set member roles"]
-    SetRole --> Notify["Notify members"]
-    Notify --> Done["✅ Tenant Setup Complete<br/>Members can use the platform via Console"]
-    
-    Return --> Later["Later, click tenant<br/>in list to configure"]
-    Later --> Quota
-```
+> ⚠️ Note: Role candidates are decided by the tenant roles endpoint, so this page does not enumerate fixed role names. Whether removing the last administrator is blocked is backend behavior with no frontend check. Not confirmed.
 
 ## API Reference
 
-| Operation | Method | Path | Description |
-|-----------|--------|------|-------------|
-| Get Tenant List | `GET` | `/api/iam/tenants` | Supports pagination and search parameters |
-| Get Single Tenant | `GET` | `/api/iam/tenants/:id` | Returns detailed tenant information |
-| Create Tenant | `POST` | `/api/iam/tenant-register` | Create a new tenant |
-| Update Tenant | `PUT` | `/api/iam/tenants/:id` | Update basic tenant information |
-| Delete Tenant | `DELETE` | `/api/iam/tenants/:id` | Requires confirmation |
-| Upload Avatar | `PUT` | `/api/iam/tenants/:id/avatar` | Max 3MB |
-| Enable Tenant | `PUT` | `/api/iam/tenants/:id/enable` | Restore access |
-| Disable Tenant | `PUT` | `/api/iam/tenants/:id/disable` | Suspend access |
-| Get Member List | `GET` | `/api/iam/tenants/:id/members` | Tenant members |
-| Add Member | `POST` | `/api/iam/tenants/:id/members` | Invite user |
-| Update Member Role | `PUT` | `/api/iam/tenants/:id/members/:uid` | Modify role |
-| Remove Member | `DELETE` | `/api/iam/tenants/:id/members/:uid` | Remove member |
+| Operation | Method and path |
+|-----------|-----------------|
+| List / get tenants | `GET /api/iam/tenants`, `GET /api/iam/tenants/:id` |
+| Create / update / delete tenant | `POST /api/iam/tenants`, `PUT /api/iam/tenants/:id`, `DELETE /api/iam/tenants/:id` (not exposed in UI) |
+| Enable / disable | `POST /api/iam/tenants/:id:enable` / `POST /api/iam/tenants/:id:disable` |
+| Upload avatar | `POST /api/iam/tenants/:id/avatar` (multipart) |
+| List members / roles | `GET /api/iam/tenants/:tenant/members`, `GET /api/iam/tenants/:tenant/roles` |
+| Add/update / remove member | `PUT /api/iam/tenants/:tenant/members/:user`, `DELETE /api/iam/tenants/:tenant/members/:user` |
 
 ## Best Practices
 
-### Tenant Planning Recommendations
-
-- **Organize tenants by organizational structure**: It is recommended that each department or team corresponds to one tenant, avoiding cross-department tenant sharing that leads to resource and permission confusion
-- **Set quotas reasonably**: Allocate resource quotas based on actual team needs, avoiding over-allocation that wastes resources or under-allocation that hinders usage
-- **Designate multiple administrators**: Each tenant should have at least 2 administrators to avoid losing tenant management when a single administrator leaves
-
-### Naming Conventions
-
-- Tenant IDs should use meaningful abbreviations, such as `team-ai-research`, `dept-engineering`
-- Maintain consistent naming styles for ease of management and lookup
-
-### Security Recommendations
-
-1. **Regularly review the member list** and remove members who no longer need access
-2. **Use the principle of least privilege**, granting only necessary roles
-3. **Monitor quota usage** and adjust promptly to avoid resource shortages or waste
-
-## Permission Requirements
-
-| Operation | Required Role |
-|-----------|---------------|
-| View Tenant List | System Administrator |
-| Create Tenant | System Administrator |
-| Edit Tenant | System Administrator |
-| Enable/Disable Tenant | System Administrator |
-| Manage Tenant Members | System Administrator |
-| Delete Tenant | System Administrator |
+- **Organize tenants by org structure**: one tenant per department or team.
+- **Set quotas reasonably and designate at least two administrators** per tenant.
+- **Be careful with image push visibility**: `private` is safer by default; adjust `defaultVisibility` when sharing is needed.

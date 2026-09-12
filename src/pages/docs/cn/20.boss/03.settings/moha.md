@@ -1,139 +1,80 @@
 ---
-title: 'Moha 设置'
-updated: '2026-03-23'
+title: 魔哈Hub设置
+updated: '2026-09-12'
+description: '魔哈Hub 展示配置与空间配置——Logo、标题、描述、基础域名与 TLS 证书。'
+tags:
+  - boss
+  - settings
 ---
 
 ## 功能简介
 
-Moha 设置用于自定义 **Moha 模型中心** 子系统的品牌展示信息，包括模块 Logo、导航栏标题和模块描述。其配置结构与 Rune 设置完全一致，配置保存在 配置项 命名空间下，修改后会立即反映在 Moha 模块的导航栏和入口页面中。
+Moha 设置维护魔哈Hub（Moha）在控制台中的展示信息，以及 Moha 空间的域名与 TLS 配置。页面包含两张配置卡：**魔哈Hub配置** 与 **空间配置**。
 
-:::tip
-Moha 设置与 Rune 设置、ChatApp 设置采用相同的配置结构，但各自保存在独立的命名空间中，互不影响。
-:::
+本页对应 BOSS 控制台「平台管理 → **魔哈Hub设置**」（菜单文案取自 `navbar.moha_setting`）。
 
 ## 进入路径
 
-BOSS → 平台设置 → **Moha 设置**
+BOSS 控制台 → 平台管理 → **魔哈Hub设置**
 
-路径：`/boss/settings/moha`
+前端真实路由：`/settings/moha`
 
-## 页面说明
+## 魔哈Hub配置
 
-![Moha 设置](/assets/screenshots/boss/settings-moha.png)
+| 界面标签 | 字段 | 类型 | 约束 | 说明 |
+|---------|------|------|------|------|
+| （Logo 上传） | `moha.logo` | 图片上传 | 最大 **128 KB**，仅 **PNG / SVG** | 以 Base64 存储 |
+| 产品标题 | `moha.title` | 文本 | 最大 **10 个字符** | 导航栏标题 |
+| 产品描述 | `moha.description` | 多行文本 | 最大 **100 个字符**，4 行 | 产品简介 |
 
-## 配置项
+> ⚠️ 注意: 「产品标题」的字段名是 **`moha.title`**（界面标签为 `navbar_title`），不是 `navbar_title` 字段。
 
-### 模块 Logo
-
-| 属性 | 说明 |
-|------|------|
-| 字段名 | `logo` |
-| 文件大小限制 | 最大 **128KB** |
-| 编码方式 | **Base64** 编码存储 |
-| 支持格式 | **PNG**、**SVG** |
-| 用途 | 显示在 Moha 模块的导航栏和入口页面 |
-
-操作步骤：
-
-1. 点击 Logo 上传区域
-2. 选择本地 PNG 或 SVG 文件（不超过 128KB）
-3. 预览 Logo 效果
-4. 确认后点击 **保存**
-
-:::warning
-模块 Logo 以 Base64 形式直接存储在配置数据库中，大小限制为 128KB，请使用 SVG 矢量格式或压缩后的 PNG 以控制文件大小。
-:::
-
-### 导航栏标题
-
-| 属性 | 说明 |
-|------|------|
-| 字段名 | `navbar_title` |
-| 最大长度 | **10 个字符** |
-| 用途 | 显示在 Moha 模块导航栏 Logo 旁边的标题文字 |
-
-默认值为 "Moha"，管理员可将其自定义为组织或产品对应的名称，如 "模型中心"、"AI 资产库" 等。
-
-### 模块描述
-
-| 属性 | 说明 |
-|------|------|
-| 字段名 | `description` |
-| 最大长度 | **100 个字符** |
-| 输入框行数 | **4 行** 文本域 |
-| 用途 | 显示在 Moha 模块入口页面或关于页面的简介文字 |
-
-描述文字用于向用户说明 Moha 模块的功能定位，例如："Moha 模型中心提供企业级的模型、数据集和镜像托管服务..."
-
-## 配置存储
-
-所有 Moha 设置保存在 配置项 命名空间中：
+写入的配置结构：
 
 ```yaml
-# config.moha 命名空间
-logo: "data:image/svg+xml;base64,PHN2ZyB..."    # Base64 编码的 Logo
-navbar_title: "Moha"                              # 导航栏标题
-description: "Moha 模型中心提供..."                # 模块描述
+moha:
+  logo: "data:image/svg+xml;base64,PHN2ZyB..."
+  title: "Moha"
+  description: "模型、数据集与镜像托管服务简介"
 ```
 
-## 设置效果展示
+接口：`PUT /api/iam/global-config`。
 
-配置保存后，Moha 模块中以下位置会受到影响：
+## 空间配置
 
-| 展示位置 | 受影响的配置项 |
-|----------|---------------|
-| 导航栏左上角 | Logo + 导航栏标题 |
-| 模块入口首页 | Logo + 描述 |
-| 浏览器标签页 | 导航栏标题（作为标签页前缀） |
-| 平台模块切换菜单 | Logo + 导航栏标题 |
+空间配置独立于展示配置，保存到 Moha 全局配置（`PUT /api/moha/global-config`）。
 
-![Moha 设置效果预览](/assets/screenshots/boss/settings-moha-preview.png)
+| 界面标签 | 字段 | 类型 | 必填 | 默认值 | 说明 |
+|---------|------|------|------|--------|------|
+| 基础域名 | `space.base` | 文本 | ✅ | 空 | 例如 `develop.xiaoshiai.cn` |
+| 启用TLS | `space.tlsEnabled` | 开关 | — | 关闭 | 开启后必须同时填写证书与私钥 |
+| TLS证书 | `space.tlsCert` | 多行文本 | 条件必填 | 空 | PEM 格式证书 |
+| TLS私钥 | `space.tlsKey` | 多行文本 | 条件必填 | 空 | PEM 格式私钥 |
 
-:::tip
-修改保存后，已打开 Moha 模块的用户需要刷新页面才能看到最新配置。
-:::
+校验规则：
 
-## 操作步骤
+- `base` 去除首尾空格后不能为空
+- 开启 TLS 时，证书与私钥都必须填写
+- 证书与私钥**只能同时填写或同时留空**，只填其中一个会报错
+- 提交前会对全部字段做 `trim()`
 
-1. 进入 BOSS → 平台设置 → Moha 设置
-2. 根据需要修改 Logo、标题和描述
-3. 在页面中预览修改效果
-4. 点击 **保存** 按钮提交变更
-5. 确认变更已生效（刷新 Moha 模块页面查看）
-
-:::warning
-Logo 文件超过 128KB 会被拒绝上传。建议优先使用 SVG 格式，通常只有几 KB，且在不同分辨率下均能清晰显示。
-:::
-
-## 配置结构概览
-
-```mermaid
-graph TD
-    A[Moha 设置] --> B[模块 Logo]
-    A --> C[导航栏标题]
-    A --> D[模块描述]
-    
-    B --> B1[128KB 限制]
-    B --> B2[PNG / SVG 格式]
-    B --> B3[Base64 编码存储]
-    
-    C --> C1[最大 10 字符]
-    C --> C2[显示在导航栏]
-    
-    D --> D1[最大 100 字符]
-    D --> D2[4 行文本域]
-    D --> D3[显示在入口页面]
+```yaml
+space:
+  base: "develop.xiaoshiai.cn"
+  tlsEnabled: true
+  tlsCert: "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----"
+  tlsKey: "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
 ```
 
-## 常见问题
+> ⚠️ 注意: 两张卡片各自独立保存，保存魔哈Hub配置不会影响空间配置，反之亦然。
 
-| 问题 | 解决方案 |
-|------|----------|
-| Logo 上传失败 | 检查文件大小是否超过 128KB，格式是否为 PNG 或 SVG |
-| 标题过长被截断 | 减少字符数至 10 个以内 |
-| 修改未生效 | 确认点击保存后刷新 Moha 模块页面 |
-| Logo 显示模糊 | 建议使用 SVG 矢量格式替代 PNG |
+## 接口
+
+| 接口 | 方法 | 说明 |
+|------|------|------|
+| `/api/iam/global-config` | `PUT` | 保存魔哈Hub展示配置 |
+| `/api/moha/global-config` | `GET` / `PUT` | 读取 / 保存空间配置 |
 
 ## 权限要求
 
-需要 **系统管理员** 角色才能访问 Moha 设置页面。
+需要 **系统管理员** 角色。

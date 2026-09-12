@@ -1,161 +1,68 @@
 ---
-title: 'System Instance Management'
-updated: '2026-03-23'
+title: System Apps
+updated: '2026-09-12'
+description: 'Instance list, deployment entry, and deletion notes for cluster-level system apps.'
 ---
 
-## Feature Overview
+## Overview
 
-System Instances are **infrastructure-level components** deployed in clusters that provide critical supporting services for the platform's operation. Unlike user applications, system instances serve the operational and management needs of the entire cluster, including but not limited to:
-
-- **Metrics Collection**: Prometheus, Node Exporter, and other metrics collection components
-- **Visualization Dashboards**: Grafana monitoring dashboards
-- **Log Collection & Query**: Loki, Promtail log pipelines
-- **Object Storage**: MinIO distributed storage
-- **Networking & Ingress**: Ingress Controller, Cert Manager
-- **GPU Management**: GPU Operator, Device Plugin
-
-System instances are deployed with one click from templates in the [System Template Market](./system-market), with lifecycle management based on Helm Charts under the hood.
-
-> 💡 Tip: System instances are only visible to platform administrators. Regular users cannot view or operate cluster-level system components.
+System instances are **infrastructure-level components** deployed in a cluster (such as monitoring, logging, and storage) that serve the operations and management needs of the whole cluster. They are deployed with one click from templates in the System Template Market and are backed by Helm Charts.
 
 ## Access Path
 
-BOSS → Rune → Clusters → Select Cluster → **System Instances**
+BOSS Console → Cluster Management → select a cluster → **System Apps**
 
-Path: `/boss/rune/clusters/:cluster/systems`
+Frontend route: `/rune/clusters/:cluster/systems`
 
-## Overall Architecture
+---
 
-```mermaid
-graph TB
-    subgraph Cluster["Cluster"]
-        subgraph SystemLayer["System Instance Layer"]
-            Prometheus["Prometheus<br/>Metrics Collection"]
-            Grafana["Grafana<br/>Monitoring Dashboard"]
-            Loki["Loki<br/>Log Aggregation"]
-            MinIO["MinIO<br/>Object Storage"]
-            Ingress["Ingress Controller<br/>Traffic Ingress"]
-        end
-        subgraph UserLayer["User Application Layer"]
-            App1["Inference Service"]
-            App2["Fine-tuning Task"]
-            App3["Development Environment"]
-        end
-        UserLayer -->|"Metrics Reporting"| Prometheus
-        UserLayer -->|"Log Output"| Loki
-        UserLayer -->|"Model/Data Access"| MinIO
-    end
-    Admin["Platform Administrator"] -->|"Deploy / Manage"| SystemLayer
-    Market["System Template Market"] -->|"One-click Deploy"| SystemLayer
-```
+## Instance List
 
-## System Instance List
+System Apps and Storage Clusters share the same instance list component, distinguished by `category`: system apps are `category = system`, storage clusters are `category = storage`.
 
-![System Instance List](/assets/screenshots/boss/rune-systems.png)
+| Column | Field Path | Description |
+| --- | --- | --- |
+| Name | `name` | Instance name (with icon); click to open instance details |
+| Version | `product.version` | Template version used for deployment |
+| Status | `status.phase` | Rendered by `ObjectStatus` |
+| Created At | `creationTimestamp` | — |
 
-The system instance list is rendered using the `InstanceListView` component with a fixed `category='system'` filter, displaying only system-level instances.
+Actions: edit, delete (with a confirmation dialog); multi-select is supported.
 
-| Column | Description | Notes |
-|--------|-------------|-------|
-| Name | Instance name (with icon) | Click to enter instance details |
-| Status | Running status | Running / Pending / Failed / Stopped, etc. |
-| Template | Name of the system template used for deployment | Links to template details |
-| Version | Currently deployed Chart version | — |
-| Created At | Instance deployment time | Timestamp format |
-| Actions | View Details / Delete | — |
+> ⚠️ Note: The list has **no separate "template" column**. The deployment source (template) is reflected in the version field and details.
 
-> ⚠️ Note: Deleting a system instance may cause cluster monitoring or logging functions to become unavailable. Please confirm there are no dependencies before performing the delete operation.
+---
 
-## Deploy System Instance
+## Deploy a System Instance
 
-### Deploy from System Template Market
+1. On the instance list, click **Add**.
+2. The system navigates to the system template market (`/rune/clusters/:cluster/system-market`).
+3. Select the target template and version.
+4. Fill in the deployment parameters (dynamically generated from the template Schema).
+5. After submission a system instance is created, and its status can be viewed in the instance list.
 
-1. On the system instance list page, click the **Add** button
-2. The system will navigate to the [System Template Market](./system-market) page
-3. Select the target template in the template market (e.g., Prometheus)
-4. Fill in deployment parameters (namespace, configuration items, etc.)
-5. Submit the deployment and wait for the instance to start
+---
 
-![Deploy System Instance](/assets/screenshots/boss/rune-system-deploy.png)
+## Manage Instances
 
-> 💡 Tip: Before deployment, confirm that the cluster has sufficient available resources (CPU, memory). Monitoring components in particular typically require significant memory quota.
+- **View details**: click the instance name to open the detail page (`/rune/clusters/:cluster/systems/:instance`) and view basic information, status, and related resources.
+- **Edit**: modify the instance's configurable items.
+- **Delete**: with a confirmation dialog; related resources are released after deletion.
 
-### Deployment Flow
+> ⚠️ Note: Deleting a system instance may make cluster monitoring or logging unavailable. Confirm there are no dependencies before proceeding.
 
-```mermaid
-sequenceDiagram
-    participant Admin as Administrator
-    participant UI as BOSS UI
-    participant API as Rune API
-    participant K8s as Kubernetes
+---
 
-    Admin->>UI: Click "Add"
-    UI->>UI: Navigate to System Template Market
-    Admin->>UI: Select template & fill in parameters
-    UI->>API: POST createSystemInstance
-    API->>K8s: Deploy Chart via Helm
-    K8s-->>API: Deployment status feedback
-    API-->>UI: Return instance information
-    UI-->>Admin: Display deployment result
-```
-
-## Manage System Instances
-
-### View Details
-
-Click on the instance name to enter the details page, where you can view:
-
-- **Basic Information**: Instance name, associated cluster, deployment template, version number, creation time
-- **Running Status**: Current Pod count, replica status, resource utilization
-- **Pod List**: Running status of each Pod, node location, restart count
-- **Event Log**: Kubernetes event stream to help troubleshoot startup failures and other issues
-- **Configuration Details**: Currently active Helm values configuration
-
-![System Instance Details](/assets/screenshots/boss/rune-system-detail.png)
-
-### Delete Instance
-
-1. On the list page or details page, click the **Delete** action
-2. Confirm deletion in the confirmation dialog
-3. The system will uninstall the instance via Helm uninstall and clean up related resources
-
-> ⚠️ Note: Delete operations are irreversible. For storage components (such as MinIO), data within them will be **permanently lost** after deletion. It is recommended to back up data beforehand.
-
-## Common System Components
-
-| Component | Purpose | Typical Resource Requirements |
-|-----------|---------|------------------------------|
-| **Prometheus** | Metrics collection and storage, provides PromQL query capability | CPU: 500m, Memory: 2Gi+ |
-| **Grafana** | Monitoring data visualization dashboards, supports custom Dashboards | CPU: 200m, Memory: 512Mi |
-| **Loki** | Lightweight log aggregation system, integrates with Grafana | CPU: 500m, Memory: 1Gi+ |
-| **Promtail** | Log collection agent, pushes logs to Loki | CPU: 100m, Memory: 128Mi |
-| **MinIO** | S3-compatible high-performance object storage | CPU: 500m, Memory: 1Gi+ |
-| **Ingress NGINX** | Kubernetes Ingress controller | CPU: 200m, Memory: 256Mi |
-| **Cert Manager** | Automatic TLS certificate management and issuance | CPU: 100m, Memory: 128Mi |
-| **GPU Operator** | NVIDIA GPU driver and device plugin management | Depends on GPU count |
-
-> 💡 Tip: The resource requirements above are reference values. Actual requirements depend on cluster scale and load. For production environments, it is recommended to adjust resource quotas based on actual monitoring data.
-
-## Troubleshooting
-
-When a system instance status is abnormal, follow these steps to troubleshoot:
-
-1. **Check Pod Status**: Go to instance details and check if Pods are in `CrashLoopBackOff` or `Pending` state
-2. **View Event Log**: Look for events like `FailedScheduling` (insufficient resources), `ImagePullBackOff` (image pull failure), etc.
-3. **Check Resource Quotas**: Confirm that remaining cluster resources meet the component requirements
-4. **View Container Logs**: Check container output logs via Pod details to identify specific errors
-5. **Check Storage Volumes**: For storage components, confirm that PVCs are properly bound
-
-## Differences from App Market Instances
+## Differences from App Instances
 
 | Comparison | System Instance | App Instance |
-|------------|----------------|--------------|
-| Deployment Source | System Template Market | User App Market |
+| --- | --- | --- |
+| Deployment Source | System Template Market (`domain = system`) | User App Market (`domain = user`) |
 | Scope | Cluster level | Workspace level |
-| Visibility | System administrators only | Tenant/workspace users |
-| Purpose | Infrastructure support | Business applications (inference/fine-tuning, etc.) |
-| Management Path | BOSS → Cluster → System Instances | Console → Apps |
+| Management Entry | Cluster → System Apps | Console → Apps |
+
+---
 
 ## Permission Requirements
 
-Requires the **System Administrator** role. Only users with this role can view, deploy, and manage cluster-level system instances.
+Requires the **System Administrator** role. You can view, deploy, and manage cluster-level system instances. For more details, see [System Template Market](./system-market).

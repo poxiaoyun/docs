@@ -1,190 +1,83 @@
 ---
-title: 'Global Platform Settings'
-updated: '2026-03-23'
+title: Platform Settings
+updated: '2026-09-12'
+description: 'Platform branding and sign-in display — title, logo, subtitle, header navigation and access management.'
+tags:
+  - boss
+  - settings
 ---
 
-## Feature Overview
+## Feature overview
 
-Global Platform Settings is the core configuration page of the BOSS management portal. Administrators can customize the platform's branding (Logo, name, subtitle), header navigation behavior, IAM authentication policies, and other global parameters. All settings take effect immediately across all user interfaces upon saving.
+Platform settings maintain the branding shown in the console and on the sign-in page, plus header navigation and access management switches. All values are written to the platform global configuration and apply to the whole platform UI.
 
-> 💡 Tip: Modifications to platform settings affect the interface experience for all users. Please confirm your changes before saving. Some configurations may require users to refresh the page to see the effects.
+This page corresponds to **Platform management → Platform settings** in the Boss console (menu label from `navbar.platform_setting`).
 
-## Access Path
+## Access path
 
-BOSS → Platform Settings → **Platform Settings**
+Boss console → Platform management → **Platform settings**
 
-Path: `/boss/settings/platform`
+Console route: `/settings/platform`
 
-## Settings Structure Overview
+## Page structure
 
-```mermaid
-graph TD
-    A[Global Platform Settings] --> B[Logo & Title Configuration]
-    A --> C[Header Navigation Configuration]
-    A --> D[IAM Authentication Configuration]
-    
-    B --> B1[Platform Logo]
-    B --> B2[Platform Name]
-    B --> B3[Platform Subtitle]
-    
-    C --> C1[Documentation Link URL]
-    C --> C2[Language Switch Toggle]
-    C --> C3[Navbar Home Page Toggle]
-    
-    D --> D1[BOSS Self-Registration Toggle]
-```
+Three configuration cards, top to bottom:
 
-## Page Description
+| Card | Component | i18n title |
+|------|-----------|-----------|
+| Title and Logo | `LogoAndTitleConfig` | `title_and_logo` |
+| Platform header config | `HeaderConfig` | `header_config` |
+| Access management config | `IamConfig` | `iam_config` |
 
-![Platform Settings](/assets/screenshots/boss/settings-platform.png)
+Each card has its own **Confirm** button; a successful save shows "Updated, please refresh the page".
 
----
+## Title and Logo
 
-## Logo & Title Configuration (LogoAndTitleConfig)
+| Field | Key | Type | Validation |
+|-------|-----|------|-----------|
+| Platform title | `title` | Text | Max **10 characters** |
+| Logo | `logo` | Image upload | Max **3 MB**, **PNG / SVG** only |
+| Subtitle | `subTitle` | Text | Max **20 characters** |
 
-Logo & Title Configuration controls the platform's branding, including content displayed on the login page, navigation bar, and browser tab.
+> ⚠️ Note: the `subTitle` limit is **20 characters**, not 10.
 
-### Platform Logo
+Logo upload behaviour:
 
-| Property | Description |
-|----------|-------------|
-| File Size Limit | Maximum **3MB** |
-| Supported Formats | **PNG**, **SVG** |
-| Upload Method | Click the upload area to select a file; supports cropping adjustment |
-| API Endpoint | `POST /api/iam/logo/avatar` |
+1. Pick a PNG or SVG file (max 3 MB)
+2. Upload happens immediately (`POST /api/iam/logo/avatar`, form field `avatar`); the new logo URL is returned
+3. Cropping preserves the aspect ratio (`preserveAspectRatio`)
+4. Clicking **Confirm** on the card is what persists the logo URL into the global configuration
 
-Steps:
+> 💡 Tip: uploading only obtains an image URL; the configuration is saved by **Confirm**.
 
-1. Click the Logo upload area
-2. Select a local PNG or SVG file (no larger than 3MB)
-3. Adjust the Logo display area in the cropping dialog
-4. Confirm the crop and click **Save**
+## Platform header config
 
-![Logo Upload](/assets/screenshots/boss/settings-platform-logo.png)
+| Field | Key | Type | Default | Notes |
+|-------|-----|------|---------|-------|
+| Show document entry | `enableDocument` | Switch | on | Hides the document entry when off |
+| Document URL | `documentUrl` | Text | empty | Only shown when "show document entry" is on |
+| Enable language switch | `enableLanguageSwitch` | Switch | on | Controls the header language switcher |
 
-> ⚠️ Note: It is recommended to use PNG or SVG format with a transparent background to ensure good display across different themes (light/dark).
+> ⚠️ Note: the schema and defaults also define `enableNavbarIndex` (default on), but the corresponding switch is **commented out** in the UI and cannot be changed from the page.
 
-### Platform Name
+## Access management config
 
-| Property | Description |
-|----------|-------------|
-| Field Name | `title` |
-| Maximum Length | **10 characters** |
-| Purpose | Displayed next to the Logo in the navigation bar and in the browser tab title |
+| Field | Key | Type | Default | Notes |
+|-------|-----|------|---------|-------|
+| Enable BOSS signup | `enableBossSignup` | Switch | off | Whether users may self-register |
 
-### Platform Subtitle
+> ⚠️ Note: for private deployments, keep this off and create accounts manually.
 
-| Property | Description |
-|----------|-------------|
-| Field Name | `subTitle` |
-| Maximum Length | **10 characters** |
-| Purpose | Displayed as descriptive text below the Logo on the login page |
+## Requests
 
-> 💡 Tip: The character limit for name and subtitle is 10 characters. Chinese characters also count as 1 character each. Keep the name concise and impactful.
+| Request | Method | Notes |
+|---------|--------|-------|
+| `/api/iam/global-config` | `GET` | Read the platform global configuration |
+| `/api/iam/global-config` | `PUT` | Save it (each save merges the current config) |
+| `/api/iam/logo/avatar` | `POST` | Upload the logo (`multipart/form-data`, field `avatar`) |
 
----
+> ⚠️ Note: all three cards submit `{ ...current, ...formValues }`, so changing one field rewrites the whole global configuration.
 
-## Header Navigation Configuration (HeaderConfig)
+## Permissions
 
-Header Navigation Configuration controls the behavior and feature toggles of the platform's top navigation bar.
-
-### Documentation Link URL
-
-| Property | Description |
-|----------|-------------|
-| Field Name | `documentUrl` |
-| Type | URL text input |
-| Purpose | Sets the URL that the **Help Documentation** button in the navigation bar links to |
-
-When users click the documentation/help icon in the navigation bar, this URL opens in a new tab. Leave empty to hide the help button.
-
-### Language Switch Toggle
-
-| Property | Description |
-|----------|-------------|
-| Field Name | `enableLanguageSwitch` |
-| Type | Switch |
-| Default | Enabled |
-| Purpose | Controls whether the language switch button (Chinese/English) is displayed in the navigation bar |
-
-> 💡 Tip: If the platform is intended only for Chinese-speaking users, you can disable the language switch to simplify the interface.
-
-### Navbar Home Page Toggle
-
-| Property | Description |
-|----------|-------------|
-| Field Name | `enableNavbarIndex` |
-| Type | Switch |
-| Default | Enabled |
-| Purpose | Controls whether the navigation bar displays the Home (Index) entry |
-
----
-
-## IAM Authentication Configuration (IamConfig)
-
-IAM Authentication Configuration controls the platform's identity authentication policies.
-
-### BOSS Self-Registration Toggle
-
-| Property | Description |
-|----------|-------------|
-| Field Name | `enableBossSignup` |
-| Type | Switch |
-| Default | Disabled |
-| Purpose | Controls whether users can self-register accounts through the registration page |
-
-> ⚠️ Note: In enterprise private deployment scenarios, it is recommended to disable self-registration and have administrators manually create user accounts to ensure security and control.
-
----
-
-## API Endpoints
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/iam/public-configurations/global` | `GET` | Read the public platform configuration value anonymously |
-| `/api/iam/namespaces/system/configurations/global` | `PUT` | Save the complete platform configuration with administrator authorization |
-| `/api/iam/logo/avatar` | `POST` | Upload platform Logo file (form upload) |
-
-### Request Example
-
-```json
-// PUT /api/iam/namespaces/system/configurations/global
-{
-  "value": {
-    "title": "AI Platform",
-    "subTitle": "Smart Computing",
-    "documentUrl": "https://docs.example.com",
-    "enableLanguageSwitch": true,
-    "enableNavbarIndex": true,
-    "enableBossSignup": false
-  }
-}
-```
-
----
-
-## Change Application Flow
-
-```mermaid
-sequenceDiagram
-    participant Admin as Administrator
-    participant BOSS as BOSS Portal
-    participant API as Backend API
-    participant Users as User Interface
-
-    Admin->>BOSS: Modify platform configuration
-    Admin->>BOSS: Upload new Logo (if needed)
-    BOSS->>API: POST /api/iam/logo/avatar
-    API-->>BOSS: Logo uploaded successfully
-    Admin->>BOSS: Click "Save"
-    BOSS->>API: PUT /api/iam/namespaces/system/configurations/global
-    API-->>BOSS: Configuration saved successfully
-    API->>Users: New configuration takes effect immediately
-    Note over Users: Users will see the new Logo<br/>and title after refreshing the page
-```
-
-## Permission Requirements
-
-Requires the **System Administrator** role to access the Global Platform Settings page.
-
-> 💡 Tip: Platform settings affect the common parts of all subsystems (Rune, Moha, ChatApp). Subsystem-specific configurations should be managed in their respective module settings.
+Requires the **system administrator** role.

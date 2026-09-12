@@ -1,230 +1,127 @@
 ---
-title: '模型渠道管理'
-updated: '2026-03-23'
+title: '渠道管理'
+updated: '2026-09-12'
+description: '配置上游模型服务渠道——提供商、端点、上游密钥、可见性与速率限制。'
+tags:
+  - boss
+  - gateway
 ---
 
 ## 功能简介
 
-模型渠道（Channel）是 LLM 网关的核心概念——每个渠道代表一个**上游模型服务端点**，可以是外部 API 提供商（如 OpenAI、阿里云百炼）、第三方平台或平台内部的自建推理服务。网关根据路由策略将用户的 API 请求智能分发到合适的渠道进行处理。
+渠道（Channel）代表一个**上游模型服务端点**，是 LLM 网关对接外部或内部推理服务的接入配置。网关按照渠道的可见性与优先级，把客户端请求路由到匹配的渠道处理。
 
-渠道管理页面允许系统管理员配置和管理所有上游模型渠道，包括添加、编辑、启用/禁用、可见性控制和路由优先级设置。
-
-:::tip
-渠道是连接客户端请求与上游推理服务的桥梁。合理配置多个渠道可实现负载均衡、故障容错和多模型统一接入。
-:::
+本页对应 BOSS 控制台「大模型网关 → 模型服务 → **渠道管理**」（菜单文案取自 `navbar.model_list`）。
 
 ## 进入路径
 
-BOSS → LLM 网关 → **模型列表**
+BOSS 控制台 → 大模型网关 → 模型服务 → **渠道管理**
 
-路径：`/boss/gateway/channels`
+前端真实路由：`/service-registrations`
 
-## 渠道路由架构
+| 操作 | 前端路由 |
+|------|---------|
+| 列表 | `/service-registrations` |
+| 创建渠道 | `/service-registrations/new` |
+| 编辑渠道 | `/service-registrations/:id/edit` |
 
-```mermaid
-flowchart LR
-    Client["客户端请求<br/>model: gpt-4"] -->|API Key| Gateway["LLM 网关"]
-    
-    Gateway -->|"1. 认证验证"| Auth["Token 验证"]
-    Auth -->|"2. 内容审查"| Mod["内容审查"]
-    Mod -->|"3. 路由匹配"| Router["智能路由"]
-    
-    Router -->|"优先级 1"| Ch1["渠道 A<br/>OpenAI 官方<br/>visibility: public"]
-    Router -->|"优先级 2"| Ch2["渠道 B<br/>Azure OpenAI<br/>visibility: public"]
-    Router -->|"优先级 3"| Ch3["渠道 C<br/>本地 vLLM<br/>visibility: tenant"]
-    
-    Router -.->|"已禁用"| Ch4["渠道 D<br/>已停用"]
-    
-    Gateway -->|"4. 审计记录"| Audit["审计日志"]
-    
-    style Ch4 fill:#ccc,stroke:#999
-```
+> ⚠️ 注意: 上表是 BOSS 控制台前端代码中的真实路径（`src/routes/paths.ts`），不是文档站 URL。
 
 ## 渠道列表
 
-![渠道列表](/assets/screenshots/boss/gateway-channels.png)
+| 列 | 字段 | 说明 |
+|----|------|------|
+| 名称 | `name` | 渠道名称 |
+| 模型服务供应商 / 端点 | `provider` + `apiBase` | 第一行为提供商标识，第二行为 API 基础地址 |
+| 可见性 | `visibility` | 标签颜色：`public`=success、`tenant`=warning、`private`=default |
+| 适用模型 | `supportedModels` | 折叠展示模型列表，为空显示 `-` |
+| 优先级 | `priority` | `> 0` 时用 info 色标签展示 |
+| RPM / TPM | `rateLimitRPM` / `rateLimitTPM` | `0` 显示为无穷符号（不限制）；TPM 以 `K` 为单位展示 |
+| 状态 | `enabled` | 启用/未启用图标 |
+| 租户 / 工作空间 | `tenant` / `workspace` | 仅租户级/私有渠道有值 |
+| 所有者 | `owner` | 渠道创建者 |
+| 创建时间 | `createdAt` | 日期时间格式 |
 
-| 列 | 字段 | 说明 | 备注 |
-|----|------|------|------|
-| 可见性 + 名称 | `visibility` + `name` | 渠道名称，前缀彩色可见性标签 | 标签颜色：`public`=绿色(success)、`tenant`=橙色(warning)、`private`=默认色 |
-| 提供商 + API 地址 | `provider` + `apiBase` | 模型提供商名称和 API 基础地址 | — |
-| 支持模型 | `supportedModels` | 该渠道支持的模型列表 | 使用 折叠面板 折叠展示多个模型 |
-| RPM | `rateLimitRPM` | 每分钟请求数限制 | 0 表示不限制 |
-| TPM | `rateLimitTPM` | 每分钟 Token 数限制 | 0 表示不限制 |
-| 启用状态 | `enabled` | 渠道是否启用 | 使用 `Label` 组件显示 |
-| 租户/工作空间 | `tenant` / `workspace` | 所属租户和工作空间 | 仅 tenant/private 可见性时有值 |
-| 创建者 | `owner` | 渠道创建者 | — |
-| 创建时间 | `createdAt` | 渠道创建时间 | 时间戳格式 |
-| 操作 | — | 启用/禁用、修改可见性、编辑、删除 | — |
+列表支持多选，并提供刷新按钮。
 
-### 可见性标签颜色
+### 筛选条件
 
-| 可见性 | 标签颜色 | 含义 |
-|--------|---------|------|
-| `public` | 🟢 绿色（success） | 公共渠道，所有用户可用 |
-| `tenant` | 🟠 橙色（warning） | 租户级渠道，仅指定租户可用 |
-| `private` | ⚪ 默认色 | 私有渠道，仅指定工作空间可用 |
+| 筛选器 | 可选值 |
+|--------|--------|
+| 可见性 | `public` / `private` / `tenant` |
+| 模型服务供应商 | 见下方「支持的模型提供商」 |
 
-## 筛选条件
-
-页面提供以下筛选器，帮助快速定位目标渠道：
-
-| 筛选器 | 说明 | 选项 |
-|--------|------|------|
-| 可见性 | 按可见性级别筛选 | `public` / `tenant` / `private` |
-| 提供商 | 按模型提供商筛选 | 见下方支持列表 |
+> ⚠️ 注意: 筛选器里的提供商枚举**只有 9 项**（不含 `deepseek`），而创建/编辑表单的提供商下拉有 **10 项**（含 `deepseek`）。两者在代码中不一致（`list.tsx` 的 filters 与 `service-registration-new-edit-form.tsx` 的下拉选项），文档按表单为准。
 
 ## 支持的模型提供商
 
-平台内置支持以下 9 种模型提供商：
+创建/编辑表单内置 10 种提供商，选择后会自动带出默认 API 端点（编辑模式下不覆盖已有值）：
 
-| 提供商 | 标识 | 说明 | API 格式 |
-|--------|------|------|---------|
-| **OpenAI** | `openai` | OpenAI 官方 API | OpenAI 标准 |
-| **OpenAI Compatible** | `openai-compatible` | 兼容 OpenAI 格式的第三方服务 | OpenAI 标准 |
-| **阿里云百炼（DashScope）** | `dashscope` | 阿里云大模型服务 | DashScope |
-| **百度文心** | `baidu` | 百度文心一言 API | 百度专有 |
-| **月之暗面（Moonshot）** | `moonshot` | Kimi 大模型 API | OpenAI 兼容 |
-| **智谱 AI** | `zhipu` | 智谱 GLM 系列 API | 智谱专有 |
-| **硅基流动（SiliconFlow）** | `siliconflow` | 硅基流动推理平台 | OpenAI 兼容 |
-| **OpenRouter** | `openrouter` | OpenRouter 聚合平台 | OpenAI 兼容 |
-| **火山引擎（Doubao）** | `doubao` | 字节跳动豆包大模型 | 火山引擎 |
+| 下拉显示名 | 标识 `provider` | 默认 `apiBase` | Chat 端点路径 |
+|-----------|----------------|---------------|--------------|
+| openai | `openai` | `https://api.openai.com` | `/v1/chat/completions` |
+| openai-compatible | `openai-compatible` | （空，需手填） | `/chat/completions` |
+| dashscope (通义千问) | `dashscope` | `https://dashscope.aliyuncs.com/compatible-mode/v1` | `/chat/completions` |
+| baidu (百度千帆) | `baidu` | `https://qianfan.baidubce.com/v2` | `/chat/completions` |
+| moonshot (月之暗面) | `moonshot` | `https://api.moonshot.cn/v1` | `/chat/completions` |
+| zhipu (智谱) | `zhipu` | `https://open.bigmodel.cn/api/paas/v4` | `/chat/completions` |
+| siliconflow (硅基流动) | `siliconflow` | `https://api.siliconflow.cn/v1` | `/chat/completions` |
+| openrouter | `openrouter` | `https://openrouter.ai/api/v1` | `/chat/completions` |
+| doubao (豆包) | `doubao` | `https://ark.cn-beijing.volces.com/api/v3` | `/chat/completions` |
+| deepseek (DeepSeek) | `deepseek` | `https://api.deepseek.com/v1` | `/chat/completions` |
 
-:::tip
-对于平台内部署的推理服务（如 vLLM、TGI），通常选择 `openai-compatible` 提供商类型，因为这些服务一般都提供 OpenAI 兼容的 API 接口。
-:::
+端点输入框下方会实时提示最终 Chat 调用地址：`{apiBase}{端点路径}`。
 
-## 创建渠道
+> 💡 提示: 自建推理服务（如 vLLM、TGI）通常选择 `openai-compatible`，并手填其 API 基础地址。
 
-点击 **添加渠道** 按钮打开创建表单：
+## 创建 / 编辑渠道
 
-![创建渠道](/assets/screenshots/boss/gateway-channel-create.png)
+点击右上角 **创建渠道** 进入创建页；在列表操作中选择 **编辑** 进入编辑页。创建页与编辑页共用同一套表单。
 
-### 基本信息
+### 表单字段
 
-| 字段 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| 名称 | 文本 | ✅ | 渠道唯一名称 |
-| 描述 | 文本域 | — | 渠道描述信息 |
-| 提供商 | 选择 | ✅ | 模型提供商（9 种可选） |
-| API 地址 | URL | ✅ | 推理服务的 API 基础地址 |
-| API Keys | 密码列表 | — | 上游服务的 API Key（支持多个，轮询使用） |
+| 字段 | 标识 | 类型 | 必填 | 说明 |
+|------|------|------|------|------|
+| 租户 | `tenantId` | 租户选择 | ✅ | 下拉搜索租户；已被禁用的租户不可选 |
+| 工作空间 | `workspace` | 文本 | — | 工作空间标识 |
+| 名称 | `name` | 文本 | ✅ | 渠道名称 |
+| 模型服务供应商 | `provider` | 选择 | ✅ | 10 种提供商，默认 `openai` |
+| 端点 | `apiBase` | 文本 | ✅ | API 基础地址，默认 `https://api.openai.com` |
+| 可见性 | `visibility` | 选择 | ✅ | `public` / `tenant` / `private`，默认 `public` |
+| 优先级 | `priority` | 数字 | ✅ | 最小值 `0`，默认 `0`；数值越大越优先 |
+| 启用 | `enabled` | 开关 | ✅ | 默认开启 |
+| RPM | `rateLimitRPM` | 数字 | — | `0`–`10000`，留空表示不限制 |
+| TPM(K) | `rateLimitTPM` | 数字 | — | `0`–`100000`，留空表示不限制 |
+| 上游 API 密钥 | `apiKeys` | 多行文本 | — | 每行一个密钥，提交时按行拆分 |
+| 支持模型 | `supportedModels` | 多行文本 | — | 每行一个模型名，提交时按行拆分 |
 
-### 可见性与归属
+> 💡 提示: `RPM` / `TPM` 已填写 `0` 时按不限制处理；表单留空时提交值同样为 `0`。
 
-| 字段 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| 可见性 | 选择 | ✅ | `public` / `tenant` / `private` |
-| 租户 | 租户选择 | 条件必填 | 当可见性为 `tenant` 或 `private` 时必填 |
-| 工作空间 | 工作空间选择 | 条件必填 | 当可见性为 `private` 时必填 |
-| 启用 | 开关 | ✅ | 创建后是否立即启用 |
-| 优先级 | 数字 | — | 路由优先级（数值越大优先级越高） |
+### 类型中存在但表单未暴露的字段
 
-### 模型配置
+`Channel` 类型还定义了 `description`、`modelAliasMap`、`modelMetadata`（`supportsThinking` / `maxContextTokens` 等）、`engine`、`adapters`，i18n 中也有对应的文案键，但**当前创建/编辑表单未渲染这些控件**。
 
-| 字段 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| 支持的模型 | 标签输入 | ✅ | 该渠道支持的模型名称列表 |
-| 模型别名映射 | Key-Value 表 | — | 将请求模型名映射为实际模型名 |
-
-**模型别名映射**（`modelAliasMap`）示例：
-
-```json
-{
-  "gpt-4": "gpt-4-turbo-preview",
-  "claude-3": "claude-3-opus-20240229"
-}
-```
-
-当用户请求 `gpt-4` 时，网关会将其映射为 `gpt-4-turbo-preview` 再发送到上游渠道。
-
-### 模型元数据
-
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| `supportsThinking` | Boolean | 模型是否支持思考链（Thinking/Reasoning） |
-| `maxContextTokens` | Number | 模型最大上下文 Token 数量 |
-
-### 速率限制
-
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| RPM | 数字 | 该渠道每分钟最大请求数（0 = 不限制） |
-| TPM | 数字 | 该渠道每分钟最大 Token 数（0 = 不限制） |
-
-:::warning
-渠道的 RPM/TPM 限制用于保护上游服务不被过载，与 API Key 的限流是独立的两层限流机制。
-:::
-
-### 高级配置
-
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| 引擎 | 文本 | 推理引擎标识 |
-| 适配器 | 列表 | 请求/响应适配器配置 |
+> ⚠️ 注意: 上述字段既无表单入口，本仓库前端也未提供其他编辑入口，其服务端行为未确认，文档暂不展开。
 
 ## 渠道操作
 
-### 启用 / 禁用
+列表每一行提供以下操作（收在折叠菜单中）：
 
-点击列表中的启用/禁用切换，可快速控制渠道的可用状态：
+| 操作 | 说明 |
+|------|------|
+| 启用 / 禁用 | 切换 `enabled`，切换后自动刷新列表 |
+| 更新可见性 | 弹出对话框，仅可切换 `visibility`（`public` / `tenant` / `private`） |
+| 编辑 | 跳转到 `/service-registrations/:id/edit` |
+| 删除 | 需二次确认（输入渠道名称），调用删除接口后刷新 |
 
-- **禁用**：渠道将不再接收路由请求，已在处理中的请求不受影响
-- **启用**：渠道恢复接收路由请求
+> ⚠️ 注意: 「更新可见性」对话框**只提交 `visibility` 一个字段**，不会同时调整租户或工作空间；缩小可见性范围后，原先可用的用户将无法再路由到该渠道。
 
-:::tip
-临时维护上游服务时，可先禁用对应渠道，待维护完成后再启用，避免用户请求被路由到不可用的服务。
-:::
+## 与其他模块的关系
 
-### 修改可见性
-
-点击操作菜单中的 **修改可见性**，弹出选择框切换渠道的可见性级别：
-
-- **public → tenant**：从公共变为租户级，需指定所属租户
-- **tenant → private**：从租户级变为私有，需指定所属工作空间
-- **private → public**：从私有变为公共
-
-:::warning
-缩小可见性范围后，之前能使用该渠道的用户将无法再路由到此渠道。
-:::
-
-### 编辑
-
-修改渠道的所有可编辑字段，包括 API 地址、API Keys、模型列表等。
-
-### 删除
-
-确认弹窗后删除渠道。
-
-:::warning
-删除渠道后，使用该渠道模型的请求可能会因为没有可用渠道而失败。删除前请确认有其他渠道能够提供相同模型的服务。
-:::
-
-## 最佳实践
-
-### 多渠道冗余
-
-为关键模型配置多个渠道，利用网关的 [容错机制](./config.md#容错配置) 实现自动故障转移：
-
-```mermaid
-flowchart TD
-    Request["请求: model=gpt-4"] --> Router["路由器"]
-    Router -->|"优先级 1"| Primary["主渠道<br/>OpenAI 官方"]
-    Router -->|"优先级 2"| Backup1["备用渠道 1<br/>Azure OpenAI"]
-    Router -->|"优先级 3"| Backup2["备用渠道 2<br/>本地兼容服务"]
-    
-    Primary -->|"失败 → 容错"| Backup1
-    Backup1 -->|"失败 → 容错"| Backup2
-```
-
-### 内外渠道分流
-
-通过可见性和优先级实现内外部服务的合理分流：
-
-- **公共渠道**：面向所有用户，使用外部 API（如 OpenAI）
-- **租户渠道**：面向特定租户，使用该租户专属的推理服务
-- **私有渠道**：面向特定工作空间，使用内部部署的推理实例
+- 渠道的**计费、限流、审计、内容审查**由 [网关配置](/boss/gateway/config) 的全局开关控制。
+- 模型的上下文长度、价格等元数据在 [模型元数据](/boss/gateway/model-metadata) 中维护，与渠道的 `supportedModels` 是两套配置。
+- 请求经渠道转发后，可在 [调用日志](/boss/gateway/audit) 与 [运营概览](/boss/gateway/operations) 中查看。
 
 ## 权限要求
 
-需要 **系统管理员** 角色。系统管理员可以创建和管理所有渠道。推理服务注册（从 Console 侧创建）的渠道也会出现在此列表中。
+需要 **系统管理员** 角色。系统管理员可以创建、编辑、启用/禁用和删除全部渠道。

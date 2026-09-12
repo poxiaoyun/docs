@@ -1,314 +1,162 @@
 ---
-title: 'Content Moderation'
-updated: '2026-03-23'
+title: Content Moderation
+updated: '2026-09-12'
+description: 'Content safety — lexicon maintenance, moderation policies and sensitive hit records.'
+tags:
+  - boss
+  - gateway
 ---
 
-## Feature Overview
+## Feature overview
 
-Content Moderation is the LLM Gateway's **content safety defense line**, performing real-time content safety checks on API requests and responses passing through the gateway. The system works through two coordinating mechanisms — **Moderation Policies** and **Moderation Lexicon** — to detect, log, replace, and block sensitive content.
+Content moderation inspects requests and responses passing through the gateway. Three modules work together:
 
-Content Moderation includes two management modules:
+- **Lexicon**: maintains terms (`term`) and their risk score (`score`) as the matching base
+- **Policies**: define "when the score meets a condition, run which action"
+- **Sensitive hits**: queries calls that triggered detection
 
-- **Moderation Policies**: Define moderation rules, judgment thresholds, and disposition actions
-- **Moderation Lexicon**: Manage sensitive terms, categories, and scores
+Moderation is governed by the `moderationEnabled` switch in [Gateway config](/boss/gateway/config); turning it off suspends all policies without losing configuration.
 
-> 💡 Tip: The content moderation feature is globally enabled/disabled via the `moderationEnabled` switch in [Gateway Configuration](./config). When disabled, all moderation policies will be suspended, but policy configurations are not lost.
+## Access path
 
-## Access Path
+Boss console → LLM gateway → Security service
 
-BOSS → LLM Gateway → **Moderation Policies** / **Moderation Lexicon**
+| Page | Menu label | Console route |
+|------|-----------|--------------|
+| Lexicon | `navbar.moderation_lexicon` | `/gateway/moderation/lexicon` |
+| Policies | `navbar.moderation_policies` | `/gateway/moderation/policies` |
+| Sensitive hits | `navbar.sensitive_hits` | `/gateway/moderation/sensitive-hits` |
 
-Path: `/boss/gateway/moderation`
+Create/edit sub-routes: `/gateway/moderation/lexicon/new` (`/gateway/moderation/lexicon/:term/edit` to edit) and `/gateway/moderation/policies/new` (`/gateway/moderation/policies/:id/edit` to edit).
 
-## Moderation Processing Flow
+## Policies
 
-```mermaid
-flowchart TD
-    Request["API Request"] --> Extract["Extract Text Content"]
-    Extract --> Scan["Lexicon Match Scan"]
-    Scan --> Score["Calculate Match Score"]
-    Score --> Evaluate["Policy Rule Evaluation"]
-    
-    Evaluate -->|"Score < Threshold"| Pass["✅ Pass"]
-    Evaluate -->|"Score ≥ Threshold"| Action["Execute Disposition Action"]
-    
-    Action --> Log["📝 Log<br/>(action=log)"]
-    Action --> Replace["🔄 Content Replace<br/>(action=replace)"]
-    Action --> Webhook["🔗 Webhook Notification<br/>(action=webhook)"]
-    Action --> Block["🚫 Block Request<br/>(action=block)"]
-    
-    Log --> Continue["Continue Processing Request"]
-    Replace --> Continue
-    Webhook --> Continue
-    Block --> Reject["Return 403"]
+### Policy list
 
-    style Pass fill:#d4edda
-    style Block fill:#f8d7da
-    style Reject fill:#f8d7da
-```
+| Column | Field | Description |
+|--------|-------|-------------|
+| Name | `name` | Policy name |
+| Trigger condition | `operator` + `threshold` | e.g. "greater than or equal (≥) 50" |
+| Action | `action` | See below |
+| Priority | `priority` | `1`–`10` |
+| Enabled | `enabled` | — |
+| Updated at | `updatedAt` | Date-time |
 
----
+Search matches name/description. The filter offers enabled state (all / enabled / disabled).
 
-## Moderation Policies
+### Create / edit a policy
 
-### Overview
+| Field | Key | Type | Required | Default | Notes |
+|-------|-----|------|----------|---------|-------|
+| Name | `name` | Text | ✅ | empty | — |
+| Description | `description` | Multiline | — | empty | — |
+| Operator | `operator` | Select | ✅ | `ge` | See below |
+| Threshold | `threshold` | Number | ✅ | `50` | `0`–`100` |
+| Action | `action` | Select | ✅ | `block` | See below |
+| Priority | `priority` | Select | — | `1` | `1`–`10` |
+| Enabled | `enabled` | Switch | — | on | — |
 
-Moderation policies define the complete rule chain of **what content, at what severity, should be handled how**. Each policy contains matching rules, judgment thresholds, and disposition actions.
+> ⚠️ Note: the threshold range is **`0`–`100`, default `50`** (not 0–1 / 0.8 as older docs claim).
 
-### Policy List
+**Operators** (`CompareOperator` — only four; there is **no `=`**):
 
-![Moderation Policy List](/assets/screenshots/boss/gateway-moderation.png)
+| Id | Label | Meaning |
+|----|-------|---------|
+| `ge` | greater than or equal (≥) | `score >= threshold` |
+| `gt` | greater than (>) | `score > threshold` |
+| `le` | less than or equal (≤) | `score <= threshold` |
+| `lt` | less than (<) | `score < threshold` |
 
-| Column | Description | Notes |
-|--------|-------------|-------|
-| Name | Policy name + description | Name and description shown in the same column |
-| Operator + Threshold | Match judgment condition | e.g., `≥ 0.8` (triggers when score is greater than or equal to 0.8) |
-| Disposition Action | Action to execute when triggered | `log` / `replace` / `webhook` / `block` |
-| Priority | Policy execution priority | Higher number = higher priority |
-| Enabled Status | Whether enabled | Toggle state |
-| Updated At | Last modified time | Timestamp |
-| Actions | Enable/Disable, Edit, Delete | — |
+**Actions** (`PolicyAction`):
 
-#### Filtering
+| Id | Label | Description |
+|----|-------|-------------|
+| `log` | Log only | Record without altering content |
+| `replace` | Replace terms | Mask matched content per replace config |
+| `webhook` | Delegate to external service | Call an external service to decide |
+| `block` | Block request | Block directly |
 
-- **Enabled Status**: Filter the policy list by enabled / disabled status
+### Action-specific config
 
-### Create Policy
+On submit, a JSON string is written to `config` based on the action.
 
-Click the **Create Policy** button to open the creation form:
+**`replace`**
 
-![Create Moderation Policy](/assets/screenshots/boss/gateway-moderation-policy-create.png)
+| Field | Default | Description |
+|-------|---------|-------------|
+| `maskChar` | `*` | Mask character |
+| `maskMode` | `char_repeat` | `char_repeat` (per character) / `fixed_length` / `single_char` |
 
-#### Basic Information
+**`webhook`**
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| Name | Text | ✅ | Unique policy name |
-| Description | Textarea | — | Policy description |
-| Priority | Number | ✅ | Execution priority (higher number executes first) |
-| Enabled | Toggle | ✅ | Whether to enable immediately after creation |
+| Field | Default | Description |
+|-------|---------|-------------|
+| `webhookUrl` | empty | External service URL (required) |
+| `webhookMethod` | `POST` | HTTP method |
+| `webhookTimeout` | `5` | Timeout in seconds |
+| `webhookHeaders` | empty | Custom headers (key/value, add/remove) |
+| `decisionPath` | empty | JSON path of the decision field in the response |
+| `passValues` | empty | Values treated as pass (options include `pass` / `allow` / `true` / `1` / `ok`) |
+| `blockValues` | empty | Values treated as block (options include `block` / `deny` / `reject` / `false` / `0`) |
+| `defaultAction` | `block` | Action when undecidable (`block` / `pass`) |
+| `messagePath` | empty | JSON path of the block message |
 
-#### Matching Rules
+> ⚠️ Note: the schema and defaults also define `notification` and `notifyEmails` (`false` / empty array), but **the form renders no controls and the submit payload omits them**. Email notification is therefore not documented.
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| Operator | Select | ✅ | Comparison operator (e.g., `≥`, `>`, `=`, etc.) |
-| Threshold | Number | ✅ | Trigger threshold (e.g., `0.8`), compared against lexicon match score |
+### Policy actions
 
-**Matching Logic**: When the sensitive term match score satisfies the `operator` `threshold` condition, the policy's disposition action is triggered. For example, "score ≥ 0.8" means triggering when the match score reaches 0.8 or above.
+Each row offers enable/disable, edit and delete (collapsed menu).
 
-#### Disposition Actions
+> ⚠️ Note: deleting requires **typing the policy name** in the confirm dialog (`secondaryConfirmText`).
 
-Policies support the following four disposition actions:
+## Lexicon
 
-| Action | Identifier | Description | Request Continues? |
-|--------|-----------|-------------|-------------------|
-| **Log** | `log` | Only records to audit log, does not affect request | ✅ Continues |
-| **Content Replace** | `replace` | Replaces matched sensitive content then continues processing | ✅ Continues (content modified) |
-| **Webhook Notification** | `webhook` | Calls external Webhook notification then continues processing | ✅ Continues |
-| **Block Request** | `block` | Directly blocks request, returns 403 error | ❌ Terminated |
+### Stats and list
 
-> 💡 Tip: It is recommended to use a tiered strategy — use `log` to observe low-risk content, `replace` to sanitize medium-risk content, and `block` to directly block high-risk content.
+Four stat cards sit at the top: total terms, enabled count (with ratio), new this month and hits this week.
 
-### Policy Rule Configuration (PolicyRuleConfig)
+| Column | Field | Description |
+|--------|-------|-------------|
+| Term | `term` | Sensitive term |
+| Enabled | `enabled` | — |
+| Risk score | `score` | `1`–`10` |
+| Category | `category` / `categories` | One or more |
+| Tags | `tags` | Multiple |
+| Hits | `hitCount` | Cumulative hits |
+| Updated at | `updatedAt` | Date-time |
+| Actions | — | Enable/disable, edit, delete |
 
-Different rule parameters need to be configured depending on the selected disposition action:
+Filters: keyword search, category scope, risk level, tag, updated time (all / today / 7 days / 30 days).
 
-#### Replace Configuration
+Multi-select supports **batch enable / batch disable / batch delete**.
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `maskChar` | Text | Mask character used for replacement (e.g., `*`) |
-| `maskMode` | Select | Mask mode |
+### Create / edit a term
 
-**Mask Modes**:
+| Field | Key | Type | Required | Default | Notes |
+|-------|-----|------|----------|---------|-------|
+| Term | `term` | Text | ✅ | empty | — |
+| Risk score | `score` | Number | ✅ | `5` | `1`–`10` |
+| Categories | `categories` | Multi-value | — | empty | Preset or custom |
+| Part of speech | `partOfSpeech` | Text | — | empty | — |
+| Tags | `tags` | Multi-value | — | empty | Preset or custom |
 
-| Mode | Identifier | Effect Example |
-|------|-----------|----------------|
-| Character-by-character | `char_repeat` | `sensitive` → `*********` |
-| Fixed length | `fixed_length` | `sensitive` → `****` (fixed 4 chars) |
-| Single character | `single_char` | `sensitive` → `*` |
+> ⚠️ Note: the risk score range is **`1`–`10`, default `5`** (not a 0–1 decimal).
 
-#### Webhook Configuration
+**Preset categories** (`PRESET_LEXICON_CATEGORIES`, see `lexicon/constants.ts`): 政治, 暴恐, 民生, 涉枪涉爆, 色情, 非法网站, 广告, GFW, 反动.
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `webhookUrl` | URL | Webhook callback URL |
-| `webhookMethod` | Select | HTTP method (GET/POST) |
-| `webhookHeaders` | Key-Value | Custom request headers |
-| `webhookTimeout` | Number | Request timeout (seconds) |
-| `webhookResponse` | Text | Expected response format |
+**Preset tags** (`PRESET_LEXICON_TAGS`): 中文, 英文, 拼音, 政治敏感, 选举相关, 人名, 个人信息, 网址, 营销, 高风险.
 
-#### Notification Configuration
+> 💡 Tip: on submit, `category` is set to `categories[0]` and the full `categories` array is written too.
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `notification` | Toggle | Whether to send email notification |
-| `notifyEmails` | Email List | Notification email recipient list |
+### Import and export
 
-> 💡 Tip: Webhook and email notifications can be enabled simultaneously. For high-risk policies, it is recommended to configure email notifications so the security team can respond promptly.
+- **Import**: batch import terms from a file through the import dialog
+- **Export**: export the lexicon to a file for backup or migration
 
-### Enable / Disable Policy
+## Sensitive hits
 
-Click the enable/disable toggle in the list to quickly switch policy status:
+See the dedicated [Sensitive hits](/boss/gateway/sensitive-hits) page.
 
-- **Disable**: Policy execution is suspended, but configuration is preserved and can be re-enabled at any time
-- **Enable**: Policy takes effect immediately and begins participating in content moderation
+## Permissions
 
-### Edit Policy
-
-Modify all editable fields of the policy (name, description, threshold, action, rule configuration, etc.).
-
-### Delete Policy
-
-After clicking the **Delete** button, the system requires **secondary confirmation — entering the policy name** to execute the deletion.
-
-> ⚠️ Note: Policy deletion requires **manually entering the policy name** in the confirmation dialog for secondary verification to prevent accidental deletion. This operation is irreversible.
-
----
-
-## Moderation Lexicon
-
-### Overview
-
-The Moderation Lexicon manages the platform's sensitive term database. Each term entry includes the keyword text, match score, category, and tags. The lexicon is the foundational data source for moderation policy matching.
-
-### Lexicon List
-
-![Moderation Lexicon](/assets/screenshots/boss/gateway-moderation-lexicon.png)
-
-| Column | Description | Notes |
-|--------|-------------|-------|
-| Term | `term` | Sensitive term text |
-| Score | `score` | Match score (0-1), compared against policy thresholds |
-| Category | `category` | Term category | Displayed using `Chip` labels |
-| Tags | `tags` | Custom tags | Displayed using `Chip` (outlined style), supports multiple |
-| Updated At | `updatedAt` | Last modified time | — |
-| Actions | — | Edit / Delete | Supports batch selection |
-
-### Create Term
-
-Click the **Create** button to add a new sensitive term:
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| Term | Text | ✅ | Sensitive term text |
-| Score | Number | ✅ | Match score (between 0-1), higher score indicates higher risk |
-| Category | Text/Select | — | Term category (e.g., violence, pornography, politics, fraud, etc.) |
-| Tags | Tag Input | — | Custom tags, supports multiple |
-
-**Score Design Recommendations**:
-
-| Score Range | Risk Level | Recommended Policy Action |
-|-------------|-----------|--------------------------|
-| 0.0 - 0.3 | Low risk | `log` (record only) |
-| 0.3 - 0.6 | Medium risk | `replace` (sanitize) |
-| 0.6 - 0.8 | High risk | `webhook` (notify + record) |
-| 0.8 - 1.0 | Critical risk | `block` (block directly) |
-
-### Batch Import
-
-Click the **Import** button to open `LexiconImportDialog` for batch importing sensitive terms from a file.
-
-**Supported Import Format**:
-
-```json
-[
-  {
-    "term": "sensitive_term_1",
-    "score": 0.9,
-    "category": "violence",
-    "tags": ["tag1", "tag2"]
-  },
-  {
-    "term": "sensitive_term_2",
-    "score": 0.7,
-    "category": "fraud",
-    "tags": ["tag3"]
-  }
-]
-```
-
-> 💡 Tip: During batch import, if a term already exists, its score, category, and tags will be updated.
-
-### Export
-
-Click the **Export** button to export the current lexicon in JSON format for backup or migration to other environments.
-
-### Edit Term
-
-Click the **Edit** button for a term to modify score, category, and tags.
-
-### Delete Term
-
-Two deletion methods are supported:
-
-- **Single delete**: Click the delete button on a term row
-- **Batch delete**: Select multiple terms via checkboxes, then click the batch delete button
-
-> ⚠️ Note: Deleting terms immediately affects moderation policy matching behavior. If you're unsure whether a term still needs to be retained, it is recommended to lower its score rather than deleting it directly.
-
----
-
-## Policy and Lexicon Collaboration
-
-```mermaid
-flowchart LR
-    subgraph Lexicon["Moderation Lexicon"]
-        W1["Term A<br/>score: 0.9"]
-        W2["Term B<br/>score: 0.5"]
-        W3["Term C<br/>score: 0.3"]
-    end
-
-    Content["Request Text Content"] --> Match["Lexicon Match Engine"]
-    Lexicon --> Match
-    Match --> MaxScore["Get Highest Match Score<br/>e.g.: 0.9"]
-
-    MaxScore --> P1{"Policy 1<br/>≥0.8 → block"}
-    MaxScore --> P2{"Policy 2<br/>≥0.5 → replace"}
-    MaxScore --> P3{"Policy 3<br/>≥0.3 → log"}
-
-    P1 -->|"0.9 ≥ 0.8 ✓"| Block["🚫 Block"]
-    
-    style Block fill:#f8d7da
-```
-
-**Execution Logic**:
-
-1. Scan the request text against the lexicon to find all matching sensitive terms
-2. Take the highest score among matched terms
-3. Evaluate policies in order from highest to lowest priority
-4. The first policy whose condition is met triggers its disposition action
-5. If the action is `block`, terminate immediately; other actions execute and continue evaluation
-
-> 💡 Tip: Policy priority determines the evaluation order. It is recommended to set `block` policies to the highest priority to ensure critical-risk content is blocked first.
-
-## Best Practices
-
-### Tiered Protection Strategy
-
-It is recommended to set up multi-tiered moderation policies:
-
-| Priority | Policy Name | Threshold | Action | Purpose |
-|----------|------------|-----------|--------|---------|
-| 100 | Critical Violation Block | ≥ 0.9 | `block` | Block critical-risk content |
-| 80 | High Risk Notification | ≥ 0.7 | `webhook` | Notify security team |
-| 60 | Medium Risk Replacement | ≥ 0.5 | `replace` | Sanitize sensitive content |
-| 40 | Low Risk Logging | ≥ 0.3 | `log` | Record for manual review |
-
-### Lexicon Maintenance
-
-1. **Regular Updates**: Periodically update the sensitive term library based on business needs and compliance requirements
-2. **Category Management**: Use categories and tags to organize terms for easier maintenance
-3. **Score Calibration**: Adjust term scores based on actual false positive/false negative situations
-4. **Backup Export**: Regularly export lexicon JSON files as backups
-
-### Monitoring & Tuning
-
-1. Monitor `blocked` results in [Audit Logs](./audit) to analyze whether there are false blocks
-2. View the trend of blocked request proportion through [Operations Overview](./operations)
-3. Adjust policy thresholds and lexicon scores based on actual business feedback
-
-## Permission Requirements
-
-Requires the **System Administrator** role. Management of moderation policies and lexicon involves the platform's content safety system and can only be operated by system administrators.
+Requires the **system administrator** role.

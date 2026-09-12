@@ -1,195 +1,121 @@
 ---
-title: '审计日志'
-updated: '2026-03-23'
+title: '调用日志'
+updated: '2026-09-12'
+description: '查询网关调用记录——按时间、用户、Token、渠道商、模型筛选并查看调用详情。'
+tags:
+  - boss
+  - gateway
 ---
 
 ## 功能简介
 
-审计日志是 LLM 网关的**安全合规核心功能**，完整记录每一次通过网关的 API 请求的详细信息，包括请求者身份、使用的模型、Token 消耗、处理结果、完整的请求/响应负载等。审计日志为安全审查、问题排查、合规审计和使用分析提供可靠的数据支撑。
+调用日志记录每一次经网关转发的请求，包含请求者、渠道、模型、耗时、Token 与计费数据，以及可选的请求/响应负载和内容审查报告。该页用于问题排查、用量核对与敏感内容追溯。
 
-:::tip
-审计功能通过 [网关配置](./config) 中的 `auditEnabled` 开关控制。建议在生产环境中始终保持审计功能开启，以满足安全合规要求。
-:::
+本页对应 BOSS 控制台「大模型网关 → 用户管理 → **调用日志**」（菜单文案取自 `navbar.call_logs`）。
 
 ## 进入路径
 
-BOSS → LLM 网关 → **审计日志**
+BOSS 控制台 → 大模型网关 → 用户管理 → **调用日志**
 
-路径：`/boss/gateway/audit`
+| 操作 | 前端路由 |
+|------|---------|
+| 记录列表 | `/gateway/audit` |
+| 独立详情页 | `/gateway/audit/:id` |
 
-## 审计数据流
-
-```mermaid
-flowchart LR
-    subgraph Request["API 请求处理"]
-        Client["客户端"] -->|"API 请求"| Gateway["LLM 网关"]
-        Gateway -->|"路由"| Channel["上游渠道"]
-        Channel -->|"响应"| Gateway
-        Gateway -->|"返回"| Client
-    end
-
-    Gateway -->|"异步写入"| AuditDB["审计日志存储"]
-
-    subgraph AuditUI["审计管理"]
-        AuditDB --> List["日志列表"]
-        AuditDB --> Detail["请求详情"]
-        AuditDB --> Cleanup["数据清理"]
-    end
-```
+> ⚠️ 注意: 列表点击时间列打开的是**弹窗**（`AuditDetailDialog`），并不跳转到 `/gateway/audit/:id`；该独立详情页路由虽然在代码中注册，但列表页未提供入口。
 
 ## 筛选条件
 
-页面顶部提供多维度筛选器，支持精准定位目标审计记录：
-
-![审计日志筛选](/assets/screenshots/boss/gateway-audit-filters.png)
+页面顶部为筛选工具条，支持范围预设与自定义起止日期：
 
 | 筛选器 | 类型 | 说明 |
 |--------|------|------|
-| 用户 | 下拉选择 | 按请求用户筛选 |
-| Token | 下拉选择 | 按使用的 API Token 筛选 |
-| 提供商 | 下拉选择 | 按上游模型提供商筛选 |
-| 模型 | 下拉选择 | 按请求的模型名称筛选 |
-| 时间范围 | 日期范围选择器 | 按请求发生时间筛选 |
-| 结果 | 下拉选择 | 按处理结果筛选：`success` / `error` |
+| 时间范围 | 预设 | 今日 / 昨日 / 近 3 日 / 近一周 / 自定义 |
+| 开始日期、结束日期 | 日期选择 | 仅「自定义」时生效 |
+| 用户 | 文本 | 按用户名模糊查询 |
+| Token | 文本 | 按 Token 查询 |
+| 渠道商 | 下拉 | 选项来自渠道列表（`channelName`），含「全部」 |
+| 模型 | 文本 | 按模型名模糊查询 |
 
-:::tip
-排查特定用户问题时，建议组合使用「用户」和「时间范围」筛选器，快速定位该用户在指定时段内的所有请求记录。
-:::
+工具条还提供 **刷新** 与 **重置**（重置会把时间范围恢复为「今日」）。
 
-## 审计记录列表
+> ⚠️ 注意: 界面**没有「结果」筛选器**。后端查询参数虽支持 `result`，但当前 UI 未暴露；同样地，i18n 里的「租户」筛选文案也未在界面上使用。
 
-![审计日志列表](/assets/screenshots/boss/gateway-audit.png)
+## 记录列表
 
-| 列 | 字段名 | 说明 | 备注 |
-|----|--------|------|------|
-| 请求 ID | `requestId` | 唯一请求标识 | 可点击跳转详情页；含敏感信息的请求会显示⚠️警告图标 |
-| 请求时间 | `requestStarted` | 请求发起时间戳 | 精确到毫秒 |
-| 用户名/用户 ID | `username` / `userId` | 请求发起者 | 同时显示用户名和 ID |
-| Token ID | `tokenId` | 使用的 API Token | 截断显示（仅前 8 位） |
-| 租户 ID | `tenantId` | 所属租户标识 | — |
-| 渠道名称 | `channelName` | 路由到的渠道名称 | — |
-| 模型 | `model` | 请求的模型名称 | — |
-| 结果 | `result` | 请求处理结果 | 彩色标签 |
-| Token 总数 | `totalTokens` | 本次请求消耗的总 Token 数 | Prompt + Completion |
-| 操作 | — | 查看详情 | — |
+| 列 | 字段 | 说明 |
+|----|------|------|
+| 时间 | `requestStarted` | 点击打开详情弹窗 |
+| 渠道 | `channelName` | 路由到的渠道 |
+| 用户 | `username` | 请求用户 |
+| Token | `tokenId` | 使用的令牌 ID |
+| 模型 | `model` | 请求的模型 |
+| 耗时 | `latencyMillis` | 端到端耗时（毫秒） |
+| Token 数 | `totalTokens` | 本次消耗的总 Token |
+| 费用 | `billedTokens` | 计费 Token，结合币种设置换算展示 |
+| 标准 | `modelPriceStandard` | 按模型价格表计算的标准价格 |
 
-### 结果状态颜色编码
+结果非 `success` 的行会在左侧固定列显示一条红色竖线作为提示。
 
-| 结果 | 颜色 | 枚举值 | 说明 |
-|------|------|--------|------|
-| 成功 | 🟢 绿色 | `success` | 请求成功处理并返回结果 |
-| 错误 | 🔴 红色 | `error` | 请求处理过程中发生错误 |
-| 已拦截 | 🟠 橙色 | `blocked` | 被内容审查策略拦截 |
-| 配额超限 | 🔴 红色 | `quota_exceeded` | 超出 Token 使用配额 |
+列表禁用搜索框与工具栏，使用独立分页。
 
-### 敏感内容警告
+## 调用详情
 
-当请求内容触发了 [内容审查](./moderation) 策略检测时，审计记录的请求 ID 旁会显示 ⚠️ 警告图标，提醒管理员该请求涉及敏感内容。
+点击「时间」列打开调用详情弹窗，包含以下标签页：
 
-:::warning
-敏感内容标记不代表请求一定被拦截。根据审查策略的 Action 配置（log/replace/block），部分请求可能仅记录日志或替换内容后放行。
-:::
+| 标签页 | 内容 |
+|--------|------|
+| 基本信息 | 见下表 |
+| 请求数据 | 请求负载（JSON，只读编辑器） |
+| 响应数据 | 响应负载（JSON，只读编辑器） |
+| 元数据 | 元数据（JSON，只读编辑器） |
+| 内容审查 | 敏感内容报告（仅当 `sensitiveDetected` 为真时出现） |
 
-## 审计详情页
+各标签页内容为空时显示「无数据」。
 
-点击请求 ID 进入详情页，查看该请求的完整信息：
+### 基本信息字段
 
-![审计详情](/assets/screenshots/boss/gateway-audit-detail.png)
-
-### 基本信息
-
-| 字段 | 说明 |
+| 字段 | 标识 |
 |------|------|
-| 请求 ID | 唯一标识 |
-| 用户 | 请求用户（用户名 + ID） |
-| Token | 使用的 API Token（完整 ID） |
-| 租户 | 所属租户 |
-| 渠道 | 路由使用的渠道 |
-| 模型 | 请求的模型 |
-| 结果 | 处理结果（彩色标签） |
-| 请求时间 | 请求开始时间 |
-| 响应时间 | 响应完成时间 |
-| 延迟 | 端到端延迟（毫秒） |
+| 自增 ID | `id` |
+| 请求 ID | `requestId` |
+| 追踪 ID | `traceId` |
+| Token ID / 名称 / 值 | `tokenId` / `tokenName` / `tokenValue` |
+| 租户 | `tenantId` |
+| 用户 ID / 用户名 | `userId` / `username` |
+| 渠道 ID / 渠道名称 | `channelId` / `channelName` |
+| 工作空间 | `workspace` |
+| 供应商 | `provider` |
+| 模型 | `model` |
+| 方法 / 端点 | `method` / `endpoint` |
+| 请求时间 / 响应时间 | `requestStarted` / `responseEnded` |
+| 耗时 | `latencyMillis` |
+| 状态码 | `statusCode` |
+| 结果 | `result`（`success` 绿色，其余红色） |
+| 错误信息 | `errorMessage`（仅出错时展示） |
+| 输入 / 输出 / 总 Token | `promptTokens` / `completionTokens` / `totalTokens` |
+| 计费 Token | `billedTokens` |
+| 流式 | `isStream` |
+| 敏感内容 | `sensitiveDetected` |
+| 处理策略 | `moderationDecision`（仅命中敏感内容时展示） |
 
-### Token 统计
+## 结果状态
 
-| 字段 | 说明 |
+| 结果 | 含义 |
 |------|------|
-| Prompt Tokens | 输入 Token 数量 |
-| Completion Tokens | 输出 Token 数量 |
-| Total Tokens | 总 Token 数量 |
+| `success` | 成功 |
+| `error` | 失败 |
+| `blocked` | 已拦截 |
+| `quota_exceeded` | 超出配额 |
 
-### 请求负载（Request Payload）
+> ⚠️ 注意: 上表枚举来自审计模块的 i18n 文案；列表中实际只会把 `success` 与非 `success` 区分着色，`result` 的完整取值范围取决于服务端返回。
 
-展示完整的 API 请求体，通常包含：
+## 关于数据清理
 
-```json
-{
-  "model": "gpt-4",
-  "messages": [
-    {"role": "system", "content": "You are a helpful assistant."},
-    {"role": "user", "content": "...用户的完整输入..."}
-  ],
-  "temperature": 0.7,
-  "max_tokens": 2048
-}
-```
+服务层提供了清理接口 `cleanupAuditRecords(before)`（`DELETE /api/airouter/v1/audit/cleanup?before=...`），审计 i18n 中也有对应的清理弹窗文案，但**当前前端没有任何页面调用它**（全仓搜索 `cleanupAuditRecords` 仅命中定义处）。
 
-### 响应负载（Response Payload）
-
-展示完整的 API 响应体，包含模型的输出内容和 usage 统计。
-
-:::warning
-请求和响应负载可能包含用户的隐私信息或敏感内容。请确保只有授权人员可以访问审计详情页，并遵循数据安全规范。
-:::
-
-## 数据清理
-
-随着时间推移，审计日志数据会持续增长。管理员可以定期清理过期的审计记录以释放存储空间。
-
-:::warning
-清理操作不可撤销，请谨慎选择清理时间范围。建议在清理前导出重要的审计记录。
-:::
-
-:::warning
-数据清理操作不可撤销。建议在清理前先导出需要保留的审计数据。根据合规要求，审计日志通常需要保留 180 天以上。
-:::
-
-## 审计流程
-
-```mermaid
-sequenceDiagram
-    participant Client as 客户端
-    participant GW as LLM 网关
-    participant Auth as 认证模块
-    participant Mod as 内容审查
-    participant Channel as 上游渠道
-    participant AuditDB as 审计存储
-
-    Client->>GW: API 请求 (Bearer Token)
-    GW->>Auth: 验证 Token
-    Auth-->>GW: 用户信息
-    
-    GW->>Mod: 内容审查检查
-    alt 审查未通过
-        Mod-->>GW: blocked
-        GW->>AuditDB: 记录(result=blocked)
-        GW-->>Client: 403 Forbidden
-    else 审查通过
-        Mod-->>GW: pass
-        GW->>Channel: 转发请求
-        alt 请求成功
-            Channel-->>GW: 200 + 响应
-            GW->>AuditDB: 记录(result=success, tokens, latency)
-            GW-->>Client: 200 + 响应
-        else 请求失败
-            Channel-->>GW: 5xx 错误
-            GW->>AuditDB: 记录(result=error)
-            GW-->>Client: 502 Bad Gateway
-        end
-    end
-```
+> ⚠️ 注意: 界面上**没有数据清理入口**。清理接口的可用性与权限要求需以后端契约为准，文档暂不提供操作说明。
 
 ## 权限要求
 
-需要 **系统管理员** 角色。审计日志包含用户的完整请求和响应数据，属于高度敏感信息，仅系统管理员可查看。
+需要 **系统管理员** 角色。调用详情可能包含请求/响应负载中的隐私与敏感信息，请按数据安全规范控制访问。

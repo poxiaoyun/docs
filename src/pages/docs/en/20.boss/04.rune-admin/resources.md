@@ -1,7 +1,7 @@
 ---
-title: 'Kubernetes Resources'
-updated: '2026-03-24'
-description: A cluster-level browser for core Kubernetes resource types used in troubleshooting and change validation.
+title: Workloads
+updated: '2026-09-12'
+description: Tab pages and use cases of the cluster-level Kubernetes resource browser in Boss.
 tags:
 - boss
 - rune-admin
@@ -10,10 +10,46 @@ tags:
 
 ## Overview
 
-The Kubernetes resource browser provides an object-centric view of the cluster. It is useful when you need to confirm whether a Pod, Service, Deployment, PVC, or other object actually exists and whether its status matches expectations.
+Boss provides a unified Kubernetes resource browser entry on the cluster detail page (the "Workloads" sidebar item), letting administrators view core objects in the cluster directly.
+
+## Access Path
+
+Boss -> Cluster Management -> select a cluster -> Workloads
+
+Frontend route: `/rune/clusters/:cluster/resources`
+
+## Supported Resource Tabs
+
+The frontend currently has the following built-in resource type tabs:
+
+- Pods
+- Nodes
+- Deployments
+- StatefulSets
+- DaemonSets
+- Jobs
+- CronJobs
+- Services
+- Ingresses
+- IngressClasses
+- StorageClasses
+- ConfigMaps
+- Secrets
+- PersistentVolumeClaims
+
+## Page Capabilities
+
+| Capability | Description |
+| --- | --- |
+| Tab switching | Switch between resource types to quickly browse object lists |
+| List display | Shows fields such as status, name, and namespace per the resource definition |
+| Resource actions | Some resources support viewing details or performing additional actions |
+| Node extended actions | Under the Nodes tab, further node operations can be combined |
 
 ## Good Use Cases
 
-- Confirm that resources were created successfully after a deployment or template change.
-- Check Services, Ingresses, StorageClasses, ConfigMaps, and Secrets when runtime behavior looks inconsistent.
-- Cross-check object status with logs, events, and dashboard signals.
+- Confirm whether a Kubernetes object was created successfully.
+- Check related resources such as Services, Ingresses, and PVCs in a namespace.
+- Cross-check with the cluster logs, events, and monitoring pages.
+
+> 💡 Tip: The resource browser is suited to an "object view" investigation; if you care about capacity, load, or performance, start with the overview, node, or GPU dashboards instead.

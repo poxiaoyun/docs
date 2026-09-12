@@ -1,54 +1,58 @@
 ---
 title: 'User Profile'
-updated: '2026-03-23'
+updated: '2026-09-12'
+description: View and edit your avatar and display name; username is read-only.
 ---
 
 ## Overview
 
-The Profile page allows you to view and update your personal account information, including your display name, avatar, and contact details.
+The Profile page maintains the current account's avatar and display name. Only these two items are editable here.
+
+- Route: `/iam/account/general`
+- View: `src/pages/iam/account/general.tsx`
 
 ## Navigation
 
-**IAM → Profile** (or click your avatar in the top-right → Profile)
+Top-right avatar → Settings → top Tab "General"
 
-## Profile Information
+## Layout
 
-![User Profile](/assets/screenshots/console/iam-profile.png)
+| Area | Content |
+|------|---------|
+| Left | Avatar upload with crop; the current `displayName` is shown below |
+| Right | Username (read-only) + display name (editable) + Save |
 
-| Field | Description | Editable |
-|-------|-------------|----------|
-| Avatar | Profile picture | ✅ |
-| Display Name | Name shown in the UI | ✅ |
-| Username | Unique login handle | ❌ (contact admin) |
-| Email | Registered email address | ✅ (with verification) |
-| Bio | Short personal description | ✅ |
-| Website | Personal or work URL | ✅ |
-| Organization | Company or institution | ✅ |
-| Location | City or country | ✅ |
+### Fields
 
-## Updating Your Avatar
+| Field | Key | Editable | Validation |
+|-------|-----|----------|------------|
+| Username | `name` | ❌ | Non-empty (read-only, lock icon) |
+| Display name | `displayName` | ✅ | Non-empty |
 
-1. Click the avatar image or the **Upload** button.
-2. Select an image file (JPG, PNG, or GIF, max 5 MB).
-3. Crop the image if needed.
-4. Click **Save**.
+> ⚠️ Note: The page does **not** show "User ID (UUID)", "Registered At", or "MFA status" (`general.tsx:164-179` renders only `name` and `displayName`).
 
-## Changing Your Email
+## Avatar
 
-1. Enter a new email address in the **Email** field.
-2. Click **Send Verification**.
-3. Check your new email inbox for a verification link.
-4. Click the link to confirm the change.
+| Item | Value |
+|------|-------|
+| Max file size | `3145728` bytes (3 MB) |
+| Crop | Supported (`preserveAspectRatio`) |
+| Upload endpoint | `POST /api/iam/current/avatar` (multipart, field `avatar`) |
 
-> Your old email remains active until the new one is verified.
+On successful upload the page re-fetches the profile, checks the session, and shows a success message.
 
-## Saving Changes
+## Endpoints
 
-After editing any fields, click **Save Profile** to apply the changes.
+| Action | Endpoint |
+|--------|----------|
+| Load | `GET /api/iam/current/profile` |
+| Save | `PUT /api/iam/current/profile` |
+| Upload avatar | `POST /api/iam/current/avatar` |
 
-## Related Settings
+On save the front-end submits `{ ...user, ...data }` — the merged full user object (`general.tsx:84-88`).
 
-- Change your password: [Security Settings](./security)
-- Enable MFA: [Security Settings](./security)
-- Manage API keys: [API Keys](./api-key)
-- Manage SSH keys for Moha Git access: [SSH Keys](./ssh-key)
+## Notes
+
+- The username cannot be changed here
+- Avatars larger than 3 MB cannot be uploaded
+- On success the front-end calls `checkUserSession()`

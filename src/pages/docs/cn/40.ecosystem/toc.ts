@@ -38,7 +38,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         icon: 'ic-file',
         product: 'ecosystem',
         children: [
-          { title: '驱动安装', path: '/ecosystem/hygon/driver-runtime' },
+          { title: 'DCU 驱动安装', path: '/ecosystem/hygon/driver-runtime' },
           {
             title: 'Kubernetes 组件',
             path: '/ecosystem/hygon/k8s-components',

@@ -1,33 +1,33 @@
 ---
-title: 'Resource management'
-updated: '2026-03-24'
-author: Rune Docs Team
+title: 'Resources & Quotas'
+updated: '2026-09-12'
 description: 'Introduces the resource governance capabilities in Rune related to shared templates, tenant quotas, and available compute flavors.'
 tags:
   - rune
   - resources
 ---
-# Resource Management
+# Resources & Quotas
 
-The `Resource Management` column corresponds to the "shared resources and governance" capabilities of Rune. The focus is not on the running process of a single instance, but on the templates, quotas, and specifications that are reused before and after instance creation.
+The "Resources & Quotas" section covers the shared-resources and governance capabilities of Rune. The focus is not the runtime of a single instance, but the templates, quotas and flavors that are reused before and after instance creation. In the console these live under the **Templates** menu in the sidebar and the **Quota / Flavor / Workspace** tabs of the tenant settings.
 
-## Differences from the console
+## How this maps to the console
 
-| Column | Focus |
-| --- | --- |
-| Console | Daily operations such as inference, fine-tuning, development environment, applications, logs, storage, etc. |
-| Resource Management | Instance template reuse, tenant and workspace quotas, available compute flavors |
+| Capability | Console location | Focus |
+| --- | --- | --- |
+| Templates | Sidebar "Workbench → Templates" | Turn an existing instance into a reusable template for future deployments |
+| Quota / Flavor / Workspace | Tenant settings tabs | Resource boundaries, selectable resource combinations and the instance isolation unit |
 
 ## Current Coverage
 
 | Page | Description |
 | --- | --- |
-| [Instance templates and reuse](/rune/resources/templates) | Save existing instances as templates and reuse them in new deployment tasks |
-| [Quotas and Policies](/rune/resources/quotas) | View tenant quotas and understand how workspace quotas are allocated hierarchically |
-| [Compute flavors](/rune/resources/flavors) | View the resource specifications that the current tenant can use in the specified cluster |
+| [Templates](/rune/resources/templates) | Save existing instances as templates and reuse them in new deployment tasks |
+| [Quota](/rune/console/quota) | View tenant quotas and understand how workspace quotas are allocated hierarchically |
+| [Flavor](/rune/console/flavor) | View the resource specifications that the current tenant can use in the specified cluster |
+| [Workspaces](/rune/console/workspace) | Create and maintain the smallest isolation unit that hosts instances |
 
 ## Recommended reading order
 
-1. Look at the template first to understand how instances are precipitated into reusable configurations.
-2. Look at the quota again and confirm the resource boundaries of the current tenant and workspace.
-3. Finally, look at the specifications and select the resource combination that is actually available in the current cluster.
+1. Start with templates to understand how instances become reusable configurations.
+2. Then review quotas to confirm the resource boundaries of the current tenant and workspace.
+3. Finally review flavors and pick a combination that is actually available in the current cluster.

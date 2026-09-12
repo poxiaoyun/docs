@@ -1,6 +1,6 @@
 ---
-title: Kubernetes 资源浏览
-updated: '2026-03-24'
+title: 工作负载
+updated: '2026-09-12'
 author: Rune Docs Team
 description: 介绍 Boss 中集群级 Kubernetes 资源浏览器的标签页和适用场景。
 tags:
@@ -9,13 +9,15 @@ tags:
   - kubernetes
 ---
 
-# Kubernetes 资源浏览
+# 工作负载
 
-Boss 为集群详情页提供了统一的 Kubernetes 资源浏览入口，便于管理员直接查看集群中的核心对象。
+Boss 在集群详情页提供统一的 Kubernetes 资源浏览入口（侧边栏「工作负载」），便于管理员直接查看集群中的核心对象。
 
 ## 进入路径
 
-Boss -> Rune 智算管理 -> 集群管理 -> 选择集群 -> 资源浏览
+Boss -> 集群管理 -> 选择集群 -> 工作负载
+
+前端路由：`/rune/clusters/:cluster/resources`
 
 ## 支持的资源标签
 

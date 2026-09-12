@@ -1,8 +1,8 @@
 ---
 title: MindCluster（集群调度组件）
-updated: '2025-12-14'
+updated: '2026-09-12'
 author: Rune Docs Team
-description: 基于 MindCluster 7.2.RC1 的集群调度组件安装准备与关键组件部署要点。
+description: 基于 MindCluster 26.0.0 的集群调度组件安装准备与关键组件部署要点。
 tags:
   - ecosystem
   - huawei
@@ -22,6 +22,4 @@ MindCluster 集群调度组件围绕 Kubernetes 运行，常见会涉及：
 
 本目录按“交付视角”整理了安装前准备与关键组件部署步骤，便于落地。
 
-:::tip
-同一套组件在不同运行时（Docker/containerd）以及不同硬件形态（训练/推理/开发套件）下，YAML 与参数可能不同。建议先明确：运行时类型、K8s 版本、节点类型，再按需选择 YAML。
-:::
+> 💡 提示: 同一套组件在不同运行时（Docker/containerd）以及不同硬件形态（训练/推理/开发套件）下，YAML 与参数可能不同。建议先明确：运行时类型、K8s 版本、节点类型，再按需选择 YAML。

@@ -1,23 +1,41 @@
 ---
-title: 'LLM gateway'
-updated: '2026-03-23'
-description: 'LLM gateway management - full-link management and control such as channel access, API Key issuance, content review, audit logs, etc.'
+title: Model Gateway
+updated: '2026-09-12'
+description: 'LLM gateway management — channel access, model metadata, tokens, moderation, call logs and operations.'
 tags:
   - boss
   - gateway
 ---
+
 ## Overview
 
-The LLM gateway is the unified large model access layer of the Xiaoshi Intelligent Computing Platform and is centrally managed by the Boss platform administrator. It realizes multi-supplier channel aggregation, unified API access, traffic control, content security review and complete audit tracking capabilities.
+The LLM gateway is the unified large model access layer of the Xiaoshi Intelligent Computing Platform, centrally managed by the Boss platform administrator. It provides multi-provider channel aggregation, unified API access, traffic control, content moderation and full call auditing.
 
-## Core functions
+Gateway pages follow the "LLM gateway" menu groups in the Boss console. The real console routes are listed below (they do **not** include a `/boss` prefix).
 
-| Module | Description |
-|------|------|
-| [Channel Management](/boss/gateway/channels) | Configure upstream LLM service providers (OpenAI, local inference, etc.) |
-| [API Key](/boss/gateway/api-keys) | Create and manage gateway API Key, set call limits |
-| [Gateway Configuration](/boss/gateway/config) | Global parameters, routing policies, load balancing and other configurations |
-| [Content Moderation](/boss/gateway/moderation) | Input/output content security filtering and auditing rules |
-| [Operation Management](/boss/gateway/operations) | Call statistics, usage analysis and current limiting configuration |
-| [Audit Log](/boss/gateway/audit) | Complete call record query and audit |
-| [Service Registration](/boss/gateway/service-reg) | Register the inference service as a channel available to the gateway |
+## Module overview
+
+| Menu group | Page | Console route | Docs |
+|-----------|------|--------------|------|
+| LLM gateway | Data dashboard | `/gateway/operations` | [Operations overview](/boss/gateway/operations) |
+| Model service | Channels | `/service-registrations` | [Channels](/boss/gateway/channels) |
+| Model service | Model config | `/gateway/model-metadata` | [Model metadata](/boss/gateway/model-metadata) |
+| User management | Tokens | `/tokens` | [Tokens](/boss/gateway/api-keys) |
+| User management | Call logs | `/gateway/audit` | [Call logs](/boss/gateway/audit) |
+| Security service | Lexicon | `/gateway/moderation/lexicon` | [Content moderation](/boss/gateway/moderation) |
+| Security service | Policies | `/gateway/moderation/policies` | [Content moderation](/boss/gateway/moderation) |
+| Security service | Sensitive hits | `/gateway/moderation/sensitive-hits` | [Sensitive hits](/boss/gateway/sensitive-hits) |
+| Platform settings | Gateway config | `/gateway/config` | [Gateway config](/boss/gateway/config) |
+| Platform settings | Currency config | `/gateway/currency-settings` | [Currency settings](/boss/gateway/currency-settings) |
+
+> ⚠️ Note: the routes above are the real paths in the Boss console source (`src/routes/paths.ts`), not docs-site URLs. Docs-site pages use the `/boss/gateway/...` prefix.
+
+## Related capabilities
+
+| Capability | Description |
+|-----------|-------------|
+| Channels & models | Upstream provider channels, model metadata and currency conversion |
+| Credentials | Gateway tokens with rate limits, IP allowlists and expiry |
+| Content safety | Policy and lexicon based detection plus hit records |
+| Runtime control | Global switches, caches, routing preferences, channel fallback and IP allowlist |
+| Observability | Operations dashboard metrics and full call log / detail |

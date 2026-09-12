@@ -1,184 +1,114 @@
 ---
 title: 'Login'
-updated: '2026-03-23'
+updated: '2026-09-12'
+description: Username + password login, CAPTCHA, third-party login, and post-login redirect.
 ---
 
-## Feature Overview
+## Overview
 
-Rune Console uses a unified authentication system — Console (user portal) and BOSS (admin portal) share the same identity authentication service. After logging in with a username/password, the system issues a JWT (JSON Web Token) access token, which is included in all subsequent API requests for identity verification. During the login process, the system dynamically adjusts the login flow based on platform configuration, such as whether to display a CAPTCHA or whether MFA is required.
+Console (user portal) and BOSS (admin portal) share the same authentication service and the same login route `/auth/sign-in`. The form renders a required agreement checkbox; the Login button stays disabled until it is checked.
 
-## Access Path
+## Page Load
 
-- Directly visit the Console or BOSS URL; unauthenticated users are automatically redirected to the login page
-- Console login URL: `https://your-domain/console/auth/sign-in`
-- BOSS login URL: `https://your-domain/boss/auth/sign-in`
+On page load, the front-end fires two requests in parallel:
 
-> 💡 Tip: If you directly access a protected page in the browser (e.g., `/console/rune/instances`), the system will record that URL as the "post-login redirect target" and automatically return you to that page after successful login, saving you from navigating manually.
+| Request | Purpose |
+|---------|---------|
+| `GET /api/iam/login-captcha` | Returns the CAPTCHA config and its `key` |
+| `GET /api/iam/login-config` | Returns the platform login config |
 
-## Page Description
+`login-config` fields:
 
-![Login Page](/assets/screenshots/console/auth-login.png)
+| Field | Description |
+|-------|-------------|
+| `allowSignup` | Whether registration is allowed |
+| `methods` | Login method list, used to render third-party login buttons |
 
-The login page defaults to a two-column layout: the left side is the brand display area, and the right side is the login form. On mobile devices, the page automatically switches to a single-column layout showing only the login form.
+> ⚠️ Note: Whether a CAPTCHA is required and which kind is used are determined by the `provider` returned from `GET /api/iam/login-captcha`, not by `login-config`.
 
-### Login Configuration Loading
-
-When the page loads, the front-end calls the `GET /api/iam/login-config` endpoint to retrieve the platform login configuration. The response determines the login page behavior:
-
-| Configuration | Description |
-|---------------|-------------|
-| Registration allowed | Determines whether the "Register" link is visible |
-| CAPTCHA enabled | Determines whether a CAPTCHA input field appears in the login form |
-| MFA enforced | Determines whether an additional MFA verification code is required after login |
-| Password reset allowed | Determines whether the "Forgot Password" link is visible |
-| Platform name and logo | Used for the brand display area on the login page |
-
-> 💡 Tip: The above configurations are managed by the system administrator in the BOSS admin's "Platform Settings". If you notice the login page is missing a registration link or forgot password link, please contact the system administrator to verify the platform configuration.
-
-### Login Form
+## Login Form
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| Username/Email | Text input | ✅ | Enter your registered username or email address; case-insensitive |
-| Password | Password input | ✅ | Enter your account password; click the eye icon to toggle between plain text and masked display |
-| CAPTCHA | Text input + CAPTCHA image | Conditional | Only shown when the platform has CAPTCHA enabled; see the "CAPTCHA Handling" section below |
-| Remember Me | Checkbox | — | When checked, extends the login session validity (default 7 days → 30 days) |
+| `username` | Text | ✅ | Account (username / email) |
+| `password` | Password | ✅ | Toggle plain/masked with the eye icon |
+| `agreement` | Checkbox | ✅ | Must be checked before Login is enabled |
+| `captchaInput` | Text | Conditional | Shown inline only when the provider is `Graphic`; for `Slider` it is entered in a dialog |
 
-### CAPTCHA Handling
+> ⚠️ Note: There is **no** "Remember Me" checkbox. `remeberMe` is hard-coded to `true` in the request body (`centered-sign-in-view.tsx:244`) and is not user-configurable.
 
-When the platform has CAPTCHA login enabled, an additional CAPTCHA input area appears in the login form:
+## CAPTCHA
 
-![CAPTCHA Example](/assets/screenshots/console/login-captcha.png)
+The backend may return two CAPTCHA providers:
 
-1. **CAPTCHA loading**: On page load, the system automatically calls `GET /api/iam/captcha` to fetch the CAPTCHA image, returning a Base64-encoded image and a `captchaId`
-2. **Enter CAPTCHA**: The user must type the characters shown in the image (typically a 4-6 character alphanumeric combination) into the CAPTCHA input field
-3. **Refresh CAPTCHA**: Click the CAPTCHA image to refresh and get a new one; the `captchaId` is updated accordingly
-4. **CAPTCHA expiry**: The CAPTCHA is valid for approximately **2 minutes**; after expiry, click to refresh and get a new one
-5. **Submit verification**: The login request `POST /api/iam/login` submits the `captchaId` along with the user-entered CAPTCHA to the back-end for verification
+| provider | Interaction |
+|----------|-------------|
+| `Graphic` | Inline CAPTCHA image + input; click the image to refresh (the `key` is updated too) |
+| `Slider` | Clicking Login opens a slider dialog; completing the drag submits automatically |
 
-> ⚠️ Note: CAPTCHAs are case-sensitive. If the image is too blurry to read, click the image to refresh and get a new CAPTCHA.
+The request body carries CAPTCHA data as:
 
-### Steps
-
-1. Open the platform URL in your browser (Console or BOSS)
-2. Wait for the page to load; the login configuration is automatically retrieved
-3. Enter your account in the "Username/Email" field
-4. Enter your password in the "Password" field
-5. If a CAPTCHA is displayed on the page, enter the characters from the CAPTCHA image
-6. Check "Remember Me" as needed
-7. Click the **Login** button
-8. After successful login:
-   - If the platform has MFA enabled and you have an MFA device bound → redirect to the [MFA Verification Page](./mfa)
-   - If you belong to only one tenant → go directly to the console home page
-   - If you belong to multiple tenants → redirect to the [Tenant Selection Page](./select-tenant)
-   - If you have not joined any tenant → guided to register or join a tenant
-
-### Additional Actions
-
-- **Forgot Password**: Click the "Forgot Password?" link below the login form to enter the [Password Reset Flow](./reset-password)
-- **Register Account**: Click the "Don't have an account? Register" link to go to the [Registration Page](./register) (only visible when the platform allows registration)
-
-## Login Flow
-
-```mermaid
-flowchart TD
-    A[Access Platform URL] --> B{Check Local Token}
-    B -->|Token Valid| C[Go Directly to Home]
-    B -->|Token Invalid/Expired| D[Redirect to Login Page]
-    D --> D1[GET /api/iam/login-config<br/>Load Login Configuration]
-    D1 --> D2{CAPTCHA Required?}
-    D2 -->|Yes| D3[GET /api/iam/captcha<br/>Load CAPTCHA Image]
-    D3 --> E[Fill in Username + Password + CAPTCHA]
-    D2 -->|No| E2[Fill in Username + Password]
-    E --> F[POST /api/iam/login<br/>Submit Login Request]
-    E2 --> F
-    F --> G{Authentication Result}
-    G -->|Wrong Password| H[Show Error Message<br/>Refresh CAPTCHA]
-    G -->|Account Locked| H2[Show Lock Message<br/>Display Remaining Lock Time]
-    G -->|Wrong CAPTCHA| H3[Show CAPTCHA Error<br/>Auto-refresh CAPTCHA]
-    H --> D
-    H2 --> D
-    H3 --> D
-    G -->|Authentication Success| I{MFA Required?}
-    I -->|Yes| J[Redirect to MFA Verification Page]
-    J --> K{MFA Verification Passed?}
-    K -->|No| J
-    K -->|Yes| L{Multiple Tenants?}
-    I -->|No| L
-    L -->|Yes| M[Redirect to Tenant Selection Page]
-    L -->|No| C
-    M --> C
+```json
+{
+  "captcha": {
+    "code": "<user input or slider offset>",
+    "key": "<key from login-captcha>",
+    "provider": "Graphic",
+    "name": ""
+  }
+}
 ```
 
-## Error Handling and Common Issues
+> 💡 Tip: The CAPTCHA field name is `key`, not `captchaId`.
 
-### Common Error Messages
+## Request Body
 
-| Error Message | Cause | Solution |
-|---------------|-------|----------|
-| Incorrect username or password | Entered credentials do not match | Verify your username and password; note that passwords are case-sensitive |
-| CAPTCHA error | Entered CAPTCHA does not match the image | Carefully check the CAPTCHA image, noting case sensitivity; or click the image to refresh |
-| CAPTCHA expired | CAPTCHA exceeded its validity period (~2 minutes) | Click the CAPTCHA image to get a new one |
-| Account locked | Too many consecutive failed login attempts | Wait for the lock period to expire (default 15 minutes), or contact the admin to unlock |
-| Account disabled | The admin has disabled this account | Contact the system administrator or tenant administrator |
-| Network request failed | Network connection error or service unavailable | Check your network connection and try again later |
+```json
+{
+  "username": "alice",
+  "type": "Password",
+  "remeberMe": true,
+  "password": { "algorithm": "PlainText", "value": "..." },
+  "captcha": { "code": "...", "key": "...", "provider": "Graphic", "name": "" }
+}
+```
 
-### Account Lockout Mechanism
+Endpoint: `POST /api/iam/login`
 
-To prevent brute-force attacks, the platform implements the following security policies:
+## Third-Party Login
 
-- After **5** consecutive failed login attempts, the account will be temporarily locked
-- The default lock duration is **15 minutes**, during which the account cannot log in
-- Lock count and duration are configured by the system administrator in the BOSS admin
-- Administrators can manually unlock locked accounts in the BOSS admin
+When `login-config.methods` contains a recognized third-party method, a login button is rendered below the form:
 
-> ⚠️ Note: Account lockout is account-based, not IP-based. Even if you switch to a different device, a locked account remains locked for the duration of the lock period.
+- The method `type` includes `oauth` / `oauth2` / `oidc` / `saml`, or a `provider` is present
+- A redirect target must be resolvable (`url` / `href` / `loginUrl` / `authUrl` / `authorizationUrl` / `redirectUrl`, at the top level or nested under `OAuth` / `OAuth2` / `OIDC` / `SAML`)
+- The label comes from `displayName` / `label` / `name` / `provider`; the icon from `icon` or `logo`
+- Clicking is a plain external link (`<a href>`)
 
-## Session Management
+> ⚠️ Note: Which providers are supported and how callbacks are configured is a backend/platform concern. The front-end only renders `methods`; this document does not confirm the provider list.
 
-### JWT Token Mechanism
+## Post-Login Redirect
 
-After successful login, the system returns a JWT Token, which the front-end stores in the browser's `localStorage`:
+Flow: `POST /api/iam/login` succeeds → `checkUserSession()` → redirect by platform.
 
-- **Access Token**: Used for API request authentication; has a shorter validity period (default 2 hours)
-- **Refresh Token**: Used to refresh the Access Token; has a longer validity period (default 7 days; 30 days when "Remember Me" is checked)
-- When the Token expires, the front-end automatically uses the Refresh Token to obtain a new Access Token, seamlessly to the user
-- When the Refresh Token also expires, the user is redirected to the login page to re-authenticate
+| Platform | Target |
+|----------|--------|
+| Console | `/auth/select-tenant?returnTo=<returnTo>` |
+| BOSS | `paths.boss.dashboard` |
 
-### Session Invalidation Scenarios
+> ⚠️ Note: On Console the user **always** goes to the tenant selection page first, not "straight to the console home when belonging to one tenant". With a single tenant, the selection page auto-enters it. There is no separate MFA verification page redirect from login.
 
-The following situations will invalidate your current session, requiring re-login:
+## Error Handling
 
-1. Both Access Token and Refresh Token have expired
-2. An administrator has reset your password in the admin panel
-3. An administrator has disabled your account
-4. You actively clicked "Log Out"
-5. An administrator changed the platform security policy (e.g., forced all users to re-login)
+| Case | Behavior |
+|------|----------|
+| `reason === 'NeedCaptcha'` | Refresh CAPTCHA; `Slider` opens the dialog, `Graphic` shows an error |
+| `reason === 'InvalidCaptcha'` | Refresh CAPTCHA and show a CAPTCHA error |
+| `reason === 'LoginLocked'` | Refresh CAPTCHA if the dialog is open, then show the backend message |
+| Code `401` or message `Invalid account or password` | Close the dialog and show "invalid account or password" |
+| Message `Already logged in` | Treat as logged in, run the session check and redirect |
 
-### Logging Out
+> ⚠️ Note: Lockout thresholds, lockout duration, and CAPTCHA TTL are backend policies; the front-end only relays the backend message. This document does not confirm the exact values.
 
-Click "Log Out" in the avatar menu in the upper right corner. The system will:
+## Logout
 
-1. Clear locally stored Tokens
-2. Notify the back-end to invalidate the current Token
-3. Redirect back to the login page
-
-## Browser Compatibility
-
-| Browser | Minimum Version | Notes |
-|---------|-----------------|-------|
-| Google Chrome | 90+ | ✅ Recommended |
-| Microsoft Edge | 90+ | ✅ Recommended |
-| Mozilla Firefox | 88+ | ✅ Supported |
-| Apple Safari | 14+ | ✅ Supported |
-| Internet Explorer | — | ❌ Not supported |
-
-> 💡 Tip: For the best experience, we recommend using the latest version of Chrome or Edge. If you encounter display issues, try updating your browser version or clearing the browser cache first.
-
-## Important Notes
-
-- Entering the wrong password consecutively will trigger account lockout; please verify carefully before logging in
-- Login sessions have a validity period; you will need to re-login after expiry
-- We recommend using a strong password and enabling [MFA](./mfa) to enhance account security
-- Do not check "Remember Me" on public devices; be sure to log out when finished
-- If you notice suspicious login activity on your account, immediately change your password and contact the administrator
+`POST /api/iam/logout`: calls the backend logout endpoint, clears local storage and session state, then redirects to the login page.

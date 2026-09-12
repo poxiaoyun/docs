@@ -1,40 +1,46 @@
 ---
-title: 'Boss Operations Platform'
-updated: '2026-03-24'
+title: Overview
+updated: '2026-09-12'
 author: Rune Docs Team
 description: 'Boss user documentation for platform administrators, operations, and platform teams, covering IAM, multi-tenant governance, the LLM Gateway, Rune resource governance, and product-level settings.'
 tags:
   - boss
   - overview
 ---
-# Boss Operations Platform
 
-Boss is the management center of the entire product suite. It is responsible for account and tenant governance, cluster resource management, LLM Gateway operations, product settings, and Moha resource review. Platform administrators usually use Boss as the single place to handle resource provisioning, permission control, policy rollout, and operational inspection.
+# Overview
+
+Boss is the management center of the entire product suite. It handles account and tenant governance, cluster resource management, LLM Gateway operations, product settings, and Moha resource review.
 
 ## Current product structure
 
-| Module | Function | Typical entrance |
-| --- | --- | --- |
-| Dashboard | View the overall operating status and key statistics of the platform | `/boss` |
-| IAM Identity Management | Manage users, tenants, and membership relationships | `/boss/iam` |
-| Platform governance | Manage cluster, tenant and gateway governance processes from the platform level | `/boss/operations` |
-| LLM Gateway | Configure API keys, model services, review workflows, and audit capabilities | `/boss/gateway` |
-| Rune AI Computing Management | Manage clusters, resource pools, compute flavors, system images, and tenant resource allocation | `/boss/rune-admin` |
-| Moha Management | Review models, datasets, images, Spaces, and repository operation content | `/boss/moha-admin` |
-| System Settings | Maintain platform, Rune, Moha, ChatApp, and license configuration | `/boss/settings` |
+The "Console entrance" column lists the **real console routes** (the BOSS route root is `/`); documentation-site URLs use the `/boss/` prefix.
+
+| Module | Function | Console entrance | Docs |
+| --- | --- | --- | --- |
+| Dashboard | Overall operating status and key statistics | `/`, `/dashboard` | [Home Dashboard](/boss/dashboard) |
+| IAM | Users, tenants and membership | `/iam/users`, `/iam/tenants` | [IAM](/boss/iam) |
+| Rune Admin | Clusters, resource pools, flavors, system images, tenant resource allocation | `/rune/clusters`, `/rune/tenants` | [Rune Admin](/boss/rune-admin) |
+| LLM Gateway | Channels, model metadata, tokens, call logs and moderation | `/service-registrations`, `/tokens`, `/gateway/*` | [LLM Gateway](/boss/gateway) |
+| Gateway Moderation | Policies, lexicon, sensitive hits | `/gateway/moderation/*` | [Content Moderation](/boss/gateway/moderation) |
+| Moha Repository Management | Models, datasets, images, Spaces and repository content | `/moha/*`, `/moha/mirrors/*` | [Moha Repository Management](/boss/moha-admin) |
+| System Settings | Platform, Rune, Moha, ChatApp and license configuration | `/settings/*` | [System Settings](/boss/settings) |
+
+> ⚠️ Note: The docs sidebar previously contained a "Platform Operations" group at `/boss/operations`. That route **does not exist** in the console (`src/routes/sections/boss.tsx` has no top-level `operations` path), and its pages have been archived. Cluster, tenant-quota and gateway-moderation capabilities live under Rune Admin, IAM and LLM Gateway respectively, as shown above.
 
 ## Typical administrator path
 
-1. Create users and tenants in IAM.
-2. Connect clusters and configure resource pools and compute flavors in Rune AI Computing Management.
-3. Assign quotas, workspaces, and available templates to tenants.
-4. Register model services in the LLM Gateway, issue API keys, and set audit policies.
-5. Maintain brand, logo, switch items and license information in system settings.
+1. Create users (`/iam/users`) and tenants (`/iam/tenants`) in IAM.
+2. Connect clusters (`/rune/clusters`) and configure resource pools and flavors in Rune Admin.
+3. Assign quotas and workspaces to tenants (`/rune/tenants/:tenant/quotas`, `/rune/tenants/:tenant/workspaces`).
+4. Maintain channels and model metadata, issue tokens and configure moderation (`/service-registrations`, `/gateway/model-metadata`, `/tokens`, `/gateway/moderation`).
+5. Maintain brand, logo, switches and license information in System Settings (`/settings/*`).
 
 ## Recommended reading
 
-- [Platform Dashboard](/boss)
-- [IAM Identity Management](/boss/iam)
+- [Home Dashboard](/boss/dashboard)
+- [IAM](/boss/iam)
 - [LLM Gateway](/boss/gateway)
-- [Rune AI Computing Management](/boss/rune-admin)
+- [Moha Repository Management](/boss/moha-admin)
+- [Rune Admin](/boss/rune-admin)
 - [System Settings](/boss/settings)

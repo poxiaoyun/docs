@@ -1,186 +1,116 @@
 ---
-title: 'API Key Management (Admin)'
-updated: '2026-03-23'
+title: Token Management
+updated: '2026-09-12'
+description: 'Admin-side API key management — list, create and edit platform tokens with rate limits and IP allowlists.'
+tags:
+  - boss
+  - gateway
 ---
 
-## Feature Overview
+## Feature overview
 
-API Key Management is the LLM Gateway's **admin-side token management** feature, allowing system administrators to view, create, and manage all API Keys on the platform. API Keys are the authentication credentials for calling the LLM Gateway API — every API request must carry a valid API Key to be accepted and processed by the gateway.
+Token management is the **admin-side API key** surface of the LLM gateway, letting system administrators inspect and manage every API key on the platform. An API key is the credential used to call the gateway.
 
-Unlike the personal Tokens that users self-manage in the Console, admin-side API Key Management provides a global view where administrators can view all users' Keys and have extended management capabilities (such as IP whitelisting, fine-grained rate limiting, etc.).
+This page corresponds to **LLM gateway → User management → Tokens** in the Boss console (menu label from `navbar.apikey`).
 
-> 💡 Tip: Users can self-create and manage their own Tokens on the Console's [API Token](../../console/chatapp/token) page. Admin-side API Key Management is for system administrators, providing a global Key management view.
+## Access path
 
-## Access Path
+Boss console → LLM gateway → User management → **Tokens**
 
-BOSS → LLM Gateway → **API Key**
+| Action | Console route |
+|--------|--------------|
+| List | `/tokens` |
+| Create | `/tokens?action=create` |
+| Edit | `/tokens/:id?action=edit` |
 
-Path: `/boss/tokens`
+> ⚠️ Note: these are the real console routes from `src/routes/paths.ts`, not docs-site URLs.
 
-## API Key List
+## Key list
 
-![API Key List](/assets/screenshots/boss/gateway-api-keys.png)
+| Column | Field | Description |
+|--------|-------|-------------|
+| Name | `name` | Key name |
+| API key | `apiKey` | Masked (see below) with a copy button |
+| Owner | `belongTo` | Key owner |
+| RPM | `rateLimitRPM` | `undefined` or `0` renders as infinity (unlimited) |
+| TPM(K) | `rateLimitTPM` | `undefined` or `0` renders as infinity, otherwise `{value}K` |
+| Allowed IPs | `allowedIPs` | `*` when empty or only `*`, otherwise collapsed |
+| Expires at | `expiresAt` | "Never expires" when unset; expired keys show a red `expired` chip and red timestamp |
+| Created at | `createdAt` | Date-time |
 
-| Column | Field | Description | Notes |
-|--------|-------|-------------|-------|
-| Name | `name` | Custom name for the Key | Used to identify Key purpose |
-| API Key | `apiKey` | Key value (partially hidden) | Displayed in `sk-xxxx...xxxx` format, supports one-click copy to clipboard |
-| Owner | `account` / `belongTo` | User/account the Key belongs to | Shows creator information |
-| RPM Limit | `rateLimitRPM` | Requests per minute limit | Shows `∞` (unlimited) when 0 |
-| TPM Limit | `rateLimitTPM` | Tokens per minute limit | Displayed in K units (e.g., `100K`) |
-| Allowed IPs | `allowedIPs` | IP access whitelist | Displayed using `CollapseItem` folding; shows `*` when unrestricted |
-| Expires At | `expiresAt` | Key expiration time | Expired Keys show an `expired` label (Chip) |
-| Created At | `createdAt` | Key creation time | Timestamp format |
-| Actions | — | Edit / Delete | — |
+### Key masking
 
-### Key Masking Display
-
-API Keys are displayed in masked form in the list, showing only the prefix and suffix:
-
-```
-sk-abc1...xyz9
-```
-
-Click the copy button next to the Key to copy the full Key to the clipboard.
-
-> ⚠️ Note: The full API Key value is only displayed **once at creation time**. After creation, the system only stores the hash of the Key and the full Key cannot be viewed again. Please copy and securely store it immediately upon creation.
-
-### Key Status
-
-| Status | Description | List Behavior |
-|--------|-------------|---------------|
-| `active` | Active status, can be used normally | Displayed normally |
-| `expired` | Past expiration time | `expiresAt` column shows red `expired` Chip label |
-
-> 💡 Tip: Expired Keys are not automatically deleted but can no longer be used for API authentication. Administrators can manually delete expired Keys or edit their expiration time to extend validity.
-
-## Create API Key
-
-Click the **Create** button to open the creation form:
-
-![Create API Key](/assets/screenshots/boss/gateway-apikey-create.png)
-
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| Name | Text | ✅ | Custom name for the Key, used to identify purpose |
-| Owner User | User Selector | ✅ | Specify the user account the Key belongs to |
-| RPM Limit | Number | — | Maximum requests per minute, 0 means unlimited |
-| TPM Limit | Number | — | Maximum Tokens per minute, 0 means unlimited |
-| Allowed IPs | IP/CIDR List | — | IP access whitelist, leave empty for unrestricted |
-| Expires At | DateTime Picker | — | Key expiration date, leave empty for never expires |
-
-### Successful Creation
-
-After successful creation, the system displays a dialog showing the full API Key:
+The list shows only the first 6 characters and covers the rest with 12 asterisks:
 
 ```
-✅ API Key Created Successfully
-
-Your API Key:
-sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-
-⚠️ Please copy this Key immediately. The full value cannot be viewed again after closing this dialog.
+sk-abc************
 ```
 
-> ⚠️ Note: This is the only opportunity to view the full API Key. After closing the dialog, the system only retains the Key's hash for verification, and the original Key cannot be recovered.
+The copy button copies the **full key from the list payload** (`item.apiKey`), not the mask.
 
-## Rate Limiting
+> ⚠️ Note: there is **no** "full key shown only once at creation" logic. After a successful create the page simply returns to the list, and the create page has no success dialog.
 
-API Keys support independent rate limiting on two dimensions:
+The list supports multi-select; each row offers **Edit** and **Delete** (delete requires confirmation).
 
-### RPM (Requests Per Minute)
+### Filters
 
-Maximum number of requests allowed per minute. Returns HTTP `429 Too Many Requests` when exceeded.
+| Filter | Description |
+|--------|-------------|
+| Owner | Search users; filtering by the selected user (via `searchUsers`) |
 
-| Setting | Effect |
-|---------|--------|
-| `0` | Unlimited (list shows `∞`) |
-| `60` | Maximum 60 requests per minute (approximately 1 per second) |
-| `600` | Maximum 600 requests per minute (approximately 10 per second) |
+> ⚠️ Note: owner is the only filter — there is no RPM / TPM / status / expiry filter.
 
-### TPM (Tokens Per Minute)
+## Create / edit a key
 
-Maximum number of Tokens allowed per minute. Displayed in K units in the list (e.g., `100K` = 100,000 Tokens/minute).
+| Field | Key | Type | Required | Default | Notes |
+|-------|-----|------|----------|---------|-------|
+| Name | `name` | Text | ✅ | empty | Disabled in edit mode |
+| Owner | `account` | User select | ✅ | empty | Submitted as both `account` and `belongTo` |
+| RPM | `rateLimitRPM` | Number | — | empty | `0`–`10000`; omitted from the payload when empty or `0` |
+| TPM(K) | `rateLimitTPM` | Number | — | empty | `0`–`100000`; omitted when empty or `0` |
+| Allowed IPs | `allowedIPs` | Multiline | — | `*` | See format below |
+| Never expires | `noExpires` | Switch | — | on | Turning it off requires an expiry date |
+| Expires at | `expiresAt` | Date-time | conditional | — | Only shown when "never expires" is off |
 
-| Setting | Effect |
-|---------|--------|
-| `0` | Unlimited (list shows `∞`) |
-| `100000` | Maximum 100K Tokens per minute (list shows `100K`) |
-| `1000000` | Maximum 1M Tokens per minute (list shows `1000K`) |
+Submit behaviour:
 
-> 💡 Tip: RPM and TPM are calculated independently; exceeding either dimension triggers rate limiting. For high-frequency short request scenarios, focus on RPM limits; for low-frequency long text scenarios, focus on TPM limits.
+- `expiresAt` is converted to **Unix seconds**; with "never expires" it submits `0`
+- `allowedIPs` is split on newlines or commas and trimmed; an empty result submits `['*']`
+- RPM / TPM are only included when greater than `0`
 
-## IP Access Whitelist
+> 💡 Tip: numeric inputs block `e` / `E` / `+` / `-` / `.` — integers only.
 
-Each API Key can be configured with an independent IP access whitelist, restricting which IP addresses can use the Key.
+## IP allowlist format
 
-- Supports individual IP addresses (e.g., `192.168.1.100`) and CIDR ranges (e.g., `10.0.0.0/8`)
-- Multiple IPs are displayed using `CollapseItem` component folding in the list
-- When no whitelist is configured, shows `*` (all IPs allowed)
+`allowedIPs` accepts the following, separated by commas or newlines:
 
-> 💡 Tip: The IP whitelist and the global whitelist in [Gateway Configuration](./config) are two independent filtering layers. Requests must pass both whitelist layers to succeed.
+| Form | Example | Notes |
+|------|---------|-------|
+| Single IPv4 | `192.168.1.100` | Exact match |
+| CIDR | `10.0.0.0/8` | Prefix `0`–`32` |
+| Wildcard | `*` | Allow all IPs (default) |
 
-## Admin vs User Self-Service Token
+Validation (`isValidIPOrCIDR` in `form.tsx`):
 
-| Comparison | Admin API Key | User Self-Service Token |
-|------------|--------------|------------------------|
-| Management Entry | BOSS → LLM Gateway → API Key | Console → ChatApp → API Token |
-| Permissions | System Administrator | Regular user (manages own Tokens) |
-| Visible Scope | All Keys platform-wide | Own Tokens only |
-| IP Whitelist | ✅ Supported | — |
-| RPM/TPM Limits | ✅ Supported | ✅ Supported |
-| View Owner User | ✅ Visible | — |
+- **IPv4 only**, exactly 4 octets, each `0`–`255`
+- Leading zeros are rejected (`01`, `001`)
+- CIDR prefix `0`–`32`
+- **IPv6 is not supported**
 
-## Edit API Key
+> ⚠️ Note: the global allowlist in gateway config is also IPv4-only.
 
-Click the **Edit** button in the list to modify the following fields:
+## Delete a key
 
-- Name
-- RPM / TPM limits
-- Allowed IP list
-- Expiration time
+Click **Delete** and confirm in the dialog.
 
-> 💡 Tip: The API Key value itself cannot be modified. To change the Key value, delete and recreate it.
+> ⚠️ Note: no frontend logic claims that requests fail immediately after deletion; the actual behaviour depends on the server and is not documented here.
 
-## Delete API Key
+## Fields defined but unused by the page
 
-Click the **Delete** button and confirm in the dialog to delete the Key. After deletion, all API requests using that Key will immediately fail.
+The `ApiKey` type defines `status` (`active` / `expired`); it does **not** contain `usage` / `remain` fields. The i18n bundle does have strings for "used quota", "remaining quota", "usage overview" and "cost estimate" — but the current list and form use none of them.
 
-> ⚠️ Note: Delete operations are irreversible. Before deleting, confirm that no production services are using the Key; otherwise, it will cause service interruption.
+> ⚠️ Note: quota/usage capabilities have no UI entry; server support is unconfirmed.
 
-## Security Recommendations
+## Permissions
 
-### Key Lifecycle Management
-
-1. **Regular Rotation**: Production API Keys should be rotated every 90 days
-2. **Least Privilege**: Create separate Keys for different purposes, avoid sharing
-3. **Timely Cleanup**: Expired or unused Keys should be promptly deleted
-4. **IP Whitelist**: Production Keys should always have IP whitelists configured
-5. **Monitoring Alerts**: Monitor Key usage through [Operations Overview](./operations) and address anomalies promptly
-
-### Key Leak Response
-
-If an API Key leak is discovered:
-
-1. Immediately delete the Key in the admin panel
-2. Create new Keys for affected services
-3. Check [Audit Logs](./audit) to confirm whether there were abnormal calls
-4. Notify affected users to update Key configurations
-
-## FAQ
-
-### What if I forget to copy the Key after creation?
-
-It cannot be recovered. You must delete it and create a new Key.
-
-### Can RPM and TPM be set independently?
-
-Yes. Setting a dimension to `0` means unlimited. For example, setting RPM=60 and TPM=0 limits request frequency but not Token usage.
-
-### Can API Keys be automatically renewed after expiration?
-
-No automatic renewal. Administrators must manually edit the Key to set a new expiration time, or delete and create a new Key.
-
-## Permission Requirements
-
-Requires the **System Administrator** role. System administrators can view and manage API Keys for all users on the platform.
+Requires the **system administrator** role.

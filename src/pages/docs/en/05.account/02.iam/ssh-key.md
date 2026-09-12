@@ -1,90 +1,81 @@
 ---
 title: 'SSH Key Management'
-updated: '2026-03-23'
+updated: '2026-09-12'
+description: Add and delete SSH public keys (inline form on the page).
 ---
 
 ## Overview
 
-SSH Keys are used to authenticate Git-over-SSH access to Moha repositories. Adding your SSH public key to your account allows you to clone, push, and pull repositories without entering a password.
+The SSH Key page manages the account's SSH public keys for Git-over-SSH style passwordless authentication.
+
+- Route: `/iam/account/ssh-key`
+- View: `src/pages/iam/account/ssh-key.tsx`
 
 ## Navigation
 
-**IAM → SSH Keys**
+Top-right avatar → Settings → top Tab "SSH Keys"
 
-## Key List
+## Endpoints
 
-![SSH Keys](/assets/screenshots/console/iam-ssh-keys.png)
+| Action | Endpoint |
+|--------|----------|
+| List | `GET /api/iam/current/sshkeys` |
+| Create | `POST /api/iam/current/sshkeys` |
+| Delete | `DELETE /api/iam/current/sshkeys/{fingerprint}` |
 
-| Column | Description |
-|--------|-------------|
-| Title | Friendly name for the key |
-| Fingerprint | SHA256 fingerprint of the public key |
-| Key Type | RSA / Ed25519 / ECDSA |
-| Added At | When the key was added |
-| Last Used | Most recent SSH authentication |
-| Actions | Delete |
+## Adding an SSH Key
 
-## Generating an SSH Key Pair
+> ⚠️ Note: The top of the page is an **inline form** (not a "top-right button + confirm dialog"). The form and the list share the page; submit with "Save".
 
-If you don't have an SSH key, generate one:
+| Field | Key | Type | Front-end Validation |
+|-------|-----|------|----------------------|
+| Name | `name` | Text | Non-empty |
+| Public key | `publicKey` | Multiline (4 rows) | Non-empty |
+
+Auto-fill: when `name` is empty, the front-end extracts the comment from the public key (split on whitespace, take the 3rd segment onward) as the name (`ssh-key.tsx:237-248`). For a key ending in `... your-email@example.com`, the name becomes `your-email@example.com`.
+
+Request body:
+
+```json
+{ "name": "MacBook Pro", "publicKey": "ssh-ed25519 AAAA... your-email@example.com" }
+```
+
+> ⚠️ Note: The front-end only checks that the public key is non-empty. It does **not** validate key type/format, and duplicate detection is up to the backend.
+
+## Generating a Key Pair
 
 ```bash
 # Recommended: Ed25519
 ssh-keygen -t ed25519 -C "your-email@example.com"
 
-# Or RSA (if Ed25519 is not supported)
+# Or RSA
 ssh-keygen -t rsa -b 4096 -C "your-email@example.com"
+
+# View the public key
+cat ~/.ssh/id_ed25519.pub
 ```
 
-This creates two files:
-- `~/.ssh/id_ed25519` — **private key** (keep this secret)
-- `~/.ssh/id_ed25519.pub` — **public key** (this is what you add to the platform)
+The public key file ends in `.pub`. Upload the **public** key, never the private key.
 
-## Adding Your SSH Public Key
+## Key List
 
-1. Copy your public key:
-   ```bash
-   cat ~/.ssh/id_ed25519.pub
-   ```
-2. In the platform, click **Add SSH Key**.
-3. Paste the public key content into the **Key** field.
-4. Enter a **Title** (e.g., "MacBook Pro", "Work Laptop").
-5. Click **Add**.
+Each key is shown as a card:
 
-## Testing SSH Access
+| Field | Description |
+|-------|-------------|
+| `name` | Custom name |
+| `creationTimestamp` | Created at |
+| `fingerprint` | Public key fingerprint |
+| `comment` | Public key comment (shown if present) |
 
-```bash
-ssh -T git@rune.develop.xiaoshiai.cn
-# Expected output: Hi username! You've successfully authenticated.
-```
+> ⚠️ Note: The list has **no** "Last Used" or "Key Type" columns.
 
-## Cloning a Repository via SSH
+## Deleting an SSH Key
 
-```bash
-git clone git@rune.develop.xiaoshiai.cn:username/model-name.git
-```
+Click "Delete" on the key card, confirm in the dialog, and the delete endpoint is called. The public key is then removed from the platform.
 
-## SSH Config (Optional)
+## Notes
 
-Add this to `~/.ssh/config` to use a custom port or key:
-
-```
-Host rune.develop.xiaoshiai.cn
-  HostName rune.develop.xiaoshiai.cn
-  User git
-  IdentityFile ~/.ssh/id_ed25519
-  Port 22
-```
-
-## Permissions
-
-| Action | Required Role |
-|--------|--------------|
-| Add / delete own SSH keys | Any logged-in user |
-| View / manage other users' keys | System Admin only |
-
-## Security Notes
-
-- Never upload your **private key** (`id_ed25519`, not `id_ed25519.pub`).
-- If your private key is compromised, delete the corresponding public key from the platform immediately and generate a new pair.
-- Use passphrase-protected private keys for additional security.
+- The add form is inline and persistent on the page
+- The name can be auto-filled from the key comment and edited manually
+- Deletion cannot be undone

@@ -1,254 +1,152 @@
 ---
 title: 'User Management'
-updated: '2026-03-23'
+updated: '2026-09-12'
+description: 'Create, edit, reset passwords for, and delete platform users in BOSS.'
 ---
 
 ## Feature Overview
 
-User Management is one of the core modules in the BOSS Account Center. System administrators can perform full lifecycle management of all registered users on the platform, including **creating users**, **editing information**, **resetting passwords**, **deleting users**, and more. Users are the foundational unit of the platform's identity system, each identified by a unique username and associated with contact information such as email and phone number.
+User Management is one of the core modules in the BOSS Account Center. Administrators can manage the full lifecycle of platform users: **create**, **edit**, **reset password**, and **delete**. A user is the base unit of the identity system, identified by a unique username and associated with a display name, email, and phone number.
 
 ## Access Path
 
 BOSS → Account Center → **User Management**
 
-Path: `/boss/iam/users`
+Console route: `/iam/users`
+
+The list supports toolbar keyword search, pagination, and multi-select batch delete.
 
 ## User List
 
-![User Management List](/assets/screenshots/boss/iam-users.png)
+Column definitions: `src/pages/boss/iam/users/list.tsx:72-113`.
 
-The user list displays all platform users in a table format, supporting keyword search and pagination.
+| Column | Field | Display | Description |
+|--------|-------|---------|-------------|
+| **Username** | `name` | Avatar + name (link) + `displayName` | Click the name to open the user detail page |
+| **Email** | `email` | Email-formatted text | Contact email |
+| **Phone** | `phone` | Phone-formatted text | Contact phone |
+| **MFA** | `mfa.enabled` | Text "Yes / No" | Whether multi-factor authentication is enabled |
+| **Created At** | `creationTimestamp` | Formatted time | Account creation time |
 
-### Column Descriptions
+Row actions:
 
-| Column | Field Name | Display | Description |
-|--------|-----------|---------|-------------|
-| **Username** | `name` | Avatar + Display Name | The user's unique identifier (login name), with avatar icon and `displayName` |
-| **Email** | `email` | Text | User's registered email address |
-| **Phone** | `phone` | Text | User's phone number |
-| **MFA Status** | `mfa.enabled` | Icon | Whether multi-factor authentication is enabled ✅/❌ |
-| **Created At** | `creationTimestamp` | Formatted Time | User account creation time |
-| **Actions** | — | Action Buttons | Edit, Reset Password, Delete |
+| Action | Description |
+|--------|-------------|
+| **Edit** | Navigate to `/iam/users/:id/edit` |
+| **Reset Password** | Opens a confirmation dialog; the server generates a new password |
+| **Delete** | Confirmation dialog (`confirmOnDelete`); batch delete is available with multi-select |
 
-### Search and Filtering
+> ⚠️ Note: User management has **no** enable/disable switch and no separate "Status" column. To disable an account, delete the user or remove them from tenants.
 
-In the search box at the top of the list, you can search for users by the following fields:
+### Search
 
-- **Username** — Exact or fuzzy match
-- **Email** — Exact or fuzzy match
-- **Display Name** — Fuzzy match
+The toolbar search box writes to the URL `search` parameter, which is forwarded to `GET /api/iam/users`. Which fields are matched is decided by the backend; the frontend only forwards the keyword.
 
-> 💡 Tip: Search supports real-time filtering. After entering keywords, the list will automatically refresh with matching results without needing to manually click a search button.
+> ⚠️ Note: The fields matched by search (username / email / display name) are not declared in the frontend. Not confirmed.
 
 ---
 
 ## Create User
 
-![Create User Form](/assets/screenshots/boss/iam-users-create.png)
+Console route: `/iam/users/new`.
 
-### Steps
+1. Click **Create User** at the top right of the list.
+2. Fill in the fields below.
+3. Click **Confirm** to submit (`POST /api/iam/users`).
 
-1. On the user list page, click the **Create User** button in the upper right corner
-2. Fill in the user information in the popup form
-3. Click the **Create** button to complete the operation
+Form fields and validation (`src/pages/boss/iam/users/components/form.tsx:44-52`, `114-134`):
 
-### Form Fields
-
-| Field | Field Name | Type | Required | Validation Rules | Description |
-|-------|-----------|------|----------|-----------------|-------------|
-| **Username** | `name` | Text Input | ✅ | Uniqueness check, only alphanumeric and hyphens allowed | User's unique login identifier, **cannot be modified after creation** |
-| **Display Name** | `displayName` | Text Input | — | No special restrictions | User's display name, can be changed by the user in personal settings |
-| **Email** | `email` | Email Input | ✅ | Must conform to standard email format (RFC 5322) | User's contact email |
-| **Phone** | `phone` | Phone Input | ✅ | Must conform to phone number format | User's contact phone number |
+| Field | Field name | Type | Required | Validation | Description |
+|-------|-----------|------|----------|-----------|-------------|
+| **Username** | `name` | Text | ✅ | Non-empty | Unique login identifier; not editable after creation |
+| **Display Name** | `displayName` | Text | — | None | Display name |
+| **Email** | `email` | Text | ✅ | Non-empty + email format | Contact email |
+| **Phone** | `phone` | Text | ✅ | Non-empty + regex `\d{6,16}` | Contact phone |
 
 ### Automatic Password Generation
 
-> ⚠️ Note: When creating a user, **you do not need to set a password manually**. The system will automatically generate a strong random password and display it in a popup after successful creation.
+> 💡 Tip: You do **not** fill in a password when creating a user. The server generates it, and on success the form shows a success alert containing the username, the plaintext password, and a **copy button** (`ClipboardButton`), see `form.tsx:99-112`.
 
-The password display popup after successful creation includes:
-
-- The automatically generated temporary password (displayed in plain text)
-- **Copy to clipboard** button
-- Security reminder: It is recommended to immediately send the password to the user and remind them to change it upon first login
-
-![Password Generation Dialog](/assets/screenshots/boss/iam-users-password-dialog.png)
+After the password is shown: copy it and send it to the user over a secure channel, and remind them to change it after first login.
 
 ```mermaid
 sequenceDiagram
     participant Admin as Administrator
-    participant BOSS as BOSS System
+    participant BOSS as BOSS Console
     participant API as IAM API
-    
-    Admin->>BOSS: Fill in user info and submit
+    Admin->>BOSS: Fill in info and submit
     BOSS->>API: POST /api/iam/users
-    API-->>API: Create user + auto-generate password
-    API-->>BOSS: Return user info + temporary password
-    BOSS-->>Admin: Display password in popup (copy to clipboard)
-    Admin->>Admin: Copy password and notify user
+    API-->>BOSS: Return user info + generated password
+    BOSS-->>Admin: Success alert with password (copyable)
 ```
 
-> 💡 Tip: The auto-generated password is only displayed once at creation time. If the administrator closes the popup without copying the password, a new one can only be generated via the "Reset Password" function.
+### Bulk Creation
+
+Bulk creation and import of users are not supported. Multi-select batch delete is supported; for bulk creation, script against the API.
 
 ---
 
 ## Edit User
 
-![Edit User Form](/assets/screenshots/boss/iam-users-edit.png)
-
-### Steps
-
-1. Find the target user in the user list
-2. Click the **Edit** button on that user's row
-3. Modify the information in the popup edit form
-4. Click the **Save** button to submit changes
-
-### Editable Fields
+Console route: `/iam/users/:id/edit`.
 
 | Field | Editable | Description |
 |-------|----------|-------------|
-| **Username** (`name`) | ❌ Not editable | User's unique identifier, locked after creation, displayed as disabled in the form |
-| **Display Name** (`displayName`) | ✅ | Can modify the user's display name |
-| **Email** (`email`) | ✅ | Can modify the user's email, must conform to email format |
-| **Phone** (`phone`) | ✅ | Can modify the user's phone number, must conform to phone format |
+| **Username** (`name`) | ❌ | Disabled in the form, with a lock icon |
+| **Display Name** (`displayName`) | ✅ | — |
+| **Email** (`email`) | ✅ | Must match email format |
+| **Phone** (`phone`) | ✅ | Must match `\d{6,16}` |
 
-> 💡 Tip: Editing user information does not affect the user's password or MFA settings. To change passwords, use the "Reset Password" function.
-
-### Corresponding API
-
-```
-PUT /api/iam/users/:name
-```
+Submit calls `PUT /api/iam/users/:name`.
 
 ---
 
 ## Reset Password
 
-When a user forgets their password or an account needs a security reset, administrators can reset the user's password.
+1. Open the row action menu and click **Reset Password**.
+2. A confirmation dialog appears; on confirm, `POST /api/iam/users/:name/password` is called.
+3. The new password is shown in the dialog with a **copy button**.
 
-### Steps
-
-1. Find the target user in the user list
-2. Click **Reset Password** in the action menu of that user's row
-3. The system will automatically generate a new random password
-4. View and copy the new password in the popup
-5. Securely send the new password to the user
-
-### Password Reset Notes
-
-- After resetting the password, all active sessions of the user will **not** be immediately terminated
-- The new password is also auto-generated and can be obtained via the clipboard copy button
-- It is recommended to notify the user to change their password immediately after logging in
-
-### Corresponding API
-
-```
-PUT /api/iam/users/:name/password
-```
-
-> ⚠️ Note: The password reset operation cannot be undone. After resetting, the old password will become invalid immediately. Please ensure the new password has been securely communicated to the user.
+> ⚠️ Note: This is destructive; the old password becomes invalid immediately. Whether existing sessions are terminated is a backend policy the frontend does not surface. Not confirmed.
 
 ---
 
 ## Delete User
 
-### Steps
+1. Click **Delete** on the row (or select multiple rows to batch delete).
+2. A confirmation dialog shows the target user.
+3. On confirm, `DELETE /api/iam/users/:name` is called.
 
-1. Find the user to delete in the user list
-2. Click **Delete** in the action menu of that user's row
-3. The system displays a **confirmation dialog** showing the username and requiring confirmation
-4. Click **Confirm Delete** to complete the operation
-
-![Delete User Confirmation](/assets/screenshots/boss/iam-users-delete-confirm.png)
-
-### Deletion Impact
-
-> ⚠️ Note: Deleting a user is an **irreversible** operation. After deletion:
-> - The user will be unable to log in to the platform
-> - The user's memberships in all tenants will be removed
-> - Resources created by the user (models, datasets, etc.) will not be automatically deleted, but ownership will be marked as deleted user
-> - All API Keys of the user will be invalidated
-
-### Corresponding API
-
-```
-DELETE /api/iam/users/:name
-```
+> ⚠️ Note: Deletion is irreversible. Side effects (tenant memberships, ownership of created models / datasets / API keys) are backend behavior the frontend does not surface. Not confirmed.
 
 ---
 
-## MFA Status Description
+## MFA Status
 
-The **MFA Status** column in the user list shows whether a user has enabled Multi-Factor Authentication:
+The **MFA** column reads `mfa.enabled` and shows "Yes / No" text.
 
-| Status | Icon | Description |
-|--------|------|-------------|
-| Enabled | ✅ | User has bound an MFA device (e.g., TOTP authenticator), dynamic verification code required at login |
-| Not Enabled | ❌ | User logs in with password only, MFA not configured |
-
-> 💡 Tip: MFA status is managed by users in their Console personal security settings. Administrators can only view MFA status in BOSS and cannot enable or disable MFA on behalf of users. For security reasons, administrators are encouraged to promote MFA adoption through announcements or notifications.
-
----
-
-## User Management Workflow
-
-```mermaid
-flowchart TD
-    A["Administrator creates user"] --> B["System auto-generates password"]
-    B --> C["Administrator copies password"]
-    C --> D["Administrator sends password to user"]
-    D --> E["User logs in for the first time"]
-    E --> F{"User changes password?"}
-    F -->|Yes| G["User sets new password"]
-    F -->|No| H["Continue using temporary password"]
-    G --> I["User enables MFA"]
-    H --> I
-    I --> J["User completes profile"]
-    J --> K["Administrator adds user to tenant"]
-    K --> L["User begins using the platform"]
-    
-    M["User forgets password"] --> N["Administrator resets password"]
-    N --> B
-```
+> 💡 Tip: MFA is managed by users in their Console personal security settings. BOSS only displays it; administrators cannot toggle it.
 
 ## API Reference
 
-| Operation | Method | Path | Description |
-|-----------|--------|------|-------------|
-| Get User List | `GET` | `/api/iam/users` | Supports pagination and search parameters |
-| Get Single User | `GET` | `/api/iam/users/:name` | Returns detailed user information |
-| Create User | `POST` | `/api/iam/users` | Auto-generates password |
-| Update User | `PUT` | `/api/iam/users/:name` | Updates basic user information |
-| Delete User | `DELETE` | `/api/iam/users/:name` | Requires confirmation |
-| Reset Password | `PUT` | `/api/iam/users/:name/password` | Auto-generates new password |
+| Operation | Method and path |
+|-----------|-----------------|
+| List users | `GET /api/iam/users` |
+| Get user | `GET /api/iam/users/:name` |
+| Create user | `POST /api/iam/users` |
+| Update user | `PUT /api/iam/users/:name` |
+| Delete user | `DELETE /api/iam/users/:name` |
+| Reset password | `POST /api/iam/users/:name/password` |
+| User tenants | `GET /api/iam/users/:name/tenants` |
+| User search (for selectors) | `GET /api/iam/user-search` |
 
 ## Best Practices
 
-### User Naming Conventions
-
-- Use **employee IDs** or **email prefixes** as usernames to ensure global uniqueness
-- Usernames should only contain lowercase letters, numbers, and hyphens (`-`)
-- Avoid using Chinese characters or special characters in usernames
-
-### Security Recommendations
-
-1. **Regularly review the user list** and promptly delete accounts of departed personnel
-2. **Encourage users to enable MFA** to enhance account security
-3. **Use secure channels for password delivery** (such as encrypted email or enterprise IM private chat), avoid sending in plain text
-4. **Avoid shared accounts** — each person should use an independent user account
-
-### Bulk Operation Recommendations
-
-The current version does not support bulk user creation or import. For bulk creation of many users, it is recommended to:
-
-1. Write a script to call the API `/api/iam/users` in batch
-2. Record all auto-generated passwords and notify users collectively
+- Use **employee IDs** or **email prefixes** as usernames; prefer lowercase letters, digits and hyphens.
+- Regularly review the user list and delete departed accounts.
+- Deliver passwords over secure channels; encourage MFA.
+- Avoid shared accounts.
 
 ## Permission Requirements
 
-| Operation | Required Role |
-|-----------|---------------|
-| View User List | System Administrator |
-| Create User | System Administrator |
-| Edit User | System Administrator |
-| Reset Password | System Administrator |
-| Delete User | System Administrator |
+> ⚠️ Note: The console source defines no fine-grained permission checks. "System Administrator" is a product-level convention; the exact permission points are not confirmed in code.

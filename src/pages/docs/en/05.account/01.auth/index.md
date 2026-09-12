@@ -1,7 +1,7 @@
 ---
 title: 'Authentication'
-updated: '2026-03-24'
-description: Login, registration, password recovery, MFA, role selection, and tenant entry.
+updated: '2026-09-12'
+description: Login, registration, password recovery, MFA, roles, and tenant entry.
 tags:
 - account
 - auth

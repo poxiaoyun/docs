@@ -1,6 +1,6 @@
 ---
 title: 'Personal Center'
-updated: '2026-03-24'
+updated: '2026-09-12'
 description: Profile, security, API keys, SSH keys, tenant membership, and display preferences.
 tags:
 - account
@@ -17,4 +17,4 @@ The Personal Center groups the settings that users manage for themselves after s
 - Control password, MFA, and account protections from [Security](/account/iam/security).
 - Create developer-facing credentials from [API Keys](/account/iam/api-key) and [SSH Keys](/account/iam/ssh-key).
 - Review tenant membership and switching behavior from [Tenant Membership](/account/iam/tenant).
-- Adjust appearance and language preferences from [Theme](/account/iam/theme).
+- Adjust appearance preferences from [Theme](/account/iam/theme).

@@ -1,69 +1,81 @@
 ---
 title: 'Security Settings'
-updated: '2026-03-23'
+updated: '2026-09-12'
+description: Change password / email / phone and MFA (collection page).
 ---
 
 ## Overview
 
-The Security Settings page lets you manage your account security configuration, including your password and multi-factor authentication (MFA).
+"Security Settings" is a documentation-level grouping. There is **no** dedicated "Security" Tab in code. The features live in four Personal Center tabs, described together here.
 
-## Navigation
+| Feature | Tab | Route | View |
+|---------|-----|-------|------|
+| Change password | Password | `/iam/account/change-password` | `change-password.tsx` |
+| Change email | Email | `/iam/account/change-email` | `change-email.tsx` |
+| Change phone | Mobile Number | `/iam/account/change-mobile` | `change-mobile.tsx` |
+| MFA | Multi-factor Authentication | `/iam/account/mfa` | `mfa.tsx` |
 
-**IAM → Security**
+## Change Password
 
-## Sections
+| Field | Key | Front-end Validation |
+|-------|-----|----------------------|
+| Old password | `oldPassword` | Non-empty |
+| New password | `newPassword` | ≥ 8 chars, printable ASCII |
+| Confirm new password | `confirmNewPassword` | ≥ 8 chars, printable ASCII, must match |
 
-![Security Settings](/assets/screenshots/console/iam-security.png)
+Extra rule: `oldPassword` must differ from `newPassword`.
 
-### Change Password
+| Item | Value |
+|------|-------|
+| Endpoint | `POST /api/iam/current/reset-password` |
+| Body | `{ "password": "<old>", "newPassword": "<new>" }` |
 
-1. Click **Change Password**.
-2. Enter your **current password**.
-3. Enter your **new password** (at least 8 characters, mix of letters and numbers).
-4. Confirm the new password.
-5. Click **Update Password**.
+> ⚠️ Note: There is **no** password strength indicator (weak/medium/strong). Rules come from `schemaHelper.password`, the same as registration.
 
-> If you are changing your password due to a security concern, also revoke all active API keys and sessions after the change.
+## Change Email
 
-#### Password Requirements
+| Field | Key | Front-end Validation |
+|-------|-----|----------------------|
+| New email | `newEmail` | Non-empty + email format |
+| Code | `code` | Non-empty (email code) |
 
-| Rule | Requirement |
-|------|-------------|
-| Minimum length | 8 characters |
-| Complexity | At least one letter and one number |
-| History | Cannot reuse the last 3 passwords |
+| Item | Value |
+|------|-------|
+| Endpoint | `POST /api/iam/current/reset-email` |
+| Body | `{ "newEmail": "...", "code": "..." }` |
 
-### Multi-Factor Authentication (MFA)
+## Change Phone
 
-| State | Action |
-|-------|--------|
-| MFA is disabled | **Enable MFA** button |
-| MFA is enabled | **Disable MFA** button + **Regenerate Recovery Codes** |
+| Field | Key | Front-end Validation |
+|-------|-----|----------------------|
+| New phone | `newPhone` | Non-empty + 6–16 digits |
+| Code | `code` | Non-empty (SMS code) |
 
-See [MFA Setup Guide](../../auth/mfa) for full setup instructions.
+| Item | Value |
+|------|-------|
+| Endpoint | `POST /api/iam/current/reset-phone` |
+| Body | `{ "newPhone": "...", "code": "..." }` |
 
-#### Recovery Codes
+## Verification Code Mechanism
 
-Recovery codes allow you to sign in when you don't have access to your authenticator app.
+Email and phone changes share `RHFVerifyCode`:
 
-- Codes are generated when you enable MFA.
-- Each code can only be used **once**.
-- Click **Regenerate Recovery Codes** to get a new set (requires current TOTP code to confirm).
-- Store recovery codes in a secure place such as a password manager.
+- Send: `POST /api/iam/send-code` with `{ action, target, type }`
+  - `action` defaults to `reset`; for email/phone change, `target` is the newly entered value and `type` is `email` / `phone`
+- The button enters a **60-second countdown** after sending
+- If the backend returns `Need captcha`, the front-end:
+  1. Calls `GET /api/iam/captcha`
+  2. Opens a dialog for the graphic CAPTCHA
+  3. Resends with `captcha: { code, key, provider, name }`
 
-### Active Sessions
+> ⚠️ Note: The graphic CAPTCHA is not a fixed prerequisite; it is triggered only when the backend returns `Need captcha`. Code TTL is backend-defined and unconfirmed.
 
-View and manage active login sessions:
+## MFA
 
-| Column | Description |
-|--------|-------------|
-| Device | Browser and operating system |
-| IP Address | Source IP of the session |
-| Last Active | Most recent activity timestamp |
-| Actions | Revoke this session |
+See [MFA](/account/auth/mfa). Key points: entering the page auto-calls `POST /api/iam/init-mfa`; there is no separate "Enable MFA" button; the Stepper has two steps; only the first recovery code is shown.
 
-Click **Revoke** to immediately sign out a specific session. Click **Revoke All Other Sessions** to sign out all devices except the current one.
+## Notes
 
-## Permissions
-
-Security settings are personal — only you can modify your own security configuration. Administrators cannot change individual user passwords directly but can trigger a password reset email.
+- Security actions all live in Personal Center tabs — there is no dedicated Security page
+- Changing the password requires the old password
+- Changing email/phone requires a code for the new value

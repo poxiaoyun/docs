@@ -5,6 +5,12 @@ export const REFERENCE_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
     subheader: 'Reference',
     items: [
       {
+        title: 'Reference Overview',
+        path: '/reference',
+        icon: 'ic-file',
+        product: 'faq',
+      },
+      {
         title: 'API Overview',
         path: '/reference/api-overview',
         icon: 'ic-file',
@@ -14,6 +20,12 @@ export const REFERENCE_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         title: 'Permission Model',
         path: '/reference/permissions',
         icon: 'ic-lock',
+        product: 'faq',
+      },
+      {
+        title: 'Build & Environment',
+        path: '/reference/build-and-env',
+        icon: 'ic-params',
         product: 'faq',
       },
       {

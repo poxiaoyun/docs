@@ -1,120 +1,61 @@
 ---
-title: 'ChatApp 设置'
-updated: '2026-03-23'
+title: '网关设置'
+updated: '2026-09-12'
+description: '网关的展示配置——Logo、产品标题与产品描述。'
+tags:
+  - boss
+  - settings
 ---
 
 ## 功能简介
 
-ChatApp 设置用于自定义 **ChatApp 对话体验** 子系统的品牌展示信息，包括模块 Logo、导航栏标题和模块描述。其配置结构与 Rune 设置、Moha 设置完全一致，配置保存在 配置项 命名空间下，修改后会立即反映在 ChatApp 模块的导航栏和入口页面中。
+网关设置维护网关相关产品在控制台中的展示信息，包括 Logo、产品标题与产品描述。配置写入平台全局配置的 `chatapp` 字段。
 
-:::tip
-ChatApp 是面向终端用户的对话式 AI 体验入口，品牌设置直接影响用户对 AI 对话产品的第一印象。
-:::
+本页对应 BOSS 控制台「平台管理 → **网关设置**」（菜单文案取自 `navbar.chatapp_setting`）。
 
 ## 进入路径
 
-BOSS → 平台设置 → **ChatApp 设置**
+BOSS 控制台 → 平台管理 → **网关设置**
 
-路径：`/boss/settings/chatapp`
-
-## 页面说明
-
-![ChatApp 设置](/assets/screenshots/boss/settings-chatapp.png)
+前端真实路由：`/settings/chatapp`
 
 ## 配置项
 
-### 模块 Logo
+| 界面标签 | 字段 | 类型 | 约束 | 说明 |
+|---------|------|------|------|------|
+| （Logo 上传） | `chatapp.logo` | 图片上传 | 最大 **128 KB**，仅 **PNG / SVG** | 以 Base64 存储 |
+| 产品标题 | `chatapp.title` | 文本 | 最大 **10 个字符** | 导航栏标题 |
+| 产品描述 | `chatapp.description` | 多行文本 | 最大 **100 个字符**，4 行 | 产品简介 |
 
-| 属性 | 说明 |
-|------|------|
-| 字段名 | `logo` |
-| 文件大小限制 | 最大 **128KB** |
-| 编码方式 | **Base64** 编码存储 |
-| 支持格式 | **PNG**、**SVG** |
-| 用途 | 显示在 ChatApp 模块的导航栏和对话入口页面 |
+> ⚠️ 注意: 「产品标题」的字段名是 **`chatapp.title`**（界面标签为 `navbar_title`），不是 `navbar_title` 字段。
 
-操作步骤：
-
-1. 点击 Logo 上传区域
-2. 选择本地 PNG 或 SVG 文件（不超过 128KB）
-3. 预览 Logo 效果
-4. 确认后点击 **保存**
-
-:::warning
-模块 Logo 以 Base64 形式存储在配置中，大小限制为 128KB。建议使用简洁的图形和 SVG 格式以保证加载效率和显示质量。
-:::
-
-### 导航栏标题
-
-| 属性 | 说明 |
-|------|------|
-| 字段名 | `navbar_title` |
-| 最大长度 | **10 个字符** |
-| 用途 | 显示在 ChatApp 模块导航栏 Logo 旁边的标题文字 |
-
-默认值为 "ChatApp"，管理员可将其自定义为面向用户的产品名称，如 "AI 助手"、"智能对话" 等。
-
-### 模块描述
-
-| 属性 | 说明 |
-|------|------|
-| 字段名 | `description` |
-| 最大长度 | **100 个字符** |
-| 输入框行数 | **4 行** 文本域 |
-| 用途 | 显示在 ChatApp 模块入口页面的产品简介文字 |
-
-描述文字用于向用户说明 ChatApp 的功能和定位，例如："基于大语言模型的智能对话助手，支持多轮对话、文档问答和代码生成..."
-
-## 配置存储
-
-所有 ChatApp 设置保存在 配置项 命名空间中：
+写入的配置结构：
 
 ```yaml
-# config.chatapp 命名空间
-logo: "data:image/png;base64,iVBORw0KGgo..."     # Base64 编码的 Logo
-navbar_title: "ChatApp"                            # 导航栏标题
-description: "ChatApp 提供智能对话体验..."          # 模块描述
+chatapp:
+  logo: "data:image/png;base64,iVBORw0KGgo..."
+  title: "ChatApp"
+  description: "产品简介"
 ```
 
-## 设置效果展示
+保存成功后提示「更新成功,请刷新页面」。
 
-配置保存后，ChatApp 模块中以下位置会受到影响：
+## 与 Rune / Moha 设置的区别
 
-| 展示位置 | 受影响的配置项 |
-|----------|---------------|
-| 导航栏左上角 | Logo + 导航栏标题 |
-| 对话入口页面 | Logo + 描述 |
-| 浏览器标签页 | 导航栏标题（作为标签页前缀） |
-| 平台模块切换菜单 | Logo + 导航栏标题 |
+三者结构一致、互相独立，各自写入全局配置下的不同字段：
 
-![ChatApp 设置效果预览](/assets/screenshots/boss/settings-chatapp-preview.png)
+| 页面 | 配置字段 | 接口 |
+|------|---------|------|
+| [Rune 设置](/boss/settings/rune) | `rune.{logo,title,description}` + `mohaAddress` / `kmsAddress` | `/api/iam/global-config` |
+| [Moha 设置](/boss/settings/moha) | `moha.{logo,title,description}` + `space.*` | `/api/iam/global-config`、`/api/moha/global-config` |
+| 网关设置 | `chatapp.{logo,title,description}` | `/api/iam/global-config` |
 
-:::tip
-由于 ChatApp 面向终端用户，Logo 和标题的选择应更贴近产品品牌调性，避免使用过于技术化的名称。
-:::
+## 接口
 
-## 三个模块设置的对比
-
-| 配置项 | Rune 设置 | Moha 设置 | ChatApp 设置 |
-|--------|-----------|-----------|-------------|
-| 命名空间 | 配置项 | 配置项 | 配置项 |
-| Logo 限制 | 128KB, PNG/SVG | 128KB, PNG/SVG | 128KB, PNG/SVG |
-| 标题长度 | 10 字符 | 10 字符 | 10 字符 |
-| 描述长度 | 100 字符 | 100 字符 | 100 字符 |
-| 存储方式 | Base64 | Base64 | Base64 |
-
-## 操作步骤
-
-1. 进入 BOSS → 平台设置 → ChatApp 设置
-2. 根据需要修改 Logo、标题和描述
-3. 在页面中预览修改效果
-4. 点击 **保存** 按钮提交变更
-5. 确认变更已生效（刷新 ChatApp 模块页面查看）
-
-:::warning
-修改 ChatApp 品牌信息后，建议同步检查 Rune 设置和 Moha 设置，确保三个子系统的品牌风格统一协调。
-:::
+| 接口 | 方法 | 说明 |
+|------|------|------|
+| `/api/iam/global-config` | `GET` / `PUT` | 读取 / 保存全局配置 |
 
 ## 权限要求
 
-需要 **系统管理员** 角色才能访问 ChatApp 设置页面。
+需要 **系统管理员** 角色。

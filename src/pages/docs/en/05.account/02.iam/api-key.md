@@ -1,61 +1,63 @@
 ---
-title: 'API Key Management'
-updated: '2026-03-23'
+title: 'IAM API Key (AK/SK)'
+updated: '2026-09-12'
+description: Generate / regenerate AccessKey and SecretKey; display only, no delete.
 ---
 
 ## Overview
 
-API Keys in the IAM section are personal credentials scoped to the platform APIs (Cloud, Moha, etc.). They are distinct from ChatApp tokens and are used for direct programmatic access to platform REST APIs.
+IAM API Key is an account-level API credential composed of **AccessKey (AK)** and **SecretKey (SK)**. The Personal Center provides generate and regenerate capabilities.
+
+- Route: `/iam/account/api-key`
+- View: `src/pages/iam/account/api-key.tsx`
 
 ## Navigation
 
-**IAM → API Keys**
+Top-right avatar → Settings → top Tab "API Key"
 
-## Key List
+## Endpoints
 
-![API Keys](/assets/screenshots/console/iam-api-keys.png)
+| Action | Endpoint |
+|--------|----------|
+| List keys | `GET /api/iam/current/apikeys` |
+| Generate key | `POST /api/iam/current/apikeys` (body `{}`) |
 
-| Column | Description |
-|--------|-------------|
-| Name | Key label |
-| Key Preview | Masked value showing first/last characters |
-| Created At | Creation timestamp |
-| Last Used | Most recent usage timestamp |
-| Expires At | Expiry date or "Never" |
-| Actions | Copy / Revoke |
+## Page Description
 
-## Creating an API Key
+The page is a **single-key view**:
 
-1. Click **New API Key**.
-2. Enter a descriptive name (e.g., "terraform-automation", "ci-cd-pipeline").
-3. Set an optional expiry date.
-4. Click **Generate**.
-5. **Copy the key immediately** — it will not be shown again.
+| Area | Description |
+|------|-------------|
+| Empty state | Shown when no key exists |
+| Key area | Shows the key `name` and the full `accessKey` with a copy button |
+| Bottom button | "Generate" when empty, "Regenerate" when a key exists |
 
-## Using an API Key
+> ⚠️ Note: The list shows only `name` and `accessKey`. There is **no** "Created At" column, **no** delete button, and **no** expiry / last-used fields. When a key exists, the button label becomes "Regenerate" (`api-key.tsx:169`).
 
-Include the key in the `Authorization` header of API requests:
+## Generating a Key
+
+1. Click "Generate" / "Regenerate" at the bottom
+2. The front-end calls `POST /api/iam/current/apikeys`
+3. A success alert appears with:
+   - `accessKey` + copy button
+   - `secretKey` + copy button
+
+> ⚠️ Note: The SecretKey only appears in the success alert (the copy says it is shown once). It cannot be viewed again from the list.
+
+## Usage
+
+The generated AK/SK is used for API authentication. The header names below are illustrative only — actual field names follow the backend contract:
 
 ```bash
-curl https://rune.develop.xiaoshiai.cn/api/iam/v1/workspaces \
-  -H "Authorization: Bearer YOUR_API_KEY"
+curl -X GET https://your-domain/api/resource \
+  -H "X-Access-Key: YOUR_ACCESS_KEY" \
+  -H "X-Secret-Key: YOUR_SECRET_KEY"
 ```
 
-## Key Security Best Practices
+> ⚠️ Note: The header names and signing/validation are not represented in the front-end code covered here; they are a backend contract and unconfirmed.
 
-- Use a separate key per application or environment (dev, staging, prod).
-- Set short expiry times for keys used in CI/CD pipelines.
-- Revoke keys immediately when an application is decommissioned.
-- Never share keys between team members — each person should have their own key.
-- Store keys in your deployment platform's secret store (AWS Secrets Manager, GitHub Actions secrets, etc.).
+## Notes
 
-## Revoking a Key
-
-Click **Revoke** next to a key. The key is immediately invalidated.
-
-## Permissions
-
-| Action | Required Role |
-|--------|--------------|
-| Create / manage own keys | Any logged-in user |
-| View or revoke other users' keys | System Admin only |
+- Generating immediately refreshes the list and shows the new AK/SK
+- The page provides no way to delete a key
+- SecretKey is only shown at generation time

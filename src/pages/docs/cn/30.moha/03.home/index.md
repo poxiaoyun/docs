@@ -1,7 +1,6 @@
 ---
 title: 首页与个人工作台
-updated: '2026-03-24'
-author: Rune Docs Team
+updated: '2026-09-12'
 description: 介绍魔哈首页、个人工作台、组织空间和常用入口。
 tags:
   - moha
@@ -27,5 +26,8 @@ tags:
 
 - [首页概览](/moha/home/overview)
 - [我创建的资源](/moha/home/created-by-me)
+- [我的收藏](/moha/home/liked-by-me)
 - [组织空间](/moha/home/organizations)
 - [访问令牌与公告](/moha/home/token-announcements)
+
+> 💡 提示: `/moha/home` 下共有 `overview`、`created-by-me`、`liked-by-me`、`token`、`announcements` 五个子路由；组织主页的真实路由在 `/moha/organizations/:organization`，不在 `/moha/home` 之下。

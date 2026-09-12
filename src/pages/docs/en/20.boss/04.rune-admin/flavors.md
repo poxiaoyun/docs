@@ -1,268 +1,127 @@
 ---
-title: 'Flavor Management (Admin)'
-updated: '2026-03-23'
+title: Flavor
+updated: '2026-09-12'
+description: 'Flavor list columns, resource configuration form, enable/disable, and deletion notes for cluster flavors.'
 ---
 
-## Feature Overview
+## Overview
 
-Flavors define the **compute resource combinations** available when deploying instances — including CPU core count, memory capacity, GPU/NPU type and quantity, etc. Administrators create, configure, and manage platform-wide flavors through BOSS Flavor Management. These flavors are ultimately presented as options to tenant users, who select appropriate flavors when creating development environments, training tasks, or inference services.
+A flavor defines the **compute resource combination** available when deploying an instance. Administrators create and manage flavors at the cluster level; flavors are then referenced by quotas and finally presented to users as options.
 
-> 💡 Tip: Flavor Management in BOSS is the **administrator view**, with full management capabilities including create, edit, enable/disable, etc. Regular users in the Console can only **view and select** enabled flavors and cannot create or modify them.
+> 💡 Tip: This page is the **administrator view**, where you can create / edit / enable / disable / delete flavors. Tenants can only view and select authorized flavors.
 
 ## Access Path
 
-BOSS → Cluster Details → **Flavors**
+BOSS Console → Cluster Management → select a cluster → **Flavors**
 
-Path: `/boss/rune/clusters/:cluster/flavors`
-
-## Admin View vs User View
-
-| Dimension | BOSS Admin View | Console User View |
-|-----------|----------------|-------------------|
-| **Permissions** | Create / Edit / Enable / Disable / Delete | View and select only |
-| **Visible Scope** | All flavors (including disabled) | Only enabled flavors with quota |
-| **Resource Pool Association** | Can configure resource pool bindings | Resource pool info not visible |
-| **Sold Out Status** | Can view sold out reasons and adjust | Only sees "unavailable" marker |
-| **Multi-level Scope** | Can configure cluster→tenant→workspace visibility | Only sees flavors available in current workspace |
+Frontend route: `/rune/clusters/:cluster/flavors`
 
 ---
 
 ## Flavor List
 
-![Flavor Management List](/assets/screenshots/boss/rune-flavors.png)
+### Columns
 
-The flavor list displays all created flavors in the current cluster in table format.
+| Column | Field Path | Display | Description |
+| --- | --- | --- | --- |
+| Name | `name` | Text + description | Flavor name, with description underneath |
+| Type | `type` | Resource type tag | Rendered by `QuotaResourceType` |
+| Model | `model` | Model tag | Rendered by `QuotaResourceModel`, combined with `vendor` |
+| Spec | `config` | Tag group | `FlavorResources` renders tags per resource item |
+| Resource Pool | `resourcePool` | Link text | The backend returns a pool ID; the frontend resolves and shows `name (ID)`; shows `-` when empty |
+| Status | `enabled` | Tag | Enabled (`enabled = true`) / disabled |
 
-### Column Descriptions
+### Filtering
 
-| Column | Field Name | Display | Description |
-|--------|-----------|---------|-------------|
-| **Name** | `name` | Text + Description | Flavor name with description below |
-| **Resource Type** | `type` | QuotaResourceType Label | Resource category, such as GPU, NPU, DCU, etc. |
-| **Resource Model** | `model` | QuotaResourceModel Label | Specific hardware model, such as A100, H100, etc. |
-| **Resource Configuration** | `resources` | FlavorResources Tag Group | Multiple tags showing CPU/memory/GPU and other resource configuration details |
-| **Resource Pool** | `resourcePool` | Link | Name of the resource pool associated with the flavor, click to navigate to pool details |
-| **Enabled Status** | `enabled` | Toggle/Label | Whether the flavor is enabled; disabled flavors are not shown to users |
-| **Actions** | — | Action Buttons | Enable/Disable, Edit, Delete |
+| Filter | Source | Values |
+| --- | --- | --- |
+| Status | Table filter bar | Enabled (`available`) / disabled (`unavailable`) |
+| Type | Flavor filter bar | Dynamically de-duplicated from the models returned by the API |
+| Vendor | Flavor filter bar | Changes dynamically with the selected type |
+| Model | Flavor filter bar | Changes dynamically with the selected type / vendor |
 
-### Resource Configuration Tags (FlavorResources)
+> 💡 Tip: The flavor filter bar also has a built-in whitelist of allowed types (`GPU`, `Accelerator`, `VGPU`, `FPGA`, `ASIC`, `NPU`, `DPU`, `TPU`, `CPU`, `MEMORY`), but the types actually shown still come from backend data — not a fixed set of six.
 
-The resource configuration column displays the specific flavor configuration as colored tag groups:
+### Actions
 
-```
-[CPU: 16 Cores]  [Memory: 64Gi]  [GPU: 2x A100]  [VRAM: 160GB]
-```
-
-Each tag contains the resource category and quantity, with colors differentiated by resource type for easy identification.
-
----
-
-## Filtering
-
-![Flavor Filter Bar](/assets/screenshots/boss/rune-flavors-filter.png)
-
-The flavor list provides a **FlavorFilterBar** component supporting multi-dimensional filtering:
-
-### Filter Conditions
-
-| Filter | Type | Options | Description |
-|--------|------|---------|-------------|
-| **Status** | Dropdown | Available / Unavailable | Filter by whether the flavor is currently allocatable |
-| **Resource Type** | Dropdown | GPU / NPU / DCU / MLU / vGPU / CPU | Filter by compute resource type |
-| **Resource Model** | Dropdown | Changes dynamically based on type | Filter by specific hardware model |
-| **Resource Pool** | Dropdown | All resource pools in current cluster | Filter by associated resource pool |
-| **Keyword** | Text Input | Free input | Fuzzy search by name |
-
-> 💡 Tip: Multiple filter conditions can be combined. For example, selecting "Resource Type: GPU" + "Status: Available" quickly finds all available GPU flavors.
+| Action | Description |
+| --- | --- |
+| Enable / Disable | Toggles `enabled`, with a confirmation dialog |
+| Edit | Opens the edit page |
+| Delete | Deletes with a confirmation dialog; multi-select is supported |
 
 ---
 
-## Create Flavor
+## Create / Edit Flavor
 
-![Create Flavor Form](/assets/screenshots/boss/rune-flavors-create.png)
+Frontend routes:
 
-### Steps
-
-1. On the flavor list page, click the **Create Flavor** button in the upper right corner
-2. Configure flavor parameters in the popup form
-3. Click the **Create** button to complete the operation
+- Create: `/rune/clusters/:cluster/flavors?action=create`
+- Edit: `/rune/clusters/:cluster/flavors/:flavor?action=edit`
 
 ### Form Fields
 
-| Field | Field Name | Type | Required | Description |
-|-------|-----------|------|----------|-------------|
-| **Name** | `name` | Text Input | ✅ | Flavor name, recommend descriptive naming like `gpu-a100-2x-64g` |
-| **Description** | `description` | Textarea | — | Detailed description of the flavor, such as applicable scenarios |
-| **Resource Type** | `type` | Dropdown | ✅ | Compute resource type (see resource type table below) |
-| **Resource Model** | `model` | Dropdown | ✅ | Specific hardware model (changes dynamically based on type) |
-| **CPU** | `cpu` | Number Input | ✅ | Number of CPU cores |
-| **Memory** | `memory` | Number + Unit | ✅ | Memory size (e.g., `64Gi`) |
-| **GPU/Accelerator Count** | `accelerator` | Number Input | — | Number of GPU/NPU accelerator cards |
-| **Resource Pool** | `resourcePool` | Dropdown | ✅ | Associated resource pool, determines which nodes instances will be scheduled to |
-| **Enabled Status** | `enabled` | Toggle | — | Whether to enable immediately after creation, enabled by default |
+| Field | Field Name | Required | Description |
+| --- | --- | --- | --- |
+| Name | `name` | — | Auto-generated and previewed by the system from the resource configuration and selected resource pool; not entered manually |
+| Resource Configuration | `config[]` | ✅ | At least one item; see the table below |
+| Resource Pool | `resourcePool` | — | **Optional**; determines the range of nodes the flavor can be scheduled to |
+| Description | `description` | — | Textarea |
+
+### Resource Configuration Item Fields (`config[]`)
+
+| Field | Description |
+| --- | --- |
+| `resourceName` | Kubernetes resource name, e.g. `cpu`, `memory`, `nvidia.com/gpu` |
+| `name` | Display name |
+| `type` | Resource type, e.g. `cpu`, `gpu`, `vgpu`, `storage` |
+| `limit` | Limit value (Quantity), required |
+| `request` | Request value (Quantity), optional |
+| `model` / `vendor` | Model / vendor |
+| `ratio` | Conversion ratio (Quantity) |
+| `candidates` | Candidate values (e.g. vNPU templates) |
+| `default` / `min` / `max` | Default value / minimum / maximum allocation unit (Quantity) |
+| `nodeSelector` | Node selector label key-value pairs |
+
+Form validation: `limit` must satisfy `min ≤ limit ≤ max`; `nodeSelector` keys and values must be filled in pairs.
+
+### Source of Selectable Resource Items
+
+The selectable resource items come from the API `listClusterFlavorResources` and are loaded dynamically as the selected resource pool changes, so the **resource types are not a fixed enumeration**.
+
+> 💡 Tip: On creation, if a resource pool is selected and the resource items are loaded, the system pre-fills defaults for CPU / memory: `cpu.limit = 2`, `memory.limit = 4Gi`.
 
 ---
 
-## Resource Type Details
-
-The Rune platform supports multiple compute resource types, covering mainstream AI acceleration hardware:
-
-| Resource Type | Type ID | Description | Typical Models |
-|--------------|---------|-------------|----------------|
-| **GPU** | `GPU` | NVIDIA GPU general-purpose compute accelerator | A100, H100, V100, A10, L40S, RTX 4090 |
-| **NPU** | `NPU` | Huawei Ascend AI processor | Ascend 910B, Ascend 310P |
-| **DCU** | `DCU` | Hygon DCU accelerator | DCU Z100 |
-| **MLU** | `MLU` | Cambricon MLU intelligent accelerator | MLU370-X8, MLU590 |
-| **vGPU** | `vGPU` | Virtualized GPU (GPU slicing) | vGPU (based on NVIDIA MIG or time-sharing) |
-| **CPU** | `CPU` | CPU-only compute resources | General x86/ARM CPU |
-
-```mermaid
-graph LR
-    subgraph AcceleratorTypes["Compute Resource Types"]
-        GPU["🟢 GPU<br/>NVIDIA General GPU"]
-        NPU["🟣 NPU<br/>Huawei Ascend"]
-        DCU["🔵 DCU<br/>Hygon DCU"]
-        MLU["🟡 MLU<br/>Cambricon MLU"]
-        vGPU["🟠 vGPU<br/>Virtualized GPU"]
-        CPU["⚪ CPU<br/>CPU Only"]
-    end
-```
-
-> 💡 Tip: The resource type determines which nodes a flavor can be scheduled to. Administrators must ensure that nodes in the selected resource pool have the corresponding accelerator drivers and device plugins installed.
-
----
-
-## Enable / Disable Flavors
-
-Administrators can control the enabled status of flavors to manage their visibility to users.
+## Enable / Disable
 
 | Action | Effect |
-|--------|--------|
-| **Enable** | Flavor is visible to users with quota; users can select it to deploy instances |
-| **Disable** | Flavor is hidden from all users; it will not appear in flavor selection lists. Running instances using this flavor are not affected |
-
-### Scenarios for Disabling Flavors
-
-- Temporarily disable corresponding flavors during hardware maintenance or failure
-- Flavor configuration is incorrect and needs modification (disable → modify → re-enable)
-- Temporarily remove some flavors from availability during resource shortages
-
-> ⚠️ Note: Disabling a flavor does not affect instances already created with that flavor that are running. However, users will be unable to create new instances using a disabled flavor.
+| --- | --- |
+| Enable | Visible to users with quota; can be selected |
+| Disable | Hidden from selection lists; running instances using this flavor are unaffected |
 
 ---
 
-## Sold Out Mechanism
+## About "Sold Out"
 
-When all physical resources for a flavor have been allocated (quota is exhausted), the system automatically marks the flavor as **sold out**:
-
-```mermaid
-flowchart LR
-    A["Flavor: 2x A100 + 64G"] --> B{"Remaining A100<br/>cards in pool?"}
-    B -->|"> 2 cards"| C["✅ Available<br/>User can select"]
-    B -->|"≤ 2 cards but queued"| D["🟡 Tight<br/>Still selectable"]
-    B -->|"= 0 cards"| E["🔴 Sold Out<br/>Cannot select"]
-```
-
-| Status | Display | User Action |
-|--------|---------|-------------|
-| **Available** | Displayed normally | Can select this flavor to deploy instances |
-| **Sold Out** | Marked as unavailable, grayed out | Cannot select; must wait for resource release or contact admin to scale up |
-
-> 💡 Tip: Sold out status is automatically determined by the system based on actual resource usage. Administrators do not need to set it manually. When instances release resources, the sold out status is automatically cleared.
+> ⚠️ Note: The frontend flavor list only shows an `enabled` tag and has **no "sold out" UI**. If a backend contract contains a field such as `status.soldOut`, the frontend does not currently render or use it, and this document does not confirm its behavior.
 
 ---
 
-## Multi-level Scope
+## About "Multi-level Scope"
 
-Flavor visibility and availability follow a **cluster → tenant → workspace** multi-level scope configuration system:
-
-```mermaid
-flowchart TD
-    subgraph ClusterLevel["Cluster Level (BOSS Management)"]
-        CF["Cluster Flavor List<br/>Created and managed by admin"]
-    end
-    
-    subgraph TenantLevel["Tenant Level (Quota Allocation)"]
-        TQ1["Tenant A Available Flavors<br/>Determined by quota allocation"]
-        TQ2["Tenant B Available Flavors<br/>Determined by quota allocation"]
-    end
-    
-    subgraph WorkspaceLevel["Workspace Level (Sub-quota)"]
-        WQ1["Workspace 1<br/>Inherits subset of tenant quota"]
-        WQ2["Workspace 2<br/>Inherits subset of tenant quota"]
-    end
-    
-    CF --> TQ1
-    CF --> TQ2
-    TQ1 --> WQ1
-    TQ1 --> WQ2
-```
-
-| Level | Manager | Description |
-|-------|---------|-------------|
-| **Cluster Level** | System Administrator (BOSS) | Creates flavors on the cluster, defining all possible resource combinations in the system |
-| **Tenant Level** | System Administrator (BOSS) | By selecting flavors when allocating quotas to tenants, determines which flavors tenants can use |
-| **Workspace Level** | Tenant Administrator (Console) | By selecting flavors when allocating sub-quotas in workspaces, determines which flavors workspace members can use |
-
-> ⚠️ Note: Even if a flavor is enabled at the cluster level, if the administrator hasn't allocated that flavor in the tenant quota, tenant users cannot see or use it. Flavor availability must be authorized at each level.
-
----
-
-## Edit Flavor
-
-1. Click the **Edit** button in the flavor list
-2. You can modify the flavor's description, resource configuration, associated resource pool, etc.
-3. Click **Save** to complete the modification
-
-> ⚠️ Note: Modifying a flavor does not affect running instances already created with that flavor. Changes only apply to newly created instances. It is recommended to disable the flavor before modification and re-enable it after completion.
+> ⚠️ Note: The frontend has **no** cluster → tenant → workspace flavor visibility configuration UI. Flavor availability at the tenant / workspace level is determined by quota allocation, not configured on the flavor page.
 
 ---
 
 ## Delete Flavor
 
-1. Click the **Delete** button in the flavor list
-2. The system displays a confirmation dialog
-3. Confirm to execute the deletion
+Click **Delete** (with a confirmation dialog). Deletion does not affect running instances, but no new instances can be created from that flavor.
 
-> ⚠️ Note: Before deleting a flavor, please ensure:
-> - No tenant quotas reference this flavor
-> - No workspaces are using this flavor
-> - The flavor has been disabled
+> ⚠️ Note: Before deleting, confirm that no tenant quota or workspace quota references the flavor.
 
 ---
 
-## Best Practices
-
-### Naming Conventions
-
-Descriptive naming including key resource information is recommended:
-
-| Recommended Name | Description |
-|-----------------|-------------|
-| `gpu-a100-1x-32g` | 1x A100 GPU + 32GB memory |
-| `gpu-a100-8x-256g` | 8x A100 GPU + 256GB memory |
-| `cpu-16c-64g` | 16-core CPU + 64GB memory |
-| `npu-910b-4x-128g` | 4x Ascend 910B NPU + 128GB memory |
-
-### Flavor Design Recommendations
-
-1. **Cover common scenarios**: Provide at least small (dev/debug), medium (small-scale training), and large (large-scale training) tiers of flavors
-2. **Avoid too many flavors**: Keep the number of flavors to 10-15 or fewer; too many flavors increase user selection difficulty
-3. **Match resource pools**: Ensure flavor resource requirements match the actual configurations of nodes in the resource pool
-4. **Set reasonable CPU/memory ratios**: For GPU flavors, recommend CPU:GPU ratio of 8:1 or 16:1, memory:GPU ratio of 32GB:1 or higher
-
-### Capacity Management
-
-1. **Monitor sold out rate**: If a flavor is frequently sold out, it indicates supply-demand imbalance for that resource type; consider adding nodes or creating smaller-granularity flavors
-2. **Regularly review utilization**: Low-utilization flavors can be considered for consolidation or deletion
-3. **Plan scaling ahead**: When GPU utilization exceeds 70%, start planning new hardware procurement
-
 ## Permission Requirements
 
-| Operation | Required Role |
-|-----------|---------------|
-| View Flavor List | System Administrator |
-| Create Flavor | System Administrator |
-| Edit Flavor | System Administrator |
-| Enable/Disable Flavor | System Administrator |
-| Delete Flavor | System Administrator |
+Requires the **System Administrator** role. You can view, create, edit, enable/disable, and delete cluster flavors.

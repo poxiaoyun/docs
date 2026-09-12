@@ -1,5 +1,5 @@
 ---
-title: 'Log Management'
+title: 'Logs'
 updated: '2026-03-23'
 ---
 
@@ -54,8 +54,6 @@ flowchart TB
 ---
 
 ## Log Viewer (LogViewer)
-
-![Log Viewer](/assets/screenshots/console/logging.png)
 
 ### Viewer Configuration
 
@@ -129,11 +127,13 @@ Historical logs are queried through HTTP GET interface using **LogQL** query syn
 
 | Quick Option | Description |
 |-------------|-------------|
+| Last 1 minute | Logs from the last 1 minute |
+| Last 5 minutes | Logs from the last 5 minutes |
 | Last 15 minutes | Logs from the last 15 minutes |
 | Last 1 hour | Logs from the last 1 hour |
-| Last 3 hours | Logs from the last 3 hours |
-| Last 12 hours | Logs from the last 12 hours |
-| Last 24 hours | Logs from the last 24 hours |
+| Last 6 hours | Logs from the last 6 hours |
+| Last 1 day | Logs from the last 1 day (24 hours) |
+| Last 7 days | Logs from the last 7 days |
 | Custom | Custom start and end time |
 
 ---
@@ -150,7 +150,7 @@ Click the **Real-Time Stream** button to enable WebSocket connection and receive
 | Auto-Scroll | Automatically scrolls to bottom when new logs arrive |
 | Pause/Resume | Supports pausing auto-scroll for reviewing history |
 | Label Filtering | Real-time stream also supports label filtering |
-| Auto-Reconnect | Automatically reconnects after WebSocket disconnection |
+| Disconnect Feedback | On close, shows a message derived from the WebSocket close code (nothing on normal closure); reopen the stream manually |
 
 > ⚠️ Note: Real-time log streaming continuously consumes network bandwidth. In scenarios with very high log volume (e.g., many Pods outputting logs simultaneously), it is recommended to use label filtering to precisely focus on target Pods to avoid receiving excessive irrelevant logs.
 
@@ -246,9 +246,9 @@ Each level provides the same structured log APIs:
 
 | Level | Path Prefix |
 |-------|------------|
-| Instance-Level | `/api/v1/.../instances/{instance}/logging/` |
-| Workspace-Level | `/api/v1/.../workspaces/{workspace}/logging/` |
-| Cluster-Level | `/api/v1/.../clusters/{cluster}/logging/` |
+| Instance-Level | `/api/cloud/tenants/{tenant}/clusters/{cluster}/workspaces/{workspace}/instances/{instance}/log/` |
+| Workspace-Level | `/api/cloud/tenants/{tenant}/clusters/{cluster}/workspaces/{workspace}/log/` |
+| Cluster-Level | `/api/cloud/clusters/{cluster}/log/` |
 
 ---
 
@@ -301,7 +301,7 @@ flowchart TB
 4. ✅ Try removing all filters to view complete logs
 5. ✅ Check if the log collection Agent is running normally
 
-> ⚠️ Note: The log system has a storage retention limit. Historical logs beyond the retention period will be automatically cleaned up. The specific retention period depends on platform configuration, typically 7-30 days.
+> ⚠️ Note: The log system has a storage retention limit. Historical logs beyond the retention period will be automatically cleaned up. The specific retention period depends on platform configuration and is not confirmed here.
 
 ---
 

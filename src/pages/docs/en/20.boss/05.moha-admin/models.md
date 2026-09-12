@@ -1,154 +1,97 @@
 ---
-title: 'Model Repository Management'
-updated: '2026-03-23'
+title: Models
+updated: '2026-09-12'
+description: 'Model repository list columns at the BOSS level, type-specific columns, and visibility/recommendation management.'
 ---
 
-## Feature Overview
+## Overview
 
-Model Repository Management on the BOSS side provides **platform-level** global management capabilities for model repositories. Unlike Console-side Moha Model Management, the BOSS side is designed for system administrators who can view, review, and manage model repositories created by **all tenants, users, and organizations** — including private models. Administrators can perform advanced management operations such as visibility changes, recommendation scoring, and encryption status review.
-
-> 💡 Tip: BOSS Model Repository Management is the core entry point for platform operations. Console-side users can only see models they have permission to access, while BOSS administrators can view all models across the entire platform.
+BOSS-level model repository management provides **platform-level** global management of model repositories. Unlike the Console side, it is aimed at system administrators who can view, review, and manage repositories created by **all tenants / users / organizations** (including private models).
 
 ## Access Path
 
-BOSS → Data Repository → **Models**
+BOSS Console → Data Repository → **Models**
 
-Path: `/boss/moha/models`
+Frontend route: `/moha/models`
 
-## Differences from Console Moha View
+---
 
-| Dimension | BOSS Model Management | Console Model Management |
-|-----------|----------------------|-------------------------|
-| Data Scope | All platform models (including private) | Only models the current user/organization has permission to access |
-| Visibility Management | Can modify public/private status of any model | Can only manage models they created |
-| Recommendation Management | Can set recommendation scores and comments | Not available |
-| Encryption Status | Can view and manage encryption status labels | View only |
-| Deletion Permission | Can delete any model repository | Can only delete own models |
+## List and Tabs
 
-## Page Description
+Models, Datasets, Image Registry, and Spaces share the same "Data Management" list component (`data-managers`), distinguished by the `type` in the URL:
 
-![Model Repository Management](/assets/screenshots/boss/moha-models.png)
+| type | Page |
+| --- | --- |
+| `models` | Models |
+| `datasets` | Datasets |
+| `images` | Image Registry |
+| `spaces` | Spaces |
 
-### Data Tab
+### Statistics Cards Above the List
 
-Model Repository Management is located under the **Models** tab of the BOSS Data Repository Management page, alongside Datasets, Image Registry, Workspaces, Spaces, etc.
+Cards above the list are five: total resources (the helper text shows the current page's total repository storage), public count, **encrypted or private count** (encrypted for `models` / `datasets`, private for the other types), downloads, and popular resource count.
 
-### Filter Bar
+### Columns
 
-The top of the page provides a FilterBar component supporting multi-dimensional filtering:
+The columns differ by `type`. First, the columns shared by models and datasets:
 
-- **Name Search**: Fuzzy search by model name
-- **Tenant/Organization Filter**: Filter by associated tenant or organization
-- **Visibility Filter**: Public / Private
-- **Task Category Filter**: Filter by applicable task category (e.g., text generation, image classification, etc.)
-- **Framework Filter**: Filter by model framework (e.g., PyTorch, TensorFlow)
+| Column | Field Path | Description |
+| --- | --- | --- |
+| Alias / Name | `name` / `alias` | The name column shows `alias || name`; includes a description tooltip; encrypted models show a 🔒 icon; mirror origin (`hidden-from-index = true`) shows a "Mirroring..." tag |
+| Organization | `organization` | Organization avatar + name |
+| Visibility | `visibility` | Public / private / tenant-only tag; private adds the creator |
+| Repository Storage | `repositoryStorageSize` | Shown only when the repository stats `status = ready`, otherwise `-` |
+| Downloads | `annotations.downloads` | Formatted number |
+| Tasks | `metadata.tasks` | Collapsible tag group |
+| Tags | `metadata.tags` | Collapsible tag group |
+| Recommendation Score | `annotations.recommendation-score` | Recommendation status |
+| Updated At | `modified` | Time |
 
-![Filter Bar](/assets/screenshots/boss/moha-models-filter.png)
+> ⚠️ Note: The list has **no "license" column**.
 
-### Model List Table
+### Type-Specific Columns
 
-| Column | Description | Details |
-|--------|-------------|---------|
-| Name | Model name | Format: `organization/model-name`. May include a **mirror tag** (🔄 indicating mirror sync origin) and a description beside the name |
-| Tenant/Organization | Associated tenant or organization | Shows organization avatar and name |
-| Visibility | Public / Private | Shows public (🌐) or private (🔒) icon with creator username |
-| Task Category | Model task classification | Tags such as: text generation, image classification, speech recognition, etc. |
-| Library/Framework | Technical framework | Such as: PyTorch, TensorFlow, JAX, Transformers, etc. |
-| License | Open source license | Such as: Apache-2.0, MIT, custom license, etc. |
-| Recommendation Score | Admin recommendation score | Contains recommendation score and comment, used for platform homepage display sorting |
-| Encryption Status | Whether encrypted | Indicates whether model files have encrypted storage enabled |
-| Actions | Management action buttons | Edit, Delete, Change Visibility, Manage Recommendation |
+| type | Exclusive Columns |
+| --- | --- |
+| `spaces` | Run status (`spaceMetadata.status.phase`), domain (`metadata.domain`), scene (`metadata.scene`) |
+| `images` | Category (`metadata.category`), accelerate (`metadata.accelerate`), arch (`metadata.arch`), and **no** recommendation-score column |
+| `models` / `datasets` | Tasks, tags, recommendation score |
 
-> ⚠️ Note: The mirror tag indicates the model was synced from an external platform (such as HuggingFace, ModelScope) via mirror sync. Editing of such models may be restricted.
+### Filtering
+
+- **Name search**, **organization filter**, **visibility filter**.
+- **Advanced filter**: filter by metadata facets (task category, tags, etc.); applied conditions are shown as chips.
+
+---
 
 ## Management Operations
 
-### Edit Model
+The actions column contains:
 
-Click the **Edit** button in the actions column to modify model basic information:
+| Action | Description | Applicable Types |
+| --- | --- | --- |
+| Visibility | Opens the visibility dialog to toggle public / private | All |
+| Recommend | Opens the recommendation dialog to configure the score and screenshot | All except `images` |
+| Edit | Opens the edit page | All |
+| Delete | With a confirmation dialog; batch supported | All |
 
-- Model description
-- Task category
-- Framework/library tags
-- License information
+> ⚠️ Note: Models / datasets have **no runtime operations such as "Restart", "Stop", or "View Logs"**; those are not provided in the data management list.
 
-![Edit Model](/assets/screenshots/boss/moha-models-edit.png)
+---
 
-### Change Visibility
+## Differences from the Console Moha View
 
-Administrators can switch any model between **Public** and **Private**:
+| Dimension | BOSS Model Management | Console Model Management |
+| --- | --- | --- |
+| Data Scope | All platform models (including private) | Only models the current user / organization can access |
+| Visibility Management | Can modify any model | Can only manage models created by oneself |
+| Recommendation Management | Can set recommendation score and screenshot | Not available |
+| Deletion Permission | Can delete any model repository | Can only delete one's own |
 
-- **Set to Public**: The model becomes visible to all platform users
-- **Set to Private**: The model becomes visible only to the associated organization/user
-
-> ⚠️ Note: After changing a public model to private, other users who have already referenced the model may be affected. Please proceed with caution.
-
-### Recommendation Management
-
-Recommendation management is a BOSS-exclusive feature for controlling model display in platform homepage and search results:
-
-| Field | Description |
-|-------|-------------|
-| Recommendation Score | Numeric score; higher scores rank higher in recommendation lists |
-| Recommendation Comment | Administrator's recommendation rationale, displayed to users for reference |
-
-```mermaid
-graph LR
-    A[Admin Sets Recommendation] --> B{Recommendation Score}
-    B -->|High Score| C[Homepage Featured]
-    B -->|Medium Score| D[Search Results Priority]
-    B -->|Low/None| E[Default Sorting]
-    A --> F[Recommendation Comment]
-    F --> G[Displayed to Users]
-```
-
-### Delete Model
-
-Click the **Delete** button to display a confirmation dialog. After deletion:
-
-- The model repository and all version files are permanently removed
-- Inference services referencing this model may fail
-- This operation is irreversible
-
-### View Model Details
-
-Click the model name to enter the details page to view:
-
-- Model file list and version history
-- README document rendering
-- Model card information
-- Download statistics and usage
-
-## Data Management Flow
-
-```mermaid
-flowchart TD
-    A[Admin Enters Model Management] --> B[Browse/Filter Model List]
-    B --> C{Select Action}
-    C -->|Review Content| D[View Model Details]
-    C -->|Adjust Exposure| E[Change Visibility]
-    C -->|Recommend Quality Models| F[Set Recommendation Score and Comment]
-    C -->|Violation/Deprecated| G[Delete Model]
-    C -->|Correct Information| H[Edit Model Metadata]
-    D --> I[Confirm Content Compliance]
-    E --> J[Public ↔ Private Toggle]
-    F --> K[Affects Homepage and Search Ranking]
-    G --> L[Confirm Delete → Permanent Removal]
-    H --> M[Update Description/Tags/License]
-```
-
-## Common Scenarios
-
-| Scenario | Action |
-|----------|--------|
-| Discovered a violating model | Set to private or delete directly |
-| Promote quality open source model | Set high recommendation score and write recommendation comment |
-| User reports incorrect model information | Edit model's task category, framework tags, or license |
-| Review encrypted model | View encryption status indicator, confirm encryption policy compliance |
-| Mirror model has issues | Check mirror tag, go to Mirror Management to view sync status |
+---
 
 ## Permission Requirements
 
-Requires the **System Administrator** role to access the BOSS Model Repository Management page.
+Requires the **System Administrator** role. Regular users should manage their own model repositories through Console → Moha.
 
-> 💡 Tip: Regular users and tenant administrators should manage their model repositories through Console → Moha → Models.
+Related pages: [Dataset Management](./datasets), [Image Registry Management](./images), [Space Management](./spaces).

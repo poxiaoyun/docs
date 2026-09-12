@@ -1,31 +1,33 @@
 ---
 title: 'Collaboration'
-updated: '2026-03-24'
-author: Rune Docs Team
-description: 'Introducing the unified repository details page of models, data sets, images and spaces in Moha.'
+updated: '2026-09-12'
+description: 'The unified repository detail page shared by models, datasets, images and Spaces.'
 tags:
   - moha
   - repository
 ---
+
 # Collaboration
 
-Although models, datasets, images, and Spaces are different resource types, they share the same repository details framework in Moha. After entering any repository, users typically collaborate through the overview, files, discussions, tags, and settings tabs.
+Models, datasets, images and Spaces share one repository detail framework. After entering a repository, collaboration happens around overview, files, freezes, discussions, tags and settings.
 
 ## Unified tabs
 
-Depending on the resource type, the details page displays some of the following tabs:
+Depending on resource type, a subset of these tabs is shown:
 
-| Tab | Scope | Description |
-| --- | --- | --- |
-| Overview | All resources | View basic repository information and README |
-| Files | Models, datasets, Spaces | Browse the file tree, preview file contents, and inspect commit history |
-| Tags | Images | View image tag information |
-| Discussion | Models, datasets, Spaces | Start discussions, questions, or Pull Request collaboration |
-| Settings | Members with permission | Modify visibility, aliases, members, metadata, and delete repositories |
+| Tab | `value` | Applies to | Description |
+| --- | --- | --- | --- |
+| Overview / Card | `content` | All | README and right-hand info blocks |
+| File | `file` | Models, datasets, Spaces | File tree, preview, commits, branch/freeze switching |
+| Version Freezes | `freezes` | Models, datasets, Spaces | Create freezes, diff and rollback |
+| Tags | `tags` | Images | Image tags and security scan results |
+| Discussion | `discussion` | Models, datasets, Spaces (images do not support it) | Discussions, questions and pull requests |
+| Setting | `setting` | Authorized members | Visibility, alias, members, metadata and delete |
 
-## Recommended reading
+## See also
 
-- [Repository details page structure](/moha/repository/detail)
-- [File browsing and version viewing](/moha/repository/files)
-- [Discussion and collaboration](/moha/repository/discussion)
-- [Repository settings and publishing](/moha/repository/settings)
+- [Repository Detail Layout](/moha/repository/detail)
+- [Files & Version Browsing](/moha/repository/files)
+- [Version Freezes](/moha/repository/freezes)
+- [Discussions & Collaboration](/moha/repository/discussion)
+- [Repository Settings & Publishing](/moha/repository/settings)

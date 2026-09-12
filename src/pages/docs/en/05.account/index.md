@@ -1,6 +1,6 @@
 ---
 title: 'Account & Access'
-updated: '2026-03-24'
+updated: '2026-09-12'
 description: Authentication, personal profile, security settings, and access credentials for the platform.
 tags:
 - account
@@ -13,5 +13,5 @@ Account & Access covers the identity-related pages that every user depends on: s
 
 ## Included Areas
 
-- Use [Authentication](/account/auth) for login, registration, password reset, role selection, and tenant selection.
+- Use [Authentication](/account/auth) for login, registration, password reset, roles, and tenant selection.
 - Use [Personal Center](/account/iam) for profile updates, security settings, API keys, SSH keys, tenant membership, and theme preferences.

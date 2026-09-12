@@ -1,244 +1,116 @@
 ---
-title: 'Operations Overview'
-updated: '2026-03-23'
+title: Dashboard
+updated: '2026-09-12'
+description: 'LLM gateway dashboard — requests, success rate, tokens, TTFT, rankings and gateway health.'
+tags:
+  - boss
+  - gateway
 ---
 
-## Feature Overview
+## Feature overview
 
-Operations Overview is the LLM Gateway's **comprehensive operations analytics dashboard**, providing platform administrators with multi-dimensional operational data including API call volume, Token consumption, request latency, user rankings, and more. Through rich visualization charts and detailed usage records, administrators can gain deep insights into platform usage, identify performance bottlenecks, and optimize resource allocation.
+The operations overview is the LLM gateway dashboard. It shows requests, success rate, token usage, sensitive hits, TTFT, active keys and uptime, plus model/user rankings, model usage distribution and gateway health.
 
-> 💡 Tip: Operations Overview page data comes from the gateway's real-time statistics engine, supporting time series analysis at three granularity levels — minute, hour, and day — to meet operational analysis needs across different scenarios.
+This page corresponds to **LLM gateway → Data dashboard** in the Boss console (menu label from `navbar.data_dashboard`).
 
-## Access Path
+## Access path
 
-BOSS → LLM Gateway → **Operations Overview**
+Boss console → LLM gateway → **Data dashboard**
 
-Path: `/boss/gateway/operations`
+Console route: `/gateway/operations`
 
-## Data Flow Architecture
-
-```mermaid
-flowchart LR
-    subgraph Gateway["LLM Gateway"]
-        Req["API Request"] --> Process["Request Processing"]
-        Process --> Record["Usage Record Write"]
-    end
-    
-    Record --> DB["Data Storage"]
-    
-    subgraph Analytics["Operations Analytics"]
-        DB --> Summary["Summary Statistics<br/>/summary"]
-        DB --> TimeSeries["Time Series<br/>/timeseries"]
-        DB --> Rankings["Rankings<br/>/rankings"]
-        DB --> Records["Usage Records<br/>/records"]
-    end
-
-    subgraph Dashboard["Operations Overview Page"]
-        Summary --> MetricCards["Metric Cards"]
-        TimeSeries --> Chart["Trend Charts"]
-        Rankings --> RankList["Rankings"]
-        Records --> Table["Usage Records Table"]
-    end
-```
+> ⚠️ Note: this is the real console route, not a docs-site URL.
 
 ## Filters
 
-The top of the page provides multi-dimensional filters supporting flexible combined queries:
-
-![Operations Overview Filters](/assets/screenshots/boss/gateway-ops-filters.png)
-
 | Filter | Type | Description |
 |--------|------|-------------|
-| Time Range | Date Range Picker | Select the start and end time for statistics, supports quick options (Today, Last 7 Days, Last 30 Days) |
-| Tenant | Dropdown | Filter usage data for a specific tenant |
-| Token | Dropdown | Filter usage data for a specific API Token |
-| User | Dropdown | Filter usage data for a specific user |
-| Provider | Dropdown | Filter for a specific model provider (e.g., OpenAI, DashScope, etc.) |
+| Time range | Preset | Today / Last 7 days / Last 30 days / Custom |
+| Start date, end date | Date picker | Only used with "Custom" |
+| Tenant | Select | Options come from the tenant facet |
+| Channel | Select | Options come from the channel facet |
+| Model | Select | Options come from the model facet |
 
-> 💡 Tip: Multiple filter conditions can be combined. For example, selecting a specific tenant + Last 7 Days quickly shows that tenant's API usage over the past week.
+The toolbar also offers:
 
-## Summary Metrics
+- **Refresh**: re-fetch manually
+- **Reset**: clears the three facet filters and restores "Today"
+- **Bucket** (read-only): derived from the range and shown as hour or day
 
-The top of the page displays three core summary metrics in card format:
+> ⚠️ Note: only the three facet filters exist — there is no token, user or provider filter.
 
-![Summary Metrics](/assets/screenshots/boss/gateway-operations.png)
+The page auto-refreshes every **30 seconds**.
 
-| Metric | Field Name | Description | Display Format |
-|--------|-----------|-------------|----------------|
-| **Total Tokens** | `totalTokens` | Total Token consumption within the filtered time range | Number (auto-converted to K/M units) |
-| **Total Requests** | `requestCount` | Total API request count within the filtered time range | Number |
-| **Average Latency** | `averageLatencyMillis` | Average response latency of all requests | Milliseconds (ms) |
+Range-to-bucket mapping (`resolveDashboardInterval`):
 
-> 💡 Tip: Summary metrics are calculated in real-time based on filter conditions. When the average latency increases significantly, it may indicate the downstream inference service is under heavy load, and channel health status should be monitored.
+| Range | Bucket |
+|-------|--------|
+| Today | hour |
+| Last 7 / 30 days | day |
+| Custom | hour when the span is `<=` 240 hours, otherwise day |
 
-## Trend Charts
+## Metric cards
 
-### Request Volume & Token Usage Trends
+**7** cards are shown at the top (responsive 1 / 2 / 4 / 7 columns):
 
-The middle of the page displays usage trends over time using an **Area Chart**, supporting hourly granularity:
-
-![Trend Charts](/assets/screenshots/boss/gateway-ops-chart.png)
-
-The chart contains two data series:
-
-| Data Series | Color | Description |
-|-------------|-------|-------------|
-| **Requests** | Primary color | API request count per hour |
-| **Tokens** | Secondary color | Total Token consumption per hour |
-
-Chart interactions:
-- **Hover tooltip**: Hovering displays detailed values for that time point
-- **Zoom**: Supports box-select zoom for fine-grained data viewing
-- **Time granularity**: Automatically adjusts based on selected time range (minute/hour/day)
-
-### Top 10 User Rankings
-
-The right side displays the top 10 users by Token consumption:
-
-![Top 10 Rankings](/assets/screenshots/boss/gateway-ops-ranking.png)
-
-| Column | Description |
-|--------|-------------|
-| Rank | Rank number 1-10 |
-| User | Username / User ID |
-| Total Tokens | Total Token consumption for the user |
-
-Rankings data is sorted by `total_tokens` in descending order, helping administrators quickly identify high-consumption users.
-
-> 💡 Tip: Rankings support switching between different dimensions, allowing you to view ranking data by Token, tenant, user, channel, provider, model, and other dimensions.
-
-## Usage Records Table
-
-The bottom of the page displays a detailed API usage records table, recording complete information for each API request:
-
-![Usage Records Table](/assets/screenshots/boss/gateway-ops-records.png)
-
-| Column | Field Name | Description | Notes |
-|--------|-----------|-------------|-------|
-| Occurred At | `occurredAt` | Request timestamp | Precise to seconds |
-| User ID | `userId` | User identifier who initiated the request | — |
-| Token Name | `tokenName` | API Token name used | — |
-| Request ID | `requestId` | Unique request identifier | Can be used to correlate audit logs |
-| Tenant ID | `tenantId` | Associated tenant identifier | — |
-| Channel Name | `channelName` | Channel name routed to | — |
-| Model | `model` | Requested model name | — |
-| Prompt Tokens | `promptTokens` | Input Token count | — |
-| Completion Tokens | `completionTokens` | Output Token count | — |
-| Latency | `latencyMillis` | Request latency (milliseconds) | — |
-| Result | `result` | Request processing result | Color-coded label, see below |
-
-### Result Status Color Coding
-
-| Result | Color | Description |
+| Metric | Field | Description |
 |--------|-------|-------------|
-| `success` | 🟢 Green | Request completed successfully |
-| `blocked` | 🟠 Orange | Blocked by content moderation policy |
-| `quota_exceeded` | 🔴 Red | Exceeded quota limit |
-| `error` | 🔴 Red | Request processing error |
+| Requests | `summary.requestCount` | Total requests, with period-over-period change |
+| Success rate | `summary.successCount` / `summary.requestCount` | Percentage, change in percentage points |
+| Tokens | `summary.totalTokens` | Abbreviated with K/M, with change rate |
+| Sensitive hits | `sensitiveHitCount` | Requests that hit sensitive content, with change rate |
+| TTFT | `recentTTFTMaxMillis` | Max time-to-first-token in the recent window; lower is better |
+| Active keys | `activeTokenCount` | Active token count, with change rate |
+| Uptime | `uptimeSeconds` | Formatted as days/hours/minutes, no change rate |
 
-> ⚠️ Note: If a large number of `blocked` status records appear, check whether [Content Moderation Policies](./moderation) are configured too strictly; a large number of `quota_exceeded` records indicates the need to check user or tenant Token quota settings.
+> 💡 Tip: when there is no comparison period, the success-rate card shows the note "No previous data" (i18n `dashboard_no_previous`).
 
-## API Reference
+## Charts and rankings
 
-The Operations Overview page uses the following API endpoints to retrieve data:
+Two charts sit side by side:
 
-| Operation | Method | Endpoint | Description |
-|-----------|--------|----------|-------------|
-| Usage Records List | GET | `/api/airouter/v1/usage/records` | Paginated query of usage records |
-| Summary Statistics | GET | `/api/airouter/v1/usage/summary` | Get summary metrics |
-| Time Series | GET | `/api/airouter/v1/usage/timeseries` | Get time series data |
-| Rankings | GET | `/api/airouter/v1/usage/rankings` | Get rankings data |
+| Chart | Content |
+|-------|---------|
+| Trend | Requests per bucket at the current granularity (single-series bars) |
+| Model usage distribution | Stacked bars by model, top 10 models plus "other models" |
 
-### Time Series Parameters
+Below is a three-column layout:
 
-`/api/airouter/v1/usage/timeseries` supports the `interval` parameter to control data aggregation granularity:
+| Card | Content |
+|------|---------|
+| Model ranking | Requests, tokens and cost per model |
+| User ranking | Rank, user, requests and total tokens (with a share bar) |
+| TTFT trend + gateway health | See below |
 
-| Value | Description | Use Case |
-|-------|-------------|----------|
-| `minute` | Aggregate by minute | View real-time traffic fluctuations |
-| `hour` | Aggregate by hour | View daily usage trends (default) |
-| `day` | Aggregate by day | View long-term usage trends |
+### TTFT trend
 
-### Rankings Dimensions
+A line chart with two series:
 
-`/api/airouter/v1/usage/rankings` supports the `dimension` parameter to specify the ranking dimension:
+| Series | Field |
+|--------|-------|
+| Max TTFT | `maxTTFTMillis` |
+| P95 TTFT | `p95TTFTMillis` |
 
-| Value | Description |
-|-------|-------------|
-| `token` | Rank by API Token |
-| `tenant` | Rank by tenant |
-| `user` | Rank by user |
-| `channel` | Rank by channel |
-| `provider` | Rank by provider |
-| `model` | Rank by model |
+TTFT uses its own granularity: minute when the span is `<= 24 hours`, hour when `<= 31 days`, otherwise day; series are capped at 1500 points.
 
-## Operations Analysis Scenarios
+### Gateway health
 
-### Cost Analysis
+| Metric | Field | Description |
+|--------|-------|-------------|
+| Availability | `gatewayHealth.availablePercent` | Percentage plus a 60-cell bar |
+| Upstream channels | `healthyChannels` / `totalChannels` | Healthy channels / total channels |
+| Rate-limit events | `rateLimitEvents` | Number of rate-limit events in the range |
+| Abnormal requests | `abnormalRequests` | Number of abnormal requests in the range |
 
-Filter by specific tenant or user to view their Token consumption trends, and combine with model pricing to calculate usage costs.
+> ⚠️ Note: there is **no usage record table and no export**. Use [Call logs](/boss/gateway/audit) for details. Older docs describing a "usage record table", "data export" and "ranking dimension switching" have no counterpart in the current code.
 
-### Capacity Planning
+## Data sources
 
-Monitor request volume trends and average latency changes. When request volume continues to grow and latency increases, consider:
-- Scaling downstream inference services
-- Adding more channels for load distribution
-- Adjusting routing strategies
+| Purpose | Request |
+|---------|---------|
+| Summary, rankings, health | `getUsageDashboard` (`summary` / `previousSummary` / `timeseries` / `topModels` / `topUsers` / `filterOptions` / `gatewayHealth`) |
+| TTFT time series | `getUsageTimeseries` (`order: 'asc'`) |
 
-### Anomaly Detection
+## Permissions
 
-Watch for the following anomaly signals:
-- Sudden appearance of large numbers of `error` or `blocked` records in a time period
-- Sudden spike in average latency
-- Abnormal surge in Token consumption for a specific user
-
-## Data Export
-
-Usage records support export functionality. Administrators can export filtered records to files for offline analysis and report generation.
-
-## Metric Definitions
-
-### Prompt Tokens vs Completion Tokens
-
-| Type | Description | Cost Impact |
-|------|-------------|-------------|
-| Prompt Tokens | Token count of user input (including system prompt and context) | Typically 30-60% of total Tokens |
-| Completion Tokens | Token count of model-generated output | Typically costs more than Prompt Tokens |
-| Total Tokens | Sum of both | Determines billing amount |
-
-### Latency Analysis
-
-| Latency Range | Rating | Possible Causes |
-|---------------|--------|-----------------|
-| < 500ms | Excellent | Local inference, lightweight model |
-| 500ms - 2s | Normal | Remote API, moderate complexity request |
-| 2s - 10s | High | Long text generation, high model load |
-| > 10s | Needs attention | Service overload, network issues |
-
-## Common Operations Scenarios
-
-### Monthly Operations Report
-
-1. Set time range to the entire previous month
-2. View summary metrics: total requests, total Token consumption, average latency
-3. View user rankings to identify top users
-4. View rankings by tenant dimension to analyze each tenant's usage
-5. Export usage records for detailed analysis
-
-### Anomalous Traffic Monitoring
-
-1. Set time granularity to "minute"
-2. Watch for sudden spikes or drops in request volume
-3. Check for large numbers of `error` or `quota_exceeded` statuses
-4. Correlate with audit logs to investigate root causes
-
-### User Usage Analysis
-
-1. Select a specific user filter
-2. View the user's Token consumption trend
-3. Analyze model usage distribution
-4. Evaluate whether quota adjustments are needed
-
-## Permission Requirements
-
-Requires the **System Administrator** role. Operations Overview data involves sensitive usage information across the entire platform and is only viewable by system administrators.
+Requires the **system administrator** role.

@@ -1,19 +1,15 @@
 ---
-title: 'Advanced use'
-updated: '2025-12-04'
-author: Rune Docs Team
-description: 'Advanced features and best practices for advanced users.'
+title: 'Advanced Integration'
+updated: '2026-09-12'
+description: 'Advanced capabilities and best practices for power users.'
 tags:
   - moha
   - advanced
 ---
-## Overview
 
-Advanced features and best practices for advanced users.
+# Advanced Integration
 
-## Main content
-
-- [API Integration](./api): Automated management of models and datasets via API
-- [CI/CD Process](./cicd): Integrate continuous training and deployment processes
-- [Performance Optimization](./optimization): Model optimization and inference acceleration techniques
-- [Community Contribution](./contribution): Participate in open source projects and community activities
+- [API Integration](/moha/advanced/api): REST endpoint groups, authentication and the SDK
+- [CI/CD Workflows](/moha/advanced/cicd): push artefacts, fetch resources and trigger Space restarts in pipelines
+- [Performance Optimization](/moha/advanced/optimization): transfer, storage and inference
+- [Community Contribution](/moha/advanced/contribution): member collaboration, discussions/PRs, favourites and ratings

@@ -1,43 +1,47 @@
 ---
 title: 'Moha Repository'
-updated: '2026-03-24'
-author: Rune Docs Team
-description: 'Moha Repository user documentation for model, dataset, mirror and Space collaboration, covering homepage, repository browsing, collaborative discussion, file management and settings publishing.'
+updated: '2026-09-12'
+description: 'Moha Repository user documentation for model, dataset, image and Space collaboration, covering the home page, repository browsing, collaboration, file management and settings publishing.'
 tags:
   - moha
   - overview
 ---
-#moharepository
 
-Moha Repository is the AI ​​asset collaboration center within the platform, used for unified management of models, datasets, images and Spaces. It also provides personal homepage, organizational space, repository details, file browsing, discussion collaboration and repository setting capabilities, which can be used for both resource discovery and team collaboration.
+# Moha Repository
+
+Moha Repository is the AI asset collaboration center within the platform, used for unified management of models, datasets, images and Spaces. It also provides a personal home page, organization space, repository details, file browsing, discussion collaboration and repository settings, supporting both resource discovery and team collaboration.
 
 ## Current product information architecture
 
-According to the `xiaoshi-rune-console` front-end implementation, Moha’s main user entrances include:
+Based on the front-end implementation, the main Moha entrances are:
 
-| Module | Function | Typical entrance |
+| Module | Purpose | Typical entry |
 | --- | --- | --- |
-| Home page and personal workbench | View recommended resources, announcements, access tokens, resources I created and my favorites | `/moha/home` |
-| Model Repository | Browse and maintain model resources | `/moha/models` |
+| Home page and personal workbench | View recommended resources, announcements, access tokens, resources I created and resources I liked | `/moha/home` |
+| Model repository | Browse and maintain model resources | `/moha/models` |
 | Datasets | Browse and maintain dataset resources | `/moha/datasets` |
 | Image repository | Manage image resources | `/moha/images` |
-| Space workspace | Browse and deploy interactive application resources | `/moha/Spaces` |
-| Collaborate | View overview, files, discussions, tags and settings | `/moha/repository` |
+| Space workspace | Browse and deploy interactive application resources | `/moha/spaces` |
+| Organization space | Browse the resources of an organization from a team perspective | `/moha/organizations/:organization` |
+| Collaboration | View content, files, freezes, discussion and settings | `/moha/repository` |
 
-## Typical usage process
+## Typical workflow
 
-1. Log in to the Moha homepage to view recommended resources and platform announcements.
-2. Enter the personal or organizational view and locate the model, dataset, image or space you want to manage.
-3. Create a new resource repository and fill in the alias, description, visibility and member permissions.
-4. Maintain files, initiate discussions, update README or configure members in the repository details.
-5. Space resources can be further deployed and linked to Rune for delivery.
+1. Sign in and open the Moha home page to review recommended resources and platform announcements.
+2. Enter a personal or organization view and locate the model, dataset, image or Space you want to manage.
+3. Create a new repository and fill in the alias, description, visibility and member permissions.
+4. Maintain files, start discussions, update the README or configure members in the repository details.
+5. Space resources can be deployed and linked to Rune for delivery.
 
 ## Recommended reading
 
 - [Quickstart](/moha/quickstart)
-- [Homepage and Personal Workbench](/moha/home)
-- [Model Repository](/moha/models)
+- [Home page and personal workbench](/moha/home)
+- [Resources created by me](/moha/home/created-by-me)
+- [Liked by me](/moha/home/liked-by-me)
+- [Model repository](/moha/models)
 - [Datasets](/moha/datasets)
 - [Image repository](/moha/images)
-- [Space workspace](/moha/Spaces)
-- [Collaboration](/moha/repository)
+- [Space workspace](/moha/spaces)
+- [Repository detail page structure](/moha/repository/detail)
+- [Freezes](/moha/repository/freezes)

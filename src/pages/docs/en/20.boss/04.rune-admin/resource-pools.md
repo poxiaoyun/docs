@@ -1,223 +1,197 @@
 ---
-title: 'Resource Pool Management'
-updated: '2026-03-23'
+title: Resource Pool
+updated: '2026-09-12'
+description: 'Partition cluster nodes into resource pools: master-detail view, change pre-check, node partitioning, and default pool rules.'
 ---
 
-## Feature Overview
+## Overview
 
-Resource Pools are the core mechanism in the Rune platform for **compute resource isolation and scheduling control**. By partitioning cluster nodes into different resource pools, administrators can achieve node-level resource grouping, ensuring that different types of workloads run on appropriate nodes.
+A resource pool groups cluster nodes into logical partitions for node-level resource isolation and scheduling control. Each node belongs to exactly one resource pool at a time; nodes that have not been explicitly partitioned belong to the system-reserved default pool `default`.
 
-For example, in a cluster, GPU-equipped nodes can be placed in a "GPU Training Pool" while regular CPU nodes go into a "General Compute Pool", achieving physical isolation between training tasks and inference services.
+The management UI uses a **master-detail layout**: the left side is a card list of resource pools (with a search box for name or ID), and the right side shows the overview of the selected pool. Creating, editing, re-partitioning, and deleting are all done through **dialogs / dedicated forms**.
 
 ## Access Path
 
-BOSS → Cluster Details → **Resource Pools**
+BOSS Console → Cluster Management → select a cluster → **Resource Pools**
 
-Path: `/boss/rune/clusters/:cluster/resource-pools`
-
-## Resource Pools in the Platform
-
-```mermaid
-graph TB
-    subgraph Cluster["Kubernetes Cluster"]
-        subgraph RP1["Resource Pool: GPU Training Pool"]
-            N1["Node A<br/>GPU: 8x A100"]
-            N2["Node B<br/>GPU: 8x A100"]
-            N3["Node C<br/>GPU: 4x A100"]
-        end
-        subgraph RP2["Resource Pool: General Compute Pool"]
-            N4["Node D<br/>CPU: 64 Cores"]
-            N5["Node E<br/>CPU: 64 Cores"]
-        end
-        subgraph RP3["Resource Pool: Inference Service Pool"]
-            N6["Node F<br/>GPU: 4x T4"]
-            N7["Node G<br/>GPU: 4x T4"]
-        end
-    end
-    
-    subgraph Flavors["Associated Flavors"]
-        F1["GPU Training Flavor<br/>8x A100 + 128G"]
-        F2["CPU Dev Flavor<br/>16C + 32G"]
-        F3["Inference Deploy Flavor<br/>1x T4 + 16G"]
-    end
-    
-    subgraph Quotas["Quota Allocation"]
-        Q1["Tenant A Quota<br/>GPU: 16 Cards"]
-        Q2["Tenant B Quota<br/>CPU: 128 Cores"]
-    end
-    
-    RP1 --> F1
-    RP2 --> F2
-    RP3 --> F3
-    F1 --> Q1
-    F2 --> Q2
-    
-    style RP1 fill:#e6f4ea
-    style RP2 fill:#e8f0fe
-    style RP3 fill:#fef7e0
-```
+Frontend route: `/rune/clusters/:cluster/resource-pools`
 
 ---
 
-## Resource Pool List
+## List and Overview
 
-![Resource Pool Management List](/assets/screenshots/boss/rune-resource-pools.png)
+The left list shows **compact cards** sorted by resource pool, each showing the name, ID, and a sync/health status summary. Above the list it shows `resource pool count / limit` and states that the limit is **10** (constant `MAX_RESOURCE_POOLS = 10`).
 
-The resource pool list displays all created resource pools in the current cluster in table format.
+> ⚠️ Note: Once the number of resource pools reaches 10, the **Create Resource Pool** button is disabled and a limit-reached message is shown.
 
-### Column Descriptions
+The right overview corresponds to the selected pool and contains:
 
-| Column | Field Name | Display | Description |
-|--------|-----------|---------|-------------|
-| **Name** | `name` | Text + Description + StatusWrapped | Resource pool name with description below. The name includes a status wrapper component showing the pool's current state |
-| **Nodes** | `nodes` | CollapseItem List | List of nodes in the resource pool, displayed in a collapsible format. Click to expand and view all nodes |
-| **Created At** | `creationTimestamp` | Formatted Time | Resource pool creation time |
-| **Actions** | — | Action Buttons | Edit, Delete |
+| Area | Content |
+| --- | --- |
+| Header | Name, ID (copyable), description, default-pool marker, status tags |
+| Capacity snapshot | Expected member count (`membership.expected`, with resolved count `resolved`), allocatable CPU, allocatable memory, accelerator group count |
+| Accelerators | Switch between "Accelerator View / Host View" (`accelerator` / `host`) |
+| Trends | Mini trend charts of CPU / memory utilization over the last hour |
+| Actions | Adjust Partition, Edit Metadata, Delete (the default pool has no delete button) |
 
-> 💡 Tip: The nodes column uses a collapsible display format (CollapseItem). When a resource pool contains many nodes, only the first few node names are shown by default. Click "expand" to view the complete list.
+### View Switching
+
+- **Accelerator View** (`accelerator`): groups by `physical` / `virtual` cards and shows each accelerator group's `capacity`, `allocatable`, and `nodeCount`.
+- **Host View** (`host`): shows accelerator details per node (utilization, VRAM, power, temperature, and other observations).
+
+### Status Tags
+
+The pool header renders the following three status types via the status component (the default pool does not show sync or monitoring status):
+
+| Dimension | Field | Values |
+| --- | --- | --- |
+| Sync | `sync.phase` | `pending` / `syncing` / `synced` / `failed` |
+| Health | `health.phase` | `healthy` / `attention` / `degraded` / `notApplicable` / `unknown` |
+| Monitoring | `monitoring.dataStatus` | `complete` / `notApplicable` / `partial` / `unavailable` / `unknown` |
+
+Capacity and health data both carry a `dataStatus` marking data completeness (`complete` / `partial` / `unavailable` / `notApplicable` / `unknown`). Observations (`monitoring.cpu` / `monitoring.memory`) additionally have availability `availability` (`observed` / `notInstalled` / `noSeries` / `queryError`) and freshness `freshness` (`delayed` / `fresh` / `stale` / `unknown`).
+
+---
+
+## Default Resource Pool
+
+The system reserves one default pool whose ID is fixed to `default` (`isDefault = true`):
+
+- The default pool **cannot be deleted**; its overview has no delete button, and the delete dialog is not rendered for it at all.
+- When creating a resource pool, the node picker only allows selecting nodes **currently in the `default` pool**; nodes already belonging to another pool are disabled with a hint to return them to the default pool first.
+- After a resource pool is deleted, its nodes return to `default`.
+
+---
+
+## Change Pre-Check Mechanism
+
+The three operations — create, delete, and move nodes — all go through a unified **"check change → tick acknowledgements → submit"** pre-check flow, to avoid mistaken operations when the snapshot and backend state are inconsistent.
+
+### Action Types (`ChangeAction`)
+
+| Value | Scenario |
+| --- | --- |
+| `CreatePool` | Create a resource pool |
+| `DeletePool` | Delete a resource pool |
+| `MoveNodes` | Node partitioning (move nodes to a target pool) |
+
+### Pre-Check Request and Response
+
+Key fields of the pre-check request `ResourcePoolChangeRequest`:
+
+| Field | Description |
+| --- | --- |
+| `action` | One of the three actions above |
+| `expectedRevision` | Optimistic-lock revision, taken from the current partition snapshot's `snapshot.partitionRevision` |
+| `pool` | The `name` / `description` submitted for `CreatePool` |
+| `poolID` | Target pool for `DeletePool` |
+| `targetPoolID` | Target pool for `MoveNodes` |
+| `nodes[]` | Nodes to move: `name` / `uid` / `expectedSourcePoolID` |
+| `acknowledgedRiskCodes` | Risk codes the user has ticked |
+| `confirm` | Set to `true` on deletion |
+
+Fields of the pre-check response `ResourcePoolChangeCheck`:
+
+| Field | Description |
+| --- | --- |
+| `ready` | Whether submission is allowed; `false` means there are blockers |
+| `noChanges` | The change has no actual effect |
+| `normalizedRequest` | The normalized request (e.g. back-filled target pool ID) |
+| `nodes[]` | Each node's `sourcePoolID` / `targetPoolID` / `changed` |
+| `blockers[]` | List of blocking reasons |
+| `requiredAcknowledgementCodes[]` | Risk codes that must each be ticked |
+| `references.flavors` / `references.quotas` | Flavor and quota references that depend on this pool |
+
+> 💡 Tip: The submit button is enabled only when `ready = true`, `noChanges = false`, and all `requiredAcknowledgementCodes` have been ticked.
 
 ---
 
 ## Create Resource Pool
 
-![Create Resource Pool](/assets/screenshots/boss/rune-resource-pools-create.png)
+Frontend route: `/rune/clusters/:cluster/resource-pools?action=create`
 
 ### Steps
 
-1. On the resource pool list page, click the **Create Resource Pool** button in the upper right corner
-2. Fill in the resource pool information in the popup form
-3. Select the nodes to include in the resource pool from the node list
-4. Click the **Create** button to complete the operation
+1. On the resource pool page, click **Create Resource Pool**.
+2. Fill in the name and description (see form fields below).
+3. In the "Initial Nodes" picker, select the nodes to include (optional; only default-pool nodes can be selected).
+4. Click **Check and Create**; a confirmation dialog shows the pre-check result.
+5. After ticking all risk acknowledgements, click **Create Resource Pool**.
 
 ### Form Fields
 
-| Field | Field Name | Type | Required | Description |
-|-------|-----------|------|----------|-------------|
-| **Name** | `name` | Text Input | ✅ | Unique identifier name for the resource pool |
-| **Description** | `description` | Textarea | — | Description of the resource pool, such as its purpose |
-| **Node Selection** | `nodes` | Node Multi-select List | ✅ | Select nodes from available cluster nodes to include in this resource pool |
+| Field | Field Name | Required | Constraint |
+| --- | --- | --- | --- |
+| Name | `name` | ✅ | 1–128 characters after trimming |
+| Description | `description` | — | ≤ 500 characters after trimming |
 
-### Node Selection
+> ⚠️ Note: When there are already 10 resource pools, the create page shows only a "limit reached" message and does not render the form.
 
-When creating a resource pool, the system lists all available nodes in the current cluster. Administrators can select nodes through:
+### Initial Node Selection
 
-- **Individual selection**: Check target nodes in the node list
-- **Select all**: Select all available nodes
-- **Search filter**: Search by node name then select
+- Only nodes with **`selectable = true` and `poolID === 'default'`** are listed.
+- Supports searching by node name and selecting all on the current page; page size options are **20 / 50 / 100**.
+- Non-default-pool nodes are disabled even if they appear in the list, with a hint to return them to the default pool first.
 
-### Resource Pool Data Structure
+### Confirmation Dialog
 
-```json
-{
-  "name": "gpu-training-pool",
-  "description": "A100 GPU Training Resource Pool",
-  "nodes": [
-    { "name": "gpu-node-01" },
-    { "name": "gpu-node-02" },
-    { "name": "gpu-node-03" }
-  ]
-}
-```
+The dialog shows:
 
-> ⚠️ Note: Each node can only belong to one resource pool. If a node is already used by another resource pool, it will not appear in the available node list when creating a new resource pool.
+- The pre-check conclusion (needs acknowledgement / passed / blocked / no changes / submission result uncertain).
+- The initial node list (index, node name, accelerator).
+- The `requiredAcknowledgementCodes` that must be ticked one by one.
+- The blocking reasons `blockers` (localized).
+
+On successful submission, it returns to the resource pool list and triggers a refresh.
 
 ---
 
 ## Edit Resource Pool
 
-1. Click the **Edit** button in the resource pool list
-2. You can modify the resource pool's description and node list
-3. You can add new nodes or remove existing nodes
-4. Click **Save** to complete the modification
+Click **Edit Metadata** in the top-right of the overview to open the edit page; only `name` and `description` can be modified:
 
-> 💡 Tip: When editing nodes in a resource pool, removing a node will not affect workloads already running on that node, but new workloads will no longer be scheduled to the removed node.
+- `name` is 1–128 characters, `description` is ≤ 500 characters.
+- The helper text on the edit page shows the current pool ID.
+
+> 💡 Tip: Adding or removing nodes is not done on the edit page, but through the **Adjust Partition** dialog via `MoveNodes`.
+
+---
+
+## Adjust Node Partition
+
+Click **Adjust Partition** in the top-right of the overview to open the dialog:
+
+1. On the left, tick the nodes to move (supports search, select-all on the current page, page size 20 / 50 / 100).
+2. On the right, select a **single** target resource pool.
+3. Click **Check Change** to run the `MoveNodes` pre-check; the panel shows the "to update / to skip" node counts and any blocking reasons.
+4. After ticking all risk acknowledgements, click **Submit Partition Change**.
+
+> ⚠️ Note: Ticking nodes, switching the target pool, paging, or changing the search invalidates the previous pre-check result and requires checking again.
 
 ---
 
 ## Delete Resource Pool
 
-1. Click the **Delete** button in the resource pool list
-2. The system displays a confirmation dialog
-3. Confirm to execute the deletion
+1. In the overview, click **Return Nodes and Delete** (the default pool has no such entry).
+2. After the dialog opens, the system automatically runs a pre-check with `DeletePool` + `confirm: true`.
+3. If flavor / quota references exist, the deletion is blocked; the dialog lists each reference (name, type, tenant / workspace) with a "Go to manage" link.
+4. When there are no blockers, enter the **resource pool ID** for second confirmation, tick the risk items, and click delete.
 
-> ⚠️ Note: Before deleting a resource pool, please ensure:
-> - No critical workloads are running on nodes in the resource pool
-> - No flavors reference this resource pool
-> - No quota allocations depend on this resource pool
-> After deletion, nodes in the resource pool will return to an "unassigned" state and can be selected by other resource pools.
+After a successful deletion, the nodes return to `default`, the list refreshes, and `default` is selected by default.
 
 ---
 
-## Relationship Between Resource Pools, Flavors, and Quotas
+## Refresh and Initialization
 
-Resource pools, flavors, and quotas are the three core concepts of Rune platform resource management, with close relationships between them:
-
-```mermaid
-flowchart TD
-    subgraph ClusterLayer["Cluster Layer"]
-        RP["Resource Pool<br/>Node Grouping"]
-    end
-    
-    subgraph FlavorLayer["Flavor Layer"]
-        FL["Flavor<br/>CPU/GPU/Memory Combination"]
-    end
-    
-    subgraph TenantLayer["Tenant Layer"]
-        QT["Quota<br/>Resource Limits"]
-    end
-    
-    subgraph UsageLayer["Usage Layer"]
-        WS["Workspace<br/>Sub-quota"]
-        INS["Instance<br/>Actual Usage"]
-    end
-    
-    RP -->|"Flavor binds to resource pool<br/>Defines which nodes are available"| FL
-    FL -->|"Quota references flavor<br/>Limits available quantity"| QT
-    QT -->|"Workspace allocation<br/>Sub-quota slicing"| WS
-    WS -->|"Instance consumption<br/>Flavor selection"| INS
-    INS -->|"Scheduled to<br/>resource pool nodes"| RP
-```
-
-| Concept | Purpose | Relationship |
-|---------|---------|-------------|
-| **Resource Pool** | Groups cluster nodes | Flavors reference resource pools, determining which nodes to deploy on |
-| **Flavor** | Defines CPU/GPU/memory combinations | Bound to specific resource pools, limiting available physical resources |
-| **Quota** | Limits the resource ceiling a tenant can use | References flavors, defines quota quantities |
-| **Workspace Quota** | Subdivides tenant quota for workspaces | Cannot exceed total tenant quota |
-| **Instance** | Actually consumes resources | Selects a flavor, scheduled to corresponding resource pool nodes |
-
-> 💡 Tip: When creating a flavor, you need to specify the associated resource pool, which determines which nodes instances created with that flavor will be scheduled to run on.
+- Under normal conditions the overview auto-refreshes every **30 seconds**.
+- If the cluster returns `initialization.phase = initializing`, it polls every **2 seconds** instead; when `phase = failed`, polling pauses and the initialization-failure state is shown.
+- While initialization is incomplete, the create entry is disabled.
 
 ---
-
-## Best Practices
-
-### Resource Pool Partitioning Strategies
-
-| Strategy | Applicable Scenario | Example |
-|----------|-------------------|---------|
-| **By Hardware Type** | Cluster contains heterogeneous hardware | GPU Pool, CPU Pool, High Memory Pool |
-| **By Business Usage** | Need to isolate different workload types | Training Pool, Inference Pool, Dev Pool |
-| **By Tenant Isolation** | Need physical-level tenant isolation | Tenant A Dedicated Pool, Tenant B Dedicated Pool |
-| **By Priority** | Differentiate tasks with different priorities | High Priority Pool (SLA guaranteed), Elastic Pool |
-
-### Naming Recommendations
-
-- Use meaningful names, such as `gpu-a100-training`, `cpu-general`
-- Maintain consistent naming styles
-- Include hardware type or usage information in the name
-
-### Capacity Planning
-
-1. **Reserve system resources**: Each node should reserve 10%-15% of resources for Kubernetes system components
-2. **Avoid single points of failure**: Each resource pool should contain 2 or more nodes to prevent a single node failure from making the entire pool unavailable
-3. **Monitor utilization**: Regularly check overall resource pool utilization; when usage consistently exceeds 80%, consider scaling up
 
 ## Permission Requirements
 
 | Operation | Required Role |
-|-----------|---------------|
-| View Resource Pool List | System Administrator |
-| Create Resource Pool | System Administrator |
-| Edit Resource Pool | System Administrator |
-| Delete Resource Pool | System Administrator |
+| --- | --- |
+| View resource pools | System Administrator |
+| Create / edit / adjust partition / delete | System Administrator |

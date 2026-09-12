@@ -17,9 +17,7 @@ You can quickly locate by source in the left directory:
 - **Hygon (DCU)**: driver/runtime, mirror environment, adaptation and tuning, troubleshooting
 - **Other open source communities**: Kubernetes/containers, frameworks and inference ecology, observability, product security
 
-:::info
-This column gives priority to providing "version matrix + operation steps + known issues/FAQ". If you find a missing version or scene, please provide feedback through the team channel to complete it.
-:::
+> ℹ️ Note: This column gives priority to providing "version matrix + operation steps + known issues/FAQ". If you find a missing version or scene, please provide feedback through the team channel to complete it.
 
 ## Directory description
 

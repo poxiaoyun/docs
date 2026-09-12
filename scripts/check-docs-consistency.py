@@ -1,0 +1,339 @@
+#!/usr/bin/env python3
+"""校验 docs 站的内容一致性与侧边栏可达性。
+
+规则来自 src/pages/docs/viewer.tsx:102-132 —— 每段剥离 ^\\d+\\. 前缀，
+index.md 映射到其父目录的 URL，viewer 用 Object.keys(files).find() 取首个命中，
+因此同 URL 的多份 md 会互相遮蔽。
+
+内链解析规则来自 src/components/markdown/markdown.tsx 的 a 渲染器：
+相对链接按「当前页面 URL 的目录」为基准，逐段剥离 ^\\d+\\. 与 \\.md 后缀，
+处理 . / ..，末尾 index 段丢弃；绝对链接直接当站内 URL。
+
+用法: python3 check-docs-consistency.py [--root docs 仓库根]
+"""
+import os
+import re
+import subprocess
+import sys
+import collections
+
+def _parse_root(argv):
+    """支持 `--root <dir>` 与位置参数；默认取脚本所在目录的父目录（即仓库根）。"""
+    if '--root' in argv:
+        i = argv.index('--root')
+        if i + 1 >= len(argv):
+            sys.exit('--root 需要一个目录参数')
+        return argv[i + 1]
+    positional = [a for a in argv if not a.startswith('-')]
+    if positional:
+        return positional[0]
+    return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+ROOT = _parse_root(sys.argv[1:])
+CONTENT = os.path.join(ROOT, 'src/pages/docs')
+if not os.path.isdir(CONTENT):
+    sys.exit(f'找不到内容目录: {CONTENT}（用 --root 指定 docs 仓库根）')
+STRIP = re.compile(r'^\d+\.')
+
+TITLE_RE = re.compile(r"^title:\s*['\"]?(.+?)['\"]?\s*$", re.M)
+TOC_PATH_RE = re.compile(r"path:\s*'([^']+)'")
+MD_LINK_RE = re.compile(r'(!?)\[[^\]]*\]\(([^)\s]+)\)')
+VITEPRESS_RE = re.compile(r'^:::')
+SKIP_SCHEME = ('http://', 'https://', 'mailto:', 'tel:', 'data:', '#', '//')
+
+
+def strip(part: str) -> str:
+    return STRIP.sub('', part)
+
+
+def md_to_url(rel_parts):
+    """cn/10.rune/03.console/app.md -> ('cn', '/rune/console/app')"""
+    lang, *rest = rel_parts
+    parts = list(rest)
+    parts[-1] = parts[-1][:-3]  # 去掉 .md
+    parts = [strip(p) for p in parts]
+    if parts and parts[-1] == 'index':
+        parts = parts[:-1]
+    return lang, '/' + '/'.join(parts)
+
+
+def collect_files():
+    """返回 {lang: {url: [文件相对路径, ...]}}（同 URL 多文件即遮蔽）"""
+    langs = collections.defaultdict(lambda: collections.defaultdict(list))
+    for dirpath, _dirnames, filenames in os.walk(CONTENT):
+        for fn in filenames:
+            if not fn.endswith('.md'):
+                continue
+            full = os.path.join(dirpath, fn)
+            rel = os.path.relpath(full, CONTENT).split(os.sep)
+            if len(rel) < 2:
+                continue
+            lang, url = md_to_url(rel)
+            langs[lang][url].append('/'.join(rel))
+    return langs
+
+
+def collect_toc_paths():
+    """返回 {toc 文件: [path, ...]}"""
+    out = {}
+    for dirpath, _dirnames, filenames in os.walk(CONTENT):
+        for fn in filenames:
+            if fn != 'toc.ts':
+                continue
+            full = os.path.join(dirpath, fn)
+            txt = open(full, encoding='utf-8').read()
+            out[os.path.relpath(full, ROOT)] = TOC_PATH_RE.findall(txt)
+    # 顶层汇总 toc.tsx（overview / account 等分区）
+    top = os.path.join(CONTENT, 'toc.tsx')
+    if os.path.exists(top):
+        txt = open(top, encoding='utf-8').read()
+        out[os.path.relpath(top, ROOT)] = TOC_PATH_RE.findall(txt)
+    return out
+
+
+def resolve_relative(current_url, is_index, href_path):
+    """复刻 markdown.tsx 的 a 渲染器解析逻辑，返回站内绝对 URL。"""
+    segs = [s for s in current_url.split('/') if s]
+    base = list(segs) if is_index else segs[:-1]
+    for raw in href_path.split('/'):
+        clean = STRIP.sub('', raw)
+        if clean.endswith('.md'):
+            clean = clean[:-3]
+        if clean in ('', '.'):
+            continue
+        if clean == '..':
+            if base:
+                base.pop()
+        else:
+            base.append(clean)
+    if base and base[-1] == 'index':
+        base.pop()
+    return '/' + '/'.join(base)
+
+
+def collect_md_links():
+    """返回 [(文件相对路径, 行号, 链接目标, 是否图片)]，跳过代码块与行内代码。"""
+    out = []
+    for dirpath, _d, filenames in os.walk(CONTENT):
+        for fn in sorted(filenames):
+            if not fn.endswith('.md'):
+                continue
+            full = os.path.join(dirpath, fn)
+            rel = os.path.relpath(full, ROOT)
+            in_fence = False
+            for lineno, line in enumerate(open(full, encoding='utf-8'), 1):
+                if line.lstrip().startswith('```'):
+                    in_fence = not in_fence
+                    continue
+                if in_fence:
+                    continue
+                # 去掉行内代码，避免把正则/示例误判为链接
+                stripped = re.sub(r'`[^`]*`', '', line)
+                for m in MD_LINK_RE.finditer(stripped):
+                    out.append((rel, lineno, m.group(2), m.group(1) == '!'))
+    return out
+
+
+def collect_archived_paths():
+    """返回 archive/<日期>/ 下所有文件的「原相对路径」集合。"""
+    base = os.path.join(ROOT, 'archive')
+    out = set()
+    if not os.path.isdir(base):
+        return out
+    for date_dir in sorted(os.listdir(base)):
+        d = os.path.join(base, date_dir)
+        if not os.path.isdir(d):
+            continue
+        for dirpath, _dirnames, filenames in os.walk(d):
+            for fn in filenames:
+                full = os.path.join(dirpath, fn)
+                out.add(os.path.relpath(full, d).replace(os.sep, '/'))
+    return out
+
+
+def check_archive_coverage(archived):
+    """工作区中已删除的文件都应在 archive/ 下有副本，保证删除可回溯。
+
+    非 git 仓库或无删除项时返回 None（跳过该项检查）。
+    """
+    try:
+        proc = subprocess.run(['git', '-C', ROOT, 'status', '--porcelain'],
+                              capture_output=True, text=True)
+    except FileNotFoundError:
+        return None
+    if proc.returncode != 0:
+        return None
+    rows = []
+    for line in proc.stdout.splitlines():
+        if not line.startswith(' D '):
+            continue
+        rel = line[3:].strip().replace(os.sep, '/')
+        if rel not in archived:
+            rows.append(rel)
+    return rows
+
+
+def main():
+    langs = collect_files()
+    toc = collect_toc_paths()
+    problems = 0
+    all_urls = {}
+    for lang, url_map in langs.items():
+        for url in url_map:
+            all_urls.setdefault(url, set()).add(lang)
+
+    # 1. frontmatter title 缺失
+    missing_title = []
+    for dirpath, _d, filenames in os.walk(CONTENT):
+        for fn in filenames:
+            if not fn.endswith('.md'):
+                continue
+            full = os.path.join(dirpath, fn)
+            head = open(full, encoding='utf-8').read(800)
+            if not TITLE_RE.search(head):
+                missing_title.append(os.path.relpath(full, ROOT))
+
+    # 2. 同 URL 遮蔽
+    shadowed = []
+    for lang, url_map in langs.items():
+        for url, files in url_map.items():
+            if len(files) > 1:
+                shadowed.append((lang, url, sorted(files)))
+
+    # 3. toc 死链 / 4. 孤儿
+    dead = []
+    referenced = set()
+    for tocfile, paths in toc.items():
+        for p in paths:
+            referenced.add(p.rstrip('/') or '/')
+            if p.rstrip('/') not in all_urls and p.rstrip('/') != '':
+                dead.append((tocfile, p))
+    orphans = []
+    for lang, url_map in langs.items():
+        for url, files in url_map.items():
+            if url not in referenced:
+                orphans.append((lang, url, files[0]))
+
+    # 5. markdown 内链失效
+    broken_links = []
+    for rel, lineno, raw, is_img in collect_md_links():
+        if raw.startswith(SKIP_SCHEME) or '://' in raw:
+            continue
+        path = raw.split('#')[0].split('?')[0]
+        if not path:
+            continue
+        lang = os.path.relpath(rel, CONTENT).split(os.sep)[0]
+        known = langs.get(lang, {})
+
+        # 5a. 静态资源（图片等）走 public/，并经过 baseUri 处理
+        if path.startswith('/assets/') or path.startswith('/screenshots/') or is_img:
+            if not os.path.exists(os.path.join(ROOT, 'public', path.lstrip('/'))):
+                broken_links.append((rel, lineno, raw, 'public 资源缺失'))
+            continue
+        if os.path.splitext(path)[1].lower() in ('.png', '.jpg', '.jpeg', '.webp', '.svg', '.gif', '.ico'):
+            if not os.path.exists(os.path.join(ROOT, 'public', path.lstrip('/'))):
+                broken_links.append((rel, lineno, raw, 'public 资源缺失'))
+            continue
+
+        # 5b. 站内页面链接
+        rel_parts = os.path.relpath(rel, CONTENT).split(os.sep)
+        if len(rel_parts) < 2:
+            continue
+        file_url = md_to_url(rel_parts)[1]
+        is_index = rel_parts[-1] == 'index.md'
+        if path.startswith('/'):
+            target = path.rstrip('/') or '/'
+        else:
+            target = resolve_relative(file_url, is_index, path).rstrip('/') or '/'
+        if target not in known and target not in all_urls:
+            if not os.path.exists(os.path.join(ROOT, 'public', target.lstrip('/'))):
+                broken_links.append((rel, lineno, raw, f'解析为 {target}，无对应页面'))
+
+    # 6. VitePress 容器语法残留
+    vitepress = []
+    for dirpath, _d, filenames in os.walk(CONTENT):
+        for fn in sorted(filenames):
+            if not fn.endswith('.md'):
+                continue
+            full = os.path.join(dirpath, fn)
+            for lineno, line in enumerate(open(full, encoding='utf-8'), 1):
+                if VITEPRESS_RE.match(line):
+                    vitepress.append((os.path.relpath(full, ROOT), lineno, line.strip()[:40]))
+
+    # 7. 侧边栏文案与页面 title 差异（仅提示，不计入问题）
+    file_titles = {}
+    for dirpath, _d, filenames in os.walk(CONTENT):
+        for fn in filenames:
+            if not fn.endswith('.md'):
+                continue
+            full = os.path.join(dirpath, fn)
+            rel = os.path.relpath(full, CONTENT).split(os.sep)
+            if len(rel) < 2:
+                continue
+            lang, url = md_to_url(rel)
+            head = open(full, encoding='utf-8').read(600)
+            m = TITLE_RE.search(head)
+            if m:
+                file_titles.setdefault((lang, url), m.group(1).strip())
+    title_drift = []
+    for tocfile, _paths in toc.items():
+        is_top = os.path.basename(tocfile) == 'toc.tsx'
+        lang = 'en' if (os.sep + 'en' + os.sep) in (tocfile + os.sep) else 'cn'
+        txt = open(os.path.join(ROOT, tocfile), encoding='utf-8').read()
+        for item in re.finditer(r"\{\s*title:\s*'([^']+)'[^}]*?path:\s*'([^']+)'", txt):
+            label, p = item.group(1), item.group(2).rstrip('/')
+            if is_top:
+                actual = file_titles.get(('cn', p)) or file_titles.get(('en', p))
+            else:
+                actual = file_titles.get((lang, p))
+            if actual and actual != label and len(actual) <= 12 and len(label) <= 12:
+                title_drift.append((tocfile, p, label, actual))
+
+    print('内容文件语言分布: ' + ', '.join(f'{k}={sum(len(v) for v in m.values())}' for k, m in sorted(langs.items())))
+    print(f'toc 文件数: {len(toc)}，引用 path 总数: {sum(len(v) for v in toc.values())}')
+    archived = collect_archived_paths()
+    if archived:
+        print(f'archive 归档文件数: {len(archived)}')
+    print()
+
+    def section(title, rows, fmt):
+        nonlocal problems
+        print(f'## {title}  ({len(rows)})')
+        if not rows:
+            print('   ✓ 无')
+        else:
+            problems += len(rows)
+            for r in rows:
+                print('   ' + fmt(r))
+        print()
+
+    section('frontmatter 缺 title', missing_title, lambda r: r)
+    section('同 URL 遮蔽（后者永不可达）', shadowed,
+            lambda r: f'[{r[0]}] {r[1]}  <- ' + ', '.join(r[2]))
+    section('侧边栏死链（toc path 无对应文件）', dead, lambda r: f'{r[0]}  ->  {r[1]}')
+    section('孤儿文件（无任何 toc 引用）', orphans, lambda r: f'[{r[0]}] {r[1]}  ({r[2]})')
+    section('markdown 内链失效', broken_links, lambda r: f'{r[0]}:{r[1]}  {r[2]}  ({r[3]})')
+    section('VitePress ::: 语法残留', vitepress, lambda r: f'{r[0]}:{r[1]}  {r[2]}')
+
+    uncovered = check_archive_coverage(archived)
+    if uncovered is None:
+        print('## 已删除文件缺归档副本  (跳过：非 git 仓库或无 git)')
+        print()
+    else:
+        section('已删除文件缺归档副本', uncovered, lambda r: r)
+
+    print(f'## 侧边栏文案与页面 title 不一致（提示，不计入问题）  ({len(title_drift)})')
+    if not title_drift:
+        print('   ✓ 无')
+    else:
+        for tocfile, p, label, actual in title_drift:
+            print(f'   {tocfile}  {p}  侧边栏「{label}」/ 页面「{actual}」')
+    print()
+
+    print(f'== 合计问题: {problems} ==')
+    return 1 if problems else 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())
