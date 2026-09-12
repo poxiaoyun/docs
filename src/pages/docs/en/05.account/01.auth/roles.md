@@ -1,82 +1,48 @@
 ---
 title: 'Roles and Permissions'
 updated: '2026-09-12'
-description: Role strings, front-end permission-string derivation, and can / hasRole checks.
+description: What administrators, developers, and members can each do, and where to check your own role.
 ---
 
-## Overview
+# Roles and Permissions
 
-Access control is role-based (RBAC). After login the front-end fetches the current user's roles and derives a set of permission strings locally to control menus and action buttons. Actual security is still enforced by the backend API.
+Your role decides which buttons you can use inside the current tenant. The same menu may be editable for an administrator and read-only for a developer, and the difference comes from the role you were given. After reading this page you will know what the three roles can do and where to find your own role.
 
-## Role Data
+:::tip A comparison
+A role is like your access level in a company: an administrator has a card for a whole floor, a developer can enter the server room but not touch personnel files, and a member can only swipe into the public areas. Which menus you see and which buttons you can press all follow from it.
+:::
 
-Roles are fetched via `GET /api/iam/current/roles`, typed as `CurrentRole` = `UserRole[]`:
+## What the three roles can do
 
-| Field | Description |
-|-------|-------------|
-| `name` | User name |
-| `tenant` | Tenant the role belongs to (optional) |
-| `workspace` | Workspace the role belongs to (optional) |
-| `cluster` | Cluster identifier (optional) |
-| `roles` | Array of role strings |
-| `description` | Description (optional) |
+| Role | What you can do | What you cannot do |
+| --- | --- | --- |
+| Administrator | Manage the tenant's workspaces, members, and quotas; take full action on instances, images, templates, and storage volumes | Only manage your own tenant; you cannot see other tenants |
+| Developer | Full control of instances (create, start, stop, delete, and more); view workspaces, images, and templates | Cannot manage members or quotas; images and templates are read-only; cannot create or modify workspaces |
+| Member | View workspaces, instances, and images | Cannot create or operate instances; cannot manage members, quotas, templates, or storage volumes |
 
-The role-string enum present in code (`src/types/tenant.ts:18-22`):
+:::info System administrator
+There is one more special kind of administrator: an administrator who belongs to no tenant. The platform treats this account as a system administrator with all permissions. Usually only platform operations staff have such an account.
+:::
 
-| Role string | Meaning |
-|-------------|---------|
-| `admin` | Administrator |
-| `developer` | Developer |
-| `member` | Member |
+## Where to see your own role
 
-## Permission String Derivation
+1. Click your avatar in the top-right corner. In the menu that opens, click **Tenant**; the entry is followed by the name of your current tenant.
+2. Open tenant management and find your own username in the member list on the **Overview** tab.
+3. The role shown with your username is your role in this tenant.
 
-> ⚠️ Note: There is **no** `/permissions` endpoint in the code. The front-end **simulates** permission strings locally via `generatePermissionsFromRoles` (`src/auth/authz/context.tsx:32-85`; the comment states it is a stand-in "until the backend exposes /permissions"). The real backend contract is unconfirmed.
+If you cannot open tenant management, or you cannot find your role in the list, your current role is not allowed to see member information; in that case ask a tenant administrator to confirm your role.
 
-Derivation rules:
+## Why a role change does not take effect immediately
 
-| Condition | Generated permission strings |
-|-----------|------------------------------|
-| `admin` with no `tenant` and no `workspace` | `*:*` |
-| `admin` with `tenant`, no `workspace` | `workspace:*`, `member:*`, `quota:*`, `instance:*`, `image:*`, `template:*`, `volume:*` |
-| `developer` with `tenant` | `workspace:list`, `workspace:get`, `instance:*`, `image:list`, `image:get`, `template:list`, `template:get` |
-| `member` with `tenant` | `workspace:list`, `workspace:get`, `instance:list`, `instance:get`, `image:list`, `image:get` |
+The platform reads your roles once when you sign in and keeps using that data to control menus and buttons afterwards. If an administrator has just changed your role, refresh the page or sign in again before the menus catch up.
 
-The result is de-duplicated. Implications:
+## A few rules to keep in mind
 
-- An `admin` with no tenant/workspace scope is treated as a system admin (all permissions)
-- A tenant `admin` has workspace/member/quota/instance/image/template/volume permissions within the tenant
-- A `developer` has full instance permissions and mostly read access elsewhere
-- A `member` is read-only
+- A role applies "inside one tenant". You may be an administrator in company A and only a member in company B.
+- If a menu is missing or a button does nothing, it is almost always a matter of insufficient permissions rather than a broken page.
+- Changing your nickname or avatar never affects your role.
 
-## Permission Checks
+## Related
 
-The permission context exposes (`src/auth/authz/types.ts`):
-
-| Method | Description |
-|--------|-------------|
-| `can(action, resource, service?)` | Check a single permission |
-| `canAll(checks)` | All must pass (AND) |
-| `canAny(checks)` | Any must pass (OR) |
-| `hasRole(role, scope?)` | Check a role, `scope` can be `{ tenant, workspace }` |
-| `refresh()` | Re-fetch roles |
-
-`can` matching logic (`context.tsx:153-167`):
-
-1. If the list contains `*:*` → pass
-2. If it contains `${resource}:*` → pass
-3. Otherwise require an exact `${resource}:${action}` or a service-prefixed `${service}:${resource}:${action}`
-
-`PermissionCheck` is `{ action, resource, service? }`.
-
-`hasRole` logic (`context.tsx:182-200`): if an `admin` with no tenant/workspace scope exists, every role query returns true; otherwise the role string must match and, when `scope.tenant` / `scope.workspace` is given, the scope must match too.
-
-> ⚠️ Note: `can` does not support an `a/b` multi-action form, nor service-prefixed wildcards such as `service:*`. Such examples are not listed here.
-
-## Front-end Usage
-
-- `usePermission()`: programmatic checks, returning `{ can, canAll, canAny, hasRole, refresh, loading }`
-- `Authorized` component and `permission-guard.tsx`: wrap permission-controlled UI
-- After a role change, refresh or re-login is required to re-fetch roles
-
-> ⚠️ Note: The precise permission required by each menu item/button, how the backend validates permissions, and who assigns roles are not fully captured in code and remain unconfirmed.
+- [Tenant Management](/account/iam/tenant)
+- [Permissions reference](/reference/permissions)

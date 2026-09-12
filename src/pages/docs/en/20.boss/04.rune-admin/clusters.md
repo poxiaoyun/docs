@@ -1,66 +1,91 @@
 ---
 title: Cluster
 updated: '2026-09-12'
-description: 'Connect Kubernetes clusters: list columns, create/edit form, connection test, terminal, and cluster detail subpage navigation.'
+description: 'Connect a Kubernetes cluster to the platform: fill in kubeconfig, test the connection, publish it and confirm its nodes.'
 ---
 
-## Overview
+# Cluster
 
-All computing power on the Rune platform comes from Kubernetes clusters connected through BOSS. Administrators perform the full lifecycle management of clusters here: **adding clusters**, **publishing**, **detail monitoring**, and **terminal operations**.
+A cluster (think of a data-centre building) is where the platform's compute comes from. One cluster contains many machines (nodes), and each machine may hold several accelerator cards. Your first job is to connect this "building" to the platform, so that the platform knows about it and can hand its resources to users.
 
-## Access Path
+By the end of this page you will be able to: connect a new cluster, test whether the connection works, publish it for tenants, and confirm that all its nodes have come up.
 
-BOSS Console → Cluster Management
+:::tip Three words to keep straight
 
-Frontend route: `/rune/clusters`
+- **Cluster** ≈ a data-centre building.
+- **Node** ≈ one server in that building.
+- **Accelerator (GPU / NPU)** ≈ the "engine" inside a server that does the AI maths.
 
----
+:::
 
-## Cluster List
+## Before you start
 
-### Columns
+- You need a **system administrator** account.
+- Prepare the **kubeconfig** of the target cluster (the "key ring" file used to connect to it — see below).
+- Confirm that the platform network can reach the cluster API address (usually `https://<cluster-address>:6443`).
 
-| Column | Field Path | Display | Description |
-| --- | --- | --- | --- |
-| Name | `name` | Link + description | Click to open the cluster overview; description shown underneath |
-| Version | `status.version.gitVersion` | Text | Kubernetes version; shows `-` when unavailable |
-| Published | `published` | Icon | Online / offline; only published clusters are visible to tenants |
-| Connection Status | `status` | Status component | Rendered by `ObjectStatus` (namespace `cluster`) |
-| Created At | `creationTimestamp` | Time | Time the cluster was connected |
+## Reading the cluster list
 
-### Available Actions
+In the left-hand menu, click **Cluster Management** under the **AI Platform** group. The list has these columns:
 
-| Action | Description |
+| Column | Meaning |
 | --- | --- |
-| Terminal | Open the cluster's kubectl terminal |
-| Publish / Unpublish | Toggle `published`, with a confirmation dialog |
+| Name | Click the cluster name to open its details; the description sits underneath the name |
+| Version | The Kubernetes version of the target cluster; shows `-` when it cannot be read |
+| Publish Status | Published / Unpublished; only **published** clusters are visible to tenants |
+| Connect Status | Whether the platform can reach the cluster |
+| Created At | When the cluster was connected to the platform |
+
+The actions on each row:
+
+| Action | Meaning |
+| --- | --- |
+| Terminal | Open the cluster's web terminal and run `kubectl` commands directly |
+| Publish / Unpublish | Toggle whether tenants can see the cluster; a confirmation dialog appears |
 | Edit | Open the edit page |
-| Delete | Delete the cluster with a confirmation dialog |
+| Delete | Delete the cluster; a confirmation dialog appears |
 
-> ⚠️ Note: **There is no "Test Connection" in the list actions.** The connection test only appears inside the create/edit form.
+## Connect a new cluster
 
----
+1. In the left-hand menu, click **AI Platform** → **Cluster Management**.
+2. Click **Create Cluster** in the top-right corner.
+3. Fill in the **Configuration** card in order:
 
-## Add / Edit Cluster
+| Field | What to fill in | Notes |
+| --- | --- | --- |
+| Name | For example `prod-gpu-01` | Fill in the name first and the ID below it is generated automatically; the ID can also be edited by hand, and **cannot be changed after creation** |
+| Description | For example "Production GPU room, zone A" | Optional, for your own reference |
+| kubeconfig | Paste the kubeconfig contents of the target cluster | Required; the format is shown below |
 
-### Form Fields
+4. When the fields are filled in, click **Test Connection** to confirm the platform can reach the cluster.
+5. Once the connection is fine, click **Confirm** to finish connecting it.
 
-| Field | Field Name | Type | Required | Description |
-| --- | --- | --- | --- | --- |
-| Name | `name` | IdField (name + auto-generated ID) | ✅ | Display name; the ID can be edited manually and cannot be changed after creation |
-| Description | `description` | Textarea (4 rows) | — | Supplementary notes such as purpose or location |
-| Cluster Type | `type` | Fixed value | — | Fixed to `Kubernetes` |
-| KubeConfig | `kube.config` | Textarea (8 rows, monospace) | ✅ | kubeconfig YAML content |
+:::warning kubeconfig is a high-privilege key
 
-> 💡 Tip: In edit mode the cluster ID cannot be modified.
+kubeconfig contains the credentials for reaching that cluster. Create a dedicated service account for the platform and grant it only the permissions the platform needs — do not reuse a cluster administrator's personal credentials.
 
-### Test Connection (Inside the Form)
+:::
 
-- The **Test Connection** button is enabled only when both `name` and `kube.config` are filled in.
-- On success, a success message is shown at the top of the form along with the detected cluster version `gitVersion`.
-- On failure, the error details are shown.
+The two possible test results:
 
-KubeConfig is the core configuration for connecting to a cluster. Example:
+- Success: a **Connection successful** message appears at the top of the form, together with the detected cluster version.
+- Failure: the reason appears at the top of the form; check the address, certificate or network as suggested and try again.
+
+:::info The connection test only exists inside the form
+
+There is **no** "Test Connection" in the action column of the list — it only appears in the create and edit forms. In addition, the **Test Connection** button only becomes clickable once both **Name** and **kubeconfig** are filled in.
+
+:::
+
+### Where to get the kubeconfig
+
+kubeconfig is the configuration file used to connect to a cluster and is normally provided by the cluster administrator. On a machine that can reach the cluster, run the command below and copy the whole output:
+
+```bash
+kubectl config view --raw
+```
+
+It looks like this (the `server`, certificate and key are replaced by real values):
 
 ```yaml
 apiVersion: v1
@@ -83,24 +108,18 @@ users:
       client-key-data: <base64-key>
 ```
 
-> ⚠️ Note: KubeConfig contains sensitive credentials. Use a dedicated ServiceAccount and grant only the minimum required permissions.
+## Publish / unpublish a cluster
 
----
-
-## Publish / Unpublish
-
-`published` determines whether the cluster is visible to tenants:
+**Publish Status** decides whether tenants can see and use the cluster:
 
 | Action | Effect |
 | --- | --- |
 | Publish | The cluster becomes visible to tenants and can be used for resource allocation and deployment |
-| Unpublish | Hidden from tenants; already deployed instances are unaffected, but new deployments are no longer allowed |
+| Unpublish | Hidden from tenants and no new instances can be deployed; **instances that are already deployed are unaffected** |
 
----
+## Run commands in the web terminal
 
-## kubectl Terminal
-
-The **Terminal** action in the list opens a built-in web terminal already configured with the target cluster's context, where you can run `kubectl` commands directly.
+Click **Terminal** in the list's action column to open a web terminal that is already connected to the target cluster, where you can type `kubectl` directly:
 
 ```bash
 kubectl get nodes
@@ -108,72 +127,56 @@ kubectl get pods -A
 kubectl top nodes
 ```
 
-> ⚠️ Note: The terminal has cluster administrator privileges. Operate with caution and avoid running destructive commands on production clusters.
+:::warning The terminal has very high privileges
 
----
+The web terminal has cluster administrator privileges. Operate with care and avoid running destructive commands on production clusters.
 
-## Cluster Detail and Subpage Navigation
+:::
 
-Click a cluster name to open the detail page (frontend route `/rune/clusters/:cluster/:domain`). The sidebar contains **11 subpages**:
+## After connecting: confirm the nodes have come up
 
-| Group | Subpage | Frontend Route |
-| --- | --- | --- |
-| Cluster Info | Cluster Info (Overview) | `/rune/clusters/:cluster/overview` |
-| Cluster Info | Node Status | `/rune/clusters/:cluster/nodes` |
-| Cluster Info | Accelerator Info | `/rune/clusters/:cluster/gpu-dashboard` |
-| Resource Management | Resource Pools | `/rune/clusters/:cluster/resource-pools` |
-| Resource Management | Flavors | `/rune/clusters/:cluster/flavors` |
-| Resource Management | Tenant Quotas | `/rune/clusters/:cluster/tenant-quotas` |
-| Operations Management | Workloads | `/rune/clusters/:cluster/resources` |
-| Operations Management | Storage Clusters | `/rune/clusters/:cluster/storages` |
-| Operations Management | System Apps | `/rune/clusters/:cluster/systems` |
-| Operations Management | Scheduler Management | `/rune/clusters/:cluster/schedulers` |
-| Operations Management | Log Management | `/rune/clusters/:cluster/logs` |
+Once the cluster is connected, the platform starts taking over its machines. Follow the steps below to confirm they are all recognised:
 
-### Overview
+1. Click the cluster name to open its detail page.
+2. In the left-hand **Operations Management** group, click **Workloads** and switch to the **Node** tab, then check machine by machine that they are all listed.
+3. To see the CPU and memory load of each machine, click **Node Status**; to see the accelerator cards, click **Accelerator Status**.
 
-The overview page renders dashboards whose names contain `basic`, i.e. **basic dashboards**. It does not include a separate accelerator dashboard (that lives on the "Accelerator Info" subpage).
+> If not all nodes appear, first check whether the account in the kubeconfig may read nodes, and whether the cluster itself is healthy.
 
-### Node Status / Accelerator Info
+## Sub-pages inside a cluster
 
-Both pages are **monitoring dashboards aggregated by name**, not node inventories:
+After opening a cluster, the left-hand sub-menu is split into three groups:
 
-- Node Status: aggregates dashboards whose names contain `node`.
-- Accelerator Info: aggregates dashboards whose name or title (lowercased) contains `gpu` or `npu`; an NPU dashboard originally listed after an NVIDIA GPU dashboard is moved ahead of it.
-
-> ⚠️ Note: These two pages have **no node table** and do not show node roles, IPs, CPU/memory details, labels, or taints. For node-level object information, use the Nodes tab on the "Workloads" subpage or the kubectl terminal.
-
-### Workloads (Kubernetes Resource Browser)
-
-There are 14 built-in resource tabs: Pods, Nodes, Deployments, StatefulSets, DaemonSets, Jobs, CronJobs, Services, Ingresses, IngressClasses, StorageClasses, ConfigMaps, Secrets, PersistentVolumeClaims. See [Kubernetes Resource Browser](./resources).
-
-### Storage Clusters / System Apps
-
-Both are rendered as instance lists (`category = storage` / `system`) with identical columns: `name`, `product.version`, `status.phase`, `creationTimestamp`. See [Storage and Runtime Services](./storage-runtime) and [System Instance Management](./systems).
-
-The **Add** button on the System Apps / Storage Clusters page navigates to the system template market (`/rune/clusters/:cluster/system-market`) to pick a template and deploy.
-
-### Log Management
-
-Loki-based cluster log query (`LogViewer`), supporting query statements, label suggestions, label-value lookup, and WebSocket real-time log streaming, with a switch between the "All / Nodes" scopes.
-
-### Scheduler Management
-
-A drag-and-drop editor for Volcano scheduling configuration: it loads `actions` / `plugins` / `tiers`, which are edited locally and then saved and pushed.
-
-### Routes Not in the Sidebar
-
-The following routes exist but are **not in the detail subpage navigation**:
-
-| Route | Status |
+| Group | Sub-pages |
 | --- | --- |
-| `/rune/clusters/:cluster/metrics` | Reserved page, a ComingSoon placeholder in the frontend |
-| `/rune/clusters/:cluster/events` | Reserved page, a ComingSoon placeholder in the frontend |
-| `/rune/clusters/:cluster/dynamic-dashboard` | Cluster dashboard editor (entered from overview dashboard configuration) |
-| `/rune/clusters/:cluster/system-market` | Entered from the "Add" button on System Apps / Storage Clusters |
+| Cluster Status | Cluster Status, Node Status, Accelerator Status |
+| Resource Management | Resource Pool, Flavor, Tenant Quotas |
+| Operations Management | Workloads, Storage Cluster, System Apps, Scheduler Management, Log Management |
 
----
+Among them:
 
-## Permission Requirements
+- **Cluster Status** shows only baseline dashboards; **Node Status** looks at machines and **Accelerator Status** looks at cards — see [Nodes & Accelerators](/boss/rune-admin/nodes-gpu).
+- **Resource Pool / Flavor / Tenant Quotas** are where resources are allocated — see [Resource Pools](/boss/rune-admin/resource-pools), [Flavors](/boss/rune-admin/flavors) and [Tenant Quotas](/boss/rune-admin/tenants).
+- **Workloads** browses the cluster's resources by object type — see [Workloads](/boss/rune-admin/resources).
+- **Storage Cluster** and **System Apps** are both one-click entries for deploying middleware and storage — see [Storage & Runtime](/boss/rune-admin/storage-runtime) and [System Apps](/boss/rune-admin/systems).
+- **Scheduler Management** and **Log Management** are covered in [Logs & Scheduler](/boss/rune-admin/observability).
 
-Requires the **System Administrator** role. You can view the list, add/edit/delete clusters, publish/unpublish, use the terminal, and access all detail subpages.
+## Confirming the result
+
+- The new cluster appears in the list, **Connect Status** shows Connected, and **Publish Status** shows Published if you published it.
+- Inside the cluster details, **Workloads → Node** lists that cluster's machines.
+
+## Common questions
+
+| What you see | Likely cause | What to do |
+| --- | --- | --- |
+| Test Connection fails | Wrong address, certificate or network | Check that the kubeconfig is complete and that the platform can reach the cluster API |
+| There is no Test Connection in the list | It only exists in the form | Open the create or edit page and test there |
+| The ID cannot be changed while editing | The ID is immutable once created | If it really must change, delete the cluster and connect it again |
+| Tenants cannot see the cluster | The cluster is not published | Click **Publish** in the list and confirm |
+
+## Related
+
+- [Cluster Status](/boss/rune-admin/cluster-overview)
+- [Nodes & Accelerators](/boss/rune-admin/nodes-gpu)
+- [Resource Pools](/boss/rune-admin/resource-pools)

@@ -1,51 +1,88 @@
 ---
 title: Logs & Scheduler
 updated: '2026-09-12'
-description: Cluster-level monitoring, events, log query, and Volcano scheduling configuration pages.
+description: 'Query logs inside a cluster to locate problems, and adjust the Volcano scheduling policy by dragging.'
 tags:
 - boss
 - rune-admin
 - observability
 ---
 
-## Overview
+# Logs & Scheduler
 
-The cluster detail page provides several operations entry points for observing cluster state from different angles and adjusting scheduling policy.
+These two pages are everyday tools for running a cluster:
 
-## Page Capabilities
+- **Log Management**: query a cluster's logs by condition, with live tailing, to locate errors.
+- **Scheduler Management**: adjust the cluster's job scheduling policy (Volcano) by dragging.
 
-| Page | Frontend Route | Current Capability |
-| --- | --- | --- |
-| Monitoring & Alerts | `/rune/clusters/:cluster/metrics` | Reserved page, a ComingSoon placeholder in the frontend (not in the sidebar navigation) |
-| Event Logs | `/rune/clusters/:cluster/events` | Reserved page, a ComingSoon placeholder in the frontend (not in the sidebar navigation) |
-| Log Management | `/rune/clusters/:cluster/logs` | Log query, label filtering, and live streaming |
-| Scheduler Management | `/rune/clusters/:cluster/schedulers` | Drag-and-drop editing and saving of Volcano scheduling configuration |
+## Before you start
 
-## Log Page
+- You need a **system administrator** account.
+- Logging depends on a log-collection component deployed in the cluster, and scheduling depends on a deployed scheduler. If a component is missing, deploy it from **System Apps** first.
 
-The log page uses the shared `LogViewer` component and supports:
+## How to open them
 
-- Custom query statements
-- Query by label, with suggestions for label values
-- Historical log queries
-- WebSocket real-time log streaming (follow mode)
-- Switching between the "All / Nodes" scopes
+1. In the left-hand menu, click **AI Platform** → **Cluster Management**, then open the target cluster.
+2. Under the **Operations Management** group in the left-hand menu:
+   - Click **Log Management** to query logs.
+   - Click **Scheduler Management** to change the policy.
 
-It is useful for troubleshooting:
+## Query logs
 
-- Platform component anomalies
-- Cluster service startup failures
-- Scheduling, storage, or gateway-side errors
+The log page has two tabs at the top:
 
-> 💡 Tip: The logging capability depends on a log-collection component deployed in the cluster. If the page shows no data, check whether the corresponding component has been installed through System Apps.
+| Tab | Use |
+| --- | --- |
+| All Logs | Query logs across the whole cluster |
+| Node Logs | Pick a machine first, then read the logs from that machine |
 
-## Scheduler Page
+In the log query area you can:
 
-The scheduler page is aimed at advanced administrators and is used to maintain the cluster's Volcano scheduling configuration. The current frontend supports:
+1. Type a filter expression into the query box, for example `level=error`.
+2. Tick labels under **Label Filter**: the input suggests the available label names and values.
+3. Choose a **Time Range**, or search for keywords directly under **Search log content**.
+4. Click **Start Live Logs** to open live tailing, then **Stop Live Logs** to end it; **Follow** keeps the view scrolled to the newest entry.
+5. Use **Wrap** to fold long log lines and **Clear** to reset the conditions.
 
-- Loading scheduling parameters (`actions` / `plugins` / `presets`) and the existing configuration (`actions` / `metrics` / `tiers`)
-- Dragging to adjust action order, adjusting plugin order within a tier, and dragging actions / plugins across containers
-- Editing a local copy of the configuration (not pushed immediately)
-- Previewing the configuration, refreshing the latest configuration, and saving and pushing to the backend
+:::tip What to do when no logs appear
 
-> ⚠️ Note: Scheduling configuration directly affects the cluster's job scheduling behavior. Validate in a test environment before changing a production cluster.
+When the page has no data, first confirm that the log-collection component has been installed through **System Apps**, then check that the query time range is correct.
+
+:::
+
+## Adjust the scheduling policy
+
+Scheduler Management is aimed at administrators who are already comfortable with scheduling. Its left side holds the available configurations, and the middle holds two editing areas: **Action** and **Plugin Layer** (plugin groups). To use it:
+
+1. Find the configuration you want under **Custom Config** / **Recommend Config** on the left and click **Use** to load it.
+2. Drag an **Action** or a **Plugin** from the left into the matching area on the right; you can also reorder items within the same layer by dragging.
+3. Click **Preview** in the top-right corner to see the effect of your changes.
+4. If the configuration was changed elsewhere meanwhile, click the refresh icon to fetch the latest version.
+5. When it looks right, click **Save**; a "Save successful" message means it has been pushed.
+
+:::warning The scheduling policy affects jobs across the whole cluster
+
+The scheduling configuration directly changes how jobs in the cluster are queued and allocated. Validate it on a test cluster before changing a production one.
+
+:::
+
+:::info Editing is not supported on phones or small screens
+
+On a narrow screen, Scheduler Management tells you that it is not suitable for use on a phone. Please use a computer.
+
+:::
+
+## Two reserved pages
+
+A cluster also has **Monitoring & Alerts** and **Event Logs** entries. They are placeholder pages for now (they show "Coming soon!") and are not in the left-hand sub-menu, so you can ignore them for the moment.
+
+## Confirming the result
+
+- The log page returns records, or the live mode keeps printing new logs.
+- The scheduler page shows a "Save successful" message after you click **Save**.
+
+## Related
+
+- [Nodes & Accelerators](/boss/rune-admin/nodes-gpu)
+- [System Apps](/boss/rune-admin/systems)
+- [Workloads](/boss/rune-admin/resources)

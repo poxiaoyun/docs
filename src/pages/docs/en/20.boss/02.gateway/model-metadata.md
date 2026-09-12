@@ -1,95 +1,132 @@
 ---
 title: Model Configuration
 updated: '2026-09-12'
-description: 'Maintain model basics and prices — name, type, provider, categories, context and unit prices.'
+description: Give a model its card: context length and prices.
 tags:
   - boss
   - gateway
 ---
 
-## Feature overview
+# Model Configuration
 
-Model metadata maintains a model's display information and billing prices: name, type, provider, categories, context length, parameter scale and four price fields. The data drives model display, price calculation and currency conversion in the gateway.
+Model Configuration maintains a model's **business card**: what it is called, which vendor it comes from, how long its context is, and how each call is priced. The list page, the cost column in Call Logs and the cost figures on the Dashboard all read from here.
 
-This page corresponds to **LLM gateway → Model service → Model config** in the Boss console (menu label from `navbar.model_metadata`).
+By the end you will be able to create a model entry, fill in its display information and prices, upload an icon, and delete it when it is no longer needed.
 
-> ⚠️ Note: model config manages metadata only and **does not participate in routing** (`model_metadata.dispatch_note`). Routing is driven by `supportedModels` on channels.
+:::tip Model Configuration is the business card, not the line
+The card carries the model's outward-facing information (name, type, price). Which line a request actually leaves through is decided by [Channel Management](/boss/gateway/channels). The two are managed separately: one model can be served by several channels, while its price is written once on the card.
+:::
 
-## Access path
+:::warning Model Configuration does not take part in routing
+This page only maintains display information and prices; it **never decides which channel a request uses**. Whether a model can be called depends on whether it is listed in a channel's **Supported Models**.
+:::
 
-Boss console → LLM gateway → Model service → **Model config**
+## Before you start
 
-| Action | Console route |
-|--------|--------------|
-| List | `/gateway/model-metadata` |
-| Create | `/gateway/model-metadata/new` |
-| Edit | `/gateway/model-metadata/edit?name=...` |
+- Permission: you need a platform administrator account (one that can enter the BOSS console).
+- Confirm the channel already exists and that the model name is listed in that channel's **Supported Models**; otherwise the model cannot be called even after you configure a price.
 
-> ⚠️ Note: edit uses a `name` query parameter rather than a path parameter.
+## Open Model Configuration
 
-## Model list
+1. Click **Model Gateway** in the left sidebar.
+2. Expand **Model Services** and click **Model Configuration**.
 
-| Column | Field | Description |
-|--------|-------|-------------|
-| Name | `name` | Model id |
-| Type | `type` | See below |
-| Provider | `provider` | See below |
-| Categories | `categories` | Multi-select |
-| Context | `contextTokens` | Context token count |
-| Parameter scale | `parameterScaleB` | In billions (B) |
-| Price | `prices` | Input / completion / cache read / cache write |
-| Channels | `channels` | Channels using the model and their priority |
+## Reading the model list
 
-Filters: **type** and **provider**. Each row offers **Edit** and **Delete** (with confirmation).
+| Column | Meaning |
+| --- | --- |
+| Model name | The model identifier; the small text below is its description |
+| Type | Chat / Image / Video and so on |
+| Vendor | Which company the model comes from |
+| Categories | Labels such as Vision or Reasoning; there can be several |
+| Context | The context window size in tokens, abbreviated with K / M |
+| Parameter scale | The parameter count, shown in B (billion) or T (trillion) |
+| Pricing | Input and output unit prices, in "currency per 1M" |
+| Channel vendors | How many channels serve this model; hover to see their names and priorities |
 
-## Create / edit a model
+Above the list you can filter by **Type** and **Vendor**. The actions menu at the end of each row has **Edit** and **Delete**.
 
-| Field | Key | Type | Required | Default | Notes |
-|-------|-----|------|----------|---------|-------|
-| Model name | `name` | Text | ✅ | empty | Disabled in edit mode |
-| Type | `type` | Select | — | `chat` | See below |
-| Provider | `provider` | Select | — | `openai` | See below |
-| Description | `description` | Multiline | — | empty | — |
-| Categories | `categories` | Multi-select | — | empty | See below |
-| Custom tags | `tags` | Multi-value | — | empty | Free input |
-| Context | `contextTokens` | Number | — | empty | Submitted as `Number(...) || 0` |
-| Parameter scale | `parameterScaleB` | Number | — | empty | Unit B, decimals allowed |
-| Input price | `prices.inputPrice` | Text | — | empty | CNY / 1M tokens |
-| Completion price | `prices.completionPrice` | Text | — | empty | Same unit |
-| Cache read price | `prices.cacheReadPrice` | Text | — | empty | Same unit |
-| Cache write price | `prices.cacheWritePrice` | Text | — | empty | Same unit |
+## Create a model
 
-You can also upload a model icon (`accept="image/*"`).
+1. On the **Model Configuration** page click **Create model** in the top-right corner.
+2. Fill in the **Basic information** block:
 
-When editing, the form additionally shows the **channels using this model** (channel name, `provider` / `tenant` / `workspace`, priority).
+   | Form field | How to fill it | Notes |
+   | --- | --- | --- |
+   | Model name | For example `gpt-4o-mini` | Required; **cannot be changed after creation**, and must match the model name used in the channel exactly |
+   | Type | Defaults to **Chat** | See "Type" below |
+   | Vendor | Defaults to **OpenAI** | See "Vendor" below |
+   | Description | One sentence | Optional; shown under the name in the list |
+   | Categories | Multi-select from the presets | Optional; see "Categories" below |
+   | Custom tags | Type and press Enter to add | Optional, for your own grouping |
+   | Context | For example `128000` | Optional, in tokens |
+   | Parameter scale | For example `7` | Optional, in units of B (billion); decimals are allowed |
 
-### Types (`ModelType`)
+3. If you want an icon, click **Upload icon** and choose an image (any format; PNG and SVG are common).
+4. In the **Pricing** block fill in the four unit prices, in **CNY / 1M** (Chinese yuan per million tokens):
 
-| Id | Label |
-|----|-------|
-| `chat` | Chat |
-| `image` | Image |
-| `video` | Video |
-| `audio` | Audio |
-| `embedding` | Embedding |
-| `rerank` | Rerank |
+   | Form field | Meaning |
+   | --- | --- |
+   | Input price | Price per million tokens for the user's input |
+   | Completion price | Price per million tokens for the model's output |
+   | Cache read price | Price when a cached value is read |
+   | Cache write price | Price when a value is written to the cache |
 
-### Providers (`ModelProvider`)
+5. Click **Create model** to finish. On the edit page the button reads **Save** instead.
 
-`deepseek`, `qwen`, `zhipu`, `kimi`, `openai`, `anthropic`, `google`, `minimax`, `doubao`.
+When you edit an existing model, the form also shows a **Channel vendors** block listing every channel that currently uses this model and its priority, so you can judge the impact of your change.
 
-> ⚠️ Note: these are a **different value set** from the providers used by [Channels](/boss/gateway/channels). Do not mix them.
+### Type
 
-### Categories (`ModelCategory`)
+| Label in the UI | Which models it suits |
+| --- | --- |
+| Chat | Chat and question-answering language models |
+| Image | Text-to-image and image-to-image models |
+| Video | Video generation models |
+| Audio | Speech recognition or speech synthesis models |
+| Embedding | Turns text into vectors for retrieval |
+| Rerank | Re-orders retrieval results |
 
-`vision`, `moe`, `reasoning`, `tools`, `fim`, `math`, `coder`.
+### Vendor
+
+Options: DeepSeek, Qwen, Zhipu, Kimi, OpenAI, Anthropic, Google, MiniMax, Doubao.
+
+:::info Two different "provider" lists
+The **Vendor** here is the company that made the model. It is not the same list as the **Provider** you choose in [Channel Management](/boss/gateway/channels); pick from each list independently.
+:::
+
+### Categories
+
+Options: Vision, MoE, Reasoning, Tools, FIM, Math, Coder. Categories are only labels that make filtering easier; they do not affect calls.
 
 ## Prices and currency
 
-Prices are always entered in **CNY / 1M tokens**. When [Currency settings](/boss/gateway/currency-settings) selects USD, the system converts using `cnyToUsdRate` with fixed-point arithmetic.
+Always enter prices as **CNY / 1M Tokens**. When [Currency Configuration](/boss/gateway/currency-settings) is set to display US dollars, the page converts the values using the configured exchange rate automatically — you do not need to enter them in dollars.
 
-> ⚠️ Note: submit writes `prices.inputPrice` / `completionPrice` / `cacheReadPrice` / `cacheWritePrice`, while the edit form reads `inputPriceCny` and friends. Both sets exist in the types; the server-side read/write convention is unconfirmed.
+## Delete a model
 
-## Permissions
+1. Click **Delete** on a row in the list.
+2. You must **type the model name** in the confirmation dialog before the delete will run.
 
-Requires the **system administrator** role.
+:::warning Check that no channel is using it first
+If a channel still lists this model under **Supported Models**, deleting the card removes its price and display information. Before deleting, check the **Channel vendors** block on the edit page to see what references it.
+:::
+
+## Confirm it worked
+
+Go back to the **Model Configuration** list: the new model appears with its type, vendor and prices. Then find a call to that model in [Call Logs](/boss/gateway/audit) — if the cost column shows an amount, the price configuration is live.
+
+## FAQ
+
+| Symptom | Likely cause | What to do |
+| --- | --- | --- |
+| The model name cannot be changed | The name is fixed once created | The name is only an identifier; if you really need a new one, create it and delete the old entry |
+| Cost is empty in Call Logs | The model has no price yet, or the called model name does not match | Add the price here and check the model name |
+| The model exists but cannot be called | No channel lists it under **Supported Models** | Add the model name to the right channel in Channel Management |
+| The currency shown in the list differs | Currency display is config-driven | Switch the display currency in Currency Configuration |
+
+## Related
+
+- [Channel Management](/boss/gateway/channels): decides which line a request actually takes
+- [Currency Configuration](/boss/gateway/currency-settings): which currency prices are shown in
+- [Call Logs](/boss/gateway/audit): see the cost calculated from these prices

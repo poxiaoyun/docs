@@ -1,53 +1,48 @@
 ---
 title: 'Reset Password'
 updated: '2026-09-12'
-description: Forgot-password and update-password pages (v1 front-end placeholders).
+description: Where to click when you forget your password, what happens next, and why an administrator must reset it for now.
 ---
 
-## Overview
+# Reset Password
 
-The "Forgot Password?" link on the login page starts the password reset flow. Two pages exist in the codebase:
+When you forget your password you reach this page from "Forgot password?" on the sign-in page. This page explains what is on the screen, what happens when you click Send, and how to actually get your password changed today.
 
-| Page | Route | View |
-|------|-------|------|
-| Reset password (email input) | `/auth/reset-password` | `centered-reset-password-view.tsx` |
-| Update password (code + new password) | `/auth/update-password` | `centered-update-password-view.tsx` |
+:::warning Self-service reset is not available yet
+The screen is built, but it is not connected to email sending: after you enter your email and click **Send**, no email is actually sent and the page does not move on. To change your password, contact a platform administrator and have them reset it for you.
+:::
 
-> ❌ Error: In v1 these two pages are **not connected to a backend**. Submitting only runs `setTimeout(500)` and `console.info`s the form data (`centered-reset-password-view.tsx:48-55`, `centered-update-password-view.tsx:70-77`). No API is called and no password is actually changed. A full "email/phone + code → new password → redirect" flow does not exist.
+## Getting here from the sign-in page
 
-## Reset Password Page
+1. Open the sign-in page.
+2. Click **Forgot password?** below the password field.
+3. The page moves to the forgot password screen.
 
-Route: `/auth/reset-password`
+## What is on the page
 
-Only one field:
+| Element | Description |
+| --- | --- |
+| Title | Forgot password? |
+| Description | Please enter your email address. We will send a password reset link to your email. |
+| **Email** field | The email address you registered with |
+| **Send** button | Shows "Sending..." after you click it |
+| **Back to login** link | Returns to the sign-in page |
 
-| Field | Type | Required | Front-end Validation |
-|-------|------|----------|----------------------|
-| `email` | Text | ✅ | Non-empty + email format |
+## What actually happens now
 
-The page has a Send button and a return-to-login link. There is no phone input, no code input, and no "Next" step.
+1. Type your email address into the **Email** field; if the format is wrong, the field shows "Please enter a valid email address" below it.
+2. Click **Send**.
+3. The page briefly shows "Sending...", then stops. **No email is sent, and there is no redirect or success message.**
 
-> ⚠️ Note: The button says "Send", but submitting only prints data — it does not actually send an email code.
+:::warning How to change your password today
+Contact a platform administrator directly, tell them your account and that you need a password reset, and they will handle it on their side.
+:::
 
-## Update Password Page
+## How to sign in after the password is changed
 
-Route: `/auth/update-password`
+Once an administrator has reset it, sign in with the new password on the sign-in page; see [Login](/account/auth/login).
 
-Fields (`centered-update-password-view.tsx:27-46`):
+## Related
 
-| Field | Type | Required | Front-end Validation |
-|-------|------|----------|----------------------|
-| `code` | Text | ✅ | Non-empty and length ≥ 6 |
-| `email` | Text | ✅ | Non-empty + email format |
-| `password` | Password | ✅ | Non-empty and length ≥ 6 |
-| `confirmPassword` | Password | ✅ | Non-empty and must match `password` |
-
-A "resend code" component is rendered, but its callback is an empty function (`onResendCode={() => {}}`) and triggers no request.
-
-> ⚠️ Note: The page title and description are hard-coded English (e.g. `Request sent successfully!`), independent of the platform language.
-
-## Notes
-
-- Field validation on these pages is the **only** front-end constraint and does not represent the backend contract
-- The `password` ≥ 6 rule differs from the register page's `schemaHelper.password` (≥ 8) — a placeholder artifact
-- The planned backend reset endpoint and request body are unconfirmed
+- [Login](/account/auth/login)
+- [Security Settings](/account/iam/security)

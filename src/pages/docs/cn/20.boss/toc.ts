@@ -73,7 +73,7 @@ export const BOSS_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
           { title: '模型库', path: '/boss/moha-admin/models' },
           { title: '数据集', path: '/boss/moha-admin/datasets' },
           { title: '镜像仓库', path: '/boss/moha-admin/images' },
-          { title: 'Spaces', path: '/boss/moha-admin/spaces' },
+          { title: '空间', path: '/boss/moha-admin/spaces' },
           { title: '镜像站', path: '/boss/moha-admin/mirrors' },
           { title: '审计日志', path: '/boss/moha-admin/audit' },
           { title: '公告', path: '/boss/moha-admin/announcements' },

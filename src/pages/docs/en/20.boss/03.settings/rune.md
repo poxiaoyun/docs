@@ -1,74 +1,93 @@
 ---
 title: AI Platform Settings
 updated: '2026-09-12'
-description: 'Rune display settings — logo, product title, description and the Moha / KMS addresses.'
+description: 'Set the AI Platform title, logo and description, its internal service addresses, and idle auto-pause for development instances.'
 tags:
   - boss
   - settings
 ---
 
-## Feature overview
+# AI Platform Settings
 
-Rune settings maintain the display information for the Rune intelligent computing platform: logo, product title, product description, and the Moha and KMS service addresses; the page also has a second **development-service idle monitor** card. The display values are written into the `rune` field and top-level address fields of the platform global configuration.
+AI Platform Settings decide **how the AI Platform (Rune) appears to users**: its name, its logo, its description, and the two internal service addresses — Moha and KMS — that the platform needs to reach.
 
-This page corresponds to **Platform management → AI Platform Settings** in the Boss console (menu label from `navbar.rune_setting`).
+Further down the page there is a separate card, **Development Instance Idle Monitor**, which can automatically pause development instances that nobody has used for a long time and free up compute.
 
-## Access path
+This page is under **System Settings → AI Platform Settings** in the left-hand menu.
 
-Boss console → Platform management → **AI Platform Settings**
+:::tip This page changes the signboard, not the switch
+The title, logo and description here only make the entry **look** like your own product.
+They do **not** make the AI Platform menus appear or disappear; whether a user can enter the AI Platform depends on whether their tenant has been assigned the product.
+The only functional switch on this page that directly affects users is the idle monitor below.
+:::
 
-Console route: `/settings/rune`
+## Before you start
 
-## Settings
+- Your account must be a **system administrator**.
+- Prepare the logo image: **PNG or SVG**, no larger than **128 KB**.
+- If you plan to use idle monitoring, first decide which development instances may accept being paused when nobody is using them.
 
-| UI label | Field | Type | Constraint | Notes |
-|----------|-------|------|-----------|-------|
-| (Logo upload) | `rune.logo` | Image upload | Max **128 KB**, **PNG / SVG** | Stored as Base64 |
-| Product title | `rune.title` | Text | Max **10 characters** | Navbar title |
-| Product description | `rune.description` | Multiline | Max **100 characters**, 4 rows | Product summary |
-| Moha address | `mohaAddress` | Text | — | Moha service address |
-| KMS address | `kmsAddress` | Text | — | KMS service address |
+## Page structure
 
-> ⚠️ Note: the field name for "product title" is **`rune.title`** (the UI label is `navbar_title`), not a `navbar_title` field.
+Top to bottom the page has two cards, each saved on its own:
 
-> ⚠️ Note: the logo limit (128 KB) is much smaller than the platform logo (3 MB) because it is embedded in the configuration as Base64.
+| Card | What it controls |
+| --- | --- |
+| Title and Logo | The AI Platform name, logo, description and internal service addresses |
+| Development Instance Idle Monitor | Whether idle development instances are paused automatically, and after how long |
 
-## Development-service idle monitor
+## Set the name and logo
 
-Below the display-settings card there is a second card, "Development-service idle monitor", which automatically suspends a development service when its GPU / vGPU utilization stays at 0% for a continuous period. It saves independently into `rune.idleMonitor.im`.
+1. Fill in the **Title and Logo** card:
 
-| UI label | Field | Type | Constraint | Default |
-|----------|-------|------|-----------|---------|
-| Enable automatic suspension of idle development services | `rune.idleMonitor.im.enabled` | Switch | — | Off |
-| Idle duration (minutes) | `rune.idleMonitor.im.idleMinutes` | Number | Integer, **1–10080** minutes | **30** |
+   | Setting | What to fill in | What happens when you change it |
+   | --- | --- | --- |
+   | Logo | Upload a PNG or SVG, no larger than **128 KB** | Replaces the icon in the **Products** entry and on AI Platform pages |
+   | Product Title | At most **10 characters**; defaults to the built-in product name | Replaces the name shown in the entry and the navigation bar |
+   | Product Description | At most **100 characters**, and it can wrap onto 4 lines | Replaces the product description text |
+   | Moha Address | For example `https://moha.example.com` | The address the platform uses internally to reach Moha |
+   | KMS Address | For example `https://kms.example.com` | The address the platform uses internally to reach KMS |
 
-- The "idle duration" field is disabled while the switch is off.
-- Submitting writes `rune.idleMonitor.im.{enabled, idleMinutes}` and shows the same "Updated, please refresh the page" message on success.
+2. Choosing a logo file **triggers an immediate save** that writes the logo, title, description and both addresses together.
 
-## Save behaviour
+3. If you only changed the text, click **Confirm** at the bottom of the card to save.
 
-- **Logo upload**: triggers a save immediately (writing `rune.logo`, `rune.title`, `rune.description`, `mohaAddress` and `kmsAddress` together)
-- **Confirm**: saves all form fields
+:::warning Wrong addresses break features
+The Moha Address and KMS Address are used by the platform to call those two services internally; a wrong value makes the related features unavailable.
+If you are not sure of the correct addresses, ask the deployment or operations team first instead of guessing.
+:::
 
-Written structure:
+## Set the development instance idle monitor
 
-```yaml
-mohaAddress: "https://moha.example.com"
-kmsAddress: "https://kms.example.com"
-rune:
-  logo: "data:image/png;base64,iVBORw0KGgo..."
-  title: "Rune"
-  description: "Product summary"
-```
+In the **Development Instance Idle Monitor** card the platform watches the GPU or vGPU usage of development instances: **as soon as usage stays at 0% for a continuous period, the instance is paused automatically** so that it stops occupying compute.
 
-A successful save shows "Updated, please refresh the page".
+| Setting | What to fill in | What happens when you change it |
+| --- | --- | --- |
+| Enable auto-pause for idle development instances | Switch, **off** by default | When on, development instances that reach the idle duration are paused automatically; when off, they are never paused automatically |
+| Idle Duration (minutes) | A whole number between **1 and 10080**, default `30` | The instance is paused once usage has been 0% for this long; anything above 10080 (7 days) is rejected |
 
-## Requests
+- While the switch is **off**, the **Idle Duration** input is greyed out and cannot be edited.
+- Click **Confirm** on this card to save.
 
-| Request | Method | Notes |
-|---------|--------|-------|
-| `/api/iam/global-config` | `PUT` | Save the global configuration (Rune settings live in `rune`) |
+:::warning Auto-pause interrupts instances users are working in
+Once triggered, the development instance is paused and any jobs running inside it may be interrupted. Agree a sensible idle duration with your users before turning this on; with the switch off nothing is paused automatically.
+:::
 
-## Permissions
+## Confirming the result
 
-Requires the **system administrator** role.
+- Both cards show "**Update successfully, please refresh the page**" after a successful save.
+- Refresh the browser, then check the **Products** entry or an AI Platform page to see whether the name and logo have updated.
+- To check the idle monitor, watch whether a development instance idle for longer than the configured duration becomes paused.
+
+## Common questions
+
+| What you see | Likely cause | What to do |
+| --- | --- | --- |
+| The logo will not upload | It is not PNG/SVG, or it is larger than 128 KB | The limit here is smaller than the 3 MB of Platform Settings — use a smaller image |
+| **Idle Duration** cannot be edited | The switch above it is off | Turn on "Enable auto-pause for idle development instances" first |
+| An instance was paused and I want it back | The idle auto-pause triggered | Start the development instance again |
+
+## Related
+
+- [Platform Settings](/boss/settings/platform)
+- [Moha Hub Settings](/boss/settings/moha)

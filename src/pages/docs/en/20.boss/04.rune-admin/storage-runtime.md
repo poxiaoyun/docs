@@ -1,7 +1,7 @@
 ---
 title: Storage Cluster & Runtime
 updated: '2026-09-12'
-description: How storage instances, system instances, and the system template market are managed in a Boss cluster.
+description: Manage a cluster's storage instances and platform runtime components so workloads have persistent storage.
 tags:
 - boss
 - rune-admin
@@ -9,36 +9,80 @@ tags:
 - system
 ---
 
-## Overview
+# Storage Cluster & Runtime
 
-From the single-cluster perspective, Boss manages not only business workloads but also the storage and system-level instances the platform needs to run.
+The inference services, fine-tuning jobs and development environments that users create all need somewhere to store things: model files, datasets, intermediate results. The Storage Cluster page is where you manage that storage capability, and like System Apps it is an instance deployed from a template.
 
-## Related Pages
+By the end of this page you can: view the storage instances already in a cluster, deploy a new storage cluster, and troubleshoot storage-related problems.
 
-| Page | Frontend Route | Purpose |
+:::tip Two terms compared
+
+- **Storage cluster** is the component in a cluster that is dedicated to storing files.
+- **System app** is middleware that ships with the platform, such as monitoring, logging or a gateway.
+
+:::
+
+## Before you start
+
+- You need a **System Administrator** account.
+- Prerequisite: the cluster is connected to the platform, and the market must contain a storage-class System-domain template.
+
+## Getting there
+
+1. In the left sidebar click **AI Platform** → **Cluster**, then open the target cluster.
+2. In the left sidebar under **Operations Management**, click **Storage Cluster**.
+
+## The storage cluster list
+
+The list fields are the same as for System Apps:
+
+| Column | Meaning |
+| --- | --- |
+| Name | The instance name; click to open the detail page |
+| Version | The template version used for deployment |
+| Status | The instance's current status |
+| Created At | — |
+
+Actions on each row: **Edit**, **Delete** (with a confirmation dialog).
+
+## Deploy a storage cluster
+
+1. On the instance list, click **Create Storage Cluster** in the top right.
+2. The page jumps to the **System Template Market** (storage category).
+3. Choose a storage-class template and a version, then click **Deploy**.
+4. On the deployment page, fill in the parameters the template asks for.
+5. After you submit, return to the list and confirm the instance status moves step by step to running.
+
+:::info Storage and system apps share one list
+
+Storage clusters and system apps share the same instance list and differ only by category. So the ways to operate them, the columns and the detail page are all the same — only the entry point and the template category differ.
+
+:::
+
+## Platform runtime components
+
+Besides storage, a cluster also runs platform runtime components such as monitoring, logging and gateways. These are managed on the **System Apps** page, and they too are deployed from the system template market; see [System Apps](/boss/rune-admin/systems) and [System Template Market](/boss/rune-admin/system-market).
+
+## Typical use cases
+
+- Initialize the baseline storage capability of a new cluster.
+- Install a missing shared runtime component.
+- Troubleshoot a platform-level storage instance that is running abnormally.
+
+## Confirming the result
+
+- The new instance appears in the list, and its **Status** eventually becomes running.
+- On the user side, the matching storage capability becomes selectable when creating an instance.
+
+## Common questions
+
+| Symptom | Likely cause | What to do |
 | --- | --- | --- |
-| Storage Clusters | `/rune/clusters/:cluster/storages` | Shows the cluster's storage-class instances as an instance list; add, view, and delete |
-| System Apps | `/rune/clusters/:cluster/systems` | Shows system-level instances and their running status |
-| System Template Market | `/rune/clusters/:cluster/system-market` | Pick a template from the market and deploy a new system / storage instance |
+| There is nothing to choose when creating a storage volume | The cluster has no usable storage component | Deploy a storage cluster on this page |
+| The storage instance is abnormal | The parameters are wrong or the node lacks resources | Open the detail page, check the status and events, then retry |
 
-## Storage Clusters
+## Related
 
-Storage Clusters and System Apps **share the same instance list component**, distinguished by `category`: storage is `category = storage`.
-
-List columns: `name`, `product.version`, `status.phase`, `creationTimestamp`; actions support edit and delete.
-
-Common usage:
-
-1. Open the cluster's "Storage Clusters" page to view existing storage instances.
-2. Click Add to navigate to the system template market and pick a storage-class template.
-3. Fill in the deployment parameters and submit, then return to the list to confirm the running status.
-
-## System Apps and the System Market
-
-System Apps target whole-cluster or platform-side infrastructure, and their deployment source is the System Template Market. For details, see [System Instance Management](./systems) and [System Template Market](./system-market).
-
-## Good Use Cases
-
-- Initialize the baseline capabilities of a new cluster.
-- Install additional shared runtime components.
-- Troubleshoot abnormal runs of platform-level storage instances.
+- [System Apps](/boss/rune-admin/systems)
+- [System Template Market](/boss/rune-admin/system-market)
+- [App Template](/boss/rune-admin/templates)

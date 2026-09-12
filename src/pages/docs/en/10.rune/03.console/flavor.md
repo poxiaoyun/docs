@@ -1,61 +1,67 @@
 ---
 title: 'Flavor'
 updated: '2026-09-12'
-description: 'The compute flavors visible to a tenant and how to filter them.'
+description: 'What a flavor is, how it decides the size of machine you can request, and how to filter the list.'
 tags:
   - rune
   - console
 ---
 
 # Flavor
-A flavor defines a set of directly selectable resource combinations (CPU, memory, accelerator cards, etc.). The "flavor" chosen when creating an instance comes from here.
 
-Path: `/rune/tenants/:tenant/flavors`
+A flavor answers "**how big a machine can I request**". A flavor is a packaged set of resources — how many CPU cores, how much memory, whether there are accelerator cards and which model — and you simply pick one from a dropdown when creating an instance. The platform then allocates that combination to you.
 
-## Current Capabilities
+Flavors are configured by platform administrators on the backend. On your side you **can view them but cannot create or modify them**.
 
-The flavor page **depends on the currently selected region/cluster**: no query is issued when no region is selected.
+:::tip Flavor vs. quota
 
-| Capability | Description |
+- **Flavor**: how big a single machine can be, meaning which resource combinations you can pick.
+- **Quota**: how much allowance you can spend over this period.
+
+Only when both are satisfied can an instance be created.
+
+:::
+
+## Before you start
+- Role: your tenant role must be **Administrator** or **Developer**.
+- Region: select a **cluster** at the top of the page first. With no cluster selected, the Flavor page issues no query and shows no data.
+
+## Where to find flavors
+1. Click your avatar in the top-right corner.
+2. In the menu, go to **Tenant** (your tenant name appears next to it).
+3. On the tenant page, click the **Flavor** tab.
+
+## Reading the flavor list
+| Column | Description |
 | --- | --- |
-| View by region | Queried with the current region/cluster |
-| Flavor filtering | `FlavorFilterBar`, filtering step by step by type / vendor / model |
-| Resource display | `FlavorResources` displays the resource combination as tags |
+| Name | The flavor name; its description appears in smaller text below |
+| Type | The resource category, for example CPU, GPU, VGPU |
+| Model | The accelerator card model (including the vendor) |
+| Flavor | The resource combination this flavor contains, for example how many CPU cores, how much memory, how many cards |
 
-### List Fields
+This page has no search. Use the filter bar to narrow the list.
 
-Fields come from `src/pages/rune/tenant/flavors/list.tsx`:
+## Filtering flavors
+Above the list there is a filter bar that narrows results step by step through **Type → Vendor → Model**:
 
-| Column | Field | Description |
-| --- | --- | --- |
-| Name | `name` | Flavor name; `description` is shown underneath |
-| Type | `type` | Resource type (e.g. GPU / CPU / VGPU / NPU, etc.) |
-| Model | `model` | Accelerator model (including `vendor`) |
-| Flavor | `resources` | Resource combination tags rendered by `FlavorResources` |
+1. Click **Type** first (for example GPU); the Vendor and Model options below change accordingly.
+2. Then click **Vendor**.
+3. Finally click **Model**, and the list keeps only the matching flavors.
 
-The page disables search and the toolbar and keeps only the filter bar.
+Click a condition that is already selected to clear it again.
 
-### Filter Dimensions
+## Where to see how much allowance is left
+The Flavor page only tells you **what you can pick**; it does not show usage. To see how much is left, go to **Quota** in the same set of tenant tabs:
 
-`FlavorFilterBar` supports three-level linked filtering:
+1. Avatar → **Tenant** → **Quota** tab.
+2. In the **Quota** column you see "used / total" and a progress bar — that is the usage.
 
-1. **Type**: candidate types are limited by `flavorAllowedTypes`, currently `GPU`, `Accelerator`, `VGPU`, `FPGA`, `ASIC`, `NPU`, `DPU`, `TPU`, `CPU`, `MEMORY`.
-2. **Vendor**: filtered by the selected type
-3. **Model**: filtered by the selected type and vendor
+To see how much allowance a particular **workspace** received, open **Workspace** in the tenant tabs, open that workspace, and then click the **Quota** tab.
 
-`QuotaFilterBar` and `FlavorFilterBar` share the same filter component (`SelectorFilterBar`); the quota page simply does not restrict a type allowlist.
+:::tip Why can't I select a certain flavor
+Even if a flavor appears in the list, that does not guarantee it can be deployed. The current workspace must also have remaining quota on the matching resource. When creation fails, check your allowance on the Quota page instead of only checking whether the flavor exists.
+:::
 
-## Relationship Between Flavors and Quotas
-
-| Concept | Question it answers |
-| --- | --- |
-| Quota | How much resource you may use at most |
-| Flavor | What combination you may choose per deployment |
-
-A flavor is usable only when the current cluster has that flavor and the current tenant/workspace still has quota on the corresponding resource.
-
-> ⚠️ Note: Mechanisms from the old documentation such as "sold out (`status.soldOut`)" and "three-level flavor query" have no corresponding display logic on the frontend list page, so they are not yet confirmed here.
-
-## Permission Requirements
-
-The flavor page is open to all members, view-only; flavors cannot be created or modified.
+## Related
+- [Quota](/rune/console/quota)
+- [Create a workload](/rune/guide/workloads)

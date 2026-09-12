@@ -1,81 +1,119 @@
 ---
 title: 'Security Settings'
 updated: '2026-09-12'
-description: Change password / email / phone and MFA (collection page).
+description: How to change your password, email, mobile number, and multi-factor authentication, item by item.
 ---
 
-## Overview
+# Security Settings
 
-"Security Settings" is a documentation-level grouping. There is **no** dedicated "Security" Tab in code. The features live in four Personal Center tabs, described together here.
+"Security Settings" is not a single tab. It is the four account-security items in the Personal Center: **Password**, **Email**, **Mobile Number**, and **Multi-factor Authentication**. This page covers where each one lives, what verification it needs, and what happens afterwards.
 
-| Feature | Tab | Route | View |
-|---------|-----|-------|------|
-| Change password | Password | `/iam/account/change-password` | `change-password.tsx` |
-| Change email | Email | `/iam/account/change-email` | `change-email.tsx` |
-| Change phone | Mobile Number | `/iam/account/change-mobile` | `change-mobile.tsx` |
-| MFA | Multi-factor Authentication | `/iam/account/mfa` | `mfa.tsx` |
+:::tip Doors and a spare key
+Your password is the key you open the door with; your email and mobile number are the contact details on file, used to recover the account if you forget the password; multi-factor authentication is a second lock on the door that only recognises your phone.
+:::
 
-## Change Password
+## Before you start
 
-| Field | Key | Front-end Validation |
-|-------|-----|----------------------|
-| Old password | `oldPassword` | Non-empty |
-| New password | `newPassword` | ≥ 8 chars, printable ASCII |
-| Confirm new password | `confirmNewPassword` | ≥ 8 chars, printable ASCII, must match |
+- You can use these as soon as you sign in; everything you change belongs to your own account.
+- Before changing your email or mobile number, make sure you can sign in to the **new email** or reach the **new mobile number**, because the verification code is sent to the new address.
+- Before turning on multi-factor authentication, install an authenticator app on your phone.
 
-Extra rule: `oldPassword` must differ from `newPassword`.
+## Where each of the four settings lives
 
-| Item | Value |
-|------|-------|
-| Endpoint | `POST /api/iam/current/reset-password` |
-| Body | `{ "password": "<old>", "newPassword": "<new>" }` |
+| Setting | Tab | What it is for |
+| --- | --- | --- |
+| Password | Password | The password you type when signing in |
+| Email | Email | Used to sign in, recover the account, and receive verification codes |
+| Mobile Number | Mobile Number | Used to sign in and to receive SMS verification codes |
+| Multi-factor Authentication | Multi-factor Authentication | A dynamic code in addition to your password when signing in |
 
-> ⚠️ Note: There is **no** password strength indicator (weak/medium/strong). Rules come from `schemaHelper.password`, the same as registration.
+## Changing your password
 
-## Change Email
+1. Click your avatar in the top-right corner → **Settings**.
+2. Click the **Password** tab.
+3. Fill in the three fields:
 
-| Field | Key | Front-end Validation |
-|-------|-----|----------------------|
-| New email | `newEmail` | Non-empty + email format |
-| Code | `code` | Non-empty (email code) |
+   | Setting | How to fill it in | What changes |
+   | --- | --- | --- |
+   | Old Password | The password you use now | A wrong value blocks submission |
+   | New Password | At least 8 characters, printable ASCII only | It cannot be the same as the old password |
+   | Confirm Password | Type the new password again | It must match the new password exactly |
 
-| Item | Value |
-|------|-------|
-| Endpoint | `POST /api/iam/current/reset-email` |
-| Body | `{ "newEmail": "...", "code": "..." }` |
+4. Click **Save**.
 
-## Change Phone
+Rules for the new password: at least 8 characters, only letters, digits, and common symbols, with no Chinese characters, spaces, or accented letters.
 
-| Field | Key | Front-end Validation |
-|-------|-----|----------------------|
-| New phone | `newPhone` | Non-empty + 6–16 digits |
-| Code | `code` | Non-empty (SMS code) |
+:::warning Changing your password does not sign you out
+After changing it you stay signed in and an **Updated successfully** message appears at the top of the page. Remember the new password right away; if you forget it, the only way back is the password recovery flow.
+:::
 
-| Item | Value |
-|------|-------|
-| Endpoint | `POST /api/iam/current/reset-phone` |
-| Body | `{ "newPhone": "...", "code": "..." }` |
+## Changing your email
 
-## Verification Code Mechanism
+1. Click the **Email** tab.
+2. Type the new email address into the **Email** field.
+3. Click **Send code**, fetch the code from the new inbox, and type it into the **Verification Code** field.
 
-Email and phone changes share `RHFVerifyCode`:
+   | Setting | How to fill it in | What changes |
+   | --- | --- | --- |
+   | Email | The new address to rebind, in a valid format | The verification code is sent to this new address |
+   | Verification Code | The code received in the new inbox | The rebind succeeds only after it is verified |
 
-- Send: `POST /api/iam/send-code` with `{ action, target, type }`
-  - `action` defaults to `reset`; for email/phone change, `target` is the newly entered value and `type` is `email` / `phone`
-- The button enters a **60-second countdown** after sending
-- If the backend returns `Need captcha`, the front-end:
-  1. Calls `GET /api/iam/captcha`
-  2. Opens a dialog for the graphic CAPTCHA
-  3. Resends with `captcha: { code, key, provider, name }`
+4. Click **Save**; the page shows **Updated successfully**.
 
-> ⚠️ Note: The graphic CAPTCHA is not a fixed prerequisite; it is triggered only when the backend returns `Need captcha`. Code TTL is backend-defined and unconfirmed.
+After you send an email code the button turns into a countdown such as `60s`, and you can click it again only when the countdown ends.
 
-## MFA
+## Changing your mobile number
 
-See [MFA](/account/auth/mfa). Key points: entering the page auto-calls `POST /api/iam/init-mfa`; there is no separate "Enable MFA" button; the Stepper has two steps; only the first recovery code is shown.
+1. Click the **Mobile Number** tab.
+2. Type the new number into the **Mobile Number** field (6–16 digits).
+3. Click **Send code**, receive the SMS code, and type it in.
 
-## Notes
+   | Setting | How to fill it in | What changes |
+   | --- | --- | --- |
+   | Mobile Number | The new number to rebind, 6–16 digits | The SMS code is sent to this new number |
+   | Verification Code | The SMS code you received | The rebind succeeds only after it is verified |
 
-- Security actions all live in Personal Center tabs — there is no dedicated Security page
-- Changing the password requires the old password
-- Changing email/phone requires a code for the new value
+4. Click **Save**; the page shows **Updated successfully**.
+
+:::info You may need to pass a graphic code too
+If the platform considers the operation risky, a graphic verification code window opens when you click **Send code**. Type the characters from the image and click **Next** to continue sending.
+:::
+
+## Turning on multi-factor authentication
+
+Once multi-factor authentication (also called a second factor) is on, you enter a 6-digit number from your phone app, changing in real time, in addition to your password when signing in.
+
+1. Click the **Multi-factor Authentication** tab. The page generates a QR code automatically.
+2. Open the authenticator app on your phone (the page uses Google Authenticator as its example; similar apps work too).
+3. Scan the QR code on the page with the app.
+
+   | Setting | How to fill it in | What changes |
+   | --- | --- | --- |
+   | QR code | Scan it with the authenticator app | Binds this phone to your account |
+   | Verification Code | The 6-digit number the app shows now | Binding succeeds only when it is correct |
+   | Recovery Code | Shown only once after a successful bind | Used to sign in if you lose your phone; copy it down on the spot |
+
+4. Type the 6-digit number currently shown in the app into the **Verification Code** field.
+5. Click **Bind**.
+6. On success a **You have successfully enabled multi-factor authentication!** message appears at the top of the page, along with one **Recovery Code**.
+
+:::warning Save the recovery code on the spot
+The recovery code is shown only once, when binding succeeds, and the page gives you just one. If you lose your phone or switch to a new one without having written the code down, you will be locked out of signing in and will have to ask a platform administrator for help.
+:::
+
+After a successful bind, opening this tab again shows the enabled state directly, plus a **Reset** button. The page has no "turn off multi-factor authentication" switch; **Reset** only takes you back to the first step to bind once more.
+
+## Common questions
+
+| What you see | Likely cause | What to do |
+| --- | --- | --- |
+| No verification code arrives | The new email or mobile number is wrong, or mail and SMS are delayed | Check the new address, wait for the countdown to end, and try again |
+| **New and old passwords cannot be the same** | The new password equals the old one | Use a new password you have not used before |
+| **Passwords do not match** | The two new passwords you typed differ | Type the same new password twice |
+| It says the password is not compliant | Fewer than 8 characters, or it contains Chinese characters or spaces | Use a mix of letters, digits, and symbols, at least 8 characters long |
+
+## Related
+
+- [Multi-Factor Authentication (MFA)](/account/auth/mfa)
+- [Roles and Permissions](/account/auth/roles)
+- [User Profile](/account/iam/profile)

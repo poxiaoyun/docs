@@ -1,73 +1,92 @@
 ---
 title: 'Metrics'
 updated: '2026-09-12'
-description: 'List, creation, experiment endpoint API, and fine-tuning integration for experiment tracking services.'
+description: 'Deploy an experiment tracking service in the console, get its access address, and record training metrics into it.'
 tags:
   - rune
   - console
 ---
 
 # Metrics
-Experiment Management (`category=experiment`) is used to deploy experiment tracking services (such as MLflow, Aim, etc.) and view their Web UI. Deployment follows the same approach as other categories: template + JSON Schema form.
 
-List path: `/rune/tenants/:tenant/clusters/:cluster/workspaces/:workspace/experiments`
+**Metrics** is the instance type in the Rune console dedicated to running **experiment tracking services**, most commonly tools like MLflow. While you train a model, you record each run's parameters, metrics, and model files into it, and afterwards you can compare the results of different runs on one web page.
 
-## Experiment Service List
+When you finish this page you can do three things: **deploy a metrics service**, **get its access address**, and **record metrics into it during training**.
 
+:::tip What a metrics service is
+Think of it as the "record book server" of a lab: the training job does the writing, and it does the storing and displaying.
+:::
+
+## Before you start
+- Role: your tenant role must be **Administrator** or **Developer**, otherwise the **Metrics** menu is not shown on the left.
+- Context: pick your **cluster** and **workspace** at the top of the page first.
+- Template: metrics services are created from templates, and which one you can deploy depends on which metrics templates your cluster has.
+
+## Where to find it
+1. In the left menu, find the **Observability** group.
+2. Click **Metrics** to open the metrics service list.
+
+## Deploy a metrics service
+1. Click **Create Metrics** at the top right of the list.
+2. The page jumps to the template selection page; pick a metrics template and its version.
+3. Fill in the basic information, then the template parameters. The parameters depend on the template, and you can switch between form and JSON modes while filling them in.
+4. Submit, then go back to the **Metrics** list and wait for the deployment to finish.
+
+> The concrete fields of the basic information and template parameters come from the template you select, and they may differ between templates. The page marks which ones are required in real time.
+
+## How to read the metrics service list
 | Column | Description |
 | --- | --- |
 | Name | Instance name; click to open the detail page |
-| Metrics Service | The template column, whose i18n key for this category is `metrics_service` |
-| Flavor | Resource summary resolved from `values.flavor` |
-| Status | `status.phase` |
-| Access | `ConnectionButtons`, providing quick Web / SSH access |
-| Created By | Taken from the labels on the instance |
-| Created At | Instance creation time |
+| Service | Which template this instance uses |
+| Resource Spec | CPU, memory, and accelerators it occupies |
+| Status | Running state, see the table below |
+| Access | Quick access buttons such as Web and SSH |
+| Creator | Who created it |
+| Created At | When the instance was created |
 
-Row action menu: start/stop, edit, delete.
+Common statuses:
 
-## Creating an Experiment Tracking Service
+| Status | Meaning |
+| --- | --- |
+| Pending | Queued, or the image is still being pulled |
+| Installing | Being deployed |
+| Running / Healthy | Deployed successfully and reachable |
+| Paused | Manually stopped |
+| Processing failed | Something went wrong; check the **Logging** tab for the reason |
+| Deleting | Being deleted |
 
-1. Click the **Create Resource** button in the upper-right corner of the list page; it navigates to `/rune/products/experiment`.
-2. Select an experiment template and version (you can also enter from App Market with one click).
-3. Fill in the basic information (`id` / `name` / `description`).
-4. Fill in the template parameters (rendered dynamically from the Schema, with switchable form/JSON modes), then submit.
+Hovering over or selecting a row also gives you **Start**, **Stop**, **Edit**, and **Delete** in the row action menu.
 
-## Experiment Endpoints and Fine-tuning Integration
-
-The platform provides a dedicated API to obtain experiment tracking endpoints usable by fine-tuning tasks:
-
-```typescript
-// src/services/instance.ts
-export const listExperimentEndpoints = (
-  tenant: string,
-  cluster: string,
-  workspace: string
-): Request<{ items: ExperimentEndpointItem[] }> => ({
-  method: 'GET',
-  url: `/api/cloud/tenants/${tenant}/clusters/${cluster}/workspaces/${workspace}/instances:experiment-endpoints`,
-});
-```
-
-- **Method / path**: `GET .../instances:experiment-endpoints`
-- **Response**: list of endpoints of experiment tracking instances (`{ items: [...] }`)
-- **Purpose**: source of candidate values for the experiment tracking address when creating a fine-tuning task
-
-> 💡 Tip: In the fine-tuning deployment form, the "experiment tracking address" is an extended control defined by the template Schema; once selected, the training process reports metrics to the corresponding tracking service. The exact field name is determined by the template Schema.
-
-## Instance Status
-
-`status.phase` values are defined in `InstanceStatusPhaseEnum` (see [Creating Workloads](/rune/guide/workloads) for the full table).
-
-## Instance Detail
+## What the detail page can do
+Click an instance name to open the detail page. It has four tabs at the top:
 
 | Tab | Content |
 | --- | --- |
-| Overview | Basic information card, Pod list |
-| Monitoring | Instance monitoring panel |
-| Logs | Instance logs |
-| Events | Kubernetes event stream |
+| Overview | Basic information card and container list |
+| Monitoring | Instance resource monitoring panel |
+| Logging | Instance runtime logs |
+| Events | System event stream for troubleshooting scheduling, mounting, and similar problems |
 
-## Permission Requirements
+The **Actions** menu at the top right contains **Edit**, **Start**, **Stop**, **Scale**, and **Delete**. Deletion cannot be undone and asks for a second confirmation first.
 
-Experiment services belong to the Observability group; navigation requires the tenant role to be `ADMIN` or `DEVELOPER`.
+## Connect metrics to a training job
+Once a metrics service is deployed, some **fine-tuning** templates offer an option in their deployment form for an "experiment tracking address", where you can pick one of your deployed metrics services. Metrics from training are then recorded into that metrics service.
+
+Whether this option appears, and what it is called, depends on the fine-tuning template you choose. See [Training and Fine-tuning](/rune/console/finetune) for details.
+
+## Confirm it worked
+Back in the **Metrics** list you can see the new instance, and once its **Status** becomes Running or Healthy the deployment succeeded. At that point click the Web icon in the **Access** column to open the metrics service interface; some templates do not offer a web interface and only provide SSH.
+
+## FAQ
+| Symptom | Likely cause | What to do |
+| --- | --- | --- |
+| The status stays Pending | Cluster resources are temporarily short, or the image is still being pulled | Wait a few minutes, or check the **Events** tab for hints |
+| The status is Processing failed | Wrong parameters, or the template does not match the resources | Open the **Logging** tab and read the error lines |
+| The Access button does not open | The service is not ready yet, or this template has no web interface | Wait until the status becomes Running; otherwise use SSH |
+| The instance is missing after creation | The context switched to another cluster or workspace | Check the cluster and workspace at the top of the page |
+
+## Related
+- [Logs](/rune/console/logging)
+- [Training and Fine-tuning](/rune/console/finetune)
+- [Create Workloads](/rune/guide/workloads)

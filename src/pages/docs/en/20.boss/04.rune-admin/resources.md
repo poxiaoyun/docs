@@ -1,55 +1,71 @@
 ---
 title: Workloads
 updated: '2026-09-12'
-description: Tab pages and use cases of the cluster-level Kubernetes resource browser in Boss.
+description: 'Browse the objects running in a cluster by type, to confirm that something was created and is in the state you expect.'
 tags:
 - boss
 - rune-admin
 - kubernetes
 ---
 
-## Overview
+# Workloads
 
-Boss provides a unified Kubernetes resource browser entry on the cluster detail page (the "Workloads" sidebar item), letting administrators view core objects in the cluster directly.
+Workloads (the Kubernetes resource browser) is the cluster's "object view": it lists what is running in the cluster by type, so you can confirm whether a particular object was created and where it lives.
 
-## Access Path
+The names here are fairly technical, so use this table for reference:
 
-Boss -> Cluster Management -> select a cluster -> Workloads
-
-Frontend route: `/rune/clusters/:cluster/resources`
-
-## Supported Resource Tabs
-
-The frontend currently has the following built-in resource type tabs:
-
-- Pods
-- Nodes
-- Deployments
-- StatefulSets
-- DaemonSets
-- Jobs
-- CronJobs
-- Services
-- Ingresses
-- IngressClasses
-- StorageClasses
-- ConfigMaps
-- Secrets
-- PersistentVolumeClaims
-
-## Page Capabilities
-
-| Capability | Description |
+| Tab in the interface | Plain explanation |
 | --- | --- |
-| Tab switching | Switch between resource types to quickly browse object lists |
-| List display | Shows fields such as status, name, and namespace per the resource definition |
-| Resource actions | Some resources support viewing details or performing additional actions |
-| Node extended actions | Under the Nodes tab, further node operations can be combined |
+| Node | One machine |
+| Pod | A group of containers that run together; the smallest unit of execution |
+| Deployment / StatefulSet / DaemonSet | Three ways of keeping a program running |
+| Job / CronJob | A task that runs once / a task that runs on a schedule |
+| Service / Ingress / IngressClass | Ways of exposing a program to callers |
+| StorageClass / PersistentVolumeClaim | Ways of defining and using storage |
+| ConfigMap / Secret | Where configuration and sensitive values are kept |
 
-## Good Use Cases
+## Before you start
 
-- Confirm whether a Kubernetes object was created successfully.
-- Check related resources such as Services, Ingresses, and PVCs in a namespace.
-- Cross-check with the cluster logs, events, and monitoring pages.
+- You need a **system administrator** account.
+- Prerequisite: the cluster is connected to the platform.
 
-> 💡 Tip: The resource browser is suited to an "object view" investigation; if you care about capacity, load, or performance, start with the overview, node, or GPU dashboards instead.
+## How to open it
+
+1. In the left-hand menu, click **AI Platform** → **Cluster Management**, then open the target cluster.
+2. In the left-hand **Operations Management** group, click **Workloads**.
+
+The page opens on the **Pod** tab by default, and the top bar switches between 14 resource types.
+
+## Supported tabs
+
+Pod, Node, Deployment, StatefulSet, DaemonSet, Job, CronJob, Service, Ingress, IngressClass, StorageClass, ConfigMap, Secret, PersistentVolumeClaim.
+
+## What you can do
+
+| Capability | Meaning |
+| --- | --- |
+| Switch tabs | Move between resource types to view their object lists |
+| View the list | Show columns such as name, namespace and status as defined for that type |
+| View details | Click an object name to open its details, with basic information, status, events and YAML |
+| Node actions | On the **Node** tab you can **Cordon** or **Uncordon** a machine, with a confirmation dialog |
+
+:::tip When to use this page
+
+- You want to confirm that an object was created successfully.
+- You want to know which namespace a Service, Ingress or PersistentVolumeClaim lives in.
+- You want to temporarily stop a machine from accepting work (for example before maintenance).
+
+If what you care about is capacity, load or performance, **Cluster Status**, **Node Status** or **Accelerator Status** will answer you more directly.
+
+:::
+
+## Confirming the result
+
+- The target object appears on the matching tab, in the state you expect.
+- After you use **Cordon** on the **Node** tab, that machine is marked as no longer accepting new work; **Uncordon** restores it.
+
+## Related
+
+- [Nodes & Accelerators](/boss/rune-admin/nodes-gpu)
+- [Logs & Scheduler](/boss/rune-admin/observability)
+- [Storage & Runtime](/boss/rune-admin/storage-runtime)

@@ -1,38 +1,49 @@
 ---
 title: Platform
 updated: '2026-09-12'
-description: 'Boss platform global configuration — branding, sub-product settings, AI assistant, license and members.'
+description: 'Change the platform name, logo, sub-product branding, AI assistant, license and administrator list.'
 tags:
   - boss
   - settings
 ---
 
-## Overview
+# Platform
 
-System settings is the global configuration center of the Boss platform, corresponding to the "Platform management" menu group in the console. Administrators maintain branding and sign-in page content, sub-product display settings, the AI assistant, the license and platform members here.
+This group of pages is the **master control panel for the whole platform**: what the platform is called, which logo it uses, how each sub-system appears in the interface, whether the AI assistant is switched on, whether the license has expired, and who the platform administrators are.
 
-## Module overview
+You will find them in the **System Settings** group in the left-hand menu. The changes you make here are usually **visible across the entire platform** — including the sign-in page, the top title bar and the product entries that ordinary users see — so think about who will be affected before you start.
 
-| Page | Menu label (i18n key) | Console route | Docs |
-|------|----------------------|--------------|------|
-| Platform settings | `navbar.platform_setting` | `/settings/platform` | [Platform settings](/boss/settings/platform) |
-| Rune settings | `navbar.rune_setting` | `/settings/rune` | [Rune settings](/boss/settings/rune) |
-| Moha settings | `navbar.moha_setting` | `/settings/moha` | [Moha settings](/boss/settings/moha) |
-| ChatApp settings | `navbar.chatapp_setting` | `/settings/chatapp` | [ChatApp settings](/boss/settings/chatapp) |
-| AI assistant | `navbar.ai_assistant_manager` | `/settings/ai-assistant` | [AI assistant](/boss/settings/ai-assistant) |
-| License | `navbar.license` | `/settings/license` | [License](/boss/settings/license) |
-| System members | `navbar.system_member` | `/settings/members` | [Members](/boss/settings/members) |
+:::tip These settings are not tenant settings
+Every item here is **platform-wide**: one change affects all tenants and all users.
+Members, quotas and workspaces inside a tenant are tenant-level settings — change those under **Account Center** on the tenant pages.
+:::
 
-> ⚠️ Note: the routes above are the real console paths from `src/routes/paths.ts`, all under `/settings`, not docs-site URLs.
+## Before you start
 
-## Notes
+- Your account must be a **system administrator**. Ordinary users do not see the **System Settings** group in the left-hand menu, and cannot open these pages even with a direct link.
+- Before changing a sub-system, work out where its entry appears, so that you do not lose track of the button afterwards.
 
-- **Platform**, **Rune**, **Moha** and **Gateway** settings are sub-product display configurations: they maintain the product name, logo and description shown in the console and write to the platform global configuration (`/api/iam/global-config`, `/api/moha/global-config`). **Rune** settings additionally include a "development-service idle monitor" card (written to `rune.idleMonitor.im`).
-- **AI assistant** and **License** are functional settings for the AI diagnostics assistant and product entitlement.
-- **Members** manages Boss platform member accounts.
+## What each settings page does
 
-> ⚠️ Note: "Dynamic dashboard" is **not** under Platform management. It lives at **Rune management → Cluster → Dynamic dashboard** with route `/rune/clusters/:cluster/dynamic-dashboard`. See [Dynamic dashboard](/boss/rune-admin/dynamic-dashboard).
+| Page | What it is for | Who is affected |
+| --- | --- | --- |
+| [System Member](/boss/settings/members) | Add or remove platform administrators and assign administrator roles | Only the platform administrator list, not ordinary users |
+| [Platform Settings](/boss/settings/platform) | Change the platform title, subtitle and logo; control the top **Document** entry, the language switcher and self-registration | Sign-in page, browser tab, the top bar of every page |
+| [AI Platform Settings](/boss/settings/rune) | Change the title, logo, description and internal service addresses of the AI Platform; set automatic pausing of idle development instances | The **Products** entry and the AI Platform pages; idle monitoring affects development instances users are working in |
+| [Moha Hub Settings](/boss/settings/moha) | Change the title, logo and description of Moha Hub, plus the Space base domain and HTTPS certificate | The Moha Hub entry and everyone who opens a Space |
+| [Gateway Settings](/boss/settings/chatapp) | Change the title, logo and description of the chat product | The product entry for chat and model playground pages |
+| [AI Assistant Settings](/boss/settings/ai-assistant) | Set the assistant avatar and name, configure the authentication key and control whether it is enabled | The floating AI assistant on the right edge of AI Platform pages |
+| [License](/boss/settings/license) | Check the license status and expiry date, and update the license | The features available platform-wide and the resource limits |
 
-## Permissions
+## Four display settings that are easy to mix up
 
-Requires the **system administrator** role.
+**Platform Settings**, **AI Platform Settings**, **Moha Hub Settings** and **Gateway Settings** each contain a card called **Title and Logo**. The only difference is **which product they control**:
+
+- **Platform Settings** controls the entire platform (sign-in page, browser tab, overall title).
+- The other three control the **AI Platform**, **Moha Hub** and **Gateway** (chat) product entries respectively.
+
+They do not affect each other: changing one leaves the others untouched.
+
+## Confirming the result
+
+Each card normally has its own **Confirm** button, and a successful save shows "Update successfully, please refresh the page". In other words: **the setting has been stored, but the page you are looking at is still the old one — refresh the browser to see the new look**.

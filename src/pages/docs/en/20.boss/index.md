@@ -2,7 +2,7 @@
 title: Overview
 updated: '2026-09-12'
 author: Rune Docs Team
-description: 'Boss user documentation for platform administrators, operations, and platform teams, covering IAM, multi-tenant governance, the LLM Gateway, Rune resource governance, and product-level settings.'
+description: Who BOSS is for, and what its menus control.
 tags:
   - boss
   - overview
@@ -10,37 +10,67 @@ tags:
 
 # Overview
 
-Boss is the management center of the entire product suite. It handles account and tenant governance, cluster resource management, LLM Gateway operations, product settings, and Moha resource review.
+BOSS (shown as **BOSS Platform** in the top-left corner) is the **platform-administrator-only** management console. It is where you manage every account, tenant, compute resource and switch across the whole platform. The everyday business interface that ordinary users work in is called the **AI Platform**. The two interfaces have different entrances and completely different menus, but they share the same data — a user you create in BOSS is the same person who later signs in to the AI Platform.
 
-## Current product structure
+:::tip Telling the two apart in one sentence
+BOSS decides **who may use the platform and how much they get** (accounts, tenants, quotas, clusters, platform switches); the AI Platform is where the work actually happens (creating inference services, running fine-tuning jobs, uploading models). What you configure in BOSS determines what is possible in the AI Platform.
+:::
 
-The "Console entrance" column lists the **real console routes** (the BOSS route root is `/`); documentation-site URLs use the `/boss/` prefix.
+## BOSS versus the AI Platform
 
-| Module | Function | Console entrance | Docs |
+| Item | BOSS (the admin console on this page) | AI Platform |
+| --- | --- | --- |
+| Who uses it | Platform administrators and operations staff | Tenant admins, developers and members |
+| What you mainly do | Create accounts and tenants, allocate compute, manage clusters, review content | Create inference services, run fine-tuning, manage models and datasets |
+| How much data you see | Every tenant on the platform | Only the tenants you belong to |
+| How to get in | Open the admin console with an administrator account | Sign in to the AI Platform with a normal account |
+
+Both sides share the same accounts and tenants, so any change you make in BOSS immediately affects what users see in the AI Platform.
+
+## The sidebar groups at a glance
+
+After you sign in to BOSS, the left sidebar is divided into groups from top to bottom. The first 15 groups are always there; the last 4 appear only after you enter a specific tenant or cluster.
+
+| Group | When it appears | What it controls | Menus inside |
 | --- | --- | --- | --- |
-| Dashboard | Overall operating status and key statistics | `/`, `/dashboard` | [Home Dashboard](/boss/dashboard) |
-| IAM | Users, tenants and membership | `/iam/users`, `/iam/tenants` | [IAM](/boss/iam) |
-| Rune Admin | Clusters, resource pools, flavors, system images, tenant resource allocation | `/rune/clusters`, `/rune/tenants` | [Rune Admin](/boss/rune-admin) |
-| LLM Gateway | Channels, model metadata, tokens, call logs and moderation | `/service-registrations`, `/tokens`, `/gateway/*` | [LLM Gateway](/boss/gateway) |
-| Gateway Moderation | Policies, lexicon, sensitive hits | `/gateway/moderation/*` | [Content Moderation](/boss/gateway/moderation) |
-| Moha Repository Management | Models, datasets, images, Spaces and repository content | `/moha/*`, `/moha/mirrors/*` | [Moha Repository Management](/boss/moha-admin) |
-| System Settings | Platform, Rune, Moha, ChatApp and license configuration | `/settings/*` | [System Settings](/boss/settings) |
+| Overview | Always | Overall platform status | Home |
+| Model Gateway | Always | Volume, latency and rankings of external model calls | Dashboard |
+| Model Services | Always | Connecting and managing the models you expose | Channel Management, Model Configuration |
+| User Management | Always | Gateway credentials and call history | Token Management, Call Logs |
+| Security Services | Always | Content screening for model calls | Sensitive Word Management, Policy Management, Hit Records |
+| Platform Settings | Always | Gateway runtime parameters and billing currency | Gateway Configuration, Currency Configuration |
+| Asset Management | Always | Platform-wide models, datasets, images and Spaces | Models, Datasets, Images, Spaces |
+| Data Sync | Always | Syncing models from external mirrors | Mirror |
+| Security Audit | Always | Finding out who changed what and when | Audit Logs |
+| System Settings | Always | Announcements and homepage banners shown to users | Announcements, Banners |
+| Tenant | Always | Reserved group with no menu items yet | — |
+| Cluster | Always | Reserved group with no menu items yet | — |
+| AI Platform | Always | Compute clusters and tenant compute allocation | Cluster, Tenant Resource, App Template |
+| Account Center | Always | User accounts and tenants | Account, Tenant |
+| System Settings | Always | Platform-level configuration | System Member, Platform Settings, AI Platform Settings, Moha Hub Settings, Gateway Settings, AI Assistant Settings, License |
+| Tenant Management | After entering a tenant | Members and compute quota of that tenant | Overview, Member, Quota, Workspace |
+| Cluster Status | After entering a cluster | Health of that cluster | Cluster Status, Node Status, Accelerator Status |
+| Resource Management | After entering a cluster | How compute is divided inside that cluster | Resource Pool, Flavor, Tenant Quotas |
+| Operations Management | After entering a cluster | What runs inside the cluster and its logs | Workloads, Storage Cluster, System Apps, Scheduler Management, Log Management |
 
-> ⚠️ Note: The docs sidebar previously contained a "Platform Operations" group at `/boss/operations`. That route **does not exist** in the console (`src/routes/sections/boss.tsx` has no top-level `operations` path), and its pages have been archived. Cluster, tenant-quota and gateway-moderation capabilities live under Rune Admin, IAM and LLM Gateway respectively, as shown above.
+## What a platform administrator usually does first
 
-## Typical administrator path
+1. **Create a tenant**: go to **Account Center → Tenant** and click **Add Tenant**. See [Tenant Management](/boss/iam/tenants).
+2. **Create a user**: go to **Account Center → Account**, click **Add User**, and hand the generated password to the person. See [User Management](/boss/iam/users).
+3. **Add the user to the tenant with a role**: go to **Account Center → Tenant**, click the tenant name, switch to the **Member** tab and click **Add Member**.
+4. **Connect compute**: go to **AI Platform → Cluster** to connect a cluster, then configure its **Resource Pool** and **Flavor**. See [Rune Admin](/boss/rune-admin).
+5. **Allocate compute to the tenant**: go to **AI Platform → Tenant Resource** and create a **Quota** for that tenant. See [Tenant Quotas](/boss/rune-admin/tenants).
+6. **Configure the platform as needed**: use the **System Settings** group to set up platform settings, AI Platform settings, Moha Hub settings, gateway settings and more. See [Platform](/boss/settings).
 
-1. Create users (`/iam/users`) and tenants (`/iam/tenants`) in IAM.
-2. Connect clusters (`/rune/clusters`) and configure resource pools and flavors in Rune Admin.
-3. Assign quotas and workspaces to tenants (`/rune/tenants/:tenant/quotas`, `/rune/tenants/:tenant/workspaces`).
-4. Maintain channels and model metadata, issue tokens and configure moderation (`/service-registrations`, `/gateway/model-metadata`, `/tokens`, `/gateway/moderation`).
-5. Maintain brand, logo, switches and license information in System Settings (`/settings/*`).
+:::info Order matters
+Without a tenant, a user has nowhere to belong; without clusters and quotas, a tenant cannot be given compute. Follow steps 1 to 5 above so that later screens do not leave you with empty dropdowns.
+:::
 
-## Recommended reading
+## Related
 
-- [Home Dashboard](/boss/dashboard)
-- [IAM](/boss/iam)
-- [LLM Gateway](/boss/gateway)
+- [Home](/boss/dashboard)
+- [Account Center](/boss/iam)
+- [Model Gateway](/boss/gateway)
 - [Moha Repository Management](/boss/moha-admin)
 - [Rune Admin](/boss/rune-admin)
-- [System Settings](/boss/settings)
+- [Platform](/boss/settings)

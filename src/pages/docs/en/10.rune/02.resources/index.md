@@ -1,33 +1,45 @@
 ---
 title: 'Resources & Quotas'
 updated: '2026-09-12'
-description: 'Introduces the resource governance capabilities in Rune related to shared templates, tenant quotas, and available compute flavors.'
+description: 'Understand how much resource and which configurations you can use: what templates, quota, flavors, and workspaces are and where to find them.'
 tags:
   - rune
   - resources
 ---
+
 # Resources & Quotas
 
-The "Resources & Quotas" section covers the shared-resources and governance capabilities of Rune. The focus is not the runtime of a single instance, but the templates, quotas and flavors that are reused before and after instance creation. In the console these live under the **Templates** menu in the sidebar and the **Quota / Flavor / Workspace** tabs of the tenant settings.
+This group of pages is not about how a single instance runs, but about the **shared configuration and resource boundaries you use before and after creating instances**:
+which templates you can reuse, how much resource this tenant can use in total, which flavors you can pick, and which workspace an instance lives in.
+After reading it you will be able to tell these four concepts apart and know where to look each one up.
 
-## How this maps to the console
+:::tip The one-line difference
+A template decides **how to deploy**, quota decides **how much you can deploy**, flavor decides **how good a machine you get**, and the workspace decides **where it is deployed**.
+:::
 
-| Capability | Console location | Focus |
+## The four pages at a glance
+
+| Page | What question it answers | Where to find it |
 | --- | --- | --- |
-| Templates | Sidebar "Workbench → Templates" | Turn an existing instance into a reusable template for future deployments |
-| Quota / Flavor / Workspace | Tenant settings tabs | Resource boundaries, selectable resource combinations and the instance isolation unit |
+| [Templates](/rune/resources/templates) | Is there a ready-made, tuned configuration I can use directly | **Workbench → Templates** in the left sidebar |
+| [Quota](/rune/console/quota) | How much CPU, memory, accelerator, and storage this tenant can use at most | Click the avatar in the top-right to open the account panel, click **Tenant**, then choose the **Quota** tab at the top |
+| [Flavor](/rune/console/flavor) | Which machine configurations are selectable when creating an instance | The same place, with the **Flavor** tab selected |
+| [Workspace](/rune/console/workspace) | Which office the instance sits in and who can see it | The same place, with the **Workspace** tab selected |
 
-## Current Coverage
-
-| Page | Description |
-| --- | --- |
-| [Templates](/rune/resources/templates) | Save existing instances as templates and reuse them in new deployment tasks |
-| [Quota](/rune/console/quota) | View tenant quotas and understand how workspace quotas are allocated hierarchically |
-| [Flavor](/rune/console/flavor) | View the resource specifications that the current tenant can use in the specified cluster |
-| [Workspaces](/rune/console/workspace) | Create and maintain the smallest isolation unit that hosts instances |
+:::info It is normal not to see the Quota / Flavor / Workspace tabs
+These three tabs belong to tenant settings and are visible only to a tenant **Administrator** or **Developer**.
+If only some tabs appear, that is a permission setting; contact your tenant administrator when necessary.
+:::
 
 ## Recommended reading order
 
-1. Start with templates to understand how instances become reusable configurations.
-2. Then review quotas to confirm the resource boundaries of the current tenant and workspace.
-3. Finally review flavors and pick a combination that is actually available in the current cluster.
+1. Read [Templates](/rune/resources/templates) first: understand how a configuration is saved and reused with one click next time.
+2. Then read [Quota](/rune/console/quota): confirm this tenant's resource ceiling so you do not get stuck halfway through creating something.
+3. Then read [Flavor](/rune/console/flavor): confirm which machine configurations are actually selectable in the current region.
+4. Finally read [Workspace](/rune/console/workspace): understand how instances are isolated from one another.
+
+## Related
+
+- [Create Workloads](/rune/guide/workloads)
+- [Rune Console](/rune/console)
+- [Rune platform overview](/rune)

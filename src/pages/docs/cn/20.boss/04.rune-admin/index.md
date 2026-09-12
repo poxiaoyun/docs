@@ -1,30 +1,54 @@
 ---
 title: Rune 智算管理
 updated: '2026-09-12'
-description: Boss 平台对 Rune 智算资源的运维管理——集群、资源池、算力规格、产品模板等。
+description: 平台管理员维护算力底座的入口：接入集群、划分资源池、定义规格并给租户分配配额。
 tags:
   - boss
   - rune-admin
 ---
 
-## 概述
+# Rune 智算管理
 
-Rune 智算管理是 Boss 运营平台中用于维护 Rune 智算平台基础设施的模块。管理员可以在此接入并管理 GPU/CPU 集群、划分资源池与租户配额、维护算力规格、管理系统级应用与产品模板。
+这里是平台管理员维护「算力底座」的地方。用户在智算平台上能用的每一台机器、每一张加速卡、每一条资源规格，都是先在这里接进来、分配好，之后才能创建实例。
 
-## 章节导航
+如果你刚接手这套平台，建议按「接入集群 → 划分资源池 → 定义规格 → 给租户分配配额 → 上线应用模版」的顺序读下去。
 
-| 模块 | 说明 |
-|------|------|
-| [集群管理](/boss/rune-admin/clusters) | 接入并管理 K8s 计算集群 |
-| [集群总览](/boss/rune-admin/cluster-overview) | 查看单个集群的容量、用量与状态 |
-| [动态仪表盘](/boss/rune-admin/dynamic-dashboard) | 用 YAML 定义集群监控面板 |
-| [节点与 GPU 仪表盘](/boss/rune-admin/nodes-gpu) | 查看节点状态与加速卡信息 |
-| [Kubernetes 资源浏览](/boss/rune-admin/resources) | 浏览集群内的工作负载与 K8s 资源 |
-| [资源池管理](/boss/rune-admin/resource-pools) | 在集群中划分资源池，关联节点 |
-| [存储与运行时服务](/boss/rune-admin/storage-runtime) | 管理存储集群与运行时组件 |
-| [监控、日志与调度](/boss/rune-admin/observability) | 可观测性、日志与调度器管理 |
-| [规格管理（管理员）](/boss/rune-admin/flavors) | 定义和维护可选的算力规格模板 |
-| [租户资源管理](/boss/rune-admin/tenants) | 为租户分配资源池及 GPU/CPU 配额 |
-| [产品模板管理](/boss/rune-admin/templates) | 维护用户域与系统域的产品模板 |
-| [系统模板市场](/boss/rune-admin/system-market) | 从系统域模板部署集群系统应用 |
-| [系统实例管理](/boss/rune-admin/systems) | 管理集群级系统应用实例 |
+:::tip 先记住这几个词
+
+- **集群** ≈ 一栋机房大楼，里面有很多台机器。
+- **节点** ≈ 大楼里的一台服务器。
+- **加速卡（GPU / NPU）** ≈ 服务器里专门算 AI 的「引擎」。
+- **资源池** ≈ 把大楼里的机器划成几个「功能区」，不同部门分着用。
+- **资源规格** ≈ 一张套餐规格表，写明「几核 CPU / 多少内存 / 几张卡」。
+- **模版** ≈ 提前配好的「装机清单」，用户一键就能用。
+- **系统应用** ≈ 平台自带的中间件（监控、日志、网关等）。
+
+:::
+
+## 开始之前
+
+- 你需要 **系统管理员** 账号；普通成员看不到左侧的 **智算平台** 分组。
+- 建议先在测试集群上完整走一遍流程，再操作生产集群。
+
+## 各页面能帮你解决什么
+
+| 页面 | 帮你解决什么 |
+| --- | --- |
+| [集群管理](/boss/rune-admin/clusters) | 把一栋新机房接进平台 |
+| [集群信息](/boss/rune-admin/cluster-overview) | 看单个集群整体的 CPU、内存、节点是否健康 |
+| [节点与加速卡状态](/boss/rune-admin/nodes-gpu) | 看每台机器、每张卡的状态 |
+| [资源池](/boss/rune-admin/resource-pools) | 把机器分成几个功能区 |
+| [资源规格](/boss/rune-admin/flavors) | 定义「几核几卡」的套餐 |
+| [租户配额](/boss/rune-admin/tenants) | 把资源分给各个租户和工作空间 |
+| [应用模版](/boss/rune-admin/templates) | 维护用户可以一键部署的装机清单 |
+| [系统模版市场](/boss/rune-admin/system-market) | 从模版一键部署平台中间件 |
+| [系统应用](/boss/rune-admin/systems) | 管理已经部署的中间件实例 |
+| [存储集群与运行时](/boss/rune-admin/storage-runtime) | 管理存储与运行时实例 |
+| [工作负载](/boss/rune-admin/resources) | 直接查看集群里的各类对象 |
+| [动态仪表盘](/boss/rune-admin/dynamic-dashboard) | 自己拼一个监控看板 |
+| [日志与调度器](/boss/rune-admin/observability) | 查日志、调整调度策略 |
+
+## 怎么确认自己进对了地方
+
+- 左侧菜单能看到 **智算平台** 分组，下面是 **集群管理**、**租户资源**、**应用模版**。
+- 从 **集群管理** 点进某个集群后，左侧会出现 **集群信息 / 资源管理 / 运维管理** 三组子菜单。

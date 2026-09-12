@@ -39,7 +39,9 @@ STRIP = re.compile(r'^\d+\.')
 TITLE_RE = re.compile(r"^title:\s*['\"]?(.+?)['\"]?\s*$", re.M)
 TOC_PATH_RE = re.compile(r"path:\s*'([^']+)'")
 MD_LINK_RE = re.compile(r'(!?)\[[^\]]*\]\(([^)\s]+)\)')
-VITEPRESS_RE = re.compile(r'^:::')
+# 告示块语法由 src/components/markdown/remark-alerts.ts 实现，只认这 5 种类型
+ALERT_OPEN_RE = re.compile(r'^:::(info|success|warning|error|tip)(\s+.+)?$')
+ALERT_ANY_RE = re.compile(r'^:::')
 SKIP_SCHEME = ('http://', 'https://', 'mailto:', 'tel:', 'data:', '#', '//')
 
 
@@ -250,16 +252,40 @@ def main():
             if not os.path.exists(os.path.join(ROOT, 'public', target.lstrip('/'))):
                 broken_links.append((rel, lineno, raw, f'解析为 {target}，无对应页面'))
 
-    # 6. VitePress 容器语法残留
-    vitepress = []
+    # 6. 告示块语法非法（:::tip 等由 remark-alerts 渲染，只支持 5 种类型且必须成对）
+    alerts = []
     for dirpath, _d, filenames in os.walk(CONTENT):
         for fn in sorted(filenames):
             if not fn.endswith('.md'):
                 continue
             full = os.path.join(dirpath, fn)
-            for lineno, line in enumerate(open(full, encoding='utf-8'), 1):
-                if VITEPRESS_RE.match(line):
-                    vitepress.append((os.path.relpath(full, ROOT), lineno, line.strip()[:40]))
+            rel = os.path.relpath(full, ROOT)
+            opened = 0
+            lines = open(full, encoding='utf-8').read().split('\n')
+            for lineno, line in enumerate(lines, 1):
+                s = line.rstrip('\n')
+                if not ALERT_ANY_RE.match(s):
+                    continue
+                if s.strip() == ':::':
+                    opened -= 1
+                    if opened < 0:
+                        alerts.append((rel, lineno, '多余的结束标记 :::'))
+                        opened = 0
+                elif ALERT_OPEN_RE.match(s):
+                    opened += 1
+                    # 多段式（开标记下一行为空行）要求闭合 ::: 前也有空行，
+                    # 否则 remark-alerts 匹配不到闭合，整块会原样显示成文字。
+                    if lineno < len(lines) and lines[lineno].strip() == '':
+                        j = lineno
+                        while j < len(lines) and lines[j].strip() != ':::':
+                            j += 1
+                        if j < len(lines) and lines[j - 1].strip() != '':
+                            alerts.append((rel, lineno,
+                                           '多段式告示块的闭合 ::: 前缺空行，整块不会渲染'))
+                else:
+                    alerts.append((rel, lineno, f'不支持的类型（仅 info/success/warning/error/tip）：{s.strip()[:40]}'))
+            if opened > 0:
+                alerts.append((rel, 0, f'{opened} 个告示块未闭合'))
 
     # 7. 侧边栏文案与页面 title 差异（仅提示，不计入问题）
     file_titles = {}
@@ -314,7 +340,7 @@ def main():
     section('侧边栏死链（toc path 无对应文件）', dead, lambda r: f'{r[0]}  ->  {r[1]}')
     section('孤儿文件（无任何 toc 引用）', orphans, lambda r: f'[{r[0]}] {r[1]}  ({r[2]})')
     section('markdown 内链失效', broken_links, lambda r: f'{r[0]}:{r[1]}  {r[2]}  ({r[3]})')
-    section('VitePress ::: 语法残留', vitepress, lambda r: f'{r[0]}:{r[1]}  {r[2]}')
+    section('告示块语法（::: 类型非法 / 未闭合）', alerts, lambda r: f'{r[0]}:{r[1]}  {r[2]}')
 
     uncovered = check_archive_coverage(archived)
     if uncovered is None:

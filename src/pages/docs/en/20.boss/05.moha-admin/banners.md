@@ -1,71 +1,91 @@
 ---
 title: Banners
 updated: '2026-09-12'
-description: 'List columns, image upload/crop, and create/edit form of platform banners.'
+description: Maintain the banners at the top of the Moha Hub home page — create one, upload an image, and set its link and active time.
 ---
 
-## Overview
+# Banners
 
-Banner Management maintains the banner slots on the platform homepage. Administrators can create, edit, and delete banners and set the link and effective time range.
+A banner is shown **at the very top of the Moha Hub home page** and cycles automatically. You can use it to promote an event, announce a new feature, or send users to a particular page.
 
-## Access Path
+:::tip What a banner looks like
 
-BOSS Console → System Settings → **Banner Management**
+A large banner image at the top of the home page, switching to the next one every 5 seconds, with small dots in the bottom right you can click. A **title** and a line of **content** can be overlaid on the image; if a **link** is set, clicking the image opens that link.
 
-Frontend route: `/moha/banners`
+:::
 
----
+## Before you start
 
-## List
+- You need the **System Administrator** role.
+- In the left sidebar click **System Settings** → **Banners**.
+- Prepare the image file in advance (a horizontal image around 4:1 is recommended, for example 1600×400).
 
-| Column | Field Path | Description |
-| --- | --- | --- |
-| Image | `image` | Thumbnail (64×40, cropped proportionally) |
-| Title | `title` | — |
-| Content | `content` | Truncated to a single line |
-| Link | `link` | Clickable external link, truncated when too wide |
-| Start Date | `startAt` | — |
-| End Date | `endAt` | — |
+## What is on the list
 
-### Status Behavior
+| Column | Meaning |
+| --- | --- |
+| Banner Image | A thumbnail of the image; shows `-` when none has been uploaded |
+| Title | The large title overlaid on the image |
+| Content | The description overlaid on the image, truncated when too long |
+| Link | The address the image opens when clicked; can be opened to preview |
+| Valid Date | From when it starts showing |
+| Invalid Date | Until when it stops showing |
 
-- Banners whose `endAt` is earlier than the current time are treated as **expired** and the whole row is grayed out.
-- Supports searching by title; actions: edit, delete (with a confirmation dialog; batch supported).
+- The search box searches by **Title**.
+- Rows whose **Invalid Date** has passed are **greyed out entirely**, meaning they no longer show.
 
----
+## Create a banner
 
-## Create / Edit Banner
+1. Click **Add Banners** in the top right.
+2. In the **Banner Configuration** card fill in:
 
-Frontend routes:
+   | Form item | What to enter | Notes |
+   | --- | --- | --- |
+   | Title | e.g. `New model release` | Optional; when filled it is overlaid on the image |
+   | Content | e.g. `Try the latest open-source model in one click` | Optional; multi-line text shown below the title |
+   | Link | e.g. `https://example.com/activity` | Optional; when filled it must be a complete URL, otherwise saving reports an error |
+   | Valid Date | Pick a date and time | Required; it starts showing from this moment |
+   | Invalid Date | Pick a date and time | Required; must be **later than** the Valid Date |
 
-- Create: `/moha/banners?action=create`
-- Edit: `/moha/banners/:id?action=edit`
+3. In the **Banner Image** card upload an image: click the upload area to choose a file, then crop to a 4:1 ratio in the cropping box that appears and confirm.
+4. Click **Confirm**.
 
-### Form Fields
+Confirming the result: the page returns automatically to the banner list, where you can see the record you just created. On the user side, it starts cycling at the top of the Moha Hub home page once its Valid Date arrives.
 
-| Field | Field Name | Required | Description |
-| --- | --- | --- | --- |
-| Title | `title` | — | Text |
-| Content | `content` | — | Multi-line text |
-| Link | `link` | — | URL; must be a valid address |
-| Start Date | `startAt` | ✅ | Date-time picker |
-| End Date | `endAt` | ✅ | Date-time picker |
-| Image | `image` | ✅ | Uploaded image (Base64) |
+### Image requirements
 
-### Image Requirements
+| Item | Requirement |
+| --- | --- |
+| Supported formats | Common image formats such as JPG, PNG, GIF, WebP and APNG |
+| Size | Static images are cropped to **4:1** and output 1600 pixels wide; preparing 1600×400 directly is recommended |
+| Animation | Animated images such as GIF and APNG keep their animation |
+| File size | No more than 3 MB each |
 
-- Supports JPEG / PNG / APNG / WebP / GIF / AVIF / SVG.
-- Can be **cropped** on upload; the output is Base64 cropped to a fixed aspect ratio.
-- Size limit is about 3MB.
+## Edit or delete
 
-Validation rules:
+- **Edit**: on the target row, click the **⋯** button on the far right → **Edit**, then click **Confirm** when done.
+- **Delete**: on the target row, click the **⋯** button on the far right → **Delete**; you can also tick several rows first and use the batch delete above the list. A second confirmation is required before deleting.
 
-- `startAt` and `endAt` are required, and `endAt` must be later than `startAt`.
-- `link`, if filled, must be a valid URL.
-- `isActive = true` is always sent on submit.
+:::warning It disappears from the user side the moment you delete it
 
----
+Deletion cannot be undone, and the banner currently showing on the user home page disappears immediately. If you only want to stop showing it for a while, take it offline with the Invalid Date instead.
 
-## Permission Requirements
+:::
 
-Requires the **System Administrator** role.
+## When it goes live and when it goes offline
+
+| Moment | What happens |
+| --- | --- |
+| The **Valid Date** arrives | It appears automatically in the rotation on the user home page |
+| The **Invalid Date** arrives | It stops showing automatically, and the whole row greys out in the list |
+| You want it offline early | Click **Edit**, move the **Invalid Date** to before the current time, then click **Confirm** |
+
+:::info
+
+The **Invalid Date** must be later than the **Valid Date**, otherwise clicking **Confirm** reports "End time must be later than start time" and the save does not go through.
+
+:::
+
+## Related
+
+- [Announcements](/boss/moha-admin/announcements)

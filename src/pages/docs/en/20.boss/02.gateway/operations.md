@@ -1,116 +1,113 @@
 ---
 title: Dashboard
 updated: '2026-09-12'
-description: 'LLM gateway dashboard — requests, success rate, tokens, TTFT, rankings and gateway health.'
+description: See gateway health: requests, errors and cost.
 tags:
   - boss
   - gateway
 ---
 
-## Feature overview
+# Dashboard
 
-The operations overview is the LLM gateway dashboard. It shows requests, success rate, token usage, sensitive hits, TTFT, active keys and uptime, plus model/user rankings, model usage distribution and gateway health.
+The Dashboard is the gateway's **operations instrument panel**. It aggregates request volume, success rate, token usage, cost, response speed and channel health over a period of time into metric cards, trend charts and rankings, so you can tell in seconds whether the gateway is healthy today.
 
-This page corresponds to **LLM gateway → Data dashboard** in the Boss console (menu label from `navbar.data_dashboard`).
+By the end you will be able to filter the data by time and dimension, understand what each chart means, and know where to go when a number looks wrong.
 
-## Access path
+:::tip The Dashboard is the car's instrument cluster
+When you drive you do not stare at the engine — you watch the speedometer and the fuel gauge. This page is the gateway's instrument cluster: it gives you conclusions, not individual calls. To inspect one specific call, go to [Call Logs](/boss/gateway/audit).
+:::
 
-Boss console → LLM gateway → **Data dashboard**
+## Before you start
 
-Console route: `/gateway/operations`
+- Permission: you need a platform administrator account (one that can enter the BOSS console).
+- No prior configuration is needed; the page reads from calls that have already happened.
 
-> ⚠️ Note: this is the real console route, not a docs-site URL.
+## Open the Dashboard
 
-## Filters
+1. Click **Model Gateway** in the left sidebar.
+2. Click **Dashboard**.
 
-| Filter | Type | Description |
-|--------|------|-------------|
-| Time range | Preset | Today / Last 7 days / Last 30 days / Custom |
-| Start date, end date | Date picker | Only used with "Custom" |
-| Tenant | Select | Options come from the tenant facet |
-| Channel | Select | Options come from the channel facet |
-| Model | Select | Options come from the model facet |
+The page refreshes automatically every **30 seconds**, and you can also refresh it manually at any time.
 
-The toolbar also offers:
+## How to filter
 
-- **Refresh**: re-fetch manually
-- **Reset**: clears the three facet filters and restores "Today"
-- **Bucket** (read-only): derived from the range and shown as hour or day
+| Filter | Notes |
+| --- | --- |
+| Time range | Today / 7 days / 30 days / Custom |
+| Start Time, End Time | Only editable when **Custom** is selected |
+| Tenant | Show only one tenant's calls |
+| Channel | Show only one channel's calls |
+| Model | Show only one model's calls |
+| Time bucket | Read-only, derived from the time range; shows **Hourly** or **Daily** |
 
-> ⚠️ Note: only the three facet filters exist — there is no token, user or provider filter.
+The two buttons on the toolbar:
 
-The page auto-refreshes every **30 seconds**.
+- **Refresh data**: pulls the data again immediately.
+- **Reset Filters**: clears the tenant, channel and model filters and puts the time range back to **Today**.
 
-Range-to-bucket mapping (`resolveDashboardInterval`):
+The time bucket is derived automatically; you never set it by hand:
 
-| Range | Bucket |
-|-------|--------|
-| Today | hour |
-| Last 7 / 30 days | day |
-| Custom | hour when the span is `<=` 240 hours, otherwise day |
+| Time range | Bucket |
+| --- | --- |
+| Today | Hourly |
+| 7 days / 30 days | Daily |
+| Custom | Hourly when the span is 240 hours or less, otherwise daily |
 
-## Metric cards
+## The seven metric cards
 
-**7** cards are shown at the top (responsive 1 / 2 / 4 / 7 columns):
+The row of cards across the top of the page, from left to right:
 
-| Metric | Field | Description |
-|--------|-------|-------------|
-| Requests | `summary.requestCount` | Total requests, with period-over-period change |
-| Success rate | `summary.successCount` / `summary.requestCount` | Percentage, change in percentage points |
-| Tokens | `summary.totalTokens` | Abbreviated with K/M, with change rate |
-| Sensitive hits | `sensitiveHitCount` | Requests that hit sensitive content, with change rate |
-| TTFT | `recentTTFTMaxMillis` | Max time-to-first-token in the recent window; lower is better |
-| Active keys | `activeTokenCount` | Active token count, with change rate |
-| Uptime | `uptimeSeconds` | Formatted as days/hours/minutes, no change rate |
+| Card | Meaning |
+| --- | --- |
+| Requests | Total requests in the range, with a "vs previous" change rate |
+| Success rate | Share of successful requests, expressed as a change in percentage points |
+| Token usage | Total tokens consumed in the range, abbreviated with K / M |
+| Sensitive hits | Number of requests that tripped content moderation |
+| TTFT | Time to first token, showing the max over the recent window; lower is better |
+| Active API Keys | How many keys made calls during the period |
+| Runtime | How long the gateway has been running, shown as days / hours / minutes |
 
-> 💡 Tip: when there is no comparison period, the success-rate card shows the note "No previous data" (i18n `dashboard_no_previous`).
+:::info What "No previous data" means
+If there is no comparable data before the selected range, the success-rate card shows **No previous data**. It means there is no period-over-period figure to compute for that item — it is not an error.
+:::
 
 ## Charts and rankings
 
-Two charts sit side by side:
+**Call trend**: at the current bucket size, shows the request volume (a single-series bar chart) for each time slot.
 
-| Chart | Content |
-|-------|---------|
-| Trend | Requests per bucket at the current granularity (single-series bars) |
-| Model usage distribution | Stacked bars by model, top 10 models plus "other models" |
+**Model usage**: a stacked bar chart split by model, taking up to the top 10 models and merging the rest into **Other models**.
 
-Below is a three-column layout:
+The lower part of the page has three columns:
 
 | Card | Content |
-|------|---------|
-| Model ranking | Requests, tokens and cost per model |
-| User ranking | Rank, user, requests and total tokens (with a share bar) |
-| TTFT trend + gateway health | See below |
+| --- | --- |
+| Model ranking | Sorted by request volume; lists each model's requests, tokens and cost |
+| User usage ranking | The top 10 users, showing requests and tokens with a share progress bar |
+| TTFT trend + Gateway health | See below |
 
-### TTFT trend
+**TTFT historical latency trend**: a line chart with two lines — **Max TTFT** and **TTFT P95**. The first shows the slowest case; the second shows what most requests experience.
 
-A line chart with two series:
+**Gateway health**: shows availability (a percentage with a progress bar) plus three details — **Upstream channels** as "healthy / total", the number of **Rate limit events**, and the number of **Abnormal requests**.
 
-| Series | Field |
-|--------|-------|
-| Max TTFT | `maxTTFTMillis` |
-| P95 TTFT | `p95TTFTMillis` |
+## No details and no export on this page
 
-TTFT uses its own granularity: minute when the span is `<= 24 hours`, hour when `<= 31 days`, otherwise day; series are capped at 1500 points.
+The Dashboard only gives aggregates. It has **no per-record table and no export**. To see a single call, how much one person used, or why a request failed, query [Call Logs](/boss/gateway/audit).
 
-### Gateway health
+## Confirm it worked
 
-| Metric | Field | Description |
-|--------|-------|-------------|
-| Availability | `gatewayHealth.availablePercent` | Percentage plus a 60-cell bar |
-| Upstream channels | `healthyChannels` / `totalChannels` | Healthy channels / total channels |
-| Rate-limit events | `rateLimitEvents` | Number of rate-limit events in the range |
-| Abnormal requests | `abnormalRequests` | Number of abnormal requests in the range |
+Once you pick a time range, the metric cards and charts show numbers and change as you change the filters — that means the data loaded correctly. To check whether a channel or a model is serving normally, filter by **Channel** or **Model** first and then read the request volume and success-rate trend.
 
-> ⚠️ Note: there is **no usage record table and no export**. Use [Call logs](/boss/gateway/audit) for details. Older docs describing a "usage record table", "data export" and "ranking dimension switching" have no counterpart in the current code.
+## FAQ
 
-## Data sources
+| Symptom | Likely cause | What to do |
+| --- | --- | --- |
+| The charts are blank | No calls in the selected range | Widen the time range or clear the filters |
+| Want to filter by token or by user | The page only offers tenant / channel / model | Use those three, or query precisely by user and token in Call Logs |
+| Numbers do not match Call Logs | The Dashboard aggregates by bucket, the log is per record | Trends here, detail there — the difference in granularity is expected |
+| Cannot find an export button | The Dashboard does not export | Query the Call Logs page if you need detail data |
 
-| Purpose | Request |
-|---------|---------|
-| Summary, rankings, health | `getUsageDashboard` (`summary` / `previousSummary` / `timeseries` / `topModels` / `topUsers` / `filterOptions` / `gatewayHealth`) |
-| TTFT time series | `getUsageTimeseries` (`order: 'asc'`) |
+## Related
 
-## Permissions
-
-Requires the **system administrator** role.
+- [Call Logs](/boss/gateway/audit): inspect the details of every call
+- [Channel Management](/boss/gateway/channels): deal with unhealthy channels here
+- [Gateway Configuration](/boss/gateway/config): adjust global rate limits and other runtime parameters

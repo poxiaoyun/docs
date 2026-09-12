@@ -1,117 +1,133 @@
 ---
 title: 'Tenant Management'
 updated: '2026-09-12'
-description: Tenant overview and member management (tabs, fields, permissions).
+description: What a tenant is, how to view and switch your tenants, and how members are managed and added.
 ---
 
-## Overview
+# Tenant Management
 
-The tenant management page provides the current tenant's overview and member management. It is organized by top tabs under `/iam/tenants/{tenant}`.
+A tenant is **a company's isolated account space on the platform**. One company's people, computing power, data, and quota all live in the same tenant, and different tenants cannot see each other. This page explains how to see which tenants you belong to, how to switch, what changes after switching, and how someone adds you to a tenant.
 
-## Navigation
+:::tip A tenant is like a separate office building
+Each tenant is a building, and its rooms (workspaces), equipment (instances), and staff (members) all belong to that building. In different buildings you can be given different identities.
+:::
 
-> ⚠️ Note: There is **no** "Personal Center → Tenant Management" entry. `AccountLayout`'s tabs are profile/password/email/mobile/API key/SSH key/MFA/theme — no tenant (`account/layouts/layout.tsx:20-61`).
+## Before you start
 
-Actual entry: the **tenant item** in the top-right avatar menu (shows the current tenant name). It opens `/iam/tenants/{tenant}`, which redirects to the overview (`/iam/tenants/{tenant}/overview?tab=overview&provider=rune`).
+- What you can see and change depends on your role in the **current tenant**.
+- Tenant management is not a tab in the Personal Center; it has its own entry (see below).
 
-## Tabs
+## A few words to remember
 
-| Tab | Key | Required role |
-|-----|-----|---------------|
-| Overview | `overview` | ADMIN / DEVELOPER |
-| Members | `members` | ADMIN only |
-| Quotas | `quotas` | ADMIN / DEVELOPER |
-| Flavors | `flavors` | ADMIN / DEVELOPER |
-| Workspaces | `workspaces` | ADMIN / DEVELOPER |
+| Term | Plain meaning |
+| --- | --- |
+| Tenant | A company's isolated account space on the platform |
+| Member | A user who has been added to this tenant |
+| Role | Your identity inside the tenant, which decides which features you can use |
 
-Role checks are in `src/pages/iam/tenant/layouts/layout.tsx:58-103`.
+## Which tenants I belong to, and how to switch
 
-> ⚠️ Note: Tabs are also filtered by the URL `provider`: when there is no `provider`, or it is `moha` / `chatapp`, only `overview` and `members` are shown.
+1. Click your avatar in the top-right corner; a menu slides out from the right.
+2. The top of the menu shows your nickname, username, and email.
+3. One item in the menu is **Tenant**, followed by the name of your **current tenant**.
+4. To see or switch to another tenant, click **Switch Tenant** at the bottom of the menu.
+5. You reach the **Select your tenant** page; choose the tenant you want in the **Tenant** dropdown.
+6. Click **Enter Platform**.
 
-## Overview Page
+The dropdown lists **all** the tenants you can enter. If a tenant carries a **Disable** label, it has been deactivated and cannot be selected. If you belong to only one tenant, the platform takes you straight in and does not show this page.
 
-Route: `/iam/tenants/{tenant}/overview`
+:::tip What if I have no tenant
+On the **Select your tenant** page, click **Create Tenant** at the bottom and fill in a name, email, and mobile number to create a new tenant for yourself. Once it is created you are its administrator.
+:::
 
-The overview combines: tenant info, member stats, member list, quotas, workspace list, and event log.
+## What is different after switching tenants
 
-### 1. Tenant Info Card
+| What changes | Description |
+| --- | --- |
+| Menus | Only the features you have permission for in the new tenant are shown |
+| Data | Instances, storage volumes, members, and quota all become the new tenant's; the old tenant's data is no longer visible |
+| Role | The same person can have a different role in each tenant, and permissions change with it |
 
-Editable fields (only a tenant ADMIN can edit, `tenant-info.tsx:194-238`):
+Switching back to the previous tenant brings back the original data and permissions.
 
-| Field | Key | Editable | Validation |
-|-------|-----|----------|------------|
-| Tenant name | `name` | ✅ | Non-empty |
-| Email | `email` | ✅ | Non-empty + email format |
-| Phone | `phone` | ✅ | Non-empty |
-| Created at | `creationTimestamp` | ❌ | — |
+## Opening tenant management
 
-The card top is a tenant avatar upload with crop, disabled for non-admins.
+1. Click your avatar in the top-right corner.
+2. Click **Tenant** in the menu (followed by the current tenant name).
+3. Tenant management opens with a row of tabs at the top.
 
-> ⚠️ Note: There is **no** "Tenant ID", "Enabled status", or "Default language" field in the info card.
+## What the tabs can do
 
-### 2. Member Stats
+| Tab | Role needed | What you can do |
+| --- | --- | --- |
+| Overview | Administrator / Developer | See tenant information, members, quota, workspaces, and recent events |
+| Member | Administrator only | Add, modify, and delete members |
+| Quota | Administrator / Developer | View the computing quota for each cluster |
+| Flavor | Administrator / Developer | View the available computing flavors |
+| Workspace | Administrator / Developer | View the workspaces under the tenant |
 
-Shows the member distribution by role: `ADMIN` / `DEVELOPER` / `MEMBER`.
+Exactly which tabs you see depends on the product you entered from and on your role. Tabs you lack permission for are not shown.
 
-### 3. Member List
+## Viewing and editing tenant information
 
-A table of members; fields are covered under "Member Management" below.
+The **Tenant Information** card on the left of the Overview tab shows the tenant avatar, tenant name, email, mobile number, and creation time.
 
-### 4. Quotas and Workspaces
+1. Only an **Administrator** can edit. Click the pencil icon to the right of a field to start editing.
+2. Type the new value in the field.
 
-Show the tenant's quota information and workspace list.
+   | Setting | How to fill it in | What changes |
+   | --- | --- | --- |
+   | Tenant avatar | Click the avatar to upload and crop an image | Every member of the tenant sees the new avatar; it affects this tenant only |
+   | Tenant Name | Type a new name; it cannot be empty | The name members see in the avatar menu and on the tenant selection page changes |
+   | Email | The tenant's contact email, in a valid format | This changes the tenant's contact email, not your own sign-in email |
+   | Mobile Number | The tenant's contact number; it cannot be empty | This changes the tenant's contact number |
+   | Created At | Read-only | It cannot be changed |
 
-### 5. Event Log
+3. Click **Confirm** to save, or **Cancel** to discard the change.
 
-Sourced from audit records queried per tenant (`tenant-events.tsx:33-39`, `pageSize: 20`). Each event shows:
+:::warning These changes affect the whole tenant
+Tenant information is shared by all members, so everyone sees your change. Make sure you are editing the **company's** information and not your own personal details.
+:::
 
-| Field | Description |
-|-------|-------------|
-| `method` + `endpoint` | HTTP method and endpoint, used as the title |
-| `username` (falls back to `userId`) | Actor |
-| `result` | Operation result |
-| `createdAt` | Shown as relative time (`fToNow`) |
+The Overview tab also shows member statistics, the member list, quota, workspaces, and **Recent Events** (the latest operations in reverse time order).
 
-> ⚠️ Note: The event fields are `method` + `endpoint` / `username` / `result`; there are **no** "operation type" or "target resource" fields.
+## Managing members (Administrator only)
 
-## Member Management
+### Adding a member
 
-Route: `/iam/tenants/{tenant}/members` (visible to ADMIN only)
+1. Open the **Member** tab.
+2. Click **Add Member** in the top-right corner.
+3. In the **User** dropdown, search for and select the person to add; options show a username with a nickname or email.
+4. In the **Role** dropdown, choose the role to give them.
+5. Click **Confirm**.
 
-### List Columns
+### Changing a member's role
 
-| Column | Description |
-|--------|-------------|
-| `name` | Member username (with avatar, from `member.user`) |
-| `userInfo.email` | Member email |
-| `role` | Role (translated via `role:{role}`) |
-| `creationTimestamp` | Joined at |
+Click the edit entry on that member's row in the member table, set the new role, and click **Confirm**.
 
-Multi-select delete is supported; the toolbar has an "Add member" button and each row has an edit entry.
+### Deleting a member
 
-### Add / Edit Member
+Tick the members to remove (multiple selections are allowed), click delete, and confirm in the dialog. The member table shows four columns by default: **Username**, **Email**, **Role**, and **Joined At**.
 
-Form fields (`members/components/form.tsx:92-95`):
+:::warning Deleting a member takes effect immediately
+The person you remove no longer sees this tenant in the dropdown the next time they switch tenants. Before deleting, make sure they really no longer need access.
+:::
 
-| Field | Key | Description |
-|-------|-----|-------------|
-| User | `user` | Searchable dropdown from the user list; disabled when editing |
-| Role | `role` | Dropdown from `GET /api/iam/tenants/{tenant}/roles` |
+## How someone adds me to a tenant
 
-> ⚠️ Note: Role options come from the tenant roles endpoint (`{ id, name }` items), not a hard-coded three-role enum; the full backend list is unconfirmed.
+There is no such thing as an "invite link". Joining a tenant means an administrator adds you:
 
-### Member Endpoints
+1. Register your own platform account first.
+2. Give your **username** (or the email you registered with) to the tenant administrator.
+3. The administrator searches for you in **Tenant management → Member → Add Member**, picks a role, and clicks **Confirm**.
+4. After you sign in again, the tenant appears in the dropdown on the **Select your tenant** page; select it and click **Enter Platform**.
 
-| Action | Endpoint |
-|--------|----------|
-| List | `GET /api/iam/tenants/{tenant}/members` |
-| Detail | `GET /api/iam/tenants/{tenant}/members/{member}` |
-| Delete | `DELETE /api/iam/tenants/{tenant}/members/{member}` |
-| Update | `PUT /api/iam/tenants/{tenant}/members/{user}` |
-| Role options | `GET /api/iam/tenants/{tenant}/roles` |
+:::tip The new tenant is not in the dropdown
+Sign out and sign in again so the page fetches your tenant list afresh.
+:::
 
-## Notes
+## Related
 
-- The Members tab is ADMIN-only; the Overview tab needs ADMIN or DEVELOPER
-- Tenant info editing is likewise restricted to a tenant ADMIN
-- The tenant entry is in the avatar menu, not in the Personal Center tabs
+- [Roles and Permissions](/account/auth/roles)
+- [Select / Register Tenant](/account/auth/select-tenant)
+- [Personal Center](/account/iam)

@@ -1,71 +1,118 @@
 ---
 title: Images
 updated: '2026-09-12'
-description: 'Container image registry list columns at the BOSS level, category/accelerate/arch tags, and visibility management.'
+description: How a platform administrator views, unlists, edits and deletes container image registries across the whole Moha Hub.
 ---
 
-## Overview
+# Images
 
-BOSS-level image registry management provides **platform-level** global management of container image registries. System administrators can view and manage container image registries created by all organizations on the platform.
+The Images page lists the container image registries every organization on the **whole platform** has created. A container image is a "system-disk template for installing an OS", and users pick one on the AI Platform to decide an instance's environment. Here you can see which images exist, how big they are and how many times they have been pulled, and also unlist or delete images that should not be public.
 
-> 💡 Tip: The "image registry" here refers to container images, which is not the same feature as data mirror sync ([Mirror Source Configuration](./mirrors)).
+:::tip An image registry is not a mirror
 
-## Access Path
+- **Image registry** (this page) holds **container images**, used as the system disk for container instances.
+- **Mirror** is the task that **syncs** models and datasets from HuggingFace and ModelScope into the platform; it has nothing to do with container images.
 
-BOSS Console → Data Repository → **Image Registry**
+The two names look alike, but one manages a "system disk" and the other "moves data around".
 
-Frontend route: `/moha/images`
+:::
 
----
+## Before you start
 
-## List
+- You need the **System Administrator** role.
+- In the left sidebar click **Asset Management** → **Images**.
 
-Image Registry shares the data management list component with Models, Datasets, and Spaces, with `type = images`.
+## A few terms first
 
-### Columns
-
-| Column | Field Path | Description |
-| --- | --- | --- |
-| Alias / Name | `name` / `alias` | The name column shows `alias || name`, with a description tooltip |
-| Organization | `organization` | Organization avatar + name |
-| Visibility | `visibility` | Public / private / tenant-only tag |
-| Repository Storage | `repositoryStorageSize` | Shown when repository stats are ready, otherwise `-` |
-| Downloads | `annotations.downloads` | — |
-| Category | `metadata.category` | Collapsible tag group |
-| Accelerate | `metadata.accelerate` | Collapsible tag group |
-| Arch | `metadata.arch` | Collapsible tag group |
-| Updated At | `modified` | — |
-
-### Differences from Models / Datasets
-
-Image Registry does **not** have the following columns:
-
-- Tasks (`metadata.tasks`)
-- Tags (`metadata.tags`)
-- Recommendation Score (`annotations.recommendation-score`)
-
-> ⚠️ Note: Accordingly, the image registry **actions column has no "Recommend"**, and it does not show encryption-related markers.
-
-### Filtering
-
-Name search, organization filter, visibility filter, and advanced filtering based on metadata facets.
-
----
-
-## Management Operations
-
-| Action | Description |
+| Term | Plain explanation |
 | --- | --- |
-| Visibility | Toggle public / private |
-| Edit | Opens the edit page |
-| Delete | With a confirmation dialog; batch supported |
+| Repository | A collection of container images you can keep pushing new versions to |
+| Organization | The team account this image belongs to |
+| Visibility | Who can see this image |
+| Framework | The acceleration framework pre-installed in the image, such as CUDA or CANN |
+| Architecture | The machine architecture the image suits, X86 or ARM |
 
-> ⚠️ Note: The list has **no "license" column**, nor any security-scan / vulnerability-level columns.
+Visibility has three values:
 
----
+| Shown as | Who can see and pull | Who can push new versions |
+| --- | --- | --- |
+| Public | Anyone, including visitors who are not signed in | Only members of the owning organization or repository administrators |
+| Tenant Only | Only members of the owning organization | Members of the owning organization |
+| Private | Only the creator | Only the creator |
 
-## Permission Requirements
+## What is on the list
 
-Requires the **System Administrator** role. Regular users and tenant administrators should manage their own container images through Console → Moha.
+Above the list are 5 statistics cards. Except for "Total Images", the other cards **count only the images on the current page**, and the numbers change when you turn the page.
 
-Related pages: [Model Repository Management](./models), [Dataset Management](./datasets), [Mirror Source Configuration](./mirrors).
+| Card | Meaning |
+| --- | --- |
+| Total Images | The number of image registries on the whole platform; the subtitle shows the total capacity of the current page's images |
+| Public Images | How many images on the current page have visibility Public |
+| Private Images | How many images on the current page have visibility Private |
+| Total Downloads | The combined download count of all images on the current page |
+| Hot Images | How many images on the current page have any downloads |
+
+Each row of the list shows:
+
+| Column | Meaning |
+| --- | --- |
+| Alias / Name | The image name; when there is an info icon next to it, hover to see the description |
+| Organization | The organization the image belongs to |
+| Visibility | Public / Tenant Only / Private; Private also shows the creator after it |
+| Used Capacity | The space the repository already occupies; shows `-` until the statistics finish |
+| Download Count | The cumulative pulls |
+| Category | The image's use category, such as Network, Database or ML |
+| Accelerates | The acceleration frameworks the image supports, collapsed when there are several |
+| Architecture | The machine architecture the image suits, X86 or ARM |
+| Updated At | The time of the most recent change |
+
+## Find the image you want to work on
+
+1. Type the image's name or alias into the search box; the search runs as you type.
+2. When needed, filter with the **Organization**, **Visibility**, **Category**, **Accelerates** and **Architecture** drop-downs.
+3. A filter you have chosen shows directly on its drop-down; choose **All** to clear it.
+
+## Unlist an image (change visibility)
+
+1. On the target image's row, click the **⋯** button on the far right (the actions menu).
+2. Click **Update Visibility**.
+3. In the **Visibility** drop-down choose the target value: **Public**, **Tenant Only** or **Private**.
+4. Click **Confirm**.
+
+Confirming the result: the visibility tag on that row changes immediately; once it is Tenant Only or Private, ordinary users can no longer see or search for the image.
+
+## Edit image information
+
+1. Click the **⋯** button on the far right → **Edit**.
+2. The page has three cards, **Image**, **Tags** and **Visibility**, which can be collapsed and expanded:
+   - **Name** cannot be changed; its input box is greyed out.
+   - You can change the **Description** and the tags such as **Category** and **Framework**.
+   - You can switch Private / Tenant Only / Public under **Visibility**.
+3. Click **Confirm** when done and you return automatically to the Images list.
+
+## Delete an image
+
+1. Click the **⋯** button on the far right → **Delete**; you can also tick several rows first and use the batch delete above the list.
+2. The confirmation dialog shows "Delete image xxx?".
+3. Type the image's name as prompted; only then does **Confirm** become clickable.
+4. Click **Confirm**.
+
+:::warning Deleted means gone
+
+Deletion permanently removes this image registry and every version inside it, and **it cannot be recovered**. Make sure you really no longer need it before deleting.
+
+:::
+
+## Common questions
+
+| Symptom | Likely cause | What to do |
+| --- | --- | --- |
+| There is no Recommendation in the **⋯** menu | Images do not support recommendations | To recommend something, use [Models](/boss/moha-admin/models) or [Datasets](/boss/moha-admin/datasets) |
+| Used Capacity keeps showing `-` | The platform is still measuring this repository | Refresh the page and look again later |
+| There are no Vulnerability Level or License columns | This information is not shown in the image list | This is normal |
+
+## Related
+
+- [Mirror](/boss/moha-admin/mirrors)
+- [Models](/boss/moha-admin/models)
+- [Spaces](/boss/moha-admin/spaces)

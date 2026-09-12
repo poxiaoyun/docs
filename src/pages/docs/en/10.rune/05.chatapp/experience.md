@@ -1,120 +1,132 @@
 ---
 title: 'Playground'
 updated: '2026-09-12'
-description: 'Layout, model selection, chat parameters and streaming mechanics of the ChatApp Experience page.'
+description: 'Walk through a full conversation: choose a model and key, send messages, follow up, attach images, edit the system prompt and clear the chat.'
 ---
 
-## Overview
+# Playground
 
-The Experience page (`/chatapp/experience`) is the core interactive page of ChatApp. It provides **real-time streaming chat** with models exposed through the LLM Gateway, with Markdown rendering, deep thinking, parameter tuning and token usage statistics.
+**Playground** is ChatApp's main conversation page. Pick a model here, type a question, and watch it write its answer one character at a time. Choosing a model, uploading images, toggling deep thinking and adjusting parameters all happen on this page.
 
-## Page layout
+:::tip An analogy
+This page is like the chat window of a messaging app: on the left is the "contact list" (the model list), in the middle is the message history, and at the bottom is the input box.
+:::
 
-The page has three areas (`chat.tsx`):
+## Before you start
 
-| Area | Position | Width | Description |
-|------|----------|-------|-------------|
-| **Model list** | Left `aside` | 264px, shown from `md` up | Tree of models, with a search box (appears when there are more than 5 models) |
-| **Conversation** | Center | Fluid | Top info bar + message list + bottom input box |
-| **Model info / parameters** | Right `aside` | 300px, `xl` only | Model information and parameter settings (including the API key) |
+- Any signed-in account works; no extra role is needed.
+- Your account needs **at least one API key**; otherwise the whole page only shows "No API Key Found", and you can click **Create API Key** in that message to make one first (see [API Keys](./token.md)).
+- Your account needs **at least one available model**; otherwise "No Models Available" is shown.
 
-> 💡 **Tip**: Below `xl` the right panel is hidden and the top of the conversation area exposes two popover entries instead: **API key selection** and **parameter settings**.
+## The page has three parts
 
-The top info bar shows the current model `id`, `provider · channel`, a parameter popover entry, the API key selector, and a **New chat** button once a model is selected.
+| Area | Position | Description |
+| --- | --- | --- |
+| **Model list** | Left | A collapsible list grouped by visibility → channel → model |
+| Conversation | Center | Top info bar + message list + bottom input box |
+| **Model information** / **Parameter settings** | Right | Shown only when the window is wide enough; on a narrow window the right side collapses and you open them with icons at the top of the conversation area |
 
-## Model list
+## Choose a model
 
-The list is a collapsible tree ordered **visibility → channel → model** (`model-list-panel.tsx`); the visibility order is `public` → `private` → `tenant`:
+1. Click **Playground** in the top navigation.
+2. Look at the **Model list** on the left. It is grouped **Public** → **Private** → **Tenant**, then by channel within each group, and the model entries come last; click a group heading to expand or collapse it.
+3. When there are more than 5 models, a **Search models** box appears at the top of the list, which searches by model name, tenant, workspace, channel and provider.
+4. Click a model entry to select it. The entry shows its type (`LLM`, `VLM`, `Embedding`), visibility, and the tenant and workspace it belongs to; the copy button beside the name copies the model ID.
 
-| Level | Description |
-|-------|-------------|
-| Visibility group | Public (`public`) / Tenant (`tenant`) / Private (`private`) |
-| Channel group | Sorted by channel name, showing the number of models in that channel |
-| Model entry | Shows the model `id` (one-click copy), type tag, visibility tag, and `tenant / workspace` |
+:::warning Choosing a model clears the current conversation
+Switching a model wipes the current chat history. Copy anything you need to keep first.
+:::
 
-**Filtering**: only chat-capable models are listed (`isChatModel`, `model-utils.ts:11-17`). A model qualifies when `metadata.type` is present; otherwise `metadata.task` must be empty or equal to `generate`, which filters out non-chat models such as Embedding.
+## Confirm which key is used
 
-**Search**: filters live by model `id`, `tenant`, `workspace`, `channel` and `provider` keywords.
+The conversation is sent under the identity of an **API key**, so check the selected key before sending.
 
-> ⚠️ **Note**: When the list is empty the page shows "no models available", which usually means no model channel is configured for the current tenant/workspace.
+- On a narrow window: open the key selector at the top of the conversation area and pick a key.
+- On a wide window: the **API Key / credential** dropdown in the right-hand **Parameter settings** panel is the same setting.
+- By default the first key in the account is selected automatically. Expired keys in the dropdown are marked `Expired` — do not pick them.
 
-## Chat parameters
+## Start a conversation
 
-Defaults are defined in the `params` prop of `ChatView` (`chat.tsx:59-77`); the adjustable ranges come from the parameter component (`chat-params.tsx`):
+1. With a model and key selected, look at the bottom input box; its placeholder reads "Type to chat with the model...".
+2. Type your question.
+3. Press **Enter** to send, or click the round send button at the bottom right.
+4. The answer streams in character by character.
+5. For a new line, press **Shift + Enter** (with an IME, an Enter that has not finished composing does not send by mistake).
 
-| Parameter | Field | Default | Range | Step | Description |
-|-----------|-------|---------|-------|------|-------------|
-| Temperature | `temperature` | `0.7` | 0 ~ 1.999 | 0.1 | Sampling temperature; higher is more random |
-| Top P | `topP` | `0.8` | 0.1 ~ 1.0 | 0.1 | Nucleus sampling threshold |
-| Max Tokens | `maxTokens` | `4096` | 0 ~ 32768 | 10 | Maximum output tokens per reply |
-| System Prompt | `systemPrompt` | `""` (empty) | Free text | — | System prompt |
-| Stop | `stop` | `""` (empty) | Free text | — | Stop sequence; not submitted when empty |
+If no model is selected or the input box is empty, the send button is grey and cannot be clicked.
 
-- **Temperature and Top P** are usually adjusted one at a time; both affect sampling randomness.
-- **Max Tokens** set to `0` means unlimited (the model default is used).
-- **Stop** is wrapped into an array when non-empty, e.g. `stop: ["stop"]`; when empty the request sends `stop: null`.
+## Follow up (multi-turn conversation)
 
-## Deep thinking
+You do not need to start over — keep typing in the same input box and press **Enter** again. Earlier messages are sent along with the new one, so the model can answer in context.
 
-The **Deep thinking** toggle sits next to the input box and is **on by default** (`deepThinking = true`). Its state is passed to the model through the `reasoning_effort` parameter:
+Only two things break the context: **switching models**, and clicking **Clear conversation**.
 
-| UI state | Submitted value |
-|----------|-----------------|
-| On (default) | `reasoning_effort: "high"` |
-| Off | `reasoning_effort: "none"` |
+## Edit the system prompt (give the model a persona)
 
-> ⚠️ **Note**: `reasoning_effort` only accepts `high` and `none` — there is no `low` or `medium` level.
+The system prompt is the rule you set before the conversation starts, for example "You are an AI assistant". It **takes effect only when you type something into it**.
 
-When enabled, models that support it return both a `reasoning_content` part (the reasoning trace, shown collapsed) and the final reply. Deep thinking consumes more tokens.
+1. Click the parameter icon at the top of the conversation area (hover shows **Parameter Settings**) to open the parameter dialog.
+   - On a wide enough window you can also work directly in the right-hand **Parameter settings** panel: click **More parameters** to expand it.
+2. Write in the multiline **System** input, for example "You are a support assistant; answer in no more than three sentences".
+3. Close the dialog — the change is remembered immediately.
+4. Only messages sent after the change follow the new rule; messages already sent are unaffected.
 
-## Input and messages
+## Send an image to the model
 
-| Interaction | Behaviour |
-|-------------|-----------|
-| Send | **Enter** |
-| New line | **Shift + Enter** |
-| IME input | Enter during IME composition does not send |
-| Attach image | Use the image-upload icon or paste an image; submitted as an `image_url` content block |
-| Stop generation | Click **Stop** while generating; the SSE connection is aborted and generated content is kept |
+1. Click the image button in the input toolbar (hover shows **Upload image**).
+2. Choose one or more images; you can also paste an image from the clipboard straight into the input box.
+3. Selected images line up as thumbnails above the input box, with "N images selected" shown.
+4. To remove one, click the close icon at the top-right corner of its thumbnail.
+5. Send as usual with **Enter**, and the images travel with that message.
 
-The message list supports Markdown rendering, collapsible reasoning content, copy and retry. The assistant reply footer shows the token usage of that request (`prompt_tokens` / `completion_tokens` / `total_tokens`).
+To actually understand images, you need a model whose **Category** includes **Vision** (visible in [Models](./marketplace.md)).
 
-## Error messages
+## Deep Thinking
 
-When a chat request fails, the front end maps the upstream `error.code` to a message (`chat-error.ts`):
+The **Deep Thinking** button in the input toolbar is **on by default**. When on, the button is filled, and the model works through its reasoning before giving a conclusion; if the model supports it, a reasoning block appears in the reply that you can fold or unfold with **Show thoughts** / **Hide thoughts**.
 
-| Error code | Description |
-|------------|-------------|
-| `rate_limit_exceeded` | Rate limited; when `error.message` matches one of these reasons a specific message is shown: `token_tpm_penalty`, `channel_tpm_penalty`, `token_tpm_insufficient`, `channel_tpm_insufficient`, `token_rpm_insufficient`, `channel_rpm_insufficient` |
-| `policy_violation` | Blocked by content moderation / safety policy |
-| `context_length_exceeded` | Context length exceeded |
-| `invalid_api_key` | API key is invalid, expired or deleted |
-| `insufficient_quota` | Quota exhausted |
+Click the button again to turn it off and it becomes outlined. Deep Thinking makes answers more reliable, but it also **consumes more tokens**.
 
-In addition, when the streaming `finish_reason` is `sensitive` or `content_filter`, the page reports that the upstream stopped the response due to sensitive content or content filtering.
+## Stop, retry or copy while generating
 
-> 💡 **Tip**: If the upstream response carries a request ID (`request_id` / `requestId` / `id`), the error message appends it to help with troubleshooting.
+| What you want | How to do it |
+| --- | --- |
+| Stop generating | Click **Stop** in the input area; content already generated is kept |
+| Have the model answer again | Click the refresh icon under that answer. It regenerates from that answer, and anything after it is discarded |
+| Copy an answer | Click the copy button under the answer |
+| See how many tokens this used | Look at the usage under the answer: `prompt_tokens` (what you sent), `completion_tokens` (what the model generated) and `total_tokens` (the sum) |
 
-## Request details
+## Clear the conversation
 
-```text
-POST /airouter-data/v1/chat/completions
-Authorization: Bearer {token}
-Accept: text/event-stream
-X-Tenant / X-Workspace / X-Channel   # non-ASCII values are URL-encoded
+1. With a model selected, a **Clear conversation** button appears at the top right of the conversation area.
+2. Click it: the message list and reasoning content are wiped, while the model and parameters stay as they are, so you can start again.
 
-{
-  "messages": [...],
-  "stream": true,
-  "model": "<model id>",
-  "temperature": 0.7,
-  "max_tokens": 4096,
-  "top_p": 0.8,
-  "reasoning_effort": "high",
-  "stop": null
-}
-```
+## When you arrive with no messages
 
-If the URL carries a `model` query parameter (and optionally `channel_id`), the Experience page selects that model automatically (`chat.tsx:268-295`); a `new_chat` parameter clears the current conversation.
+The page shows "Start with a question" and four ready-made prompt cards (Explain a concept, Create a delivery plan, Analyze key questions, Generate a project template). With a model selected, click any card and the question inside it is sent immediately.
 
-> 💡 **Tip**: A parameter combination tuned here can be used directly for API integration — the parameter names match the request body exactly.
+## Confirm it worked
+
+- Success: an answer appears in the assistant bubble, with a row of token usage numbers below it.
+- Failure: an error message or "Generation failed" is shown where the message would be. Use the table below.
+
+## Common issues
+
+| Message on the page | Possible cause | What to do |
+| --- | --- | --- |
+| No API Key Found | The account has no key yet | Click **Create API Key** in the message and create one |
+| No Models Available | The account has no model channel at all | Ask the platform administrator to open a model for you |
+| Invalid API key | The key was deleted or has expired | Check its status in [API Keys](./token.md) and switch to a valid one |
+| Too many requests, please try again later | You hit the rate limit | Wait a moment, or send less frequently |
+| Insufficient quota | The account allowance is used up | Ask the administrator to handle the allowance |
+| Context length exceeded | The chat content exceeds what the model can remember | Click **Clear conversation** to restart, or switch to a model with a larger context |
+| The request was blocked by a content safety policy | The content matched a safety policy | Rephrase and remove anything that may violate the policy |
+| The model ended the reply early because sensitive-content policy was triggered | The reply was cut off mid-way by policy | Rephrase and retry; the reply may carry an upstream request ID that you can give the administrator |
+| Nothing happens mid-generation | A network hiccup or a dropped connection | Click **Stop**, then retry the message |
+
+## Related
+
+- [Models](./marketplace.md)
+- [Comparison](./compare.md)
+- [Parameter Configuration](./debug.md)
+- [API Keys](./token.md)

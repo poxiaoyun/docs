@@ -1,80 +1,90 @@
 ---
 title: Moha Hub Settings
 updated: '2026-09-12'
-description: 'Moha display settings and space settings — logo, title, description, base domain and TLS certificates.'
+description: 'Set the Moha Hub title, logo and description, plus the base domain and HTTPS certificate used by Spaces.'
 tags:
   - boss
   - settings
 ---
 
-## Feature overview
+# Moha Hub Settings
 
-Moha settings maintain the display information for Moha Hub and the Moha space domain and TLS configuration. The page has two cards: **Moha Hub config** and **Space config**.
+Moha Hub Settings decide **how Moha Hub appears to users** (name, logo, description) and also manage which domain **Spaces** are served from and whether HTTPS is enabled.
 
-This page corresponds to **Platform management → Moha settings** in the Boss console (menu label from `navbar.moha_setting`).
+The page has two cards: display information on top and space configuration below. They **save independently**, so changing one never affects the other.
 
-## Access path
+This page is under **System Settings → Moha Hub Settings** in the left-hand menu.
 
-Boss console → Platform management → **Moha settings**
+:::tip What the two cards control
+The upper card only changes what Moha Hub is called and how it looks; users see this directly.
+The lower card controls how the Spaces feature is reached — a wrong domain or certificate makes Spaces unreachable, so treat it as the more sensitive of the two.
+:::
 
-Console route: `/settings/moha`
+## Before you start
 
-## Moha Hub config
+- Your account must be a **system administrator**.
+- Prepare the logo image: **PNG or SVG**, no larger than **128 KB**.
+- If you are going to change the space configuration, first prepare a **domain that is registered and pointed at this platform**; to enable HTTPS you also need the certificate and private key contents.
 
-| UI label | Field | Type | Constraint | Notes |
-|----------|-------|------|-----------|-------|
-| (Logo upload) | `moha.logo` | Image upload | Max **128 KB**, **PNG / SVG** | Stored as Base64 |
-| Product title | `moha.title` | Text | Max **10 characters** | Navbar title |
-| Product description | `moha.description` | Multiline | Max **100 characters**, 4 rows | Product summary |
+## Page structure
 
-> ⚠️ Note: the field name for "product title" is **`moha.title`** (the UI label is `navbar_title`).
+| Card | What it controls | How it is saved |
+| --- | --- | --- |
+| Title and Logo | The Moha Hub name, logo and description | Click **Confirm** inside the card |
+| Space Configuration | The Space base domain, whether HTTPS is enabled, and the certificate | Click **Confirm** inside the card |
 
-Written structure:
+## Set the name and logo
 
-```yaml
-moha:
-  logo: "data:image/svg+xml;base64,PHN2ZyB..."
-  title: "Moha"
-  description: "Product summary"
-```
+1. Fill in the **Title and Logo** card:
 
-Request: `PUT /api/iam/global-config`.
+   | Setting | What to fill in | What happens when you change it |
+   | --- | --- | --- |
+   | Logo | Upload a PNG or SVG, no larger than **128 KB** | Replaces the icon in the **Products** entry and on Moha Hub pages |
+   | Product Title | At most **10 characters**; defaults to the built-in product name | Replaces the name shown in the entry and the navigation bar |
+   | Product Description | At most **100 characters**, and it can wrap onto 4 lines | Replaces the product description text |
 
-## Space config
+2. Choosing a logo file **triggers an immediate save**.
 
-Space config is separate from display settings and is saved to the Moha global configuration (`PUT /api/moha/global-config`).
+3. If you only changed the text, click **Confirm** at the bottom of the card.
 
-| UI label | Field | Type | Required | Default | Notes |
-|----------|-------|------|----------|---------|-------|
-| Base domain | `space.base` | Text | ✅ | empty | e.g. `develop.xiaoshiai.cn` |
-| Enable TLS | `space.tlsEnabled` | Switch | — | off | Requires both certificate and key |
-| TLS certificate | `space.tlsCert` | Multiline | conditional | empty | PEM certificate |
-| TLS private key | `space.tlsKey` | Multiline | conditional | empty | PEM key |
+## Set the space configuration
 
-Validation:
+1. Fill in the **Space Configuration** card:
 
-- `base` must be non-empty after trimming
-- With TLS on, both certificate and key are required
-- Certificate and key must be **provided together or both empty**; providing only one is an error
-- All values are trimmed before submit
+   | Setting | What to fill in | What happens when you change it |
+   | --- | --- | --- |
+   | Base Domain | Required, for example `develop.example.com` | Spaces are served publicly on this domain; it cannot be left empty |
+   | Enable TLS | Switch, **off** by default | When on, Spaces are accessed over HTTPS |
+   | TLS Certificate | Required when TLS is enabled, PEM format | The certificate used for Space HTTPS |
+   | TLS Private Key | Required when TLS is enabled, PEM format | The private key used for Space HTTPS |
 
-```yaml
-space:
-  base: "develop.xiaoshiai.cn"
-  tlsEnabled: true
-  tlsCert: "-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----"
-  tlsKey: "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
-```
+2. Click **Confirm** at the bottom of the card to save.
 
-> ⚠️ Note: the two cards save independently.
+Validation rules:
 
-## Requests
+- **Base Domain** must not be empty once leading and trailing spaces are removed, otherwise the form cannot be saved.
+- With **Enable TLS** on, both the certificate and the private key **must be filled in**; providing only one raises an error.
+- The certificate and private key must be **provided together or both left empty**; filling in only one shows an error.
 
-| Request | Method | Notes |
-|---------|--------|-------|
-| `/api/iam/global-config` | `PUT` | Save the Moha Hub display config |
-| `/api/moha/global-config` | `GET` / `PUT` | Read / save space config |
+:::warning Check the certificate before enabling HTTPS
+With TLS on, the platform reaches Spaces over HTTPS. Make sure the certificate and private key belong together and match the base domain, otherwise users will not be able to open their Spaces.
+:::
 
-## Permissions
+## Confirming the result
 
-Requires the **system administrator** role.
+- Both cards show "**Update successfully, please refresh the page**" after a successful save.
+- Refresh the browser, then check the **Products** entry to see whether the Moha Hub name and logo have updated.
+- Once the space configuration takes effect, open a Space using the base domain and confirm it loads; with TLS enabled the address should start with `https://`.
+
+## Common questions
+
+| What you see | Likely cause | What to do |
+| --- | --- | --- |
+| The space configuration will not save | The base domain was left empty | Enter the correct domain |
+| A TLS-related error appears | Only the certificate or only the private key was filled in | Fill in both, or clear both |
+| Spaces do not open after enabling HTTPS | The certificate and private key do not match, or the domain is wrong | Check the certificate against the domain and paste them again |
+
+## Related
+
+- [Platform Settings](/boss/settings/platform)
+- [AI Platform Settings](/boss/settings/rune)

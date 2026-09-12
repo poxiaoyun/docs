@@ -1,121 +1,122 @@
 ---
 title: Call Logs
 updated: '2026-09-12'
-description: 'Query gateway call records by time, user, token, channel and model, and open call details.'
+description: Look up one call: model, channel, latency, cost.
 tags:
   - boss
   - gateway
 ---
 
-## Feature overview
+# Call Logs
 
-Call logs record every request forwarded through the gateway, including the requester, channel, model, latency, tokens and billing data, plus optional request/response payloads and moderation reports. The page is used for troubleshooting, usage reconciliation and sensitive-content tracing.
+Call Logs records **every** request that passes through the gateway, including the caller, the channel, the model, the latency, the token count and the cost. It is the main evidence you use to troubleshoot problems, reconcile usage and trace sensitive content.
 
-This page corresponds to **LLM gateway → User management → Call logs** in the Boss console (menu label from `navbar.call_logs`).
+By the end you will be able to filter by time, user, key, channel provider and model, and open a record to inspect its request and response details.
 
-## Access path
+:::tip Like a building's security footage
+The Dashboard gives you the statistics of "how many people entered the building today"; Call Logs is the frame-by-frame footage, recording who came in at what time, through which door, and which floor they went to. When something goes wrong, this is what you replay, record by record.
+:::
 
-Boss console → LLM gateway → User management → **Call logs**
+## Before you start
 
-| Action | Console route |
-|--------|--------------|
-| Record list | `/gateway/audit` |
-| Standalone detail page | `/gateway/audit/:id` |
+- Permission: you need a platform administrator account (one that can enter the BOSS console).
+- **Enable Audit Logging** in **Gateway Configuration** must be on, otherwise new calls are not recorded.
 
-> ⚠️ Note: clicking the time column opens a **dialog** (`AuditDetailDialog`) rather than navigating to `/gateway/audit/:id`. The standalone route is registered but the list provides no entry point to it.
+## Open Call Logs
 
-## Filters
+1. Click **Model Gateway** in the left sidebar.
+2. Expand **User Management** and click **Call Logs**.
 
-The filter bar supports range presets and a custom range:
+## How to filter
 
-| Filter | Type | Description |
-|--------|------|-------------|
-| Time range | Preset | Today / Yesterday / Last 3 days / Last week / Custom |
-| Start date, end date | Date picker | Only used with "Custom" |
-| User | Text | Fuzzy match on username |
-| Token | Text | Match on token |
-| Channel | Select | Options come from the channel list (`channelName`), with "All" |
-| Model | Text | Fuzzy match on model name |
+A filter toolbar sits at the top of the page:
 
-The bar also offers **Refresh** and **Reset** (reset restores the range to "Today").
+| Filter | Notes |
+| --- | --- |
+| Time Range | Today / Yesterday / Last 3 days / Last week / Custom |
+| Start date, End date | Editable only when **Custom** is selected |
+| User | Fuzzy search by username |
+| Token | Query by key |
+| Channel provider | A dropdown that includes **All** |
+| Model | Fuzzy search by model name |
 
-> ⚠️ Note: there is **no "Result" filter** in the UI. The backend query supports `result`, but it is not exposed; the "tenant" filter string in i18n is likewise unused.
+The toolbar has **Refresh** and **Reset**. Reset puts the time range back to **Today**.
 
-## Record list
+:::info There is no "Result" filter
+The interface offers no way to filter by success or failure. To find failed requests, watch for rows with a red marker in the list, or narrow the range by user and model first.
+:::
 
-| Column | Field | Description |
-|--------|-------|-------------|
-| Time | `requestStarted` | Click to open the detail dialog |
-| Channel | `channelName` | Channel the request was routed to |
-| User | `username` | Requesting user |
-| Token | `tokenId` | Token id used |
-| Model | `model` | Requested model |
-| Duration | `latencyMillis` | End-to-end latency (ms) |
-| Tokens | `totalTokens` | Total tokens consumed |
-| Cost | `billedTokens` | Billed tokens, rendered with the currency setting |
-| Standard | `modelPriceStandard` | Standard price from the model price table |
+## What the list contains
 
-Rows whose result is not `success` show a red bar in the sticky column.
+| Column | Meaning |
+| --- | --- |
+| Time | When the request happened; the small text below is the result of that call, and clicking it opens the details |
+| Channel | The channel it was actually routed to; the small text below shows provider / tenant / workspace |
+| User | The user who made the call, with the tenant name |
+| Token | The key that was used |
+| Model | The model requested |
+| Duration | End-to-end duration; when a first-token time exists, both **First token** and **Duration** are shown |
+| Tokens | Total tokens consumed by this call |
+| Cost | The billed amount, converted according to Currency Configuration |
+| Standard | The standard price calculated from the model's price table |
 
-The list disables the search box and toolbar and uses its own pagination.
+Any row whose result is not a success shows a fixed red vertical line on the left, so anomalies are easy to spot at a glance.
 
-## Call details
+:::info Cost is a calculated number
+The cost here is a **cost snapshot** calculated from the model price, used for reconciliation and analysis. The gateway itself does no top-ups or deductions; the cost column is just a monetary statistic.
+:::
 
-Clicking the Time column opens a dialog with these tabs:
+## View the details of a call
 
-| Tab | Content |
-|-----|---------|
-| Basic info | See the table below |
-| Request data | Request payload (read-only JSON editor) |
-| Response data | Response payload (read-only JSON editor) |
-| Metadata | Metadata (read-only JSON editor) |
-| Moderation | Sensitive-content report (only when `sensitiveDetected` is true) |
+1. Click the **Time** cell of a record.
+2. The dialog has several tabs:
 
-Empty tabs show "No data".
+   | Tab | Content |
+   | --- | --- |
+   | Basic Info | Request ID, user, channel, model, duration, status code, token breakdown and more |
+   | Request Data | The content sent to the model (read-only) |
+   | Response Data | The content the model returned (read-only) |
+   | Metadata | Additional information (read-only) |
+   | Moderation | The sensitive-content report, shown only when this call tripped moderation |
 
-### Basic info fields
+3. When a tab has nothing in it, it shows **No Data**.
 
-| Field | Key |
-|-------|-----|
-| Numeric id | `id` |
-| Request id | `requestId` |
-| Trace id | `traceId` |
-| Token id / name / value | `tokenId` / `tokenName` / `tokenValue` |
-| Tenant | `tenantId` |
-| User id / username | `userId` / `username` |
-| Channel id / name | `channelId` / `channelName` |
-| Workspace | `workspace` |
-| Provider | `provider` |
-| Model | `model` |
-| Method / endpoint | `method` / `endpoint` |
-| Request / response time | `requestStarted` / `responseEnded` |
-| Duration | `latencyMillis` |
-| Status code | `statusCode` |
-| Result | `result` (`success` green, otherwise red) |
-| Error message | `errorMessage` (only on failure) |
-| Prompt / completion / total tokens | `promptTokens` / `completionTokens` / `totalTokens` |
-| Billed tokens | `billedTokens` |
-| Streaming | `isStream` |
-| Sensitive | `sensitiveDetected` |
-| Moderation decision | `moderationDecision` (only when sensitive) |
-
-## Result values
+### Result states
 
 | Result | Meaning |
-|--------|---------|
-| `success` | Succeeded |
-| `error` | Failed |
-| `blocked` | Blocked |
-| `quota_exceeded` | Quota exceeded |
+| --- | --- |
+| Success | The request completed normally |
+| Failed | The request errored |
+| Blocked | It was stopped by content moderation |
+| Quota Exceeded | A limit was reached and processing stopped |
 
-> ⚠️ Note: these values come from the audit i18n bundle; the list only distinguishes `success` from everything else by colour. The full set returned by the server is unconfirmed.
+The list uses colour to separate **Success** from the other results, making anomalies quick to find.
 
-## About data cleanup
+## How long records are kept
 
-The service layer exposes a cleanup request `cleanupAuditRecords(before)` (`DELETE /api/airouter/v1/audit/cleanup?before=...`) and the i18n bundle has cleanup dialog strings, but **no page calls it** (a repo-wide search for `cleanupAuditRecords` only hits its definition).
+The page itself has **no retention setting and no cleanup entry**. That means:
 
-> ⚠️ Note: there is **no cleanup entry in the UI**. Availability and permissions must follow the backend contract.
+- You cannot delete call logs or schedule automatic cleanup from the interface.
+- How long records are actually kept depends on how the platform is deployed and on the database policy.
 
-## Permissions
+If you need to clear historical records for capacity or compliance reasons, contact platform operations.
 
-Requires the **system administrator** role. Call details may contain private and sensitive data; restrict access accordingly.
+## Confirm it worked
+
+Once you set a time range, the list shows matching records and opening one reveals its request and response content — that means the query is working. To check whether a channel or key is in use, filter by it and see whether records are still being produced.
+
+## FAQ
+
+| Symptom | Likely cause | What to do |
+| --- | --- | --- |
+| No records at all | Audit logging is off, or the time range is too narrow | Check the audit switch in [Gateway Configuration](/boss/gateway/config) and widen the range |
+| A request shows as failed | An upstream channel failure, an invalid key, and so on | Open the details to read the error, then check the channel in [Channel Management](/boss/gateway/channels) |
+| The cost column is empty | The model has no price configured yet | Add the price in [Model Configuration](/boss/gateway/model-metadata) |
+| The state is Blocked | A content moderation policy matched | See what matched in [Hit Records](/boss/gateway/sensitive-hits) |
+| Want to delete old records | The page offers no cleanup | Contact platform operations |
+
+## Related
+
+- [Channel Management](/boss/gateway/channels): deal with the channel behind a failed request
+- [Model Configuration](/boss/gateway/model-metadata): the model prices cost is calculated from
+- [Hit Records](/boss/gateway/sensitive-hits): only the calls that tripped moderation

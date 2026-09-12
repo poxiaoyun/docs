@@ -1,83 +1,156 @@
 ---
 title: 'Inference Services'
 updated: '2026-09-12'
-description: 'Inference service list fields, deployment, status enum, gateway registration, and instance detail.'
+description: 'Deploy a model as an online service from scratch: pick a template, fill in parameters, wait for Healthy, and find the access address.'
 tags:
- - rune
- - console
+  - rune
+  - console
 ---
 
 # Inference Services
 
-Inference services (`category=inference`) deploy a model as an online service. Deployment follows the shared model: pick a template, fill base fields, fill JSON Schema parameters. After deployment the instance can be registered with the gateway.
+An inference service is **opening a model for business**: once deployed, your model gets an access address that colleagues' programs or applications can call. This page walks you through deploying your first inference service, and tells you where to get the address afterwards, how to tell it succeeded, and where to look when something goes wrong.
 
-List path: `/rune/tenants/:tenant/clusters/:cluster/workspaces/:workspace/inferences`
+:::tip Three analogies
 
-## List
+- A template is like a machine assembly list: choose the list and Rune assembles the machine and software for you.
+- An instance is a machine assembled from that list; the inference service is this machine.
+- A resource spec is how many CPU cores, how much memory, and how many accelerator cards this machine gets.
 
-| Column | Description |
-| --- | --- |
-| Name | Instance name, click to open detail |
-| Template | Source product template name and version |
-| Flavor | Resource summary parsed from `values.flavor` |
-| Model | From `status.summary.model` |
-| Replicas | From `status.summary.replicas` |
-| Status | `status.phase` |
-| Creator | From labels |
-| Created At | Instance creation time |
+:::
 
-Row actions: Start/Stop, Publish/Gateway configuration, Unregister, Save as template, Edit, Delete.
+## Before you start
 
-> ⚠️ Note: The list does **not** support status filtering and has **no batch start/stop** (the toolbar batch action list is empty and `filterFields` is empty).
+- Your tenant role must be **Administrator** or **Developer**.
+- **Region** and **Workspace** are selected in the top-left.
+- If the model files are in your own hands, create a **Storage** volume first and upload the model — see [Storage](/rune/console/storage). Skip this step if you use a platform model or an online model.
+- Confirm the current workspace has enough quota, otherwise creation fails.
 
-## Create
+## Deploy an inference service from scratch
 
-1. Click **Create Resource** (i18n key `create_resource`) — this navigates to `/rune/products/inference`.
-2. Select a template and version (or start from a template in the App Market).
-3. Fill base fields:
+1. In the **Workbench** group in the left sidebar, click **Inference**.
+2. Click **Create Inference** in the top-right to open the template picker.
+3. Click into an inference template card, confirm the **Version** to use, and click **Deploy**.
+4. When the form appears, fill in the basic info first:
 
-| Field | Required | Description |
+   | Field | What to fill | Notes |
+   | --- | --- | --- |
+   | Name | For example `qwen-chat` | Required and for display; the ID below it is generated from it automatically |
+   | ID | Generated automatically by default | Click the pencil icon below the name to customize it; it cannot be changed after creation |
+   | Description | For example "customer service Q&A trial" | Optional |
+
+5. Fill in the template parameters (see "How to fill in the parameters" below).
+6. Click **Confirm** at the bottom of the page to submit.
+
+:::tip You do not have to use the Inference menu to get an address
+You can also pick a template directly in the **Marketplace**: open the template detail, choose the **Version**, and click **Deploy** — the result is exactly the same.
+:::
+
+## How to fill in the parameters
+
+Apart from Name and Description, the other fields are **decided by the template**, so different templates look different. Taking the commonly used vLLM inference template as an example, you will see these:
+
+| Field | What to fill | Notes |
 | --- | --- | --- |
-| `id` | ✅ | Instance ID, not editable in edit mode |
-| `name` | ✅ | Display name |
-| `description` | — | Description |
+| Resource flavor | Pick a GPU compute resource flavor | Required. Confirm the quota is enough before choosing |
+| Model configuration | Choose a platform model, or type an online model name | Required. Choosing "Local storage" associates the file storage volume you created |
+| Model name (required) | For example `qwen-7b` | Required. Clients must send this name when calling |
+| API access token | Leave empty or set your own string | Empty means callers need no authentication; if set, the request header must carry this token |
+| GPU memory utilization | Defaults to `0.9` | Selectable from 70% to 100%. A higher value improves throughput but may cause OOM |
+| LoRA configuration | Off by default | When enabled, mounts shared storage and loads fine-tuning artifacts |
+| Scheduled autoscaling | Off by default | Needs cluster support; adjusts the replica count automatically by time window |
 
-4. Fill template parameters rendered from the version JSON Schema (graphical mode ↔ JSON mode).
+:::warning About images and ports
+The **image and port of an inference template are preset by the template** and usually do not appear in the deploy form, so you do not need to fill them in. Only a few templates additionally expose "Image settings" or "Network configuration", and only then do you fill them in as the template says.
+:::
 
-> 💡 Tip: There is no fixed "choose flavor → mount storage → fill parameters" flow. Whether flavor, storage, or replica fields exist depends on the template Schema.
+If you are unsure what a parameter means, click **AI Config Guide** in the top-right of the form; it uses the current template and what you have filled in to explain the key settings, required fields, and the risks to check before deploying. You can also click the icon to switch to JSON mode and edit the underlying parameters directly, but new users are advised to stay in form mode.
 
-## Status
+## Confirming the result
 
-`status.phase` comes from `InstanceStatusPhaseEnum` (`src/types/instance.ts`), 12 values: `Reconciling`, `Installed`, `Pending`, `Running`, `Healthy`, `Unhealthy`, `Degraded`, `Paused`, `Succeeded`, `PartialFailed`, `Failed`, `Terminating`.
+After submitting, you return to the **Inference** list:
 
-## Lifecycle
+1. The service appears, with the **Status** column first showing **Pending** or **Installing**.
+2. When the **Status** becomes **Running** or **Healthy**, the service is available.
+3. Click the service name to open the detail page: the **Overview** tab shows the basic info and the pod list, **Monitoring** shows resource curves, **Logging** shows runtime output, and **Events** helps you diagnose failures.
 
-| Action | Description |
+:::tip How long to wait
+There is no fixed duration; it depends on how fast the image is pulled and the model is downloaded: small models are quick, and large models load noticeably more slowly the first time. During this period the status stays at Pending / Installing, which is normal — do not submit again.
+:::
+
+## Find services in the list and delete them in bulk
+
+Once you have a few services, use the toolbar above the list:
+
+| Control | How to use it |
 | --- | --- |
-| Edit | Edit name, description, and template parameters |
-| Start / Stop | Toggle `values.global.paused`; not a state-machine transition |
-| Scale | `ScaleAction` in the detail action menu |
-| Delete | Deletes the instance and related resources; confirmation required |
+| Search box | Search by **service name / model / template** |
+| **Status** | Switch between All / Healthy / Needs attention / Paused |
+| **Template** | Show only services deployed from one template |
+| **Resource** | Filter by the resource in use |
+| **Visibility** | Filter by the service's visibility (for example Public / Tenant only / Private) |
 
-## Gateway Registration
+To clean up several at once: tick the checkboxes at the start of the rows, then the toolbar shows a bin icon (**Batch Delete**) — click it and confirm.
 
-- Requires instance status `Healthy` or `Installed`; otherwise the menu item is disabled.
-- The form renders `endpoint` (required URL, auto-completable from instance endpoints), `accessLevel`, `engine`, and `adapters`.
-- `models` and `key` exist in the backend contract but have **no input control** in the current form.
-- The front end defines **no gateway status enum**; only a `paused` boolean exists.
+:::warning There is no batch start/stop
+Bulk actions only support **delete**. Start, stop and scaling are per-service: use that row's action menu, or the **Actions** menu on the detail page.
+:::
 
-> ⚠️ Note: The gateway status enum belongs to the backend contract and is not constrained by the front end; not yet confirmed.
+## Where to get the access address
 
-See [Inference Hosting](/rune/guide/inference) for details.
+On the instance detail page, **Endpoints** in **Overview** shows the access address. Addresses fall into three kinds by network scope:
 
-## Detail
+| Kind | Who can reach it |
+| --- | --- |
+| Cluster network | Only instances inside the cluster |
+| Internal network | Reachable from the tenant's internal network |
+| External network | Callable from outside |
 
-Tabs: Overview / Monitoring / Logging / Events. The action menu additionally provides "Save as template", "Gateway configuration", and "Decrypt model".
+## Publish the service to the gateway
 
-### Model Decryption
+To let callers reach the model through the unified gateway, click **Publish Service** in the row action menu or the **Actions** menu on the detail page:
 
-Inference instances support decrypting an encrypted model (`DecryptModelAction`); the dialog requires a decryption password. Individual Pods in the Pod list can also be decrypted.
+1. The instance status must be **Healthy** or **Installed**, otherwise the menu item is greyed out.
+2. In the dialog, confirm the **Endpoint** (choose from the instance addresses or type one), and choose the **Visibility** (Public / Tenant / Workspace / Private).
+3. If needed, expand the LoRA configuration, choose the engine, and fill in the adapter name and path.
+4. Click **Confirm**.
 
-## Permissions
+After publishing, the same place becomes **Gateway Configuration** and can be changed at any time; when you no longer want to offer it externally, click **Unpublish**.
 
-Inference belongs to the PAI Workbench group; the navigation requires tenant role `ADMIN` or `DEVELOPER`.
+:::warning After unpublishing, the outside world cannot call it
+After unpublishing, users can no longer access this model through the model gateway. Only do this once you have confirmed no caller depends on it.
+:::
+
+## Day-to-day management
+
+In the row action menu or the **Actions** menu on the detail page:
+
+| Action | Notes |
+| --- | --- |
+| Edit | Change the name, description, and template parameters |
+| Start / Stop | Stopping releases compute; click **Start** to resume |
+| Scale | Appears only when the template declares replicas; fill in a new replica count and click **Confirm** |
+| Save as Task Template | Save the current configuration as a template to reuse in one click |
+| Decrypt model | For a deployed encrypted model, enter the decryption password and click **Decrypt** |
+| Delete | After a second confirmation, deletes the instance and releases resources; cannot be undone |
+
+:::warning What to do when the status says "Processing failed"
+Do not rush to delete and recreate it. Open the **Events** and **Logging** tabs on the detail page; they usually show the specific cause (not enough quota, image pull failure, wrong model path, and so on). Once fixed you can click **Edit** and submit again.
+:::
+
+## FAQ
+
+| Symptom | Likely cause | What to do |
+| --- | --- | --- |
+| Stuck at Pending for a long time | Not enough resource, queued for scheduling | Check the quota, or switch to a smaller flavor |
+| Status becomes Processing failed | Wrong parameter, wrong model path, or not enough quota | Check **Events** and **Logging** to locate it |
+| Cannot find where to fill in the entry point / port | This template does not expose a port | The port is fixed by the template; once the service is ready, get the link from **Endpoints** |
+| You expect batch start/stop but there is no button | Bulk actions only support delete | Start and stop are per-service: the row action menu, or the **Actions** menu on the detail page |
+
+## Related
+
+- [Training & Fine-tuning](/rune/console/finetune)
+- [Storage](/rune/console/storage)
+- [Marketplace](/rune/console/app-market)
+- [Inference Hosting](/rune/guide/inference)
+- [Create Workloads](/rune/guide/workloads)

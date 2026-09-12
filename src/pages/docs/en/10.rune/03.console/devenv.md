@@ -1,100 +1,117 @@
 ---
 title: 'Development'
 updated: '2026-09-12'
-description: 'Dev environment list, creation, SSH/JupyterLab access, and credential resolution order.'
+description: 'Open a browser-based dev environment, get into it from the console, and understand the difference between stop, restart, and delete.'
 tags:
   - rune
   - console
 ---
 
 # Development
-Dev environments (Interactive Machine Learning, `category=im`) are used to launch interactive development environments on the platform. They can be used through **VSCode SSH remote connection** and **Web access**, and share the same deployment and lifecycle mechanism with inference and fine-tuning instances.
 
-> ⚠️ Note: The dev environment category is `im`, not `devenv`. The list route is `.../ims`, and the product list category is `/rune/products/im`.
+A dev environment gives you **a machine with tools, opened in your browser**: the page is Jupyter or a similar online IDE where you can write code, run scripts, and debug models. When you need a command line you can open a terminal, or connect remotely from your own VS Code. This page covers how to create it, how to get into it, and how stop, restart, and delete actually differ.
 
-List path: `/rune/tenants/:tenant/clusters/:cluster/workspaces/:workspace/ims`
+:::tip How a dev environment differs from inference and fine-tuning
+An inference service "stays open and serves requests", a fine-tuning job "runs and finishes", and a dev environment is "a machine you sit down at and use". It is still an instance, just meant for interactive work.
+:::
 
-## Dev Environment List
+## Before you start
 
-| Column | Description |
-| --- | --- |
-| Name | Instance name; click to open the detail page |
-| Template | The i18n key for this column is `dev_environment` |
-| Flavor | Resource summary resolved from `values.flavor` |
-| Status | `status.phase` |
-| Created At | Instance creation time |
-| Created By | Taken from the labels on the instance |
-| Connect | Quick connect buttons (`ConnectionButtons`) |
+- Your tenant role must be **Administrator** or **Developer**.
+- Pick your **region** and **workspace** in the upper-left corner first.
+- If you want code and large files to survive after the instance stops, create a **Storage** volume first, see [Storage](/rune/console/storage). Without a mounted storage volume, the files inside disappear with the instance.
+- To connect from VS Code, have your SSH public key ready.
 
-The list supports search by name and refresh. The row action menu includes edit, start/stop, and delete; scaling is available in the instance detail page action menu (`ScaleAction`).
+## Create a dev environment
 
-> ⚠️ Note: The current list has no status filtering and no batch start/stop. Related descriptions in the old documentation have been removed.
+1. In the left **Workbench** group, click **Runebox**.
+2. Click **Create Runebox** at the top right to open the template selection page.
+3. Pick a dev environment template (for example a Notebook template with Jupyter), confirm the **Version**, and click **Deploy**.
+4. Fill in the basic information:
 
-## Creating a Dev Environment
+   | Field | What to enter | Notes |
+   | --- | --- | --- |
+   | Name | For example `my-dev` | Required, for display only; the ID below is generated to match |
+   | ID | Generated automatically by default | Click the pencil icon to customize it; cannot be changed after creation |
+   | Description | For example "for algorithm debugging" | Optional |
 
-1. Click the **Create Resource** button in the upper-right corner of the list page; it navigates to `/rune/products/im`.
-2. Select a template and version (you can also enter from the template detail page in App Market `/rune/app-market` via **Deploy**).
-3. Fill in the basic information.
+5. Fill in the template parameters. Taking the Notebook template as an example:
 
-| Field | Required | Description |
+   | Field | What to enter | Notes |
+   | --- | --- | --- |
+   | Resource Spec | Choose a CPU / memory spec | Required |
+   | Access Password | Your own, or leave it empty | If left empty, a random 24-character password is generated; **save it right after deployment** |
+   | Authorized Users | Select one or more SSH public keys of tenant users | If you select none, no external SSH entry is created, so VS Code remote connection is not available |
+   | Storage | Select an existing storage volume | Mounted into the working directory; if left empty a temporary directory is used and **its files are cleared when the instance ends** |
+
+6. Click **Confirm** at the bottom to submit.
+
+:::warning Do not let your work disappear with the instance
+Without a **Storage** volume, the Notebook uses a temporary directory, and its files are cleared when the instance stops or is deleted. If you have code or data worth keeping, be sure to select a storage volume.
+:::
+
+## Get in from the console (Web IDE / Jupyter / terminal)
+
+Once the instance status becomes **Running** or **Healthy**, there are three ways in.
+
+### Option 1: web IDE (recommended for beginners)
+
+1. In the **Connection** column of the **Runebox** list, or in the access address area of the detail page, click **Access**.
+2. A new browser tab opens the instance's web interface, for example JupyterLab, where you write code and run cells directly.
+3. If the template set an **Access Password**, enter it as prompted. For an auto-generated password, use the string you recorded at deployment time.
+
+### Option 2: container terminal (when you need a command line)
+
+1. Open the instance detail page and find the container group list in **Overview**.
+2. On the row of the container you want, click **Terminal**. A command line window opens in the page where you can run commands directly.
+
+### Option 3: VS Code remote connection (with VS Code installed locally)
+
+1. In the **Connection** column, click **Connect VSCode**, or choose **Use VSCode** in the dropdown; your local machine starts the remote connection automatically.
+2. If you prefer not to open it automatically, choose **Copy SSH Command** and paste the command into a terminal.
+3. When the instance exposes several SSH addresses, the dropdown lists options for each address separately.
+
+:::tip Two things to check when you cannot connect
+First, whether the instance **Status** is Running or Healthy (the buttons are greyed out until it is ready). Second, whether you selected your SSH public key under **Authorized Users** at creation time; without it there is no SSH entry.
+:::
+
+## How stop, restart, and delete differ
+
+You operate an instance from the row action menu in the list or the **Actions** menu on the detail page. The three differ a lot, so do not click the wrong one:
+
+| Action | What happens | Is data lost | When to use it |
+| --- | --- | --- | --- |
+| Stop | Releases compute resources and stops billing; the instance stays in the list | Files on a mounted storage volume survive; the temporary directory is lost | You will not use it for a while and want to save resources |
+| Start | Allocates resources again and runs the instance | Not affected | To continue using a previously stopped instance |
+| Delete | After a second confirmation, removes the instance and its related resources for good | **Cannot be undone**, except for files in a storage volume | When you are sure you no longer need it |
+
+:::tip How do I "restart"?
+There is no separate **Restart** button. To restart, click **Stop**, wait until the status becomes **Paused**, then click **Start**.
+:::
+
+:::warning Deletion is irreversible
+Deleting releases both the compute resources the instance occupies and its related resources, and cannot be undone. Data is safe only if it lives in a mounted storage volume, so check before you delete.
+:::
+
+## Confirm it worked
+
+- The instance appears in the list, and its **Status** changes from Pending / Installing to **Running** or **Healthy**.
+- The **Connection** column shows **Access** or **Connect VSCode**, which means the instance is ready.
+- Clicking **Access** opens the web interface, which means the dev environment is usable.
+
+## FAQ
+
+| Symptom | Likely cause | What to do |
 | --- | --- | --- |
-| `id` | ✅ | Instance ID; cannot be modified in edit mode |
-| `name` | ✅ | Display name |
-| `description` | — | Description |
+| The connection buttons are greyed out | The instance is not ready yet, or it was stopped | Wait until the status becomes Running, or click **Start** first |
+| There is no SSH / VS Code entry | No **Authorized Users** were selected at creation time | Redeploy and select your SSH public key |
+| The web interface asks for a password | The template set an access password | Use the password you entered; for an auto-generated one, find your deployment record |
+| Files inside the instance are gone after a restart | No storage volume was mounted, so a temporary directory was used | Redeploy and mount a **Storage** volume |
+| I stopped it and want to continue | Stopping only releases resources and does not delete the instance | Click **Start** in the list or on the detail page |
 
-4. Fill in the template parameters: rendered dynamically from the version's JSON Schema, with switchable form/JSON modes.
+## Related
 
-> 💡 Tip: Whether fields such as storage volume or flavor exist is determined by the selected template's Schema; the console has no fixed "mount storage volume" step.
-
-## Using a Dev Environment
-
-Once the instance is ready, the "Connect" column in the list and the endpoint area on the detail page provide quick connect buttons. The connection method depends on the endpoint protocol the instance exposes:
-
-| Protocol | Button |
-| --- | --- |
-| SSH | VSCode connect (split button: the main button opens VSCode, the dropdown copies the SSH command) |
-| HTTP/Web | Web access link |
-| RDP | Remote desktop connection |
-
-When the instance is in `Paused` status, the connect buttons are disabled.
-
-### SSH Username Resolution Order
-
-The connect component prefers the username embedded in the endpoint URL; when the URL has no username, it falls back to the instance `values` in the following order (`src/pages/rune/instances/components/instance-credentials.ts`):
-
-1. `auth.username` / `auth.user` (password from `auth.password` / `auth.pass`)
-2. `pipe.from[0].username` / `pipe.from[0].user`
-3. `kubeSsh.credentials[0].username` / `kubeSsh.credentials[0].user`
-4. `auth.users[0].username` / `auth.users[0].user`
-
-If none of the four is found, an empty object is returned, i.e. no username.
-
-> ⚠️ Note: The old documentation listed only `instance.values.pipe.from[0].username`; the actual resolution order is the table above.
-
-### VSCode SSH Connection
-
-The split button contains two actions:
-
-| Action | Description |
-| --- | --- |
-| Connect | Generates and opens a `vscode://` URI to start a remote connection in local VSCode |
-| Copy command | Copies a command line like `code --new-window --remote ssh-remote+user@host:port` |
-
-When the instance exposes multiple SSH endpoints, the dropdown lists "Use VSCode" and "Copy SSH command" for each endpoint.
-
-### Web Access
-
-The Web access button opens the instance's Web endpoint (for example, JupyterLab) in a new tab. When multiple endpoints are available, the connect component selects one by endpoint type priority.
-
-## Instance Detail
-
-| Tab | Content |
-| --- | --- |
-| Overview | Basic information card, Pod list |
-| Monitoring | Instance monitoring panel |
-| Logs | Instance logs |
-| Events | Kubernetes event stream |
-
-## Permission Requirements
-
-Dev environments belong to the PAI workbench group; navigation requires the tenant role to be `ADMIN` or `DEVELOPER`.
+- [Storage](/rune/console/storage)
+- [Inference Service](/rune/console/inference)
+- [Training and Fine-tuning](/rune/console/finetune)
+- [App Instances](/rune/console/app)

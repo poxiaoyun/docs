@@ -1,55 +1,75 @@
 ---
 title: 'System Template Market'
 updated: '2026-09-12'
-description: 'Select a template from the system template market and deploy a system instance or storage cluster.'
+description: Pick a system template from the market and deploy cluster middleware such as monitoring, logging or a gateway in one click.
 ---
 
-## Overview
+# System Template Market
 
-The System Template Market is a cluster-level **infrastructure app market** that shows product templates in the system domain (`domain = system`), letting administrators select one and deploy it to the current cluster with one click.
+The system template market is the cluster-level "infrastructure app store". Everything listed here is a template in the **System** domain — platform middleware such as monitoring, logging, storage and gateways. Pick a template, choose a version, fill in the parameters, and it is deployed to the current cluster.
 
-## Access Path
+By the end of this page you can: deploy a system app or a storage cluster from the market.
 
-Entered from the **Add** button on the **System Apps** or **Storage Clusters** page:
+:::tip Two terms compared
 
-- System Apps: `/rune/clusters/:cluster/systems` → Add
-- Storage Clusters: `/rune/clusters/:cluster/storages` → Add
+- **Template** is a ready-made "installation list".
+- **System app** is middleware that ships with the platform, such as monitoring, logging or a gateway.
 
-Frontend routes (with deployment category):
+:::
 
-- `/rune/clusters/:cluster/system-market/system`
-- `/rune/clusters/:cluster/system-market/storage`
+## Before you start
 
----
+- You need a **System Administrator** account.
+- Prerequisite: the cluster is connected to the platform, and the market must contain the template you want. If it does not, create and publish one first in [App Template](/boss/rune-admin/templates).
 
-## Template Browsing
+## Getting there
 
-The market reuses the product list component for rendering, with data from `listSystemProducts`. Cards show the template icon, name, description, and version information.
+The market has no menu entry of its own; you reach it through the create button on the **System Apps** or **Storage Cluster** page:
 
-> ⚠️ Note: The market page **does not show a category filter** (`showCategoryFilter = false`). Under the system domain a template's `category` is `system` or `storage`, determined by the template's own category field.
+- To deploy system middleware: **Cluster** → select a cluster → **Operations Management** group → **System Apps** → click **Create System App**.
+- To deploy storage: **Cluster** → select a cluster → **Operations Management** group → **Storage Cluster** → click **Create Storage Cluster**.
 
----
+Once inside, the page title shows **System App Template** or **Storage Cluster Template** depending on the category.
 
-## One-click Deployment
+## Deploy in one click
 
-1. Select the target template card in the market.
-2. Select a deployable version.
-3. Enter the deployment view and fill in configuration parameters according to the template Schema.
-4. Submit the deployment to create the corresponding system or storage instance.
+1. Find the target template card in the market and click **Deploy**.
+2. Choose the **version** to deploy.
+3. On the deployment page, fill in the parameters item by item using the form the template provides (the parameters are defined by the template itself, so they differ between templates).
+4. Submit the deployment; the platform starts creating the matching instance.
 
-The deployment entry corresponds to the frontend route `/rune/clusters/:cluster/:types?action=create&product=<template>&version=<version>`.
+Once deployment finishes, go back to the **System Apps** or **Storage Cluster** list to see the instance's running status.
 
-After deployment, return to the [System Instances](./systems) or Storage Clusters list to check the running status.
+:::info The market has no category filter
 
----
+The market page only shows templates in the System domain, so it does not offer a category filter. Whether a template is a system type or a storage type is decided by the template's own category.
 
-## Differences from the User App Market
+:::
 
-| Comparison | System Template Market | User App Market |
+## Differences from the user app market
+
+| Comparison | System template market | User app market |
 | --- | --- | --- |
-| Target Role | System administrator | User |
-| Template Domain | `domain = system` | `domain = user` |
-| Deployment Scope | Cluster level | Workspace level |
-| Management Entry | BOSS → Cluster → System Apps / Storage Clusters | Console → App Market |
+| Who it is for | System administrators | Ordinary users |
+| Which templates | System-domain templates | User-domain templates |
+| Where it deploys | The whole cluster | One workspace |
+| How to get in | System Apps / Storage Cluster → Create | **Marketplace** in the AI Platform |
 
-> 💡 Tip: Templates in the market are maintained and published in [Product Template Management](./templates). If a required template is missing, create and publish the corresponding product template first.
+## Confirming the result
+
+- After you submit the deployment, a new instance appears in the **System Apps** or **Storage Cluster** list, and its **Status** moves step by step from deploying to running.
+- Click the instance name to open the detail page and see its basic information and related resources.
+
+## Common questions
+
+| Symptom | Likely cause | What to do |
+| --- | --- | --- |
+| The template you want is not in the market | No matching System-domain template has been published | Create and publish one first in [App Template](/boss/rune-admin/templates) |
+| The deployment never comes up | Parameters are wrong or resources are insufficient | Check the status and events on the instance detail page, fix them and retry |
+| There is no **Deploy** button | The template has no deployable version | Publish a version for the template in [App Template](/boss/rune-admin/templates) |
+
+## Related
+
+- [System Apps](/boss/rune-admin/systems)
+- [Storage & Runtime](/boss/rune-admin/storage-runtime)
+- [App Template](/boss/rune-admin/templates)

@@ -1,140 +1,170 @@
 ---
 title: Gateway Configuration
 updated: '2026-09-12'
-description: 'Global LLM gateway runtime settings — switches, caches, routing preferences, channel fallback and IP allowlist.'
+description: Gateway-wide switches and runtime settings.
 tags:
   - boss
   - gateway
 ---
 
-## Feature overview
+# Gateway Configuration
 
-The gateway config page manages the global LLM gateway runtime settings: core switches, caches, routing preferences, channel fallback, the global IP allowlist and cache rebuild. Settings are stored in the global configuration and apply to the whole gateway.
+Gateway Configuration is the gateway's **main control panel**: whether rate limiting is on, whether content is screened, how long caches live, whether a failed upstream is retried, which IPs may connect — all platform-wide behaviour is set here.
 
-This page corresponds to **LLM gateway → Platform settings → Gateway config** in the Boss console (menu label from `navbar.gateway_config`).
+By the end you will be able to turn capabilities on and off, configure routing preferences and the IP allowlist, tune caching and retry policy, and know whether each change takes effect immediately or needs a moment.
 
-## Access path
+:::tip These are the settings for the whole vehicle
+Channel Management and Model Configuration deal with individual parts; Gateway Configuration deals with how the vehicle behaves — whether the brakes work (rate limiting), whether you pass the security gate (moderation), how often the air is exchanged (caching). Changes here affect calls across the entire platform.
+:::
 
-Boss console → LLM gateway → Platform settings → **Gateway config**
+## Before you start
 
-Console route: `/gateway/config`. Settings are read and written through `/api/airouter/v1/settings` (`GET` / `PUT`).
+- Permission: you need a platform administrator account (one that can enter the BOSS console).
+- Think about the blast radius first: these parameters apply to the **whole platform**, not to one tenant or one channel.
 
-## Page structure
+## Open Gateway Configuration
 
-The form is ordered top to bottom:
+1. Click **Model Gateway** in the left sidebar.
+2. Expand **Platform Settings** and click **Gateway Configuration**.
 
-1. Routing
-2. Core switches
-3. Security
-4. Cache
-5. Channel fallback
-6. Cache management
+## What the page contains, top to bottom
 
-The footer has **Save** and **Reset**: Save is disabled until the form is dirty, and Reset restores the last loaded server configuration.
+1. Routing Configuration
+2. Core Switches
+3. Security Configuration
+4. Caching
+5. Channel Fallback Policy
+6. Cache Management
 
-## Core switches
+At the bottom are two buttons, **Reset** and **Save Changes**. The save button stays grey until something changes, and **Reset** restores the form to the last configuration loaded from the server.
 
-| Setting | Field | Type | Default | Description |
-|---------|-------|------|---------|-------------|
-| Enable rate limiting | `rateLimitEnabled` | Boolean | `true` | Turning it off disables all RPM/TPM limits |
-| Enable audit log | `auditEnabled` | Boolean | `true` | Turning it off stops recording request metadata |
-| Enable moderation | `moderationEnabled` | Boolean | `true` | Turning it off skips sensitive-word detection |
-| Enable billing | `billingEnabled` | Boolean | `true` | Turning it off stops recording billing data |
-| Allow overdraft | `billingAllowOverdraft` | Boolean | `false` | When off, a balance `<= 0` returns `402 Payment Required` |
+## Core Switches
 
-> ⚠️ Note: the default for `billingEnabled` is **`true`** (`DEFAULT_GLOBAL_SETTINGS`), not `false` as some older docs claim.
+| Switch | Default | What turning it on / off does |
+| --- | --- | --- |
+| Enable Rate Limiting | On | When off, every RPM / TPM limit for users, tenants and channels stops applying at once |
+| Enable Audit Logging | On | When off, request metadata is no longer recorded, which greatly reduces storage pressure but makes past requests untraceable |
+| Enable Content Moderation | On | When off, inputs and outputs skip the sensitive-word check entirely |
+| Enable Billing | On | When off, no usage cost data (cost snapshots) is generated |
+| Allow Overdraft | Off | When off, requests are rejected once the account balance is insufficient |
 
-## Routing
+:::warning Turning these off needs care
+- Turning off **rate limiting**: an upstream provider can be overwhelmed by a traffic spike.
+- Turning off **audit logging**: you will no longer be able to trace who called what in the past.
+- Turning off **content moderation**: disallowed content passes straight through.
+Turn them off only for debugging or an emergency, and restore them as soon as you are done.
+:::
 
-| Setting | Field | Type | Default | Description |
-|---------|-------|------|---------|-------------|
-| Preferred providers | `routingPreferredProviders` | String[] | `[]` | Providers preferred when several are available |
-| Blocked providers | `routingBlockedProviders` | String[] | `[]` | Providers globally disabled even when their channels are enabled |
+:::info Enabling billing is not the same as charging
+**Enable Billing** only controls whether **cost snapshots** are generated, i.e. the amounts shown in Call Logs and on the Dashboard. It does not mean the platform deducts money from an account balance — the gateway itself does no top-ups, deductions or payments.
+:::
 
-Both are free-input multi-value fields (`freeSolo`) with no preset options; the value is the provider id.
+## Routing Configuration
 
-```yaml
-routingPreferredProviders: ["siliconflow"]
-routingBlockedProviders: ["openai"]
-```
+This decides who wins when several channels are available.
 
-> 💡 Tip: "preferred" is a soft preference; "blocked" is a hard restriction.
+| Setting | How to fill it | Notes |
+| --- | --- | --- |
+| Preferred Providers | Type a provider identifier and press Enter; several allowed | When several providers are available, the ones listed here are preferred |
+| Blocked Providers | Type a provider identifier and press Enter; several allowed | Providers listed here are disabled globally, even if their channels are enabled |
 
-## Security
+- Both are **free-text, multi-value** boxes with no preset dropdown. You type the provider name (for example `openai`, `siliconflow`).
+- **Preference is a nudge; blocking is a hard limit**: a wrong preference simply has no effect, but a wrong block cuts off all traffic to that provider.
 
-| Setting | Field | Type | Default | Description |
-|---------|-------|------|---------|-------------|
-| Global IP allowlist | `globalWhitelist` | String[] | `[]` | Only allowlisted sources can reach the gateway API; empty means allow all |
+:::warning Blocking a provider is an emergency cut
+Once a provider is on the blocked list, every request through it fails. Treat it as the switch for cutting off a broken or non-compliant provider in an emergency, and remove the entry when you are done.
+:::
 
-| Form | Example | Notes |
-|------|---------|-------|
-| Single IPv4 | `192.168.1.100` | Exact match |
-| IPv4 CIDR | `10.0.0.0/8` | Prefix `0`–`32` |
+## Security Configuration
 
-Validation matches the token allowlist: IPv4 only, each octet `0`–`255`, no leading zeros; **`*` is not accepted and IPv6 is not supported**.
+| Setting | Notes |
+| --- | --- |
+| Global IP Whitelist | Only requests from whitelisted IPs may reach the gateway; leave it empty to allow all sources |
 
-Entering a CIDR whose host bits are set (e.g. `192.168.1.100/24`) shows a normalization hint with the normalized network and covered range.
+Supported formats:
 
-> ⚠️ Note: make sure the admin node IP is included before enabling the allowlist, or admins will be locked out too.
+| Form | Example |
+| --- | --- |
+| A single IPv4 address | `192.168.1.100` |
+| An IPv4 network range | `10.0.0.0/8` |
 
-## Cache
+Validation matches the key allowlist: IPv4 only, each part `0`–`255`, no leading zeros. **`*` is not accepted and IPv6 is not supported.**
 
-| Setting | Field | Type | Default | Validation |
-|---------|-------|------|---------|-----------|
-| Enable channel cache | `cacheChannelEnabled` | Boolean | `true` | — |
-| Channel cache TTL (s) | `cacheChannelTTL` | Number | `300` | `>= 0` |
-| Enable user/tenant cache | `cacheUserTenantEnabled` | Boolean | `true` | — |
-| User/tenant cache TTL (s) | `cacheUserTenantTTL` | Number | `600` | `>= 0` |
-| Enable billing cache | `cacheBillingEnabled` | Boolean | `true` | — |
-| Token cache TTL (s) | `cacheTokenTTL` | Number | `300` | `>= 1` |
-| Billing account cache TTL (s) | `cacheBillingAccountTTL` | Number | `300` | `>= 1` |
-| Token binding cache TTL (s) | `cacheTokenBindingTTL` | Number | `300` | `>= 1` |
+If the IP you enter is not the network address of its range (for example `192.168.1.100/24`), the page shows the normalized range and the addresses it actually covers; just confirm it.
 
-> ⚠️ Note: the billing cache TTL field is **`cacheBillingAccountTTL`** (not `cacheBillingTTL`). The billing cache switch sits next to the *Token* TTL field, while `cacheBillingAccountTTL` and `cacheTokenBindingTTL` have no paired switch.
+:::warning Do not lock yourself out
+Once the whitelist is configured, any request from a source not on it is rejected. Before saving, make sure **your own administrative IP** is on the list, otherwise even your back-office requests will be blocked.
+:::
 
-### Cache management
+## Caching
 
-Click **Rebuild cache** to force-clear and rebuild all cache indexes.
+Caching reduces the cost of hitting the database on every request, at the price that a configuration change is only fully reflected once the cache expires.
 
-- Request: `POST /api/airouter/v1/cache/rebuild`
-- Success message: `Cache rebuilt: {channels} channels, {users} users`
+| Setting | Default | Notes |
+| --- | --- | --- |
+| Enable Channel Cache | On | Caches channel configuration in memory |
+| Channel Cache TTL (seconds) | `300` | How long the channel cache stays valid |
+| Enable User/Tenant Cache | On | Caches the binding between users and tenants |
+| User/Tenant Cache TTL (seconds) | `600` | How long the user/tenant cache stays valid |
+| Enable Billing Cache | On | Caches billing account information |
+| Token Cache TTL (seconds) | `300` | How long token information stays valid |
+| Billing Account Cache TTL (seconds) | `300` | How long billing account information stays valid |
+| Token Binding Cache TTL (seconds) | `300` | How long the token-to-channel binding stays valid |
 
-> 💡 Tip: use this when channel enable/disable state is out of sync; the rebuild briefly increases database load.
+Shorter times mean fresher data; longer times mean better performance. Every TTL is entered in **seconds**.
 
-## Channel fallback
+### Cache Management
 
-Channel fallback defines retry and degradation behaviour when an upstream channel fails. All fields live inside the `channelFallback` object.
+Click **Rebuild Cache** and the system force-clears and rebuilds every cache index, then reports something like "Cache rebuilt successfully: 12 channels, 34 users".
 
-Editable fields:
+Use it when a channel's enabled/disabled state does not match how it actually behaves.
 
-| Setting | Field | Type | Default | Validation |
-|---------|-------|------|---------|-----------|
-| Enable channel fallback | `channelFallback.enabled` | Boolean | `true` | — |
-| Max retries per channel | `channelFallback.maxRetryPerChannel` | Number | `1` | `0`–`5` |
-| Max fallback count | `channelFallback.maxFallbackCount` | Number | `2` | `0`–`10` |
-| Retry delay (ms) | `channelFallback.retryDelayMs` | Number | `0` | `>= 0` |
+:::warning Rebuilding the cache briefly adds load
+During a rebuild the database is hit all at once, which can cause a momentary spike. Do it off-peak and do not click it repeatedly.
+:::
 
-The type also defines `channelFallback.retryableStatusCodes` (default `[500, 502, 503, 504, 429]`) and `channelFallback.fallbackDelayMs` (default `0`), but the **form renders no controls for them**.
+## Channel Fallback Policy
 
-> ⚠️ Note: `channelFallback` is a **nested object**, not a flat `fallbackEnabled`. The older flat names and values (`2` retries, `3` fallbacks, `100`/`200` ms delays) do not match the code.
+When an upstream channel fails, this controls whether the request errors out or switches to another line. It only affects **chat-style** requests.
 
-> ⚠️ Note: since `retryableStatusCodes` and `fallbackDelayMs` are not editable in the UI, their effective values depend on the server-side configuration and are not guaranteed here.
+| Setting | Default | Range |
+| --- | --- | --- |
+| Enable Channel Fallback | On | — |
+| Max Retries Per Channel | `1` | `0`–`5` |
+| Max Fallback Count | `2` | `0`–`10` |
+| Retry Delay (ms) | `0` | `0` or more |
 
-Behaviour:
+How to read the two numbers:
 
-- `maxRetryPerChannel = 1` means up to 2 requests to the same channel including the first
-- `maxFallbackCount = 2` means up to 3 channels total
+- **Max Retries Per Channel** = `1` means the same channel is called at most **2 times** (the first attempt plus 1 retry).
+- **Max Fallback Count** = `2` means at most **3 channels** are tried in total.
 
-> 💡 Tip: retries and fallbacks add latency; lower both for latency-sensitive workloads.
+:::info Retrying makes callers wait longer
+Retries and fallbacks both make the user wait. For latency-sensitive workloads you can lower these two values.
+:::
 
-## When settings take effect
+## When changes take effect
 
 | Setting | When it applies |
-|---------|-----------------|
-| Switches, routing, allowlist | Immediately after save |
-| Cache TTLs | After the cache expires or a manual rebuild |
-| Channel fallback | Immediately after save |
+| --- | --- |
+| Core switches, routing, allowlist, channel fallback | Immediately after you click **Save Changes** |
+| Cache switches and TTLs | After the cache expires naturally, or immediately if you click **Rebuild Cache** |
 
-## Permissions
+## Confirm it worked
 
-Requires the **system administrator** role.
+After clicking **Save Changes**, a "Configuration saved successfully" message appears in the top-right corner. To verify a specific change — for example after blocking a provider — watch [Call Logs](/boss/gateway/audit) and check that related requests are no longer routed to it.
+
+## FAQ
+
+| Symptom | Likely cause | What to do |
+| --- | --- | --- |
+| The save button will not respond | Nothing in the form has changed | Change any field and the button becomes available |
+| Changed a cache time but nothing happened | The cache has not expired yet | Click **Rebuild Cache** to refresh immediately |
+| The back office can no longer reach the gateway | The global whitelist does not include your IP | Add your administrative IP to the whitelist first |
+| A channel's status does not match reality | The in-memory cache is stale | Use **Rebuild Cache** |
+
+## Related
+
+- [Channel Management](/boss/gateway/channels): what fallback and routing act on
+- [Content Moderation](/boss/gateway/moderation): the full chain behind the global moderation switch
+- [Currency Configuration](/boss/gateway/currency-settings): the currency prices are displayed in

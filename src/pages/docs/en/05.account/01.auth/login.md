@@ -1,114 +1,77 @@
 ---
 title: 'Login'
 updated: '2026-09-12'
-description: Username + password login, CAPTCHA, third-party login, and post-login redirect.
+description: Walks you from the sign-in page into the platform, step by step, and explains the errors you may see.
 ---
 
-## Overview
+# Login
 
-Console (user portal) and BOSS (admin portal) share the same authentication service and the same login route `/auth/sign-in`. The form renders a required agreement checkbox; the Login button stays disabled until it is checked.
+Signing in means using the account and password you registered to get into the platform. This page walks you from opening the sign-in page to reaching the platform home, spelling out exactly what to click and what to type, and telling you what appears on screen when sign-in does not work.
 
-## Page Load
+:::tip Signing in takes two steps
+First you prove who you are on the sign-in page, then you choose a company on the tenant selection page. If your account belongs to only one tenant, the second step happens automatically, so it sometimes feels like a single click.
+:::
 
-On page load, the front-end fires two requests in parallel:
+## Before you start
 
-| Request | Purpose |
-|---------|---------|
-| `GET /api/iam/login-captcha` | Returns the CAPTCHA config and its `key` |
-| `GET /api/iam/login-config` | Returns the platform login config |
+- Have a registered account ready. If you do not have one yet, see [Registration](/account/auth/register) first.
+- Make sure you know the platform address and remember your password.
 
-`login-config` fields:
+## How to sign in
 
-| Field | Description |
-|-------|-------------|
-| `allowSignup` | Whether registration is allowed |
-| `methods` | Login method list, used to render third-party login buttons |
+1. Open the platform sign-in address. On a wide screen the left side introduces the platform and the right side holds the sign-in form.
+2. Type your account into the **Username/Email/Mobile Number** field.
+3. Type your password into the **Password** field. Characters show as dots by default; click the eye icon on the right of the field to reveal them.
+4. If a **Verification Code** field appears in the form, type the characters from the image next to it; if you cannot read them, click the image for a new one.
+5. Tick **I have read and agree to the Terms of Service and the Privacy Policy.**
+6. Click **Login**. The button briefly shows "Signing in...".
 
-> ⚠️ Note: Whether a CAPTCHA is required and which kind is used are determined by the `provider` returned from `GET /api/iam/login-captcha`, not by `login-config`.
+## About the verification code
 
-## Login Form
+The platform uses two kinds of verification code. Which one appears is decided by the platform, so just follow the style you see.
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `username` | Text | ✅ | Account (username / email) |
-| `password` | Password | ✅ | Toggle plain/masked with the eye icon |
-| `agreement` | Checkbox | ✅ | Must be checked before Login is enabled |
-| `captchaInput` | Text | Conditional | Shown inline only when the provider is `Graphic`; for `Slider` it is entered in a dialog |
+| Style | What you see | What to do |
+| --- | --- | --- |
+| Graphic code | A **Verification Code** field and an image inside the form | Type the characters from the image; click the image for a new one |
+| Slider code | A "Security verification" window opens after you click **Login** | Drag the slider so the puzzle piece lines up with the gap; it submits automatically when you let go |
 
-> ⚠️ Note: There is **no** "Remember Me" checkbox. `remeberMe` is hard-coded to `true` in the request body (`centered-sign-in-view.tsx:244`) and is not user-configurable.
+If you get the slider code, in the "Security verification" window:
 
-## CAPTCHA
+1. Press the slider at the bottom and drag it to the right.
+2. Line the puzzle piece up with the gap and release; the platform verifies automatically and continues signing in.
+3. To stop, click **Cancel** or the close icon in the top-right corner.
 
-The backend may return two CAPTCHA providers:
+:::tip What if you cannot read the code
+Click the verification code image to load a new one. The old code becomes invalid immediately, so type the new one.
+:::
 
-| provider | Interaction |
-|----------|-------------|
-| `Graphic` | Inline CAPTCHA image + input; click the image to refresh (the `key` is updated too) |
-| `Slider` | Clicking Login opens a slider dialog; completing the drag submits automatically |
+## What happens after a successful sign-in
 
-The request body carries CAPTCHA data as:
+- You first reach the **Select your tenant** page; see [Select / Register Tenant](/account/auth/select-tenant).
+- If your account belongs to only one tenant, the page enters it automatically and you do not have to choose.
+- After that you can see the left-hand menu and the platform home.
 
-```json
-{
-  "captcha": {
-    "code": "<user input or slider offset>",
-    "key": "<key from login-captcha>",
-    "provider": "Graphic",
-    "name": ""
-  }
-}
-```
+## What to do when sign-in fails
 
-> 💡 Tip: The CAPTCHA field name is `key`, not `captchaId`.
+A red banner appears at the top of the page with the reason. Common cases:
 
-## Request Body
+| What you see | Likely cause | What to do |
+| --- | --- | --- |
+| Invalid account or password | The account or password is wrong | Check the letter case and your input method, then type it again |
+| Incorrect verification code. Please try again. | The graphic code is wrong or has expired | Click the code image for a new one and type it again |
+| Please agree to the Terms of Service and Privacy Policy first | The agreement box is not ticked | Tick the box, then click **Login** |
+| Too many failed sign-in attempts. Try again in ... | Too many wrong attempts, so the account is locked for a while | Wait until the stated time has passed, or contact an administrator |
 
-```json
-{
-  "username": "alice",
-  "type": "Password",
-  "remeberMe": true,
-  "password": { "algorithm": "PlainText", "value": "..." },
-  "captcha": { "code": "...", "key": "...", "provider": "Graphic", "name": "" }
-}
-```
+:::info Third-party sign-in
+If the platform has third-party sign-in enabled, a dashed separator labelled **Other sign-in methods** and the matching buttons appear below the form. Clicking one sends you to the provider to complete authentication.
+:::
 
-Endpoint: `POST /api/iam/login`
+## Signing out
 
-## Third-Party Login
+Click your avatar in the top-right corner to open the menu, then click **Logout**. The platform clears the sign-in state on this computer and returns you to the sign-in page.
 
-When `login-config.methods` contains a recognized third-party method, a login button is rendered below the form:
+## Related
 
-- The method `type` includes `oauth` / `oauth2` / `oidc` / `saml`, or a `provider` is present
-- A redirect target must be resolvable (`url` / `href` / `loginUrl` / `authUrl` / `authorizationUrl` / `redirectUrl`, at the top level or nested under `OAuth` / `OAuth2` / `OIDC` / `SAML`)
-- The label comes from `displayName` / `label` / `name` / `provider`; the icon from `icon` or `logo`
-- Clicking is a plain external link (`<a href>`)
-
-> ⚠️ Note: Which providers are supported and how callbacks are configured is a backend/platform concern. The front-end only renders `methods`; this document does not confirm the provider list.
-
-## Post-Login Redirect
-
-Flow: `POST /api/iam/login` succeeds → `checkUserSession()` → redirect by platform.
-
-| Platform | Target |
-|----------|--------|
-| Console | `/auth/select-tenant?returnTo=<returnTo>` |
-| BOSS | `paths.boss.dashboard` |
-
-> ⚠️ Note: On Console the user **always** goes to the tenant selection page first, not "straight to the console home when belonging to one tenant". With a single tenant, the selection page auto-enters it. There is no separate MFA verification page redirect from login.
-
-## Error Handling
-
-| Case | Behavior |
-|------|----------|
-| `reason === 'NeedCaptcha'` | Refresh CAPTCHA; `Slider` opens the dialog, `Graphic` shows an error |
-| `reason === 'InvalidCaptcha'` | Refresh CAPTCHA and show a CAPTCHA error |
-| `reason === 'LoginLocked'` | Refresh CAPTCHA if the dialog is open, then show the backend message |
-| Code `401` or message `Invalid account or password` | Close the dialog and show "invalid account or password" |
-| Message `Already logged in` | Treat as logged in, run the session check and redirect |
-
-> ⚠️ Note: Lockout thresholds, lockout duration, and CAPTCHA TTL are backend policies; the front-end only relays the backend message. This document does not confirm the exact values.
-
-## Logout
-
-`POST /api/iam/logout`: calls the backend logout endpoint, clears local storage and session state, then redirects to the login page.
+- [Registration](/account/auth/register)
+- [Reset Password](/account/auth/reset-password)
+- [Select / Register Tenant](/account/auth/select-tenant)

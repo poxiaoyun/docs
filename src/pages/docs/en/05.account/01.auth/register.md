@@ -1,81 +1,59 @@
 ---
 title: 'Registration'
 updated: '2026-09-12'
-description: Self-service registration form, field validation, and register API.
+description: How to register a platform account with an email verification code, and what each field expects.
 ---
 
-## Overview
+# Registration
 
-The registration page creates a platform account. Whether the entry is available depends on the platform setting and the running platform.
+Registration creates a platform account that belongs to you. You fill in a username, a password, an email address, and a mobile number, and confirm the email address with a verification code sent to your inbox. Once registration finishes, sign in with the new account.
 
-> ⚠️ Note: The page renders only when the platform setting `enableBossSignup` is true, or when running on the Console platform; otherwise it redirects to 404 (`centered-sign-up-view.tsx:82-84`).
+:::tip Registration and sign-in are separate
+Registration only creates the account; it does not sign you in automatically. After a successful registration the page returns to the sign-in page, and you sign in once with your new account.
+:::
 
-## Access Path
+## Before you start
 
-- Login page → "Don't have an account? Register now" (only shown when registration is allowed)
-- Direct route: `/auth/sign-up`
+- An email address that can receive mail normally.
+- A mobile number that can receive text messages (the mobile number is required).
+- Note that the registration entry is not open on every platform. If the sign-in page has no "Don't have an account? Register now" link, this platform does not allow self-service registration, so ask an administrator to create an account for you.
 
-## Registration Form
+## How to register
 
-| Field | Type | Required | Front-end Validation | Description |
-|-------|------|----------|----------------------|-------------|
-| `username` | Text | ✅ | Non-empty | Account name |
-| `password` | Password | ✅ | ≥ 8 chars, printable ASCII only | Toggle plain/masked |
-| `email` | Text | ✅ | Email format | Receives the email verification code |
-| `phone` | Text | ✅ | Non-empty + valid number | Must include country code |
-| `code` | Text | ✅ | Non-empty | Email verification code |
-| `agreement` | Checkbox | ✅ | Must be checked | Register button stays disabled otherwise |
+1. On the sign-in page, click **Register now** at the bottom (the full text is "Don't have an account? Register now").
+2. Fill in **Username**; this is the account name you will sign in with.
+3. Fill in **Password**; the rules are below.
+4. Fill in **Email**, which is where the verification code is sent.
+5. Fill in **Mobile Number**, including the country code (for mainland China, for example, `+86`).
+6. Click the send button next to the verification code field, open the email, and type the code into the **Verification Code** field.
+7. Tick **I have read and agree to the Terms of Service and the Privacy Policy.**
+8. Click **Create Account**. The button briefly shows "Registering...".
 
-> ⚠️ Note: There is **no** "Confirm Password", **no** "Invite Code", **no** password strength bar, and **no** SMS code. Only an email code is implemented.
+## How to fill in the password
 
-### Password Rules
+- At least 8 characters.
+- Only letters, digits, and symbols you can type directly on a keyboard; no Chinese characters, no spaces, and no accented letters.
+- The page does not require "must contain upper and lower case letters and digits", but it is a good idea to make the password stronger.
 
-From `schemaHelper.password` (`components/hook-form/schema-helper.ts:57-67`):
+:::tip You can reveal the password
+The eye icon on the right of the password field toggles between plain text and dots, so you can check what you typed.
+:::
 
-- At least 8 characters
-- Printable ASCII only: `/^[\x21-\x7E]{8,}$/`
+## About the mobile number
 
-> ⚠️ Note: The front-end does **not** enforce "must include upper/lowercase letters and digits". Any extra backend rules are unconfirmed here.
+The mobile number is required and must be a valid number. Include the country code when you type it. If the format is wrong, the page shows "Please enter a valid mobile number" below the field when you submit.
 
-### Username Rules
+## The result of registration
 
-The front-end only checks that `username` is non-empty (`schemaHelper.required`).
+- Success: the page returns to the sign-in page automatically. Sign in with the account you just registered.
+- Failure: a red banner appears at the top of the page. Fix the problem it describes and submit again.
 
-> ⚠️ Note: Length, character set, and uniqueness rules are defined by the backend and not enforced by the front-end; unconfirmed in this document.
+## After you register
 
-### Phone Rules
+A newly registered account belongs to no tenant by default. On your first sign-in you need to create or join a tenant before you can enter the platform; see [Select / Register Tenant](/account/auth/select-tenant).
 
-`phone` is **required** and validated as a real number via `parsePhoneNumber(phone)?.isValid()` (`centered-sign-up-view.tsx:92-96`). The parsed `countryCode` is submitted along with the phone.
+## Related
 
-### Email Verification Code
-
-Component parameters: `action="signup"`, `codeType="email"`, `target=<current email>` (`centered-sign-up-view.tsx:171-178`).
-
-- Sending calls `POST /api/iam/send-code`
-- Countdown and code TTL are controlled by the component and backend; unconfirmed here
-
-## Submit
-
-Request body (`centered-sign-up-view.tsx:41-68`):
-
-```json
-{
-  "username": "alice",
-  "displayName": "alice",
-  "agreement": true,
-  "email": { "value": "alice@example.com", "code": "123456" },
-  "phone": { "value": "+8613800000000" },
-  "countryCode": "CN",
-  "password": { "algorithm": "PlainText", "value": "..." }
-}
-```
-
-Endpoint: `POST /api/iam/register`
-
-On success the page runs `router.replace(paths.auth.signIn)` and goes to the login page. On failure the backend message is shown at the top.
-
-## Notes
-
-- The phone number is required and must be a valid parsed number
-- Whether the registration entry appears depends on `enableBossSignup` and the running platform
-- After registration you belong to no tenant by default
+- [Login](/account/auth/login)
+- [Select / Register Tenant](/account/auth/select-tenant)
+- [Roles and Permissions](/account/auth/roles)

@@ -1,121 +1,165 @@
 ---
 title: Channel Management
 updated: '2026-09-12'
-description: 'Configure upstream model channels — provider, endpoint, upstream keys, visibility and rate limits.'
+description: Connect a provider: build a channel and verify it.
 tags:
   - boss
   - gateway
 ---
 
-## Feature overview
+# Channel Management
 
-A channel represents one **upstream model service endpoint** and is the gateway's access configuration for external or internal inference services. The gateway routes client requests to matching channels based on visibility and priority.
+A channel is **one model provider** the gateway is connected to — you can think of it as a telephone line. Callers only submit a model name; the gateway decides which line to take. This page shows you how to build a channel from scratch and confirm that it really works.
 
-This page corresponds to **LLM gateway → Model service → Channels** in the Boss console (menu label from `navbar.model_list`).
+By the end you will be able to create a channel pointing at a provider (or a self-hosted model service), bind it to a set of models, control who can use it, and disable or delete it when needed.
 
-## Access path
+:::tip A channel is like a telephone line
+One "support number" can sit in front of several lines. The switchboard decides which line is up and which is cheaper. A channel is one of these switchable lines for the gateway: its address, its keys and the models it carries all live inside one channel.
+:::
 
-Boss console → LLM gateway → Model service → **Channels**
+## Before you start
 
-| Action | Console route |
-|--------|--------------|
-| List | `/service-registrations` |
-| Create | `/service-registrations/new` |
-| Edit | `/service-registrations/:id/edit` |
+- Permission: you need a platform administrator account (one that can enter the BOSS console).
+- Prepare in advance: the **endpoint address** and **API key** the provider gave you (usually a string starting with `sk-`).
+- Create a **tenant** on the platform first — a tenant must be selected when creating a channel.
 
-> ⚠️ Note: these are the real console routes from `src/routes/paths.ts`, not docs-site URLs.
+## Concepts you need
 
-## Channel list
+| Term | Plain explanation |
+| --- | --- |
+| Channel | One upstream configuration: address, key, usable models, who may use it |
+| Visibility | Who this channel is open to (everyone / one tenant / only you) |
+| Priority | When several channels can serve the same model, which one is tried first |
+| RPM / TPM | Speed caps: at most how many requests / tokens per minute |
+| Endpoint | The provider's interface address; requests are actually sent here |
 
-| Column | Field | Description |
-|--------|-------|-------------|
-| Name | `name` | Channel name |
-| Provider / endpoint | `provider` + `apiBase` | Provider id on the first line, API base URL on the second |
-| Visibility | `visibility` | Label color: `public`=success, `tenant`=warning, `private`=default |
-| Supported models | `supportedModels` | Collapsed list, `-` when empty |
-| Priority | `priority` | Shown as an info label when `> 0` |
-| RPM / TPM | `rateLimitRPM` / `rateLimitTPM` | `0` renders as an infinity icon; TPM is shown in `K` |
-| Status | `enabled` | Enabled / disabled icon |
-| Tenant / workspace | `tenant` / `workspace` | Only for tenant or private channels |
-| Owner | `owner` | Channel creator |
-| Created at | `createdAt` | Date-time |
+## Open Channel Management
 
-The list supports multi-select and a refresh button.
+1. Click **Model Gateway** in the left sidebar.
+2. Expand **Model Services** and click **Channel Management**.
+3. The **Create Channel** button is in the top-right corner, and the list below shows the channels that already exist.
 
-### Filters
+## Reading the channel list
 
-| Filter | Values |
-|--------|--------|
-| Visibility | `public` / `private` / `tenant` |
-| Provider | see "Supported providers" |
+| Column | Meaning |
+| --- | --- |
+| Name | A channel name for you to tell channels apart |
+| Provider / Endpoint | Provider type on top, interface address underneath |
+| Visibility | Public / Tenant / Private |
+| Applicable Models | Which models this channel supports; click to expand |
+| Priority | The higher the number, the higher the priority |
+| RPM / TPM | An infinity symbol means unlimited; TPM is in units of `K` |
+| Status | A green check means enabled, a grey circle means not enabled |
+| Tenant / Workspace | Shown for tenant-level or private channels |
+| Owner | Who created the channel |
+| Created At | When the channel was created |
 
-> ⚠️ Note: the provider filter lists only **9** values (no `deepseek`) while the create/edit form offers **10** (including `deepseek`). The two differ in the source (`list.tsx` filters vs `service-registration-new-edit-form.tsx` select); this document follows the form.
+The list supports multi-select, and there is a **refresh** button in the top-right corner to pull the data again manually. Above it you can filter by **Visibility** and by **Provider**.
 
-## Supported providers
+## Create a channel
 
-The create/edit form ships 10 providers; selecting one fills in its default API base (edit mode does not overwrite existing values):
+1. On the **Channel Management** page click **Create Channel** in the top-right corner.
+2. Fill in the form field by field:
 
-| Select label | `provider` | Default `apiBase` | Chat path |
-|--------------|-----------|------------------|-----------|
-| openai | `openai` | `https://api.openai.com` | `/v1/chat/completions` |
-| openai-compatible | `openai-compatible` | (empty, fill manually) | `/chat/completions` |
-| dashscope (通义千问) | `dashscope` | `https://dashscope.aliyuncs.com/compatible-mode/v1` | `/chat/completions` |
-| baidu (百度千帆) | `baidu` | `https://qianfan.baidubce.com/v2` | `/chat/completions` |
-| moonshot (月之暗面) | `moonshot` | `https://api.moonshot.cn/v1` | `/chat/completions` |
-| zhipu (智谱) | `zhipu` | `https://open.bigmodel.cn/api/paas/v4` | `/chat/completions` |
-| siliconflow (硅基流动) | `siliconflow` | `https://api.siliconflow.cn/v1` | `/chat/completions` |
-| openrouter | `openrouter` | `https://openrouter.ai/api/v1` | `/chat/completions` |
-| doubao (豆包) | `doubao` | `https://ark.cn-beijing.volces.com/api/v3` | `/chat/completions` |
-| deepseek (DeepSeek) | `deepseek` | `https://api.deepseek.com/v1` | `/chat/completions` |
+   | Form field | How to fill it | Notes |
+   | --- | --- | --- |
+   | Tenant | Search and select a tenant | Required; disabled tenants cannot be selected |
+   | Workspace | For example `default` | Optional, to distinguish ownership further |
+   | Name | For example `my-openai` | Required, anything you can recognize |
+   | Provider / Endpoint | Pick one from the dropdown | Required; see "Supported providers" below |
+   | Endpoint | The provider's interface address | Required; on a new channel the default address is filled in for you once you pick a provider |
+   | Visibility | Public / Tenant / Private | Required, defaults to **Public** |
+   | Priority | For example `0` | Required, defaults to `0`; higher wins |
+   | Enabled | On by default | When off, this channel is never selected |
+   | RPM | For example `600` | Optional, `0`–`10000`; leave it empty for unlimited |
+   | TPM (K) | For example `48000` | Optional, `0`–`100000`, in units of K (1K = 1000 tokens per minute) |
+   | Upstream API Keys | The keys from the provider | One per line; several may be entered to rotate between |
+   | Supported Models | For example `gpt-4o-mini` | One model name per line |
 
-The endpoint field shows the resulting Chat URL live: `{apiBase}{chat path}`.
+3. Under the Endpoint box the address this channel will actually call is shown live, in the form `Chat: <your endpoint>/chat/completions`. Check it against the provider's documentation.
+4. When everything looks right, click **Create**.
 
-> 💡 Tip: for self-hosted inference services (vLLM, TGI, …) pick `openai-compatible` and fill in the base URL manually.
+Nothing is lost if you get it wrong: go back to the list, click **Edit** and change it.
 
-## Create / edit a channel
+### Supported providers
 
-Use **Create channel** in the top-right corner or **Edit** in a row action. Both share the same form.
+The dropdown has 10 providers. Picking one fills in the default endpoint (when editing an existing channel, your current address is not overwritten).
 
-| Field | Key | Type | Required | Notes |
-|-------|-----|------|----------|-------|
-| Tenant | `tenantId` | Tenant select | ✅ | Searchable; disabled tenants cannot be selected |
-| Workspace | `workspace` | Text | — | Workspace id |
-| Name | `name` | Text | ✅ | Channel name |
-| Provider | `provider` | Select | ✅ | 10 providers, default `openai` |
-| Endpoint | `apiBase` | Text | ✅ | Default `https://api.openai.com` |
-| Visibility | `visibility` | Select | ✅ | `public` / `tenant` / `private`, default `public` |
-| Priority | `priority` | Number | ✅ | Min `0`, default `0`; higher wins |
-| Enabled | `enabled` | Switch | ✅ | On by default |
-| RPM | `rateLimitRPM` | Number | — | `0`–`10000`; empty means unlimited |
-| TPM(K) | `rateLimitTPM` | Number | — | `0`–`100000`; empty means unlimited |
-| Upstream API keys | `apiKeys` | Multiline | — | One key per line, split on submit |
-| Supported models | `supportedModels` | Multiline | — | One model per line, split on submit |
+| Dropdown name | Typical use | Default endpoint |
+| --- | --- | --- |
+| openai | Official OpenAI | `https://api.openai.com` |
+| openai-compatible | Self-hosted or OpenAI-compatible services | You must fill it in yourself |
+| dashscope | Alibaba Cloud Qwen | `https://dashscope.aliyuncs.com/compatible-mode/v1` |
+| baidu | Baidu Qianfan | `https://qianfan.baidubce.com/v2` |
+| moonshot | Kimi | `https://api.moonshot.cn/v1` |
+| zhipu | Zhipu | `https://open.bigmodel.cn/api/paas/v4` |
+| siliconflow | Aggregator | `https://api.siliconflow.cn/v1` |
+| openrouter | Aggregator | `https://openrouter.ai/api/v1` |
+| doubao | Volcano Ark Doubao | `https://ark.cn-beijing.volces.com/api/v3` |
+| deepseek | DeepSeek | `https://api.deepseek.com/v1` |
 
-> 💡 Tip: a value of `0` (or an empty field) is submitted as `0`, meaning unlimited.
+:::tip Connecting a self-hosted model service
+If you run your own inference service such as vLLM or TGI, choose **openai-compatible**, enter its interface address manually, and list the model names the service actually serves under **Supported Models**.
+:::
 
-### Fields defined but not exposed
+### Choosing a visibility
 
-The `Channel` type also defines `description`, `modelAliasMap`, `modelMetadata` (`supportsThinking`, `maxContextTokens`, …), `engine` and `adapters`, and i18n keys exist for them, but the current form renders **no controls** for them.
+| Choice | Who can use this channel |
+| --- | --- |
+| **Public** | Every authenticated caller |
+| **Tenant** | Only members of the selected tenant |
+| **Private** | Only the person who created the channel |
 
-> ⚠️ Note: these fields have no UI entry and no other editing surface in this repo; their server behaviour is unconfirmed and not documented here.
+:::warning Narrowing visibility is risky
+Once the scope is reduced, callers that could use this channel lose access to it immediately. Before changing it, make sure no running workload depends on the channel.
+:::
 
-## Channel actions
+### Filling in RPM / TPM
 
-| Action | Description |
-|--------|-------------|
-| Enable / disable | Toggles `enabled` then refreshes |
-| Update visibility | Dialog that submits **only** `visibility` (`public` / `tenant` / `private`) |
-| Edit | Navigates to `/service-registrations/:id/edit` |
-| Delete | Requires typing the channel name to confirm |
+- Leaving both empty or at `0` means **unlimited**.
+- RPM caps at `10000` and TPM at `100000` (in units of K, i.e. one hundred thousand K tokens per minute).
+- This rate limit is applied to the **channel**; an API key can carry a second limit on top, and both take effect at the same time.
 
-> ⚠️ Note: the visibility dialog does not adjust tenant or workspace; narrowing visibility immediately blocks users who previously could route to the channel.
+## Verify the channel works
 
-## Relations to other modules
+There is **no "test" button** on the page, so you verify by sending a real request.
 
-- Billing, rate limiting, auditing and moderation are governed by global switches in [Gateway config](/boss/gateway/config).
-- Context length and prices live in [Model metadata](/boss/gateway/model-metadata), separate from a channel's `supportedModels`.
-- Requests handled by channels can be inspected in [Call logs](/boss/gateway/audit) and [Operations overview](/boss/gateway/operations).
+1. Confirm the channel's status is enabled and that **Supported Models** contains the model name you want to test.
+2. Use any valid **API key** to make one real call to that model.
+3. Go to **User Management → Call Logs** in the left sidebar. If the call appears there with a **Success** result, the channel is working.
 
-## Permissions
+If the call log shows a failure, first check the endpoint address, the upstream API key and the model name against the provider's documentation.
 
-Requires the **system administrator** role.
+## Day-to-day actions
+
+In the collapsed menu at the end of each row you can:
+
+| Action | Notes |
+| --- | --- |
+| Enable / Disable | Flip whether this channel takes part in routing; the list refreshes automatically |
+| Update Visibility | The dialog can change **Visibility** only; tenant and workspace are left alone |
+| Edit | Go back to the form and change the channel's settings |
+| Delete | You must **type the channel name in the confirmation dialog** before it will delete |
+
+:::warning Deleting cannot be undone
+A deleted channel cannot be restored, and calls that referenced it lose that line immediately. Disabling is usually safer than deleting — a disabled channel can be enabled again at any time.
+:::
+
+## Confirm it worked
+
+Go back to the **Channel Management** list: the new channel appears with a green check. If **Call Logs** shows successful calls going through it, your configuration is live.
+
+## FAQ
+
+| Symptom | Likely cause | What to do |
+| --- | --- | --- |
+| Nothing in Call Logs | The channel is not enabled, or no caller is using it | Confirm the channel is enabled and actually send one request |
+| Calls fail with an authentication error | The upstream API key is wrong or expired | Edit the channel and paste the key again |
+| Requests never reach this channel | The visibility scope excludes the caller, or the priority is too low | Adjust the visibility or the priority |
+| Changed the provider but the endpoint did not change | Editing never overwrites an existing endpoint | Set the endpoint to the correct address yourself |
+
+## Related
+
+- [Model Configuration](/boss/gateway/model-metadata): maintain model prices and context length
+- [Token Management](/boss/gateway/api-keys): issue the API keys used for calls
+- [Call Logs](/boss/gateway/audit): inspect the details of every call

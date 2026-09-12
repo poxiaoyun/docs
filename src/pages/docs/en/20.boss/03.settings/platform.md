@@ -1,83 +1,97 @@
 ---
-title: Platform Settings
+title: 'Platform Settings'
 updated: '2026-09-12'
-description: 'Platform branding and sign-in display — title, logo, subtitle, header navigation and access management.'
+description: 'Set the platform title, subtitle and logo, and control the document entry, language switcher and self-registration.'
 tags:
   - boss
   - settings
 ---
 
-## Feature overview
+# Platform Settings
 
-Platform settings maintain the branding shown in the console and on the sign-in page, plus header navigation and access management switches. All values are written to the platform global configuration and apply to the whole platform UI.
+Platform Settings decide **what the sign-in page and the top bar of every page look like**: the platform title, the subtitle, which logo is used, whether the top bar shows the **Document** entry and the language switcher, and whether the sign-in page offers a registration entry.
 
-This page corresponds to **Platform management → Platform settings** in the Boss console (menu label from `navbar.platform_setting`).
+These changes are visible platform-wide. Ordinary users see them the **moment they open the sign-in page**, so confirm that this is the information you want to show publicly.
 
-## Access path
+This page is under **System Settings → Platform Settings** in the left-hand menu.
 
-Boss console → Platform management → **Platform settings**
+## Before you start
 
-Console route: `/settings/platform`
+- Your account must be a **system administrator**.
+- Prepare the logo image: **PNG or SVG**, no larger than **3 MB**.
 
 ## Page structure
 
-Three configuration cards, top to bottom:
+Top to bottom the page has three cards, and each card has **its own Confirm button** — edit a card, then click that card's button:
 
-| Card | Component | i18n title |
-|------|-----------|-----------|
-| Title and Logo | `LogoAndTitleConfig` | `title_and_logo` |
-| Platform header config | `HeaderConfig` | `header_config` |
-| Access management config | `IamConfig` | `iam_config` |
+| Card | What it controls |
+| --- | --- |
+| Title and Logo | Platform title, subtitle and logo |
+| Platform Header Configuration | The document entry and language switcher in the top bar |
+| IAM Configuration | Whether users may self-register |
 
-Each card has its own **Confirm** button; a successful save shows "Updated, please refresh the page".
+## Set the title and logo
 
-## Title and Logo
+1. Fill in the **Title and Logo** card:
 
-| Field | Key | Type | Validation |
-|-------|-----|------|-----------|
-| Platform title | `title` | Text | Max **10 characters** |
-| Logo | `logo` | Image upload | Max **3 MB**, **PNG / SVG** only |
-| Subtitle | `subTitle` | Text | Max **20 characters** |
+   | Setting | What to fill in | What happens when you change it |
+   | --- | --- | --- |
+   | Platform Title | At most **10 characters**, for example `Acme Cloud` | Shown in the browser tab, the top bar title and the sign-in page heading |
+   | Sub Title | At most **20 characters**, for example `Build without limits` | Shown on the sign-in page and under the sidebar title |
+   | Logo | Upload a PNG or SVG, no larger than **3 MB** | Replaces the browser tab icon and the logo on the sign-in page and top bar |
 
-> ⚠️ Note: the `subTitle` limit is **20 characters**, not 10.
+2. Choosing a logo file **uploads the image immediately**, and a successful upload shows "Upload successfully". The image address now exists, but the configuration is not saved yet.
 
-Logo upload behaviour:
+3. Click **Confirm** at the bottom of the card to store the title, subtitle and logo together.
 
-1. Pick a PNG or SVG file (max 3 MB)
-2. Upload happens immediately (`POST /api/iam/logo/avatar`, form field `avatar`); the new logo URL is returned
-3. Cropping preserves the aspect ratio (`preserveAspectRatio`)
-4. Clicking **Confirm** on the card is what persists the logo URL into the global configuration
+:::tip Uploading a logo takes two steps
+The upload only sends the image to the server; you **must click Confirm again** before the platform starts using the new logo.
+When cropping the logo the original aspect ratio is preserved, so the image is never stretched.
+:::
 
-> 💡 Tip: uploading only obtains an image URL; the configuration is saved by **Confirm**.
+## Set the top bar entries
 
-## Platform header config
+In the **Platform Header Configuration** card:
 
-| Field | Key | Type | Default | Notes |
-|-------|-----|------|---------|-------|
-| Show document entry | `enableDocument` | Switch | on | Hides the document entry when off |
-| Document URL | `documentUrl` | Text | empty | Only shown when "show document entry" is on |
-| Enable language switch | `enableLanguageSwitch` | Switch | on | Controls the header language switcher |
+| Setting | What to fill in | What happens when you change it |
+| --- | --- | --- |
+| Enable document entry | Switch, **on** by default | When off, the **Document** button disappears from the top bar and users cannot find the documentation |
+| Document URL | Text, for example `/docs` | The address opened by the **Document** button; if left empty it opens `/docs` |
+| Enable Language Switch | Switch, **on** by default | When off, neither the top bar nor the sign-in page shows the language switcher |
 
-> ⚠️ Note: the schema and defaults also define `enableNavbarIndex` (default on), but the corresponding switch is **commented out** in the UI and cannot be changed from the page.
+- **Document URL** only appears while "Enable document entry" is on; turning the switch off hides it again.
+- Click **Confirm** on this card when you are done.
 
-## Access management config
+## Set the registration switch
 
-| Field | Key | Type | Default | Notes |
-|-------|-----|------|---------|-------|
-| Enable BOSS signup | `enableBossSignup` | Switch | off | Whether users may self-register |
+In the **IAM Configuration** card:
 
-> ⚠️ Note: for private deployments, keep this off and create accounts manually.
+| Setting | What to fill in | What happens when you change it |
+| --- | --- | --- |
+| Enable BOSS Platform Registration | Switch, **off** by default | When on, the BOSS sign-in page shows a self-registration entry so anyone can create an account; when off, only administrators can create accounts |
 
-## Requests
+:::warning Keep it off for private deployments
+With this switch on, a registration entry appears on the sign-in page and outsiders can create their own accounts. For private enterprise deployments, keep it off and let administrators create accounts as needed.
+:::
 
-| Request | Method | Notes |
-|---------|--------|-------|
-| `/api/iam/global-config` | `GET` | Read the platform global configuration |
-| `/api/iam/global-config` | `PUT` | Save it (each save merges the current config) |
-| `/api/iam/logo/avatar` | `POST` | Upload the logo (`multipart/form-data`, field `avatar`) |
+Click **Confirm** on this card when you are done.
 
-> ⚠️ Note: all three cards submit `{ ...current, ...formValues }`, so changing one field rewrites the whole global configuration.
+## Confirming the result
 
-## Permissions
+- After a successful save the card shows "**Update successfully, please refresh the page**".
+- **Refresh the browser** as prompted before the new title, logo, subtitle and entry switches appear.
+- Open the sign-in page and check that the title, subtitle, logo and registration entry are what you configured.
 
-Requires the **system administrator** role.
+## Common questions
+
+| What you see | Likely cause | What to do |
+| --- | --- | --- |
+| Nothing changes after saving | The configuration is stored, but the current page still holds the old data | Refresh the browser |
+| The logo will not upload | The image is not PNG/SVG, or it is larger than 3 MB | Use an image with the right format and size |
+| Changing the title also changed other products | This is the platform-level title; sub-product titles are set separately | Change the sub-product on its own settings page |
+
+## Related
+
+- [AI Platform Settings](/boss/settings/rune)
+- [Moha Hub Settings](/boss/settings/moha)
+- [Gateway Settings](/boss/settings/chatapp)

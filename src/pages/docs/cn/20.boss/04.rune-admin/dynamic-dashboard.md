@@ -1,104 +1,111 @@
 ---
 title: '动态仪表盘'
 updated: '2026-09-12'
-description: '用 YAML 定义集群监控面板，编辑即预览，数据实时查询集群监控接口。'
+description: 用一个 YAML 文本框自己拼监控看板，左边改配置、右边实时出图，即改即看。
 tags:
   - boss
   - settings
 ---
 
-## 功能简介
+# 动态仪表盘
 
-动态仪表盘是一个 YAML 驱动的集群监控面板编辑器：在左侧编辑 YAML 配置，右侧按配置实时渲染监控面板。面板数据通过集群监控接口实时查询，配置本身**不落库、不可保存**。
+动态仪表盘是一个「自己拼监控看板」的地方：左边是一个文本编辑框，你在里面写一段描述「显示哪些图表」的配置；右边会按你的配置实时把图渲染出来。适合临时想看某个指标、但又不想等平台出新看板的时候。
 
-本页对应 BOSS 控制台 **Rune 智算管理 → 集群 → 动态仪表盘**。
+读完这页，你能完成：新建一个看板、加一张图表、并把数据源（查询语句）配好。
 
-## 进入路径
+:::tip 一个类比
 
-| 操作 | 前端路由 |
-|------|---------|
-| 动态仪表盘 | `/rune/clusters/:cluster/dynamic-dashboard` |
+把它想成「自己画的仪表盘」：左边是画图说明，右边就是画好的盘面。你改一句说明，右边几秒后跟着变。
 
-> ⚠️ 注意: 真实路由是 `/rune/clusters/:cluster/dynamic-dashboard`（`ROOTS.BOSS` 为空串，因此没有 `/boss` 前缀）。旧文档写的 `/boss/rune/clusters/...` 不存在。文档站页面 URL 为 `/boss/rune-admin/dynamic-dashboard`。
+:::
 
-> ⚠️ 注意: 页面顶部面包屑的链接目标在代码中硬编码为 `/boss/clusters` 与 `/boss/clusters/:cluster`，与实际注册的路由不一致，属于代码中的遗留写法。
+## 开始之前
+
+- 你需要能访问该集群的 **系统管理员** 账号。
+- 前置：集群的监控数据已经接上（否则图会空）。
+
+## 进入方式
+
+这个页面不在左侧菜单里，需要直接访问某个集群的动态仪表盘地址：在浏览器里打开 `集群 → 动态仪表盘` 对应的地址（可在集群相关页面的地址基础上把末段换成 `dynamic-dashboard`）。
 
 ## 页面布局
 
-页面上下两块：
+| 区域 | 内容 |
+| --- | --- |
+| 上方 YAML 配置卡 | 一个文本框，用来写配置；右上角有一个 **Reset** 按钮 |
+| 下方预览卡 | 按你写的配置实时渲染出来的看板 |
 
-| 区域 | 说明 |
-|------|------|
-| YAML 配置卡 | 固定高度 600px，标题栏含 **Reset** 按钮，下方为 YAML 编辑器（Monaco） |
-| 预览卡 | 占剩余空间（`flexBasis: 70%`），渲染 `Dashboard` 组件 |
+编辑框里的内容改动后，大约 **1 秒**后才会刷新右侧预览（防止每敲一个字都重画）。
 
-编辑器内容变更后，会经过 **1000ms 防抖**再解析并刷新预览。
+:::warning 只有 Reset，没有保存
 
-> ⚠️ 注意: 页面**只有 Reset 按钮，没有保存按钮，也不调用任何写接口**。点击 Reset 会把编辑器恢复为内置的默认 YAML。旧文档中「点击保存 → 后端 API 保存成功」的流程在代码中不存在。
+这个页面**没有保存按钮**，也不会把配置存到服务器。点 **Reset** 只是把文本框恢复成内置的默认配置。
 
-> ⚠️ 注意: YAML 解析失败时只在控制台打印错误，预览会停止更新，界面不会弹出提示。
+所以：**刷新页面后，你写的内容会丢掉**。想要长期使用，请自己把这段配置复制到别处保存。
 
-## 配置结构
+:::
 
-顶层字段（`DashboardConfiguration`）：
+## 新建一个看板
 
-| 字段 | 说明 |
-|------|------|
-| `title` | 面板标题 |
-| `description` | 描述 |
-| `i18n` | 本地化文案，形如 `{ locale: { 原文: 译文 } }` |
-| `panels` | 面板数组 |
-| `templating` / `time` / `timezone` / `refresh` | 预留字段，默认配置未使用 |
+「新建」其实就是把文本框里的内容改成你想要的配置，右侧预览会跟着变：
 
-每个面板（`DashboardPanel`）：
+1. 打开页面，文本框里已经有一段默认配置，右侧是默认看板。
+2. 修改或清空文本框，写入你自己的配置。
+3. 等约 1 秒，右侧预览按新配置重画。
+4. 满意后，把这整段配置复制出来自己备份。
 
-| 字段 | 说明 |
-|------|------|
-| `title` | 面板标题 |
-| `type` | 面板类型（自由字符串，`DashboardPanelType \| string`） |
-| `gridPos` | 网格位置 `{ h, w, x, y }`（24 列栅格） |
-| `fieldConfig.defaults` | 默认字段配置：`unit`、`decimals`、`min`、`max`、`thresholds`、`color` |
-| `targets[]` | 数据查询，元素为 `{ expr, legendFormat?, refId?, instant?, range? }` |
-| `options`、`panels`、`transformations` 等 | 其余透传字段 |
+## 配置怎么写
 
-> ⚠️ 注意: 查询表达式写在 **`targets[].expr`** 上，不是面板顶层的 `query`。旧文档的 `query:` 写法不会被解析。
+整份配置的顶层大致是：看板标题、分组、以及一组「面板」（每张图就是一个面板）。
 
-### 默认配置用到的面板类型
+| 配置项 | 含义 |
+| --- | --- |
+| `title` | 看板标题 |
+| `panels` | 面板数组，一个面板就是一张图或一个分组标题 |
+| `i18n` | 可选，把英文标题映射成中文显示 |
 
-默认 YAML 用到 5 种类型：
+每个面板（`panels` 里的一项）常用：
 
-| 类型 | 用途 |
-|------|------|
-| `row` | 分组标题行（`gridPos.h: 1`，`w: 24`） |
-| `stat` | 单个聚合数值 |
-| `timeseries` | 时间序列折线 |
-| `table` | 多行表格 |
-| `gauge` | 仪表盘/环形，配合阈值变色 |
+| 配置项 | 含义 |
+| --- | --- |
+| `title` | 这张图的标题 |
+| `type` | 图表类型，例如 `stat`（单个数值）、`timeseries`（折线）、`table`（表格）、`gauge`（仪表盘）、`row`（分组标题行） |
+| `gridPos` | 放在网格的哪个位置（`x`、`y` 定位，`w`、`h` 是宽高；一行 24 列） |
+| `targets` | 数据查询，每项用 `expr` 写查询语句 |
+| `fieldConfig.defaults` | 数值的显示方式，比如单位 `unit`、颜色阈值 `thresholds` |
 
-> 💡 提示: `type` 在类型定义中是开放字符串，实际可用的类型取决于 `Dashboard` 渲染组件；文档只列出默认配置确实使用到的 5 种。
+### 数据源怎么配
 
-## 默认配置内容
+图表数据来自集群的监控接口，你不需要配置「连哪个数据库」，只要在面板的 `targets` 里用 `expr` 写一条查询语句即可；图表类型和单位在 `fieldConfig` 里调。
 
-默认 YAML 的标题为 `Kubernetes Cluster Overview`，并通过 `i18n.zh-CN` 提供简体中文译文。
+:::warning 查询语句要写在 targets 里
 
-| 分组 | 面板 | 类型 | 查询表达式（`targets[].expr`） |
-|------|------|------|------------------------------|
-| Cluster Summary | Total Nodes | stat | `count(kube_node_info)` |
-| Cluster Summary | Total Pods | stat | `count(kube_pod_info)` |
-| Cluster Summary | CPU Capacity | stat | `sum(kube_node_status_capacity{resource="cpu"})` |
-| Cluster Summary | Memory Capacity | stat | `sum(kube_node_status_capacity{resource="memory"})` |
-| Node Resources | Node CPU Usage | timeseries | `sum(rate(node_cpu_seconds_total{mode!="idle"}[5m])) by (instance)` |
-| Node Resources | Node Memory Usage | timeseries | `node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes` |
-| Workload Metrics | Top 10 CPU Consuming Pods | table | `topk(10, sum(rate(container_cpu_usage_seconds_total{image!=""}[5m])) by (pod, namespace))` |
-| Workload Metrics | Pod Restart Rate (Last 1h) | **timeseries** | `sum(increase(kube_pod_container_status_restarts_total[1h])) by (namespace, pod) > 0` |
-| Workload Metrics | Node Disk Usage | gauge | `100 - (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"} * 100)` |
+查询表达式要写在面板的 `targets[].expr` 上，不是写在面板顶层。写错位置右边的图就不会出数据。
 
-> ⚠️ 注意: 「Pod 重启次数（最近 1 小时）」在默认配置中的类型是 **`timeseries`**，不是 `stat`。
+:::
 
-### 单位与阈值
+### 怎么写一张图 + 一个分组
 
-- `fieldConfig.defaults.unit` 取值示例：`short`、`cores`、`bytes`、`percent`
-- 阈值结构为嵌套在 `fieldConfig.defaults` 下的对象：
+```yaml
+panels:
+  - title: "GPU 监控"          # 分组标题行
+    type: "row"
+    gridPos: { h: 1, w: 24, x: 0, y: 0 }
+
+  - title: "GPU 使用率"        # 一张折线图
+    type: "timeseries"
+    gridPos: { h: 8, w: 12, x: 0, y: 1 }
+    fieldConfig:
+      defaults:
+        unit: "percent"
+    targets:
+      - expr: 'avg(DCGM_FI_DEV_GPU_UTIL) by (gpu, instance)'
+        legendFormat: "{{instance}} - GPU{{gpu}}"
+```
+
+### 颜色阈值怎么写
+
+想让数值超过某个值时变色，用 `fieldConfig.defaults.thresholds`，每个阈值是一组「颜色 + 起始值」：
 
 ```yaml
 fieldConfig:
@@ -117,36 +124,20 @@ fieldConfig:
           value: 90
 ```
 
-> ⚠️ 注意: 阈值是 `fieldConfig.defaults.thresholds.{mode, steps[]}`，`steps` 元素为 `{ color, value }`；不是面板顶层的 `thresholds: [{ value, color }]` 数组。
+## 结果确认
 
-## 自定义示例
+- 改完配置约 1 秒后，右侧预览出现新的面板或数值。
+- 如果右侧没有变化：多半是配置的格式写错了，请检查缩进和字段拼写。
 
-```yaml
-panels:
-  - title: "GPU 监控"
-    type: "row"
-    gridPos: { h: 1, w: 24, x: 0, y: 0 }
+## 常见问题
 
-  - title: "GPU 使用率"
-    type: "timeseries"
-    gridPos: { h: 8, w: 12, x: 0, y: 1 }
-    fieldConfig:
-      defaults:
-        unit: "percent"
-    targets:
-      - expr: 'avg(DCGM_FI_DEV_GPU_UTIL) by (gpu, instance)'
-        legendFormat: "{{instance}} - GPU{{gpu}}"
-```
+| 现象 | 可能原因 | 怎么办 |
+| --- | --- | --- |
+| 右侧预览不动了 | 配置格式错误，解析失败 | 检查缩进与字段名；点 **Reset** 回到默认配置再改 |
+| 图是空的 | 查询语句写错位置或指标不存在 | 确认查询写在 `targets[].expr` 里 |
+| 刷新后配置没了 | 这个页面不保存配置 | 提前把配置复制到外部保存 |
 
-## 数据来源
+## 相关
 
-面板数据由集群监控接口实时返回：
-
-- 面板查询：`queryClusterDynamicDashboard(cluster, config, params)`
-- 查询参数：`getClusterDynamicDashboardParams(cluster, config, params)`
-
-> ⚠️ 注意: 由于配置不持久化，刷新页面后编辑器会回到默认 YAML，自定义内容会丢失。如需长期使用，请在外部自行保存 YAML 文本。
-
-## 权限要求
-
-需要能够访问 Rune 智算管理对应集群的管理员角色。
+- [集群信息](/boss/rune-admin/cluster-overview)
+- [节点与加速卡状态](/boss/rune-admin/nodes-gpu)

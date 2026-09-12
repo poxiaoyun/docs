@@ -1,82 +1,71 @@
 ---
 title: 'Select / Register Tenant'
 updated: '2026-09-12'
-description: Tenant selection (Autocomplete) and new-tenant registration form after login.
+description: How to choose a company space after signing in, and how to create a new tenant for yourself.
 ---
 
-## Overview
+# Select / Register Tenant
 
-The platform is multi-tenant. After a successful Console login, the user always lands on the tenant selection page and picks one of the tenants the account can access. If the account has only one tenant, the page auto-enters it.
+A tenant is **a company's isolated account space on the platform**. One company's members, data, computing power, and quota all live in the same tenant, and different tenants cannot see each other's things. After signing in you must pick a tenant before you can start working.
 
-- Route: `/auth/select-tenant`
-- View: `src/auth/view/centered/centered-tenant-view.tsx`
+:::tip A comparison
+Picture the platform as an office building and a tenant as one company in it. You can belong to several companies (own several tenants) at the same time; after signing in you first choose which one to enter today, then start working.
+:::
 
-## Tenant List Data Source
+## When you see this page
 
-| Item | Value |
-|------|-------|
-| Endpoint | `GET /api/iam/current/tenants` |
-| Response | `Tenant[]` |
-| Option shape | `{ id, name, enabled }` |
+- You pass through this page every time after a successful sign-in.
+- To change company while inside the platform, click your avatar in the top-right corner → **Switch Tenant**, which brings you back here.
 
-Options are sorted so disabled tenants come last.
+## Choosing an existing tenant
 
-## Page Description
+1. After signing in, the page shows a greeting and "Please select your tenant or create a new one".
+2. Click the **Tenant** dropdown; the list shows every tenant you can enter.
+3. Select the tenant you want to enter.
+4. Click **Enter Platform**. The button briefly shows "Entering...".
+5. You then land on that tenant's platform home.
 
-The main control is a dropdown, not a card list:
+:::tip One tenant enters automatically
+If your account belongs to only one tenant, the page skips the choice and enters it for you, so you may barely notice this step.
+:::
 
-| Element | Description |
-|---------|-------------|
-| Title | A personalized greeting using `displayName` / `name` / `email`, with a generic fallback |
-| Select | `Field.Autocomplete`, field name `tenant`, label "Tenant" |
-| Disabled options | Options with `enabled === false` cannot be selected and show an error-label "Disabled" |
-| Enter button | Enters the selected tenant |
+## About disabled tenants
 
-> ⚠️ Note: There is **no** tenant card list, and **no** tenant ID, role, member count, status column, search box, or sorting.
+Some tenants in the dropdown carry a red **Disable** label. They cannot be entered right now:
 
-## Single-Tenant Auto-Entry
+- they are sorted to the bottom of the list;
+- you cannot select them, so you cannot enter them.
 
-When the tenant count is exactly 1, the page automatically selects and enters that tenant (`centered-tenant-view.tsx:138-142`).
+If a tenant you need is disabled, contact a platform administrator.
 
-## Entering a Tenant
+## Creating a new tenant
 
-After selecting and submitting (`centered-tenant-view.tsx:120-136`):
+If you have no tenant yet, or want a company space of your own:
 
-1. `setDefaultTenant(tenantId)`
-2. Clears the default region and default workspace context
-3. Redirects:
-   - If the URL has `returnTo`, go back to it; if it also has `oldTenantId`, replace the old ID inside `returnTo` with the new tenant ID
-   - Otherwise go to `paths.rune.dashboard`
+1. On the tenant selection page, click **Create Tenant** at the bottom.
+2. The new page shows "Create Tenant" and "Create a tenant for yourself".
+3. Fill in the three fields in the table below.
+4. Click **Create Tenant**. The button briefly shows "Creating account...".
+5. Once it is created, the platform takes you straight to the new tenant's home.
 
-## Register a New Tenant
+| Field | How to fill it in |
+| --- | --- |
+| Name | The name of this tenant, for example your company or team name |
+| Email | A contact email address |
+| Mobile Number | A contact mobile number |
 
-The "Create Tenant" button at the bottom opens the registration form:
+:::warning All three fields are required
+Name, email, and mobile number must all be filled in, and the email must be a valid address, or you cannot submit.
+:::
 
-- Route: `/auth/regist-tenant`
-- View: `centered-regist-tenant-view.tsx`
+If you change your mind while creating, click **Select Tenant** at the bottom of the page to go back.
 
-Fields (all required):
+## Signing out
 
-| Field | Type | Front-end Validation |
-|-------|------|----------------------|
-| `name` | Text | Non-empty |
-| `email` | Text | Email format |
-| `phone` | Text | Non-empty + 6–16 digits |
+At the bottom of the tenant selection page, click **Sign out** to sign out of the current account and return to the sign-in page.
 
-Submit:
+## Related
 
-| Item | Value |
-|------|-------|
-| Endpoint | `POST /api/iam/tenant-register` |
-| Body | `{ name, email, phone }` |
-
-On success (`centered-regist-tenant-view.tsx:71-79`): re-check the session → store the new tenant ID in `localStorage` (key `tenant`) → redirect to `paths.rune.dashboard`.
-
-> ⚠️ Note: The registration form has **no** "Tenant ID" field and **no** "Description" field; `email` and `phone` are plain text inputs without verification codes.
-
-## Notes
-
-- Tenant selection is an Autocomplete dropdown, not a card grid
-- A single tenant skips selection automatically
-- Disabled tenants cannot be entered
-- Approval mode and quota allocation for new tenants are backend concerns and unconfirmed here
+- [Login](/account/auth/login)
+- [Tenant Management](/account/iam/tenant)
+- [Roles and Permissions](/account/auth/roles)

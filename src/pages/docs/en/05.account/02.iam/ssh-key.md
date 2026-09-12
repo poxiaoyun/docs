@@ -1,81 +1,111 @@
 ---
 title: 'SSH Key Management'
 updated: '2026-09-12'
-description: Add and delete SSH public keys (inline form on the page).
+description: From generating an SSH key pair to pasting the public key here, and deleting keys you no longer use.
 ---
 
-## Overview
+# SSH Key Management
 
-The SSH Key page manages the account's SSH public keys for Git-over-SSH style passwordless authentication.
+An SSH key is a matched pair of "keys" that lets you connect to a Git repository or server without typing your password every time. The platform stores only the **public** key; the private key always stays on your own computer. This page takes you through the whole path from "generate a key pair" to "paste the public key here", and explains which actions cannot be undone.
 
-- Route: `/iam/account/ssh-key`
-- View: `src/pages/iam/account/ssh-key.tsx`
+:::tip The public key is the lock, the private key is the key
+You hand the lock (public key) to the platform and keep the key (private key) yourself. Someone holding your lock still cannot open your door, but if the private key leaks, anyone can pretend to be you.
+:::
 
-## Navigation
+## Before you start
 
-Top-right avatar → Settings → top Tab "SSH Keys"
+- This is a setting for your own account, so you can use it as soon as you sign in; no tenant role is needed.
+- You need to be able to open a terminal on your computer: Terminal on macOS, PowerShell on Windows.
+- If you have generated a key before, there is no need to generate another one; just use your existing public key file.
 
-## Endpoints
+## Telling the public and private keys apart
 
-| Action | Endpoint |
-|--------|----------|
-| List | `GET /api/iam/current/sshkeys` |
-| Create | `POST /api/iam/current/sshkeys` |
-| Delete | `DELETE /api/iam/current/sshkeys/{fingerprint}` |
+| Term | Plain meaning |
+| --- | --- |
+| Public key | The file whose name ends in `.pub`; it may be shared, and it is the text you paste here |
+| Private key | The file without `.pub`; it is your real key and must never be sent to anyone |
+| Fingerprint | A short string computed from the public key, used to check that the record here matches your local key |
 
-## Adding an SSH Key
+:::warning Paste the public key only
+The platform needs the public key. Pasting private key content is the same as handing over your key, and anyone could use it to impersonate you.
+:::
 
-> ⚠️ Note: The top of the page is an **inline form** (not a "top-right button + confirm dialog"). The form and the list share the page; submit with "Save".
+## Step 1: generate a key pair
 
-| Field | Key | Type | Front-end Validation |
-|-------|-----|------|----------------------|
-| Name | `name` | Text | Non-empty |
-| Public key | `publicKey` | Multiline (4 rows) | Non-empty |
-
-Auto-fill: when `name` is empty, the front-end extracts the comment from the public key (split on whitespace, take the 3rd segment onward) as the name (`ssh-key.tsx:237-248`). For a key ending in `... your-email@example.com`, the name becomes `your-email@example.com`.
-
-Request body:
-
-```json
-{ "name": "MacBook Pro", "publicKey": "ssh-ed25519 AAAA... your-email@example.com" }
-```
-
-> ⚠️ Note: The front-end only checks that the public key is non-empty. It does **not** validate key type/format, and duplicate detection is up to the backend.
-
-## Generating a Key Pair
+Run the command below in your terminal (the email is just a label, so use your own):
 
 ```bash
-# Recommended: Ed25519
 ssh-keygen -t ed25519 -C "your-email@example.com"
+```
 
-# Or RSA
-ssh-keygen -t rsa -b 4096 -C "your-email@example.com"
+Press Enter through the prompts; by default this creates two files: `~/.ssh/id_ed25519` (the private key) and `~/.ssh/id_ed25519.pub` (the public key). When it asks for a passphrase you can press Enter to leave it empty.
 
-# View the public key
+Print the public key content and copy it:
+
+```bash
 cat ~/.ssh/id_ed25519.pub
 ```
 
-The public key file ends in `.pub`. Upload the **public** key, never the private key.
+On Windows PowerShell use this instead:
 
-## Key List
+```bash
+Get-Content ~/.ssh/id_ed25519.pub
+```
 
-Each key is shown as a card:
+The public key is usually a **single line** that starts with `ssh-ed25519`, `ssh-rsa`, or `ecdsa-sha2-nistp256`.
 
-| Field | Description |
-|-------|-------------|
-| `name` | Custom name |
-| `creationTimestamp` | Created at |
-| `fingerprint` | Public key fingerprint |
-| `comment` | Public key comment (shown if present) |
+## Step 2: paste the public key here
 
-> ⚠️ Note: The list has **no** "Last Used" or "Key Type" columns.
+1. Click your avatar in the top-right corner → **Settings**.
+2. Click the **SSH Keys** tab at the top.
+3. The add form sits at the top of the page. Fill in the two items below:
 
-## Deleting an SSH Key
+   | Setting | How to fill it in | What changes |
+   | --- | --- | --- |
+   | Key Name | For example `My work computer` | Just the name in the list, to help you tell keys apart; you can choose anything |
+   | Public Key | Paste the **whole line** you copied in the previous step | The platform registers this public key, and the matching private key can then connect without a password |
 
-Click "Delete" on the key card, confirm in the dialog, and the delete endpoint is called. The public key is then removed from the platform.
+4. Click **Save**.
 
-## Notes
+:::tip The name can fill itself in
+If you paste the public key before typing a name, the page fills the name in for you from the comment at the end of the key (usually the email you typed when generating it). The name cannot be empty; if the key has no comment at the end, just type one yourself.
+:::
 
-- The add form is inline and persistent on the page
-- The name can be auto-filled from the key comment and edited manually
-- Deletion cannot be undone
+## Confirming the result
+
+- A green **SSH key added successfully** alert appears at the top of the page.
+- The form below is cleared and a new card appears in the list, showing the name, creation time, and fingerprint; if the public key has a comment, one more comment line is shown.
+
+## Where the same key can be used
+
+| Situation | Works? | Advice |
+| --- | --- | --- |
+| One computer connecting to several platforms | Yes; add the same public key to each platform | The private key stays as it is |
+| Several computers sharing one identity | Yes, but you must copy the private key to every machine | Generating one key per computer is better |
+| A computer you no longer use | Delete its entry from the list | Other computers are unaffected |
+
+Generating a separate key on each computer has one advantage: if a device is lost, deleting only its entry revokes just that device instead of dragging the others down with it.
+
+## Deleting a key
+
+1. Find the card to delete in the **SSH Keys** list.
+2. Click **Delete** in the top-right corner of the card.
+3. A **Delete SSH Key** confirmation dialog opens; click **Confirm**.
+
+:::warning Deleting cannot be undone
+After you delete it, this public key is removed from the platform and any connection using the matching private key stops working immediately. To use it again you must add it once more.
+:::
+
+## Common questions
+
+| What you see | Likely cause | What to do |
+| --- | --- | --- |
+| **Please enter public key** when you click Save | The public key field is empty | Go back to the terminal and copy the whole line of the `.pub` file again |
+| **Please enter key name** when you click Save | The name is empty and the public key has no comment at the end | Type a name yourself |
+| It says the key was added but you still cannot connect | The platform holds the public key, but the local private key is not its match | Compare the fingerprint on the key card with your local private key |
+
+## Related
+
+- [IAM API Key (AK/SK)](/account/iam/api-key)
+- [Security Settings](/account/iam/security)
+- [Personal Center](/account/iam)

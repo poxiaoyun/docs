@@ -1,35 +1,56 @@
 ---
 title: Cluster Status
 updated: '2026-09-12'
-description: The overview dashboard on the cluster detail page, and how to reach the various governance pages from it.
+description: 'See whether one cluster is healthy overall — CPU, memory, nodes and core services — and drill down from here.'
 tags:
 - boss
 - rune-admin
 - cluster
 ---
 
-## Overview
+# Cluster Status
 
-Cluster Overview (the "Cluster Info" sidebar item) is the main view after an administrator enters a single Rune cluster, used to inspect baseline resource panels and monitoring dashboards.
+Cluster Status is the main dashboard you get after stepping into a "data-centre building" (a cluster): CPU, memory, node counts and core services on one screen, so you can judge whether the cluster is healthy overall. To drill into a single machine or a single card, go on to **Node Status** and **Accelerator Status** in the left-hand menu.
 
-## Access Path
+## Before you start
 
-Boss -> Cluster Management -> select a cluster -> Cluster Info
+- You need a **system administrator** account.
+- Prerequisite: a cluster is already connected to the platform, see [Cluster Management](/boss/rune-admin/clusters).
 
-Frontend route: `/rune/clusters/:cluster/overview`
+## Open the cluster overview
 
-## Page Structure
+1. In the left-hand menu, click **Cluster Management** under the **AI Platform** group.
+2. In the cluster list, click the name of the cluster you want to inspect.
+3. In the left-hand sub-menu, click **Cluster Status**.
 
-The overview page renders the cluster dashboard configuration delivered by the backend and keeps only the **basic dashboards whose names contain `basic`**; it does not include an accelerator dashboard (that lives on the "Accelerator Info" subpage).
+:::info This page is the baseline dashboard
 
-| Area | Description |
+The Cluster Status page renders only baseline monitoring dashboards and **does not include accelerator dashboards**. To see utilisation, VRAM and temperature per card, open the **Accelerator Status** sub-page.
+
+:::
+
+## What is on the page
+
+| Area | Content |
 | --- | --- |
-| Cluster baseline monitoring | Baseline metrics such as CPU, memory, nodes, and core services |
-| Dynamic variable filters | Switch the view using variables provided by the monitoring template |
-| Drill-down entries | Enter the node, GPU, storage, log, and resource pages from the overview |
+| Baseline monitoring charts | Cluster metrics such as CPU, memory, node count and core services |
+| Variable filters | Drop-down filters at the top mean this monitoring template offers switchable views |
+| Drill-down entries | The left-hand sub-menu leads on to nodes, accelerators, storage, logs and more |
 
-## Typical Uses
+## Confirming the result
 
-- Confirm whether the cluster is healthy overall.
-- After spotting an anomaly, continue into the node or log pages to locate the problem.
-- Observe the current cluster load before scaling, upgrading, or adjusting scheduling.
+- If the charts draw normally (rather than spinning forever), the cluster monitoring data is connected.
+- If the charts stay blank for a long time, the cluster usually has no monitoring components installed yet — check **System Apps** to see whether the monitoring components are deployed.
+
+## Common questions
+
+| What you see | Likely cause | What to do |
+| --- | --- | --- |
+| The charts keep spinning or stay blank | The cluster has no monitoring collection component | Deploy the monitoring components from **System Apps** |
+| Only baseline metrics are shown, no cards | Accelerator dashboards live on another sub-page | Click **Accelerator Status** in the left-hand menu |
+
+## Related
+
+- [Nodes & Accelerators](/boss/rune-admin/nodes-gpu)
+- [Logs & Scheduler](/boss/rune-admin/observability)
+- [Workloads](/boss/rune-admin/resources)

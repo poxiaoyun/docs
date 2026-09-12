@@ -1,87 +1,114 @@
 ---
 title: Hit Records
 updated: '2026-09-12'
-description: 'Query calls that triggered content moderation — matched terms, risk level and decision.'
+description: See which calls tripped moderation and how.
 tags:
   - boss
   - gateway
 ---
 
-## Feature overview
+# Hit Records
 
-Sensitive hits collects every call that **triggered content detection**, for tracing matched terms, risk level and the final decision.
+Hit Records is the **archive of moderation results**. Every time a request or a response trips the sensitive-word check, a record is left here stating who it was, when it happened, which words matched, how risky they were and how the system finally handled it.
 
-This page corresponds to **LLM gateway → Security service → Sensitive hits** in the Boss console (menu label from `navbar.sensitive_hits`).
+By the end you will be able to filter to the records you care about by time and user, read the risk level and handling method, and open a record to see exactly what matched.
 
-## Access path
+:::tip Like replaying the scanner's footage
+An airport scanner sweeps thousands of bags a day; to review "what set that alarm off", you rely on the recorded footage. Hit Records is the replay of content moderation: you do not have to dig through every call, because the system has already filtered down to the alarms.
+:::
 
-Boss console → LLM gateway → Security service → **Sensitive hits**
+## Before you start
 
-Console route: `/gateway/moderation/sensitive-hits`
+- Permission: you need a platform administrator account (one that can enter the BOSS console).
+- The lexicon and policies must already be configured and real hits must have happened, otherwise this page has no data. See [Content Moderation](/boss/gateway/moderation) for how to set that up.
 
-> ⚠️ Note: this is the real console route, not a docs-site URL.
+## Open Hit Records
 
-## Query behaviour
+1. Click **Model Gateway** in the left sidebar.
+2. Expand **Security Services** and click **Hit Records**.
 
-The request always includes `sensitiveDetected: true`, so only calls that hit content detection appear. Results are ordered by request time (`requestStarted`) **descending**, paged **15** per page by default.
+## This page is already filtered for you
 
-The default time range looks back **1 month** (start = 00:00 one month ago, end = 24:00 today).
+You do not have to say "only show hits" — the page always queries records that tripped sensitive content. The list is ordered by request time, **newest first**, with **15** records per page by default.
 
-## Filters
+The default time range is **the last month**: from midnight one month ago up to the end of today.
 
-| Filter | Type | Description |
-|--------|------|-------------|
-| Start time | Date-time | Minute precision |
-| End time | Date-time | Minute precision |
-| User | Text | Match on username |
-| Channel | Select | Options come from the channel list, with "All" |
+## How to filter
 
-The toolbar offers **Refresh** and **Reset** (reset restores the default 1-month range).
+| Filter | Notes |
+| --- | --- |
+| Start time | Accurate to the minute |
+| End time | Accurate to the minute |
+| User | Search by username |
+| Channel provider | A dropdown that includes **All** |
 
-## Record list
+The toolbar has **Reset** and **Refresh**. Reset puts the time range back to the default last month and clears the user and channel provider filters.
 
-| Column | Field | Description |
-|--------|-------|-------------|
-| Time | `requestStarted` | — |
-| User | `username` | With avatar and tenant name |
-| Model | `model` | With model icon |
-| Type | `sensitiveType` | Sensitive content type |
-| Terms | `sensitiveTerms` | Matched terms joined by "、" |
-| Risk level | `riskLevel` | Coloured label |
-| Token | `tokenId` | `tokenName` when available, otherwise the masked token |
-| Decision | `moderationDecision` | Policy action |
+## What the list contains
 
-Empty multi-value cells show a placeholder.
+| Column | Meaning |
+| --- | --- |
+| Time | When the request happened; the small text below is the result of that call |
+| User | The user who made the call, with avatar and tenant name |
+| Model | The model requested, with the model icon |
+| Type | The category the sensitive content belongs to |
+| Sensitive Words | The matched words, joined together when there are several |
+| Risk Level | High / Medium / Low, distinguished by colour |
+| Token | The name of the key used (the masked key when it has no name) |
+| Handling Method | The action the policy finally took |
 
-### Risk level
+### How the risk level is decided
 
-Derived from the **highest score** among matches:
+The risk level is derived from the **highest score** among the matched content:
 
-| Score | Level | Label |
-|-------|-------|-------|
-| `>= 8` | `high` | High |
-| `>= 5` | `medium` | Medium |
-| otherwise | `low` | Low |
+| Score | Level |
+| --- | --- |
+| 8 or above | High |
+| 5 or above | Medium |
+| Anything else | Low |
 
-### Decision
+### The possible handling methods
 
-Shows the policy action: `log` / `replace` / `webhook` / `block` — the same values as [Policies](/boss/gateway/moderation).
+The handling method matches the action configured in [Policy Management](/boss/gateway/moderation):
 
-## Hit details
+| Handling method | Meaning |
+| --- | --- |
+| Log | The content passed normally and only a record was left |
+| Replace | The matched words were masked and the request continued |
+| Webhook | An external moderation service made the decision |
+| Block | The request was rejected outright |
 
-Clicking a record opens a dialog showing:
+## View the details of a hit
 
-- The matched terms (as tags)
-- The request content with matched terms highlighted
+1. Click the **Time** cell of a record in the list (or the magnifier icon next to the time).
+2. The dialog lists the matched sensitive words as labels at the top.
+3. Below that is the request content, with the matched words highlighted, so you can tell a real hit from a false positive.
 
-> ⚠️ Note: this page is **read-only** — no delete, export or remediation actions.
+:::info This page is read-only
+Hit Records is for querying only. The page offers no delete, no export and no way to act on an individual record. To change how something is judged, go back and adjust the lexicon or the policies.
+:::
 
-## Relations to other modules
+## How this relates to the other pages
 
-- Terms and scores are maintained in [Lexicon](/boss/gateway/moderation)
-- Conditions and actions are configured in [Policies](/boss/gateway/moderation)
-- All call records (including non-sensitive ones) live in [Call logs](/boss/gateway/audit)
+- Terms and scores are maintained in **Sensitive Word Management**.
+- Trigger conditions and actions are configured in **Policy Management**.
+- All calls (including those that tripped nothing) are queried in [Call Logs](/boss/gateway/audit).
 
-## Permissions
+## Confirm it worked
 
-Requires the **system administrator** role.
+After changing the time range and user, if the list follows your changes and opening a record shows highlighted matched words, the query is working. If it stays empty for a long time, first check whether the master switch and the entries are enabled.
+
+## FAQ
+
+| Symptom | Likely cause | What to do |
+| --- | --- | --- |
+| The list is empty | The master switch is off, the entries are not enabled, or nothing was hit in that period | Check the moderation switch in [Gateway Configuration](/boss/gateway/config) and widen the time range |
+| Cannot find older records | The default query covers only the last month | Move the start time back manually |
+| Want to delete a record | This page is read-only | Not supported; adjust the lexicon or the policies as needed |
+| The handling method is Log and the content was unchanged | That policy only records, it does not act | Change the policy's action if you want blocking or replacement |
+
+## Related
+
+- [Content Moderation](/boss/gateway/moderation): maintain the lexicon and policies
+- [Call Logs](/boss/gateway/audit): query every call in detail
+- [Gateway Configuration](/boss/gateway/config): the master switch for content moderation

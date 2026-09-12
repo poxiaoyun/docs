@@ -1,162 +1,214 @@
 ---
 title: Content Moderation
 updated: '2026-09-12'
-description: 'Content safety — lexicon maintenance, moderation policies and sensitive hit records.'
+description: Set up the word list, policies and hit review.
 tags:
   - boss
   - gateway
 ---
 
-## Feature overview
+# Content Moderation
 
-Content moderation inspects requests and responses passing through the gateway. Three modules work together:
+Content moderation is the gateway's **security check**: it inspects user input as a request arrives and model output as it returns. When sensitive content is found it acts according to the rules you define — record it, replace the words with asterisks, or block the request outright.
 
-- **Lexicon**: maintains terms (`term`) and their risk score (`score`) as the matching base
-- **Policies**: define "when the score meets a condition, run which action"
-- **Sensitive hits**: queries calls that triggered detection
+By the end you will have set up the whole chain: maintain the word list first, then define policies for "how high a score triggers what action", and finally verify the effect in Hit Records.
 
-Moderation is governed by the `moderationEnabled` switch in [Gateway config](/boss/gateway/config); turning it off suspends all policies without losing configuration.
+:::tip Moderation is like an airport scanner
+A scanner needs two things: a **list of prohibited items** (the lexicon) and a set of **handling rules** (the policies) — whether a find is confiscated, logged, or waved through. The list and the rules are maintained separately, so changing the list never means re-entering the rules, and vice versa.
+:::
 
-## Access path
+## What the whole chain looks like
 
-Boss console → LLM gateway → Security service
+```mermaid
+flowchart LR
+  A[Maintain the lexicon<br/>Sensitive Word Management] --> C[Detect on the way in and out]
+  B[Define the action on a hit<br/>Policy Management] --> C
+  C --> D{Score the hit<br/>does it reach the threshold}
+  D -->|No| E[Pass through]
+  D -->|Yes| F[Apply the policy action<br/>log / replace / webhook / block]
+  F --> G[Write a hit record<br/>visible in Hit Records]
+```
 
-| Page | Menu label | Console route |
-|------|-----------|--------------|
-| Lexicon | `navbar.moderation_lexicon` | `/gateway/moderation/lexicon` |
-| Policies | `navbar.moderation_policies` | `/gateway/moderation/policies` |
-| Sensitive hits | `navbar.sensitive_hits` | `/gateway/moderation/sensitive-hits` |
+1. **The list** (Sensitive Word Management): which words are sensitive and how sensitive each one is (a score of 1–10).
+2. **The rules** (Policy Management): "when the score meets this condition, do this".
+3. **The results** (Hit Records): every hit, and how it was handled at the time.
 
-Create/edit sub-routes: `/gateway/moderation/lexicon/new` (`/gateway/moderation/lexicon/:term/edit` to edit) and `/gateway/moderation/policies/new` (`/gateway/moderation/policies/:id/edit` to edit).
+## Before you start
 
-## Policies
+- Permission: you need a platform administrator account (one that can enter the BOSS console).
+- Make sure the master switch is on: go to **Model Gateway → Platform Settings → Gateway Configuration** and check that **Enable Content Moderation** is on. With it off, every policy pauses (the configuration is not lost).
 
-### Policy list
+## Where the three pages are
 
-| Column | Field | Description |
-|--------|-------|-------------|
-| Name | `name` | Policy name |
-| Trigger condition | `operator` + `threshold` | e.g. "greater than or equal (≥) 50" |
-| Action | `action` | See below |
-| Priority | `priority` | `1`–`10` |
-| Enabled | `enabled` | — |
-| Updated at | `updatedAt` | Date-time |
+| Page | Location | Purpose |
+| --- | --- | --- |
+| Sensitive Word Management | Model Gateway → Security Services → Sensitive Word Management | Maintain the word list |
+| Policy Management | Model Gateway → Security Services → Policy Management | Define what happens on a hit |
+| Hit Records | Model Gateway → Security Services → Hit Records | Review the results |
 
-Search matches name/description. The filter offers enabled state (all / enabled / disabled).
+## Step 1: maintain the word list
 
-### Create / edit a policy
+### Get there and see the overview
 
-| Field | Key | Type | Required | Default | Notes |
-|-------|-----|------|----------|---------|-------|
-| Name | `name` | Text | ✅ | empty | — |
-| Description | `description` | Multiline | — | empty | — |
-| Operator | `operator` | Select | ✅ | `ge` | See below |
-| Threshold | `threshold` | Number | ✅ | `50` | `0`–`100` |
-| Action | `action` | Select | ✅ | `block` | See below |
-| Priority | `priority` | Select | — | `1` | `1`–`10` |
-| Enabled | `enabled` | Switch | — | on | — |
+1. Click **Model Gateway** in the left sidebar.
+2. Expand **Security Services** and click **Sensitive Word Management**.
 
-> ⚠️ Note: the threshold range is **`0`–`100`, default `50`** (not 0–1 / 0.8 as older docs claim).
+Four statistic cards sit at the top of the page: **Total Terms**, **Enabled** (with an enabled ratio), **New This Month** and **Hits in 7 Days**.
 
-**Operators** (`CompareOperator` — only four; there is **no `=`**):
+### What the list shows
 
-| Id | Label | Meaning |
-|----|-------|---------|
-| `ge` | greater than or equal (≥) | `score >= threshold` |
-| `gt` | greater than (>) | `score > threshold` |
-| `le` | less than or equal (≤) | `score <= threshold` |
-| `lt` | less than (<) | `score < threshold` |
+| Column | Meaning |
+| --- | --- |
+| Term | The word itself |
+| Enabled Status | A green check means enabled, grey means paused |
+| Risk Score | High (≥ 8) / Medium (≥ 5) / Low, coloured automatically from the score |
+| Category | Which category the word belongs to; there can be several |
+| Tags | Your own tags; there can be several |
+| Hits | How many times it has been hit in total |
+| Updated At | When it was last changed |
 
-**Actions** (`PolicyAction`):
+The filters are: **Keyword Search** at the top, **Category** quick buttons and dropdown, **Risk Level**, **Tag**, and **Updated At** (Updated At / Today / Last 7 days / Last 30 days).
 
-| Id | Label | Description |
-|----|-------|-------------|
-| `log` | Log only | Record without altering content |
-| `replace` | Replace terms | Mask matched content per replace config |
-| `webhook` | Delegate to external service | Call an external service to decide |
-| `block` | Block request | Block directly |
+### Create a sensitive word
 
-### Action-specific config
+1. Click **Create Sensitive Word** in the top-right corner.
+2. Fill in the form:
 
-On submit, a JSON string is written to `config` based on the action.
+   | Form field | How to fill it | Notes |
+   | --- | --- | --- |
+   | Term | The word to detect | Required; **cannot be changed after creation** |
+   | Score | For example `5` | Required, `1`–`10`, default `5`; higher means more sensitive |
+   | Category | Pick from the presets or type your own | Several allowed; press Enter to add |
+   | Part of Speech | For example a noun | Optional |
+   | Tags | Pick from the preset tags or type your own | Several allowed, for your own grouping |
 
-**`replace`**
+3. Click **Confirm**.
 
-| Field | Default | Description |
-|-------|---------|-------------|
-| `maskChar` | `*` | Mask character |
-| `maskMode` | `char_repeat` | `char_repeat` (per character) / `fixed_length` / `single_char` |
+Both the Category and Tag boxes offer a set of presets you can click, and you can always type your own values.
 
-**`webhook`**
+:::info Matching uses the word list, not regular expressions
+Detection matches **entries** in the lexicon one by one. Categories and tags exist only so you can organize things; they play no part in matching, and there is nowhere in the interface to write a regular expression.
+:::
 
-| Field | Default | Description |
-|-------|---------|-------------|
-| `webhookUrl` | empty | External service URL (required) |
-| `webhookMethod` | `POST` | HTTP method |
-| `webhookTimeout` | `5` | Timeout in seconds |
-| `webhookHeaders` | empty | Custom headers (key/value, add/remove) |
-| `decisionPath` | empty | JSON path of the decision field in the response |
-| `passValues` | empty | Values treated as pass (options include `pass` / `allow` / `true` / `1` / `ok`) |
-| `blockValues` | empty | Values treated as block (options include `block` / `deny` / `reject` / `false` / `0`) |
-| `defaultAction` | `block` | Action when undecidable (`block` / `pass`) |
-| `messagePath` | empty | JSON path of the block message |
+### Batch import and export
 
-> ⚠️ Note: the schema and defaults also define `notification` and `notifyEmails` (`false` / empty array), but **the form renders no controls and the submit payload omits them**. Email notification is therefore not documented.
+- **Batch Import**: opens an import dialog; click **Select File** and upload a JSON file. On success it reports "Parsed N entries" — then click the import button to submit. The file may be up to 2MB and must contain a JSON array.
+- **Batch Export**: confirm and all entries are downloaded as one JSON file, useful for backup or migration.
 
-### Policy actions
+### Batch actions
 
-Each row offers enable/disable, edit and delete (collapsed menu).
+After selecting entries, an action bar appears above the list with **Batch Enable**, **Batch Disable** and **Batch Delete**.
 
-> ⚠️ Note: deleting requires **typing the policy name** in the confirm dialog (`secondaryConfirmText`).
+:::warning Batch delete cannot be undone
+Deleting entries removes them from detection immediately and cannot be reversed. It is a good idea to run **Batch Export** for a backup first.
+:::
 
-## Lexicon
+## Step 2: decide what happens on a hit (Policy Management)
 
-### Stats and list
+### Get there and read the list
 
-Four stat cards sit at the top: total terms, enabled count (with ratio), new this month and hits this week.
+1. Click **Model Gateway** in the left sidebar.
+2. Expand **Security Services** and click **Policy Management**.
 
-| Column | Field | Description |
-|--------|-------|-------------|
-| Term | `term` | Sensitive term |
-| Enabled | `enabled` | — |
-| Risk score | `score` | `1`–`10` |
-| Category | `category` / `categories` | One or more |
-| Tags | `tags` | Multiple |
-| Hits | `hitCount` | Cumulative hits |
-| Updated at | `updatedAt` | Date-time |
-| Actions | — | Enable/disable, edit, delete |
+The list shows each policy's name and description, its **Trigger Condition** (shown like `≥ 50`), its action, its priority, its status and when it was last updated. You can search by name or description above, and filter by status.
 
-Filters: keyword search, category scope, risk level, tag, updated time (all / today / 7 days / 30 days).
+### Create a policy
 
-Multi-select supports **batch enable / batch disable / batch delete**.
+1. Click **Create Policy** in the top-right corner.
+2. Fill in the form:
 
-### Create / edit a term
+   | Form field | How to fill it | Notes |
+   | --- | --- | --- |
+   | Policy Name | For example "Block high scores" | Required |
+   | Description | One sentence | Optional |
+   | Comparison Operator | Defaults to **Greater or Equal (≥)** | Required; see the table below |
+   | Threshold | Defaults to `50` | Required, `0`–`100` |
+   | Action | Defaults to **Block** | Required; see the table below |
+   | Priority | Defaults to `1` | `1`–`10`, used to order policies when several match at once |
+   | Enabled | On by default | When off, the policy does not apply |
 
-| Field | Key | Type | Required | Default | Notes |
-|-------|-----|------|----------|---------|-------|
-| Term | `term` | Text | ✅ | empty | — |
-| Risk score | `score` | Number | ✅ | `5` | `1`–`10` |
-| Categories | `categories` | Multi-value | — | empty | Preset or custom |
-| Part of speech | `partOfSpeech` | Text | — | empty | — |
-| Tags | `tags` | Multi-value | — | empty | Preset or custom |
+3. If you choose **Replace** or **Webhook** as the action, the matching configuration block opens below (see below).
+4. Click **Confirm**.
 
-> ⚠️ Note: the risk score range is **`1`–`10`, default `5`** (not a 0–1 decimal).
+**Comparison Operator** has exactly four options:
 
-**Preset categories** (`PRESET_LEXICON_CATEGORIES`, see `lexicon/constants.ts`): 政治, 暴恐, 民生, 涉枪涉爆, 色情, 非法网站, 广告, GFW, 反动.
+| Option | Meaning |
+| --- | --- |
+| Greater or Equal (≥) | Fires when the score reaches or exceeds the threshold |
+| Greater Than (>) | Fires when the score exceeds the threshold |
+| Less or Equal (≤) | Fires when the score is not above the threshold |
+| Less Than (<) | Fires when the score is below the threshold |
 
-**Preset tags** (`PRESET_LEXICON_TAGS`): 中文, 英文, 拼音, 政治敏感, 选举相关, 人名, 个人信息, 网址, 营销, 高风险.
+**Action** has four options:
 
-> 💡 Tip: on submit, `category` is set to `categories[0]` and the full `categories` array is written too.
+| Option | What happens on a hit |
+| --- | --- |
+| Log | Content passes normally and a single record is left in Hit Records |
+| Replace | The matched words are replaced with mask characters and the request continues, for example `***` |
+| Webhook | The content is sent to an external moderation service that decides |
+| Block | The request is rejected and an error is returned |
 
-### Import and export
+:::info Start with Log
+For a first setup, use a low-risk action such as **Log** for a while, watch whether the hit records are accurate, and only then move to Replace or Block.
+:::
 
-- **Import**: batch import terms from a file through the import dialog
-- **Export**: export the lexicon to a file for backup or migration
+### Replace configuration
 
-## Sensitive hits
+| Setting | Default | Notes |
+| --- | --- | --- |
+| Mask Character | `*` | The character used for replacement |
+| Mask Mode | Character Repeat | Character Repeat (each character is replaced, e.g. `word` → `****`) / Fixed Length / Single Character (the whole word becomes one character) |
 
-See the dedicated [Sensitive hits](/boss/gateway/sensitive-hits) page.
+### Webhook configuration
 
-## Permissions
+| Setting | Default | Notes |
+| --- | --- | --- |
+| Request URL | Empty | Required; the address of the external service |
+| HTTP Method | `POST` | POST or GET |
+| Timeout (seconds) | `5` | Request timeout |
+| Custom Headers | Empty | Fill in and click **Create Header** to add; headers can be removed |
+| JSON Path | Empty | Extracts the decision value from the external service's response |
+| Pass Values | Empty | Response values treated as a pass |
+| Block Values | Empty | Response values treated as a block |
+| Default Action | Block | The action taken when the response is in neither list (Block or Pass) |
+| Message Path | Empty | Extracts the message shown to the caller from the response |
 
-Requires the **system administrator** role.
+### Everyday policy actions
+
+The actions menu at the end of each row offers **Enable / Disable**, **Edit** and **Delete**.
+
+:::warning Deleting a policy requires typing its name
+To delete a policy you must **type the policy name** in the confirmation dialog. A deleted policy cannot be restored.
+:::
+
+:::info How priority works
+Priority is a value from `1` to `10` that decides which policy runs first when several match at once. The page's own explanation is "Lower number = higher priority. High threshold rules should have higher priority."
+:::
+
+## Where to see the hits
+
+Every hit is recorded on the **Hit Records** page, including the matched words, the risk level and how it was handled. See [Hit Records](/boss/gateway/sensitive-hits) for the full description.
+
+## When changes take effect
+
+Lexicon and policy changes are pushed to the gateway as soon as you save. No restart is needed, and they usually apply within a few seconds.
+
+## Confirm it worked
+
+After configuring one entry and one policy of "score ≥ 5 → Log", send a test request containing that word and then open the **Hit Records** page. If the hit appears in the list, the whole chain is working.
+
+## FAQ
+
+| Symptom | Likely cause | What to do |
+| --- | --- | --- |
+| Hit Records stays empty | The master switch is off, the entries are not enabled, or the time range is too narrow | Check **Enable Content Moderation** in Gateway Configuration, confirm the entries are enabled, and widen the time range |
+| Words in the content turned into asterisks | The policy action is **Replace** | Expected; change the action to **Block** if you want rejection instead |
+| Requests are rejected outright | The policy action is **Block** | Check whether the threshold is too low, or switch the action to Log or Replace |
+| The sensitive word cannot be edited | Entries are immutable once created | Create the entry you need and delete the old one |
+| Cannot find anywhere to use a regular expression | Detection matches lexicon entries | Add each string you want caught to the lexicon individually |
+
+## Related
+
+- [Hit Records](/boss/gateway/sensitive-hits): see what was matched
+- [Gateway Configuration](/boss/gateway/config): the master switch for content moderation
+- [Call Logs](/boss/gateway/audit): all calls, including those that were not moderated

@@ -2,29 +2,56 @@
 title: 'Mirror warehouse'
 updated: '2026-09-12'
 author: Rune Docs Team
-description: 'Introduce the browsing, filtering and warehouse maintenance methods of Moha mirror warehouse.'
+description: 'What an image is, how it differs from a model or dataset, and where to enter the Images repository.'
 tags:
   - moha
   - images
 ---
+
 # Mirror warehouse
 
-The image warehouse is used to manage reusable running image resources, which is suitable for precipitating the basic environment required for training, inference, and Space operation.
+An **image** is a ready-made **runtime environment** that someone (possibly you) has built: a "system disk" with the operating system, Python, drivers and dependencies already installed, ready to boot as is instead of installing everything yourself. The Images repository is where these environments are collected.
 
-## Enter path
+Use it to accumulate the base environments needed for training, inference or Space runtime, so colleagues can pull them directly instead of rebuilding the same setup.
 
-Moha top navigation -> Mirror
+:::tip Think of an image as a system disk
+Picture the **system disk template** you would use to install an operating system: you boot a machine from it and all the software it needs is already there. When everyone uses the same disk for the same kind of environment, the results match.
+:::
 
-Path: `/moha/images`
+## Where to enter
 
-## Page capabilities
+Click **Images** in the top navigation to open the image list page.
 
--Supports switching between public and private views.
-- Supports searching, sorting and filtering.
-- Use unified data cards to display image information.
-- After entering the repository details, you can view the tags, README and settings.
+## A few terms
 
-## Recommended reading
+| Term | What it means |
+| --- | --- |
+| Image | A packaged runtime environment you can pull and run directly |
+| Tag | The version of the environment, for example `v1.0` or `latest` |
+| Image Scan | A check for known security vulnerabilities in this environment |
+| Visibility | Who can see it: Public, Internal or Private |
 
-- [Image list and filter](/moha/images/gallery)
-- [Collaboration](/moha/repository)
+## How it differs from models and datasets
+
+| | Model | Dataset | Image |
+| --- | --- | --- | --- |
+| What is inside | Trained weights | Training and evaluation data | A complete runtime environment |
+| How to take it | Web download, Git, command line | Same | Pull it with `docker pull` |
+| Detail page tabs | Card, File, Snapshot | Card, File, Snapshot | Card, **Tags**, Settings |
+
+An image detail page has no File or Snapshot tabs. Instead it has a **Tags** tab, where all versions of the same image live.
+
+## What you can do here
+
+| I want to... | Go to |
+| --- | --- |
+| Browse which images exist | [Image List & Filters](/moha/images/gallery) |
+| See which versions an image has | Open the image and go to the **Tags** tab |
+| Check an image for vulnerabilities | Click **Image Scan** on the **Tags** tab |
+| Change an image's visibility or description | Open the image and go to the **Settings** tab (needs maintain access) |
+
+## Related
+
+- [Image List & Filters](/moha/images/gallery)
+- [Repository detail page structure](/moha/repository/detail)
+- [Models](/moha/models)

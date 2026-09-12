@@ -41,7 +41,7 @@ export const MOHA_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         icon: 'ic-course',
         product: 'moha',
         children: [
-          { title: 'Model Hub Overview', path: '/moha/models/intro' },
+          { title: 'Models Overview', path: '/moha/models/intro' },
           { title: 'Download Models', path: '/moha/models/download' },
           { title: 'Upload Models', path: '/moha/models/upload' },
           { title: 'Model Cards', path: '/moha/models/card' },
@@ -93,7 +93,7 @@ export const MOHA_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
           { title: 'Files & Version Browsing', path: '/moha/repository/files' },
           { title: 'Discussions & Collaboration', path: '/moha/repository/discussion' },
           { title: 'Repository Settings & Publishing', path: '/moha/repository/settings' },
-          { title: 'Version Freezes', path: '/moha/repository/freezes' },
+          { title: 'Snapshots', path: '/moha/repository/freezes' },
         ],
       },
       {

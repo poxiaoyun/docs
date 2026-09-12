@@ -1,72 +1,62 @@
 ---
 title: 'Theme & Preferences'
 updated: '2026-09-12'
-description: Appearance preferences with automatic save.
+description: How to adjust each appearance setting, where the settings are stored, and who they affect.
 ---
 
-## Overview
+# Theme & Preferences
 
-The Theme page maintains the current account's appearance preferences. Every change is **auto-saved to the server** — there is no Save button.
+The theme page is the **Theme** tab of the Personal Center. It adjusts the look of your own interface: light or dark, contrast, compactness, primary color, font, and font size. Changes take effect immediately and there is no Save button.
 
-- Route: `/iam/account/theme`
-- View: `src/pages/iam/account/theme.tsx`
+:::tip It only changes your interface
+Every item here applies only to your own browser. Your colleagues see the interface as they have set it up.
+:::
 
-## Navigation
+## Before you start
 
-Top-right avatar → Settings → top Tab "Theme"
+- You can use it as soon as you sign in; no tenant role is needed.
 
-## Configurable Options
+## How to get there
 
-Only the following five groups are rendered:
+1. Click your avatar in the top-right corner → **Settings**.
+2. Click the **Theme** tab at the top.
 
-| Option | Key | Values |
-|--------|-----|--------|
-| Color mode | `mode` | Light / Dark (shows a `System` label when following the system) |
-| Contrast | `contrast` | `default` / `hight` |
-| Compact layout | `compactLayout` | On / Off |
-| Primary color | `primaryColor` | `default`, `preset1` – `preset5` (6 swatches) |
-| Font family | `fontFamily` | 4 options (below) |
-| Font size | `fontSize` | Slider, range 12–20, step 1 |
+## How to adjust each setting
 
-> ⚠️ Note: The `visibility` object also computes `navLayout`, `navColor`, and `direction`, but the render code does **not** use them (`theme.tsx:69-79`). Therefore this page has **no** "Nav Layout", "Nav Color", or "Direction" sections.
+| Setting | How to adjust it | What changes |
+| --- | --- | --- |
+| Mode | Turn the switch on the card on or off | Off is light and on is dark; the whole interface brightens or darkens at once |
+| Contrast | Turn the switch on the card on or off | Turning it on makes the interface contrast stronger and text clearer |
+| Compact | Turn the switch on the card on or off | Tightens the spacing so more content fits on one screen |
+| Preset Colors | Click a color swatch | Replaces the interface's primary color, so buttons, links, and selected states all follow |
+| Font Family | Click a font card | Switches the font the interface uses |
+| Font Size | Drag the slider | Adjusts the interface text size, from 12 to 20 px in steps of 1 |
 
-### Font Family
+Details for each item:
 
-The 4 `fontFamily` options (`theme.tsx:190-195`):
+- **Preset Colors**: there are 6 swatches in total. After changing it, click **Reset** on the right of the section to return to the default color.
+- **Font Family**: there are 4 in total, and the card shows the font name (Public Sans, Inter, DM Sans, Nunito Sans).
+- **Font Size**: the current pixel value is shown above the slider as you drag it.
 
-1. `themeConfig.fontFamily.primary` (default primary font)
-2. `Inter Variable`
-3. `DM Sans Variable`
-4. `Nunito Sans Variable`
+:::info Compact mode is not always visible
+Compact applies to the main layout only, and it is noticeable only when the screen is wider than 1600px. On a narrower window it is normal for the switch to seem to do nothing.
+:::
 
-The `Variable` suffix is stripped in the UI.
+## Where the settings are stored
 
-### Defaults
+| Question | Answer |
+| --- | --- |
+| Do I need to click Save? | No; changes take effect and are saved automatically |
+| Are they stored locally or on my account? | On your account (a copy also stays in the browser), so they still apply when you sign in from another browser or computer |
+| Do they affect others? | No; they change only your own interface |
 
-Defaults come from `src/settings/user/settings-config.ts:10-21`:
+## Confirming the result
 
-| Option | Default |
-|--------|---------|
-| `contrast` | `default` |
-| `compactLayout` | `false` |
-| `primaryColor` | `preset1` |
-| `fontSize` | `16` |
-| `fontFamily` | `themeConfig.fontFamily.primary` |
-| `mode` | `themeConfig.defaultMode` |
+- The interface changes immediately with every adjustment, with no need to refresh the page.
+- After you sign out and back in, the appearance is still the way you set it.
 
-> ⚠️ Note: The `mode` default ultimately depends on `themeConfig.defaultMode`, whose concrete value is not expanded here.
+## Related
 
-## Auto-Save
-
-| Item | Description |
-|------|-------------|
-| Read | `GET` current user settings (`getCurrentUserSettings`) |
-| Save | Each change auto-calls `setCurrentUserSettings` with the current settings |
-
-> ⚠️ Note: The exact save endpoint path is defined in `src/services/setting.ts`; the response shape is not expanded field by field here.
-
-## Notes
-
-- Changes are saved immediately; there is no Save button
-- Nav layout / nav color / direction are not part of this page
-- Font size is a slider from 12 to 20px
+- [User Profile](/account/iam/profile)
+- [Personal Center](/account/iam)
+- [Account & Access](/account)

@@ -1,199 +1,178 @@
 ---
 title: 'Tenant Management'
 updated: '2026-09-12'
-description: 'Create, edit, enable/disable tenants, configure image push, and manage tenant members in BOSS.'
+description: Create a tenant, then assign its admin and quota.
 ---
 
-## Feature Overview
+# Tenant Management
 
-A Tenant is the **organizational isolation unit** of the platform and the base boundary for resource allocation, permission management, and billing. Each tenant has its own member system, resource quotas, and workspaces. Administrators use the BOSS tenant module to **create tenants**, **edit information**, **enable / disable**, **configure image push**, and **manage members**.
+A **tenant** is a company's isolated account space on the platform. One company gets one tenant; that company's members, compute quota and workspaces all live inside the tenant and do not interfere with any other company. From here you create tenants, maintain their details, enable or disable them, and add their members.
 
-## Access Path
+:::tip An analogy
+Think of a tenant as **a separate office building**: the members are the people inside, the quota is the monthly utility allowance for that building, and the workspaces are the individual offices. Buildings do not interfere with one another, and you as platform administrator are the one who erects the building, approves the utility allowance and hands out the door passes.
+:::
 
-BOSS → Account Center → **Tenant Management**
+## Before you start
 
-Console route: `/iam/tenants`
+- You need an administrator account that can sign in to BOSS.
+- It is best to confirm the platform already has **at least one cluster**. Without a cluster you cannot allocate compute quota right after creating the tenant.
 
-## Tenant List
+## The words you need first
 
-Column definitions: `src/pages/boss/iam/tenants/list.tsx:65-106`.
+| Term | Plain explanation |
+| --- | --- |
+| Tenant | A company's isolated account space, and the unit that owns members and resources |
+| Member | A user who has joined a tenant, together with a role |
+| Role | What that person may do inside the tenant (Administrator / Member / Developer and so on) |
+| Quota | How much compute this tenant may use on a given cluster |
+| Workspace | A further subdivision inside the tenant for colleagues to share |
 
-| Column | Field | Display | Description |
-|--------|-------|---------|-------------|
-| **Name** | `name` | Avatar + name (link) + tenant ID | Click the name to open the overview page; the grey caption below is `id` |
-| **Email** | `email` | Text | Administrative contact email |
-| **Members** | `userCount` | Integer | Total members |
-| **Status** | `enabled` | Label (Enabled / Disabled) | Green when enabled, red when disabled |
-| **Created At** | `creationTimestamp` | Formatted time | Tenant creation time |
+## What the tenant list shows
 
-Row actions:
+Go to **Account Center → Tenant**. The list has these columns:
 
-| Action | Description |
-|--------|-------------|
-| **Enable / Disable** | Toggle with a second confirmation dialog (see below) |
-| **Edit** | Navigate to `/iam/tenants/:tenant?action=edit` |
+| Column | Explanation |
+| --- | --- |
+| Name | Tenant avatar and name (clickable). The small grey text under the name is the tenant ID |
+| Email | The tenant's administrative contact email |
+| Members | How many members the tenant currently has |
+| Status | **Enable** (green) or **Disable** (red) |
+| Created At | When the tenant was created |
 
-> ⚠️ Note: The tenant list has **no delete entry**. `deleteTenant` exists in `src/services/tenant.ts`, but the console UI does not expose it.
+On the right of each row you can **edit** the tenant, or **disable / enable** it.
 
----
+## Create a tenant
 
-## Create Tenant
+1. Go to **Account Center → Tenant**.
+2. Click **Add Tenant** in the top-right corner.
+3. Fill in the form described below.
+4. Click **Confirm**.
 
-Console route: `/iam/tenants?action=create`.
+| Form field | How to fill it | Notes |
+| --- | --- | --- |
+| Name | For example `Acme Corp` | Required. The name shown in the interface; any language is fine |
+| ID | Leave it alone | Required. Generated from **Name**. Only lowercase letters, numbers and hyphens are allowed, and it must start with a lowercase letter. The result appears under the Name box; to set your own, click the pencil icon on that row |
+| Email | For example `admin@example.com` | Required, and must be a valid email address |
+| Mobile Number | For example `13800000000` | Required, 6 to 16 digits |
+| Description | May be left empty | Optional free-text note |
 
-1. Click **Create Tenant** at the top right of the list.
-2. Fill in the basic information.
-3. Click **Confirm** to submit (`POST /api/iam/tenants`).
+:::warning The tenant ID cannot be changed after creation
+The ID is the tenant's unique identifier in the system. You may set it yourself while creating the tenant, but it is **locked once creation finishes** — you cannot change it later when editing the tenant. If you intend to choose it yourself, decide before you create the tenant.
+:::
 
-Form fields and validation (`src/pages/boss/iam/tenants/components/form.tsx:49-63`):
+### What happens after creation
 
-| Field | Field name | Type | Required | Validation | Description |
-|-------|-----------|------|----------|-----------|-------------|
-| **Name** | `name` | Text | ✅ | Non-empty | Tenant display name |
-| **Tenant ID** | `id` | IdField | ✅ | Non-empty; format checked by `validateId` | Unique identifier; **editable on create, disabled on edit** |
-| **Email** | `email` | Text | ✅ | Non-empty + email format | Administrative contact email |
-| **Phone** | `phone` | Text | ✅ | Non-empty + regex `\d{6,16}` | Administrative contact phone |
-| **Description** | `description` | Textarea (4 rows) | — | None | Supplementary description |
+Clicking **Confirm** does not stay on the form; it takes you to a success page titled "Tenant xxx Created Successfully" with three buttons:
 
-`name` and `id` are rendered by the same `IdField` component (`src/business/components/id-field`): typing `name` auto-generates `id`, and you can override `id` manually in a popover; when not overridden, `id` follows `name`.
+| Button | When it appears | Where it goes |
+| --- | --- | --- |
+| Set Quota Now | Only when the platform already has at least one cluster | Straight to the quota page for this tenant (using the first cluster) |
+| Add Member | Always | The page for adding members to this tenant |
+| Back to List | Always | Back to the tenant list |
 
-> ⚠️ Note: **Avatar upload only appears on the edit page.** The create form does not render the avatar control (`tenant && ...` at `form.tsx:156`), and neither does the image push config. Create the tenant first, then configure these on the edit page.
+:::info No avatar upload while creating
+**Avatar** and **Image Push Configuration** appear only when **editing** a tenant. You do not need them at creation time; open the edit page afterwards if you want to set them.
+:::
 
-### Post-Creation Guide
+## What to do after creating a tenant
 
-On success the form is replaced by a result page with up to three quick actions (`src/pages/boss/iam/tenants/create.tsx:61-98`):
+A new tenant is just an empty shell. To make it usable you need two more steps:
 
-```mermaid
-flowchart LR
-    A["Tenant created"] --> B{"Choose next step"}
-    B --> C["Allocate quota"]
-    B --> D["Add members"]
-    B --> E["Back to list"]
-```
+1. **Give it an administrator and members**: in the tenant list click the tenant name, switch to the **Member** tab and click **Add Member**, then pick a user and a role. See "Add members to a tenant" below.
+2. **Give it compute quota**: go to **AI Platform → Tenant Resource** and create a quota for the tenant. Without quota, members of the tenant cannot create instances.
 
-| Option | Condition | Target |
-|--------|-----------|--------|
-| **Allocate quota** | Only when at least one cluster exists | `/rune/tenants/:tenant/clusters/:cluster/quotas?action=create` (first cluster) |
-| **Add members** | Always | `/iam/tenants/:tenant/members?action=create` |
-| **Back to list** | Always | `/iam/tenants` |
+## Edit a tenant
 
----
+1. Go to **Account Center → Tenant**.
+2. On the target tenant's row click **Edit** (or click the tenant name and edit from there).
 
-## Edit Tenant
+The edit page has two blocks.
 
-Console route: `/iam/tenants/:tenant?action=edit`.
+### Basic information
 
-The edit page loads both the tenant and its config (`getTenant` + `getTenantConfig`) and submits via `updateTenant` and `updateTenantConfig`.
-
-### Basic Information
-
-| Field | Editable | Description |
-|-------|----------|-------------|
-| **Avatar** | ✅ | Edit page only; croppable, single file up to 3MB (`maxSize = 3145728`) |
-| **Name** (`name`) | ✅ | Rendered by IdField, editable |
-| **Tenant ID** (`id`) | ❌ | Locked in edit mode; the edit button next to the ID is hidden |
-| **Email** (`email`) | ✅ | Email format |
-| **Phone** (`phone`) | ✅ | `\d{6,16}` |
-| **Description** (`description`) | ✅ | Textarea |
-
-> 💡 Tip: The overview page also supports inline editing of `name` / `email` / `phone`, equivalent to the edit page.
+| Form field | Editable | Notes |
+| --- | --- | --- |
+| Avatar | Yes | Only on the edit page. JPEG, JPG, PNG and WEBP are supported, up to 3 MB each; you can scale, rotate and crop before uploading |
+| Name | Yes | Any language |
+| ID | **No** | Locked while editing; the pencil icon is gone |
+| Email | Yes | Must be a valid email address |
+| Mobile Number | Yes | 6 to 16 digits |
+| Description | Yes | Multi-line text |
 
 ### Image Push Configuration
 
-The edit page renders an extra "Image Push" card below the basic info (`form.tsx:223-260`, only when both tenant and tenant config are available). It maps to backend `tenantConfig.image`:
+Also only on the edit page. It decides what happens when this tenant's members push images to the image registry:
 
-| Field | Control | Default | Description |
-|-------|---------|---------|-------------|
-| `allowCreateOnPush` | Switch | `true` | Whether pushing an image may auto-create an image record |
-| `defaultVisibility` | Radio group | `private` | Default visibility for pushed images |
+| Form field | How to fill it | Notes |
+| --- | --- | --- |
+| Allow pushing images that were not created in the UI | On by default | When on, members can `docker push` directly and the system creates the image record for them. When off, the image must be created in the UI first |
+| Default visibility for automatically created images | **Personal** by default | Only takes effect when the switch above is on. Options are **Personal** (only the pushing user, tenant administrators and authorized members), **Tenant** (members of the current tenant) and **Public** (anyone who can access Moha can view and pull it) |
 
-`defaultVisibility` values:
+Click **Confirm** to save your changes.
 
-| Value | Meaning |
-|-------|---------|
-| `private` | Private |
-| `internal` | Internal |
-| `public` | Public |
+## Enable or disable a tenant
 
-On submit the config is saved via `updateTenantConfig(tenantId, { image: { allowCreateOnPush, defaultVisibility } })`.
+1. Go to **Account Center → Tenant**.
+2. On the target tenant's row open the actions menu and click **Disable** (for an enabled tenant) or **Enable** (for a disabled tenant).
+3. Confirm in the dialog that appears.
 
----
+The Status column switches between **Enable** and **Disable** immediately.
 
-## Enable / Disable Tenant
+:::warning Think before disabling
+Disabling affects every member of that tenant, and it **does not recover on its own** — to make the tenant usable again you must click **Enable** manually. Before doing it, make sure the tenant really does not need to be in use, and tell the people affected.
+:::
 
-Enable/disable is implemented (`src/pages/boss/iam/tenants/list.tsx:108-134`): use the row action, which opens a **second confirmation dialog** before calling:
+:::info There is no "delete tenant" in the UI
+The tenant list has no delete entry. To stop a tenant from being used, **disable** it; if you truly need to empty it out, remove its members first and leave it disabled.
+:::
 
-| Operation | API | Effect |
-|-----------|-----|--------|
-| **Disable** | `POST /api/iam/tenants/:id:disable` | Tenant disabled |
-| **Enable** | `POST /api/iam/tenants/:id:enable` | Tenant restored |
+## Add members to a tenant
 
-> ⚠️ Note: The exact effect of disabling on existing tasks, sessions, and resource access is a backend policy the frontend does not surface. Not confirmed.
+1. Go to **Account Center → Tenant** and click the target tenant's name.
+2. Switch to the **Member** tab on the left.
+3. Click **Add Member** in the top-right corner.
+4. Fill in the member information:
 
----
+   | Form field | How to fill it | Notes |
+   | --- | --- | --- |
+   | User | Type a username in the box, search and select | Required. You can only pick users that already exist. When editing an existing member this field cannot be changed |
+   | Role | Choose one from the dropdown | Required. The options are provided by the platform backend; the common ones are **Administrator**, **Member** and **Developer** |
 
-## Tenant Overview Page
+5. Click **Confirm** and the page returns to the member list.
 
-Console route: `/iam/tenants/:tenant/overview`.
+The member list has four columns: **Username**, **Email**, **Role** and **Joined At**. Each row can be **edited** (to change the role) or **deleted**, and selecting several rows lets you delete them in bulk. Every deletion asks for confirmation first.
 
-Layout (`src/pages/boss/iam/tenants/overview/overview.tsx`): a 3-column tenant info card on the left, and a 9-column area on the right with member stats on top and the member list below.
+:::tip Keep at least two administrators
+People take leave and people leave. Give every tenant at least 2 administrators so that there is always someone who can take over when one is unavailable.
+:::
 
-### Tenant Info (TenantInfo)
+## Tenant overview page
 
-| Item | Inline editable | Field |
-|------|-----------------|-------|
-| Avatar | ✅ (upload + crop) | `avatar` |
-| Tenant name | ✅ | `name` |
-| Email | ✅ | `email` |
-| Phone | ✅ | `phone` |
-| Created At | — | `creationTimestamp` |
+After clicking a tenant name you land on the **Overview** tab by default:
 
-> ⚠️ Note: The overview info card does **not** show tenant ID, description, or enabled status. Those appear in the list column, the edit page, and tenant config respectively.
+- The left column is **Tenant Information**: avatar, tenant name, email, mobile number and creation time. Avatar, name, email and mobile number can each be edited in place with the small pencil icon on the right; click **Confirm** when done.
+- The right column shows **member counts by role** (how many Administrators, Members and Developers) on top, and the tenant's **member list** (username, email, role) below. Clicking **View More** jumps to the full member management page.
 
-### Member Stats and Member List
+## Confirm it worked
 
-- **TenantMemberStats**: member-count cards by role; roles are `admin` / `member` / `developer` (`TenantRole`, `src/types/tenant.ts:18-22`), aggregated client-side.
-- **TenantMembers**: the embedded table shows only three columns — Member (`userInfo.name`, falls back to `user`), Email (`userInfo.email`), Role (`role`, translated) — plus a "view more" link to the members page.
+| What you want to check | Where to look |
+| --- | --- |
+| The tenant exists | **Account Center → Tenant** lists it with status **Enable** |
+| Members were added correctly | Enter the tenant → **Member** tab, and you can see the person and their role |
+| Quota was granted | **AI Platform → Tenant Resource** shows the tenant's quota |
 
----
+## FAQ
 
-## Tenant Member Management
+| Symptom | Likely cause | What to do |
+| --- | --- | --- |
+| No "Set Quota Now" on the success page | The platform has no clusters yet | Connect a cluster under **AI Platform → Cluster**, then create quota for the tenant manually |
+| The ID row reports a format error | The name contains no usable Latin letters or digits | Click the pencil icon and specify an ID that starts with a letter |
+| Want to change the tenant ID | Not supported | The ID is immutable after creation |
+| Cannot find a person when adding a member | That user has not been created yet | Go to **Account Center → Account** and create the user first |
 
-Console route: `/iam/tenants/:tenant/members`.
+## Related
 
-| Column | Field | Description |
-|--------|-------|-------------|
-| **Member** | `name` | Avatar + user identifier |
-| **Email** | `userInfo.email` | — |
-| **Role** | `role` | Translated role label |
-| **Joined At** | `creationTimestamp` | Formatted time |
-
-Row actions: edit role (`/iam/tenants/:tenant/members/:member?action=edit`) and remove member (with a confirmation dialog; multi-select batch delete supported).
-
-### Add Member
-
-Click **Add Member**, pick a user and assign a role (`src/pages/boss/iam/tenants/members/components/form.tsx`); submit calls `PUT /api/iam/tenants/:tenant/members/:user`.
-
-| Field | Field name | Required | Description |
-|-------|-----------|----------|-------------|
-| **User** | `user` | ✅ | Async user selector with search; disabled when editing |
-| **Role** | `role` | ✅ | Options come from `GET /api/iam/tenants/:tenant/roles`, **returned dynamically by the backend**; not hardcoded in the frontend |
-
-> ⚠️ Note: Role candidates are decided by the tenant roles endpoint, so this page does not enumerate fixed role names. Whether removing the last administrator is blocked is backend behavior with no frontend check. Not confirmed.
-
-## API Reference
-
-| Operation | Method and path |
-|-----------|-----------------|
-| List / get tenants | `GET /api/iam/tenants`, `GET /api/iam/tenants/:id` |
-| Create / update / delete tenant | `POST /api/iam/tenants`, `PUT /api/iam/tenants/:id`, `DELETE /api/iam/tenants/:id` (not exposed in UI) |
-| Enable / disable | `POST /api/iam/tenants/:id:enable` / `POST /api/iam/tenants/:id:disable` |
-| Upload avatar | `POST /api/iam/tenants/:id/avatar` (multipart) |
-| List members / roles | `GET /api/iam/tenants/:tenant/members`, `GET /api/iam/tenants/:tenant/roles` |
-| Add/update / remove member | `PUT /api/iam/tenants/:tenant/members/:user`, `DELETE /api/iam/tenants/:tenant/members/:user` |
-
-## Best Practices
-
-- **Organize tenants by org structure**: one tenant per department or team.
-- **Set quotas reasonably and designate at least two administrators** per tenant.
-- **Be careful with image push visibility**: `private` is safer by default; adjust `defaultVisibility` when sharing is needed.
+- [Account Center](/boss/iam)
+- [User Management](/boss/iam/users)
+- [Tenant Quotas](/boss/rune-admin/tenants)
+- [Cluster](/boss/rune-admin/clusters)

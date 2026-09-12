@@ -1,61 +1,67 @@
 ---
-title: Gateway Settings
+title: 'Gateway Settings'
 updated: '2026-09-12'
-description: 'Gateway display settings — logo, product title and product description.'
+description: 'Set the name, logo and description of the chat product that users see in the console.'
 tags:
   - boss
   - settings
 ---
 
-## Feature overview
+# Gateway Settings
 
-ChatApp settings maintain the display information for the gateway product in the console: logo, product title and product description. Values are written into the `chatapp` field of the platform global configuration.
+Gateway Settings decide **how the chat sub-system appears to users**: its name, its logo and its description. These values appear wherever users see the chat and model playground product.
 
-This page corresponds to **Platform management → Gateway Settings** in the Boss console (menu label from `navbar.chatapp_setting`).
+This page is under **System Settings → Gateway Settings** in the left-hand menu.
 
-## Access path
+:::tip Gateway Settings is the signboard of the chat product
+The menu entry is called **Gateway Settings**, but the product it maintains is the chat sub-system — the one users open to chat, compare models and read call analytics.
+If you change the product title to something else, that is the name users will see.
+:::
 
-Boss console → Platform management → **Gateway Settings**
+## Before you start
 
-Console route: `/settings/chatapp`
+- Your account must be a **system administrator**.
+- Prepare the logo image: **PNG or SVG**, no larger than **128 KB**.
 
-## Settings
+## Set the name and logo
 
-| UI label | Field | Type | Constraint | Notes |
-|----------|-------|------|-----------|-------|
-| (Logo upload) | `chatapp.logo` | Image upload | Max **128 KB**, **PNG / SVG** | Stored as Base64 |
-| Product title | `chatapp.title` | Text | Max **10 characters** | Navbar title |
-| Product description | `chatapp.description` | Multiline | Max **100 characters**, 4 rows | Product summary |
+1. Fill in the **Title and Logo** card:
 
-> ⚠️ Note: the field name for "product title" is **`chatapp.title`** (the UI label is `navbar_title`).
+   | Setting | What to fill in | What happens when you change it |
+   | --- | --- | --- |
+   | Logo | Upload a PNG or SVG, no larger than **128 KB** | Replaces the icon in the **Products** entry, on chat pages and on the splash screen |
+   | Product Title | At most **10 characters**; defaults to the built-in product name | Replaces the entry name, plus the browser tab and navigation title of chat pages |
+   | Product Description | At most **100 characters**, and it can wrap onto 4 lines | Replaces the product description text |
 
-Written structure:
+2. Choosing a logo file **triggers an immediate save**.
 
-```yaml
-chatapp:
-  logo: "data:image/png;base64,iVBORw0KGgo..."
-  title: "ChatApp"
-  description: "Product summary"
-```
+3. If you only changed the text, click **Confirm** at the bottom of the card.
 
-A successful save shows "Updated, please refresh the page".
+## Confirming the result
 
-## Compared with Rune / Moha settings
+- After a successful save the page shows "**Update successfully, please refresh the page**".
+- Refresh the browser, then check the **Products** entry to see whether the name and logo have updated.
+- Open any chat or model playground page and confirm the browser tab title also uses the new name.
 
-All three share the same structure but are independent and write to different fields:
+## How this page differs from AI Platform and Moha Hub settings
 
-| Page | Fields | Request |
-|------|--------|---------|
-| [Rune settings](/boss/settings/rune) | `rune.{logo,title,description}` + `mohaAddress` / `kmsAddress` | `/api/iam/global-config` |
-| [Moha settings](/boss/settings/moha) | `moha.{logo,title,description}` + `space.*` | `/api/iam/global-config`, `/api/moha/global-config` |
-| ChatApp settings | `chatapp.{logo,title,description}` | `/api/iam/global-config` |
+All three pages have exactly the same structure — a **Title and Logo** card — and differ only in **which product they brand**. They are independent of each other:
 
-## Requests
+| Page | Product it brands |
+| --- | --- |
+| [AI Platform Settings](/boss/settings/rune) | The AI Platform |
+| [Moha Hub Settings](/boss/settings/moha) | Moha Hub |
+| Gateway Settings | The chat product |
 
-| Request | Method | Notes |
-|---------|--------|-------|
-| `/api/iam/global-config` | `GET` / `PUT` | Read / save the global configuration |
+## Common questions
 
-## Permissions
+| What you see | Likely cause | What to do |
+| --- | --- | --- |
+| The logo will not upload | It is not PNG/SVG, or it is larger than 128 KB | Use an image that meets the requirements |
+| Changing one place changed another product too | You may have edited the wrong page | Change each product on its own settings page |
 
-Requires the **system administrator** role.
+## Related
+
+- [Platform Settings](/boss/settings/platform)
+- [AI Platform Settings](/boss/settings/rune)
+- [Moha Hub Settings](/boss/settings/moha)

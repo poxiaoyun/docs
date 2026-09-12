@@ -2,42 +2,44 @@
 title: 'SDK Tutorial'
 updated: '2026-09-12'
 author: Rune Docs Team
-description: 'Moha SDK tutorials and API reference covering CLI, Python SDK, and Transformers/Datasets integration.'
+description: 'Directory of the SDK and CLI tutorials: install, authenticate, and look up commands.'
 tags:
   - moha
   - sdk
 ---
-## SDK Tutorial
 
-Moha SDK provides a complete command line tool and Python API to facilitate interaction with the Moha warehouse - including uploading and downloading of models/data sets, certification management, encrypted transmission, etc.
+# SDK Tutorial
 
-### getting Started
+This section shows you how to work with Moha repositories from a terminal and from Python code, without opening a web page: upload, download, and manage models and datasets.
+If this is your first time, start with **Quick start in 5 minutes** and get one command working before reading the rest.
 
-| Chapter | Description |
-|------|------|
-| [Quick Start](./quick-start) | Complete installation, login, download, and upload in 5 minutes |
-| [SDK Overview](./intro) | Compatibility instructions and environment configuration |
-| [Installation and environment configuration](./install) | Installation method, dependency requirements, environment variables |
-| [Authentication and Token Management](./authentication) | Token, username/password, persistence management |
+## Getting started
 
-### Tool Reference
+| Chapter | What this page helps you do |
+| --- | --- |
+| [Quick start in 5 minutes](./quick-start) | Install the tool, then run login, download, and upload with three commands |
+| [SDK introduction](./intro) | Understand what the toolkit is made of and what it can do |
+| [Installation and environment configuration](./install) | Install the `moha` command and confirm it works |
+| [Authentication and Token Management](./authentication) | Get a token, log in, and learn where the token is stored and how to replace it |
 
-| Chapter | Description |
-|------|------|
-| [CLI tool reference](./cli-reference) | `moha` command line complete command reference |
-| [HubClient API](./hub-api) | Detailed explanation of Python SDK core class API |
+## Tool reference
 
-### Workflow
+| Chapter | What this page helps you do |
+| --- | --- |
+| [CLI tool reference](./cli-reference) | Look up the usage and options of every `moha` subcommand |
+| [HubClient API](./hub-api) | Call upload, download, and repository management from Python |
 
-| Chapter | Description |
-|------|------|
-| [Model loading and inference](./transformers-datasets) | Transformers/Datasets integration, Pipeline, multi-GPU |
-| [Model training and export](./training-export) | Fine-tuning, LoRA, evaluation, export ONNX/TorchScript |
+## Workflows
 
-### Advanced
+| Chapter | What this page helps you do |
+| --- | --- |
+| [Model loading and inference](./transformers-datasets) | Load models and datasets from the platform with Transformers / Datasets |
+| [Model training and export](./training-export) | Fine-tune, use LoRA, evaluate, and export ONNX / TorchScript |
 
-| Chapter | Description |
-|------|------|
-| [Upload, download and synchronization](./transfer) | File filtering, batch operations, performance optimization |
-| [Data encryption](./encryption) | AES/SM4 encrypted upload, automatic decryption, KMS |
-| [Error handling and FAQ](./error-handling) | Exception types, retry mechanism, FAQ |
+## Advanced
+
+| Chapter | What this page helps you do |
+| --- | --- |
+| [Upload, download and synchronization](./transfer) | Control which files are transferred with filter patterns, and how to speed it up |
+| [Data encryption](./encryption) | Encrypt large model files while uploading |
+| [Error handling and FAQ](./error-handling) | Read an error message and know what to do next |

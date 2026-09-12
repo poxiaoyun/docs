@@ -1,178 +1,131 @@
 ---
 title: 'API Keys'
 updated: '2026-09-12'
-description: 'Fields, create/edit rules, rate limits and expiry policy of ChatApp API tokens.'
+description: 'Create and manage the keys used to call ChatApp models: how to create them, what they can do, how cost is counted and where to see the logs.'
 ---
 
-## Overview
+# API Keys
 
-Token Management (front-end route `/chatapp/tokens`) creates and manages **ChatApp API access tokens**. A token is the credential for the conversation data plane (`/airouter-data/v1/chat/completions`) and can carry its own RPM/TPM limits, IP allowlist and expiry policy.
+**API Keys** manages the credential used to **call the ChatApp model API**. You need it to chat by hand on the [Playground](./experience.md) page, and even more so to connect models to your own programs — a program uses this key to prove "this call came from me".
 
-> ⚠️ **Note**: ChatApp tokens and the IAM [API key](/account/iam/api-key) are two separate credential sets. ChatApp tokens are used for the conversation data plane; the IAM API key is used for platform management-plane APIs.
+:::warning This is not the same as the API key in the Account Center
+The API key in the Account Center is used for the platform's own management APIs; the keys here are used only for the **conversation model API**. The two cannot be interchanged.
+:::
 
-> ⚠️ **Note**: The real route is `/chatapp/tokens`; there is no `/chatapp/token` (`routes/paths.ts:78-84`).
+## Before you start
 
-## Page structure
+- Any signed-in account works; no extra role is needed.
+- You can only see and manage the keys under your own account.
 
-| Tab | Route | Description |
-|-----|-------|-------------|
-| **API Keys** | `/chatapp/tokens` | Token list with create/edit/delete |
-| **Request Logs** | `/chatapp/tokens/logs` | Call logs |
+## The page has two tabs
 
-## Token fields
+| Tab | What you see |
+| --- | --- |
+| **API Keys** | The key list, plus create, edit and delete |
+| **Request Logs** | A detailed record of each call |
 
-The token data structure (`src/types/apikey.ts`):
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `id` | number | Unique token identifier (system-generated) |
-| `name` | string | Token name (user-defined, cannot be changed after creation) |
-| `apiKey` | string | Token value |
-| `account` | string | Creator account |
-| `belongTo` | string | Ownership information |
-| `expiresAt` | number/string | Expiry time |
-| `rateLimitRPM` | number | Maximum requests per minute |
-| `rateLimitTPM` | number | Maximum tokens per minute (unit K, 1K = 1000 tokens) |
-| `allowedIPs` | string[] | IP allowlist |
-| `createdAt` / `updatedAt` | string | Creation / update time |
-| `status` | string | `active` / `expired`, computed on the front end from `expiresAt` |
-
-## List columns
+## Reading the key list
 
 | Column | Description |
-|--------|-------------|
-| **Name** | Click to open the detail page |
-| **API Key** | Masked (first 6 characters + `************`) with a copy button |
-| **RPM** | Requests per minute; shown as "unlimited" when `0` or empty |
-| **TPM(K)** | Tokens per minute in K; shown as "unlimited" when `0` or empty |
-| **Allowed IPs** | Configured allowlist; empty or containing `*` means unrestricted |
-| **Expires At** | Shown as "never expires" when `expiresAt` is empty or 1970 |
+| --- | --- |
+| **Name** | Click the name to open the details |
+| **API Key** | Shows only the first 6 characters plus `************`; the copy button on the right copies the full value |
+| **RPM** | Maximum requests per minute; `∞` means unlimited |
+| **TPM (K)** | Maximum tokens per minute, in K; `∞` means unlimited |
+| **Allowed IPs** | `*` means every IP can use it |
+| **Expiration time** | **Never expires** means it stays valid long term; an expired key is flagged in red as "Expired", after which it can no longer call |
+| **Created at** | When the key was created |
 
-## Creating a token
+## Create a key
 
-Click the create button on `/chatapp/tokens` to open the form (`tokens/components/form.tsx`).
+1. Click **API Keys** in the top navigation.
+2. Click **Add API Key** in the top-right corner of the page.
+3. Fill in the **API Key Configuration** form:
 
-### Form fields and validation
+   | Form item | How to fill | Notes |
+   | --- | --- | --- |
+   | Name | For example `my-app-prod` | Required; **cannot be changed** after creation |
+   | RPM | For example `60` | Maximum requests per minute, range 0 ~ 10000; empty or `0` means unlimited |
+   | TPM (K) | For example `100` | Maximum tokens per minute, in K (1K = 1000 tokens/min), range 0 ~ 100000; empty or `0` means unlimited |
+   | Allowed IPs | Defaults to `*` | Only addresses on the list may call; see the next section for the format |
+   | Never expires | On by default | After turning the switch off, **Expiration time** appears and you must pick a time |
 
-| Field | Default | Validation | Note |
-|-------|---------|------------|------|
-| **Name** (`name`) | `''` | Required | Disabled when editing (cannot be changed) |
-| **RPM** (`rateLimitRPM`) | empty | Number, 0 ~ 10000 | Empty or `0` means unlimited |
-| **TPM(K)** (`rateLimitTPM`) | empty | Number, 0 ~ 100000 | Empty or `0` means unlimited |
-| **Allowed IPs** (`allowedIPs`) | `'*'` | One IP or CIDR per line or comma | Defaults to `*`, meaning all IPs |
-| **No expiry** (`noExpires`) | `true` | — | When turned off, an expiry time is required |
-| **Expires at** (`expiresAt`) | — | Required when "No expiry" is off | |
+4. Click **Confirm**. To give up, click **Cancel**.
 
-> 💡 **Tip**: `allowedIPs` defaults to `'*'` and `noExpires` defaults to `true` (`form.tsx:132-138`).
+Once created, the new key appears back in the list.
 
-### Handling on submit
-
-| Input | Submitted value |
-|-------|-----------------|
-| RPM / TPM is `0` or empty | The field is not submitted (treated as unlimited, `form.tsx:162-172`) |
-| Allowlist empty | Submits `["*"]` (`form.tsx:173-178`) |
-| "No expiry" on | `expiresAt` is not submitted (`undefined`) |
-| "No expiry" off | `expiresAt` is converted to Unix seconds |
-
-### IP allowlist format
+### How to write the Allowed IPs
 
 | Format | Example |
-|--------|---------|
-| Single IPv4 | `192.168.1.100` |
-| CIDR range | `10.0.0.0/24` (mask 0~32) |
-| Wildcard | `*` (all IPs) |
+| --- | --- |
+| A single IP | `192.168.1.100` |
+| A subnet | `10.0.0.0/24`, where the mask after the slash must be 0 ~ 32 |
+| All IPs | `*` |
 
-Validation rules: four octets of 0~255; no leading zeros (e.g. `01`); CIDR mask 0~32; multiple values may be separated by an English comma or a newline.
+Separate multiple values with a **comma** or a **newline**. Note that each number must be 0 ~ 255 and **must not have leading zeros** (`01` will fail validation).
 
-## Editing and deleting
+## Get the full value of a key
 
-- **Edit**: the name cannot be changed; RPM/TPM/allowlist/expiry can.
-- **Delete**: requests using the token fail immediately afterwards and the action cannot be undone.
+In both the list and the detail page, the key itself is always masked. To get the full value, click the **copy button** beside the key.
 
-## Token detail
+:::warning What you copy is the full key
+Once you have the full key, store it somewhere safe immediately (for example a password manager or an environment variable in your program). Do not paste it into chat tools, documents or code repositories. A leaked key means someone else can spend your allowance calling models.
+:::
 
-The detail page (`/chatapp/tokens/:id`) shows the configuration and a **call history**. Log fields (`tokens/request-logs.tsx`, `services/api-key.ts:200-237`):
+## What this key can do
 
-| Field | Description |
-|-------|-------------|
-| `timestamp` | Request time (from `occurredAt`) |
-| `model` | Model called |
-| `provider` | Provider |
-| `channelId` / `channelName` | Channel |
-| `tenantId` / `tenantName` | Tenant |
-| `workspace` | Workspace |
-| `requestId` | Request trace ID |
-| `latencyMillis` | Latency in milliseconds |
-| `status` | `success` or `blocked` (mapped from `result`) |
-| `promptTokens` / `completionTokens` / `totalTokens` | Token usage |
+1. Start conversations on the [Playground](./experience.md) and [Comparison](./compare.md) pages — the page automatically picks the first key in the account, and you can switch keys on the page.
+2. Let your own programs call the model API. In [Models](./marketplace.md), open any model's details and click **API docs**, which gives the **Gateway Address** and curl, Python and Go samples you can copy.
+3. In the samples, replace `YOUR_TOKEN` with the key you copied and `YOUR_MODEL` with the model ID on the card, and your first call will go through.
 
-> 💡 **Tip**: A `blocked` record usually means the request was rate limited or blocked by content moderation.
+## How cost is counted
 
-## Rate limits
+This page **sets no allowance** and does not limit how much you spend. Cost works like this:
 
-| Dimension | Field | Range | Meaning when empty |
-|-----------|-------|-------|--------------------|
-| RPM | `rateLimitRPM` | 0 ~ 10000 | Unlimited |
-| TPM(K) | `rateLimitTPM` | 0 ~ 100000 | Unlimited |
+The cost of each call is calculated from the **model price** — the input price and output price you see in the [Models](./marketplace.md) details (per 1M tokens) — and the running total is the **Total spend** on the **Usage analysis** page. To control spending, work from two sides: set a sensible RPM / TPM on the key, or switch to a cheaper model.
 
-```mermaid
-flowchart LR
- Req["API request"] --> RPM{"RPM check"}
- RPM -- pass --> TPM{"TPM check"}
- RPM -- exceeded --> R1["Reject: rate_limit_exceeded"]
- TPM -- pass --> OK["Process request"]
- TPM -- exceeded --> R2["Reject: rate_limit_exceeded"]
-```
+If the account's overall allowance runs out, calls return "Insufficient quota" directly, and you need to ask the administrator to handle the allowance.
 
-> ⚠️ **Note**: Token-level and channel-level rate limits are independent. A channel may still reject a request even when the token is under its own limit.
+## Edit and delete
 
-## Expiry policy
+- **Edit**: choose **Edit** from the action menu at the end of a row to open the edit form. The name field is locked and cannot be changed; RPM, TPM, the allowlist and the expiry setting can all be changed — click **Confirm** when done. You can also use **Actions** → **Edit** at the top right of the detail page.
+- **Delete**: choose **Delete** from the row's action menu, or **Actions** → **Delete** on the detail page. Deleting opens a confirmation dialog and requires you to type the key's name to continue.
 
-- "No expiry" on: `expiresAt` is not submitted and the token stays valid indefinitely.
-- "No expiry" off: a specific expiry time is set.
-- Front-end status: `active` while the current time is before `expiresAt`, otherwise `expired`; expired tokens cannot be used.
+:::warning Deletion cannot be undone
+After deletion, every request still using this key **fails immediately**, and the action cannot be undone. Before deleting, confirm that no program is still using it.
+:::
 
-## API endpoints (management plane)
+## View the key details
 
-| Operation | Method and path |
-|-----------|-----------------|
-| List (personal) | `GET /api/airouter/v1/me/tokens` |
-| Create (personal) | `POST /api/airouter/v1/me/tokens` |
-| Get by ID | `GET /api/airouter/v1/tokens/by-id/{id}` |
-| Update by ID | `PUT /api/airouter/v1/tokens/by-id/{id}` |
-| Delete by ID | `DELETE /api/airouter/v1/tokens/by-id/{id}` |
-| Usage logs | `GET /api/airouter/v1/me/tokens/{token}/usage-logs` |
+Click a key's **name** in the list to open its detail page, which shows the key value (masked, with a copy button), ownership, created at, expiration time, RPM, TPM (K) and Allowed IPs.
 
-## Call example (data plane)
+To change the configuration or delete it, use the **Actions** menu at the top right.
 
-```bash
-curl -X POST https://your-domain/airouter-data/v1/chat/completions \
-  -H "Authorization: Bearer YOUR_CHATAPP_TOKEN" \
-  -H "Content-Type: application/json" \
-  -H "Accept: text/event-stream" \
-  -H "X-Tenant: your-tenant" \
-  -H "X-Workspace: your-workspace" \
-  -H "X-Channel: your-channel" \
-  -d '{
-    "model": "your-model-name",
-    "messages": [{"role": "user", "content": "Hello"}],
-    "stream": true,
-    "temperature": 0.7,
-    "max_tokens": 4096,
-    "top_p": 0.8,
-    "reasoning_effort": "none",
-    "stop": null
-  }'
-```
+## View the request logs
 
-## Security recommendations
+Switch to the **Request Logs** tab to see a record of every call under your account:
 
-| Recommendation | Description |
-|----------------|-------------|
-| One token per application | Create a separate token for each application/environment instead of sharing |
-| Configure the allowlist | Restrict the token to specific IPs/CIDRs (the default `*` is unrestricted) |
-| Set an expiry | Avoid long-lived, never-expiring tokens unless necessary |
-| Set sensible limits | Configure RPM/TPM according to real demand |
-| Rotate and clean up | Rotate tokens periodically and delete the ones no longer in use |
+1. At the top, choose a **Time Range**: **Today** (default), **Yesterday**, **Last 3 days**, **Last week** or **Custom**. Choosing Custom reveals a **Start date** and an **End date**.
+2. You can filter further by **Token**, **Channel**, **Model** and **Result**; Result offers **All**, **Success**, **Error**, **Blocked** and **Quota Exceeded**.
+3. Click **Refresh** to fetch again, or **Reset** to clear every filter.
+4. Each row in the table is one call, listing the time, channel, token, model, request ID, duration (including first-token time), tokens, cost and standard.
+5. To see a row's details, click the eye icon next to the time column.
 
-> ⚠️ **Note**: The UI always shows the token value masked (first 6 characters + `************`), but the copy buttons on the list and detail pages copy the **full token value**. Only click copy in a trusted environment and store the value securely.
+When troubleshooting a failed call, the **Request ID** and **Result** columns are the most useful: give the request ID to the administrator and they can locate that exact call.
+
+## Security advice
+
+| Advice | Description |
+| --- | --- |
+| One key per application | Create separate keys for different programs and environments, so you can disable and meter them individually |
+| Set up the allowlist | Allow only the IPs of the machines that run your programs; do not keep using `*` |
+| Set an expiry | Avoid long-lived, never-expiring keys where not necessary |
+| Set sensible RPM / TPM | Prevent a misbehaving program from burning the whole allowance in an instant |
+| Rotate and clean up | Rotate keys regularly and delete old ones you no longer use |
+
+## Related
+
+- [Models](./marketplace.md)
+- [Playground](./experience.md)
+- [Usage analysis](./usage-statistics.md)
+- [Parameter Configuration](./debug.md)

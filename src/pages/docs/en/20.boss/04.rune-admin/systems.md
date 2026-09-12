@@ -1,68 +1,87 @@
 ---
 title: System Apps
 updated: '2026-09-12'
-description: 'Instance list, deployment entry, and deletion notes for cluster-level system apps.'
+description: Manage the infrastructure components deployed in a cluster, such as monitoring, logging or a gateway, and view, edit or delete them.
 ---
 
-## Overview
+# System Apps
 
-System instances are **infrastructure-level components** deployed in a cluster (such as monitoring, logging, and storage) that serve the operations and management needs of the whole cluster. They are deployed with one click from templates in the System Template Market and are backed by Helm Charts.
+System apps are **infrastructure-level components** deployed in a cluster, such as monitoring, logging, storage and gateways. They serve the whole cluster and are deployed in one click from templates in the system template market.
 
-## Access Path
+By the end of this page you can: view the system apps already deployed, deploy a new one, and edit or delete them.
 
-BOSS Console → Cluster Management → select a cluster → **System Apps**
+:::tip Two terms compared
 
-Frontend route: `/rune/clusters/:cluster/systems`
+- **System app** is middleware that ships with the platform, such as monitoring, logging or a gateway.
+- **Template** is a ready-made "installation list", and a system app is installed from one.
 
----
+:::
 
-## Instance List
+## Before you start
 
-System Apps and Storage Clusters share the same instance list component, distinguished by `category`: system apps are `category = system`, storage clusters are `category = storage`.
+- You need a **System Administrator** account.
+- Prerequisite: the cluster is connected to the platform, and to deploy a new component the market must contain a matching System-domain template.
 
-| Column | Field Path | Description |
+## Getting there
+
+1. In the left sidebar click **AI Platform** → **Cluster**, then open the target cluster.
+2. In the left sidebar under **Operations Management**, click **System Apps**.
+
+## Reading the instance list
+
+| Column | Meaning |
+| --- | --- |
+| Name | The instance name; click to open the detail page |
+| Version | The template version used for deployment |
+| Status | The instance's current status |
+| Created At | — |
+
+Actions on each row: **Edit**, **Delete** (with a confirmation dialog); multi-select batch deletion is supported.
+
+## Deploy a new system app
+
+1. On the instance list, click **Create System App** in the top right.
+2. The page jumps to the **System Template Market**.
+3. Choose a template and a version, then click **Deploy**.
+4. On the deployment page, fill in the parameters the template asks for.
+5. After you submit, you return to the list; the new instance appears first and its status moves step by step to running.
+
+See [System Template Market](/boss/rune-admin/system-market) for details.
+
+## Manage existing instances
+
+- **View details**: click the instance name to open the detail page and see its basic information and related resources.
+- **Edit**: change the configurable parts of this instance.
+- **Delete**: click **Delete** and confirm; the related resources are released after deletion.
+
+:::warning Deleting middleware affects the whole cluster
+
+Deleting a system app can make the cluster's monitoring, logging or gateway capability unavailable. Make sure no workload depends on it before you delete.
+
+:::
+
+## Differences from user app instances
+
+| Comparison | System app | User app instance |
 | --- | --- | --- |
-| Name | `name` | Instance name (with icon); click to open instance details |
-| Version | `product.version` | Template version used for deployment |
-| Status | `status.phase` | Rendered by `ObjectStatus` |
-| Created At | `creationTimestamp` | — |
+| Where it comes from | The system template market | The user app market |
+| Scope | The whole cluster | One workspace |
+| Where you manage it | Cluster → System Apps | **Apps** in the AI Platform |
 
-Actions: edit, delete (with a confirmation dialog); multi-select is supported.
+## Confirming the result
 
-> ⚠️ Note: The list has **no separate "template" column**. The deployment source (template) is reflected in the version field and details.
+- The new instance appears in the list, and its **Status** eventually becomes running.
+- Open it and you can see the basic information and related resources, with no errors.
 
----
+## Common questions
 
-## Deploy a System Instance
-
-1. On the instance list, click **Add**.
-2. The system navigates to the system template market (`/rune/clusters/:cluster/system-market`).
-3. Select the target template and version.
-4. Fill in the deployment parameters (dynamically generated from the template Schema).
-5. After submission a system instance is created, and its status can be viewed in the instance list.
-
----
-
-## Manage Instances
-
-- **View details**: click the instance name to open the detail page (`/rune/clusters/:cluster/systems/:instance`) and view basic information, status, and related resources.
-- **Edit**: modify the instance's configurable items.
-- **Delete**: with a confirmation dialog; related resources are released after deletion.
-
-> ⚠️ Note: Deleting a system instance may make cluster monitoring or logging unavailable. Confirm there are no dependencies before proceeding.
-
----
-
-## Differences from App Instances
-
-| Comparison | System Instance | App Instance |
+| Symptom | Likely cause | What to do |
 | --- | --- | --- |
-| Deployment Source | System Template Market (`domain = system`) | User App Market (`domain = user`) |
-| Scope | Cluster level | Workspace level |
-| Management Entry | Cluster → System Apps | Console → Apps |
+| The status never becomes running | The deployment parameters are wrong or the cluster lacks resources | Open the detail page, check the events, fix them and retry |
+| The logs / monitoring page has no data | The component is not installed or has been deleted | Confirm on this page whether the component is running |
 
----
+## Related
 
-## Permission Requirements
-
-Requires the **System Administrator** role. You can view, deploy, and manage cluster-level system instances. For more details, see [System Template Market](./system-market).
+- [System Template Market](/boss/rune-admin/system-market)
+- [Storage & Runtime](/boss/rune-admin/storage-runtime)
+- [Logs & Scheduler](/boss/rune-admin/observability)

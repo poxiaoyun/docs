@@ -1,84 +1,114 @@
 ---
 title: 'Models'
 updated: '2026-09-12'
-description: 'ChatApp Model Marketplace: browsing, filtering, channels, prices and API docs.'
+description: 'Pick the right model in the Models page: read the cards, filter and search, check prices, and start a chat in one click.'
 ---
 
-## Overview
+# Models
 
-The Model Marketplace (`src/pages/chatapp/marketplace.tsx`) is ChatApp's **model browsing entry**, served at `/chatapp/marketplace` and titled "Model Marketplace".
+**Models** is where you pick a model in ChatApp. Visit this page before you start chatting: you can see which models you may use, how much content each one can remember, what each costs per 1M tokens, and then jump straight into a conversation.
 
-> ⚠️ **Note**: This marketplace is ChatApp's conversation-model marketplace. It is **not** the Rune App Market (`/rune/console/app-market`), which is used to deploy application templates.
+:::tip An analogy
+Models is like the list page of an app store: the card tells you what the "app" does, how big it is and what it costs; open the details to decide whether to install it (start chatting).
+:::
 
-## Page structure
+## Before you start
 
-| Area | Description |
-|------|-------------|
-| Left filter bar (shown from `md` up) | Filter by type, category, provider, context length and parameter scale |
-| Top visibility tabs | All / Public / Tenant / Private, each with a count |
-| Search and sort | Search by name; sort by "Name" or "Newest" |
-| Model card grid | Adaptive 1 / 2 / 4 columns; each card shows the model ID, provider, visibility, type, categories, context and parameter scale tags |
-| Detail drawer | Slides in from the right with model information, available channels, prices and API docs |
+- Any signed-in account works; no extra role is needed.
+- You only see the models **you are allowed to use**. If you see none, the administrator has not opened a model channel for you yet.
 
-## Filter dimensions
+## What the page looks like
 
-Filters come from model metadata (`model-utils.ts` and `types/model-metadata`):
+| Area | Position | Description |
+| --- | --- | --- |
+| Filter area | Left (above the cards on a narrow window) | Grouped filters by **Type**, **Category**, **Vendor**, **Context** and **Parameters** |
+| Visibility tabs | Top left | **All** / **Public** / **Tenant** / **Private**; the number after each label is the model count in that scope |
+| Search and sort | Top right | The search box finds models by name or keyword; the dropdown sorts by **Sort by name** or **Newest** |
+| Model cards | Center | Arranged into 1 to 4 columns by window width; each card is one model |
+| Model count | Below the cards | Shows "N models" |
 
-| Filter group | Values |
-|--------------|--------|
-| Type (`metadata.type` / inferred) | LLM / VLM / Embedding, etc. |
-| Category (`metadata.categories`) | Defined by the model metadata |
-| Provider (`metadata.vendor` / `provider`) | Defined by the model metadata |
-| Context length | `<32K`, `32K~128K`, `128K~1M`, `≥1M` |
-| Parameter scale | `<10`, `10~30`, `30~100`, `100~300`, `≥300` (unit B) |
+## Pick a model
 
-> 💡 **Tip**: Like the filters, the card list only shows chat-capable models (`isChatModel`: `metadata.type` present, or `metadata.task` empty or `generate`).
+1. Click **Models** in the top navigation.
+2. Set the scope first: click one of **All**, **Public**, **Tenant** or **Private** at the top.
+3. Narrow further with the left-hand filters. A tag is **selected on the first click and cleared on the second**, and different groups can be combined:
+   - **Type**: for example Chat.
+   - **Category**: for example Vision, Reasoning, Coder.
+   - **Vendor**: for example DeepSeek, Qwen, Zhipu, Kimi, OpenAI.
+   - **Context**: `< 32K`, `32K - 128K`, `128K - 1M`, `≥ 1M`.
+   - **Parameters**: `< 10B`, `10B - 30B`, `30B - 100B`, `100B - 300B`, `≥ 300B`.
+4. Still cannot find it? Type directly: the search box matches model names or keywords, including model IDs, vendors, channels, tenants and workspaces.
+5. To change the order, pick **Sort by name** or **Newest** in the dropdown to the right of the search box.
+6. Results appear in the card area and the count "N models" shows below. When nothing matches, "No matching models" appears — loosen the conditions as the message suggests.
 
-## Visibility tabs
+## Reading the card
 
-| Tab | `visibility` | Counting rule |
-|-----|--------------|---------------|
-| All | — | De-duplicated model count |
-| Public | `public` | Count of de-duplicated model IDs |
-| Tenant | `tenant` | Same as above |
-| Private | `private` | Same as above |
+| Card element | What it means |
+| --- | --- |
+| Model icon + model name | This ID is what you use when calling the API. The copy button next to the name copies it in one click; hover shows **Copy model ID** |
+| Provider | Who provides this model |
+| **New** (top right) | A recently added model |
+| Colored tag (top right) | Visibility: **Public** (available platform-wide), **Tenant** (this tenant only), **Private** (only you or this workspace) |
+| Description | A one-line introduction to the model, shown on at most two lines |
+| Bottom tags | Type, categories (up to 2), **Context**, parameter scale and custom tags (up to 2); the full set is in the details |
 
-## Model card
+### What context length means
 
-The card shows (`marketplace.tsx:198-357`):
+It is the upper bound on how much content a model can remember in one conversation. The `128K` or `1M` on the card is that bound; the bigger the number, the better it handles long documents and long code. Beyond the bound the model forgets the earliest content, or even returns a "Context length exceeded" error.
 
-- The model icon and **model ID**
-- The provider name
-- Top-right: a **New** tag (when the metadata marks it as recently created) and the visibility tag
-- The description (up to two lines)
-- Bottom tags: type, up to 2 categories, context length, parameter scale, up to 2 custom tags
+### What parameter scale means
 
-## Detail drawer
+The unit is `B` (billion). `7B` means 7 billion parameters. More parameters usually means stronger capability, but speed, price and memory use differ too — the card price is the reliable guide.
 
-Clicking a card opens a drawer from the right (`50vw` wide, full width on small screens):
+### How do I know whether a model supports images
 
-| Block | Content |
-|-------|---------|
-| Header | Model ID, visibility, provider, description, all tags, and two action buttons |
-| **Go to playground** | Opens the Experience page with the model selected (carrying `model` / `channel_id`) |
-| **API docs** | Shows call samples for this model inside the drawer |
-| Available channels | All channels for this model ID, with their **channel priority** and owning tenant |
-| Prices | Input price, output price, cache read price and cache write price (shown as `-` when missing) |
+There is no separate "supports images" switch. Check the **Category** tag: **Vision** means the model can process images. On the [Playground](./experience.md) page, the image button in the input toolbar sends an image together with your message.
 
-> 💡 **Tip**: The same model ID may map to several channels (different access paths for the same model). The drawer lists them by channel priority and selects the highest-priority channel by default when entering the playground.
+## Open the model details
 
-## API docs content
+1. Click any card and the detail panel slides out on the right.
+2. The top of the panel shows the model name, visibility, provider, description and all tags, plus the **Try model** and **API docs** buttons.
+3. In the middle is **Available channels (N)**: every source this model is served from, with its **Tenant** and **Priority**.
+4. Below that is **Pricing**.
+5. To see call samples, click **API docs**. The panel expands into **Examples**, which switch between the curl, Python and Go tabs, and it also shows the **Gateway Address**.
 
-The "API docs" block uses the ChatApp data-plane address (`model-docs-content.tsx:39-40`):
+:::tip Why does one model have several channels
+A model may be connected through more than one source. They are merged into a single card, and the details list them by **Priority** from high to low; clicking **Try model** uses the highest-priority channel by default.
+:::
 
-```text
-{origin}/airouter-data/v1/chat/completions
-```
+## How to read the prices
 
-| Sample | Language |
-|--------|----------|
-| cURL | `curl --request POST ... --header 'Authorization: Bearer YOUR_TOKEN'` |
-| Python | `requests.post` |
-| Go | `net/http` |
+| Price item | Meaning |
+| --- | --- |
+| **Input price** | What you send to the model (question and context) is billed at this rate |
+| **Output price** | What the model generates is billed at this rate |
+| **Cache read price** | The rate when a cache hit lets the model reuse existing context directly |
+| **Cache write price** | The rate for writing context into the cache |
 
-> ⚠️ **Note**: Replace `YOUR_TOKEN` in the samples with a ChatApp token created in [Token Management](./token.md), and `YOUR_MODEL` with the model ID from the card.
+The unit is "price per 1M tokens", shown on the page as something like `0.5 CNY / 1M`. When a price item has no configured value it shows `-`.
+
+## Start a conversation
+
+1. Click **Try model** at the top of the detail panel.
+2. The page jumps to **Playground** with this model already selected.
+3. Type your question in the input box at the bottom and press **Enter** to send.
+
+:::warning This clears the current conversation
+Entering through **Try model** from Models starts a fresh conversation, and earlier messages are not kept. Copy or screenshot anything you want to keep first.
+:::
+
+## Common issues
+
+| Symptom | Possible cause | What to do |
+| --- | --- | --- |
+| "No matching models" is shown | The search term or filters are too narrow | Adjust the search term or filter scope as suggested and retry |
+| A model you want has no card | It is not under the current visibility tab | Switch to **All** or the matching visibility |
+| A model has several channels and you are unsure which to use | One model may be connected through several sources | Open the details and check the **Available channels** priority; the highest one is used by default |
+| The price shows `-` | That price item is not configured | Use the other price items, or check the actual cost in [Usage analysis](./usage-statistics.md) |
+
+## Related
+
+- [Playground](./experience.md)
+- [Comparison](./compare.md)
+- [API Keys](./token.md)
+- [Usage analysis](./usage-statistics.md)

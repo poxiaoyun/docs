@@ -1,7 +1,7 @@
 ---
 title: 'Home'
 updated: '2026-09-12'
-description: 'The actual block composition, context selection, and usage of the Rune console dashboard.'
+description: 'What to look at first after signing in: use Home to judge whether the current workspace has compute, storage, or instance problems.'
 tags:
   - rune
   - console
@@ -9,56 +9,91 @@ tags:
 ---
 
 # Home
-The Rune dashboard is the default landing page after entering the workbench. It shows a resource overview and workload status for the current tenant, cluster, and workspace context.
 
-## Entry Path
+Home is the page that opens by default after you sign in to the Rune console. It gives you the whole picture within the **current region + current workspace** at a glance: how many instances there are, how much quota is left, how much storage is used, and whether anything needs attention. You do not have to walk through every menu — this page alone tells you whether there is anything to deal with today.
 
-Rune Workbench → Dashboard
+:::tip Treat Home as your car's dashboard
+It does not drive the car; it tells you the fuel level (quota), the water temperature (resource utilization), and the warning lights (things to look at). When you see an anomaly, click through to handle it.
+:::
 
-Path: `/rune/dashboard`
+## Before you start
 
-## Prerequisites
+- You are signed in and a tenant is selected.
+- **Region** and **Workspace** are selected in the top-left. When no workspace is selected, the page shows a single line: Select a region and workspace to view overview data.
+- There is no permission restriction; every member can view Home.
 
-- Signed in and a tenant is selected.
-- The current account has access to the Rune product.
-- A cluster and workspace must be selected at the top; when no workspace is selected, the page prompts you to select one first.
+## What the blocks are, top to bottom
 
-## Page Blocks
+| Block | What you can see |
+| --- | --- |
+| Header | The title "Workspace Overview" and the **Refresh** button on the right |
+| Attention banner | Appears only when there is something to handle; click it to deal with the item directly |
+| Overview cards | Total workloads, Running / healthy, Processing, Abnormal, Quota warnings, Storage usage |
+| Resource Quota | Resource quota usage plus the average resource utilization over the last 24 hours |
+| Data Storage | Total capacity, used, available, number of volumes, and overall storage usage |
+| Workload Status | Instance status distribution by type |
+| Needs Attention | A list of issues; click **View** to jump straight to the instance or quota page |
 
-The dashboard renders the following blocks in order (`src/pages/rune/home/dashboard.tsx`):
+:::tip If the data looks wrong, refresh first
+The **Refresh** button in the top-right pulls every piece of data on the page again. While loading, the button spins and is temporarily unclickable, which is normal.
+:::
 
-| Block | Component | Description |
+## How to read these numbers
+
+### Overview cards
+
+The top row is the "one-line conclusion"; when something looks off, look here first:
+
+| Card | Meaning |
+| --- | --- |
+| Total workloads | How many instances are in the current workspace |
+| Running / healthy | Instances that are working normally |
+| Processing | Instances being created, started, or adjusted |
+| Abnormal | Instances that need you to step in |
+| Quota warnings | Number of quota items that have reached the warning threshold |
+| Storage usage | Overall storage usage |
+
+### Resource Quota
+
+Shows the compute quota (CPU, memory, accelerators) and the average resource utilization over the last 24 hours. If one item is close to its ceiling, creating a new instance may fail for lack of quota, so adjust it under [Quota](/rune/console/quota) first.
+
+### Data Storage
+
+Shows total storage capacity, used, available, and the number of volumes, with a "Storage Volume Usage" table below listing each volume's name, storage cluster, usage, mount status (Mounted / Unmounted), and status (Normal / High usage).
+
+### Workload Status
+
+Counts instance status by type: inference services, fine-tuning jobs, development environments, applications, evaluation jobs, and experiments. Each item's status falls into one of five buckets:
+
+| Status | Meaning |
+| --- | --- |
+| Running | The instance is working normally |
+| Scheduling | Waiting for resources or still being created |
+| Completed | A job-type instance (such as fine-tuning) has finished |
+| Paused | Stopped manually |
+| Abnormal | Failed or in an abnormal state; needs handling |
+
+### Needs Attention
+
+This block is a table with the columns **Name, Object type, Problem, Updated, Action**. Common problems include **Run failed**, **Abnormal status**, **High usage**, and **High usage**. Clicking **View** on the far right jumps straight to the corresponding instance detail, storage volume, or quota page. When the list is empty it shows "Nothing needs attention".
+
+## Confirming the result
+
+- Seeing numbers in all six overview cards means the current workspace's data has loaded normally.
+- If a yellow message appears below the header — "Some overview data is temporarily unavailable. Other sections remain usable." — an individual data source is temporarily unavailable; other blocks still work, so refresh or check again later.
+
+## FAQ
+
+| Symptom | Likely cause | What to do |
 | --- | --- | --- |
-| Header | `OverviewHeader` | Title and refresh button; shows the refreshing state |
-| Attention banner | `AttentionBanner` | Shown when there are items that need attention |
-| Overview cards | `OverviewCards` | Resource/workload summary cards for the current workspace |
-| Resource overview | `ResourceOverview` | Resource usage vs. quota |
-| Storage overview | `StorageOverview` | Storage volume usage overview |
-| Workload status | `WorkloadStatus` | Status distribution across workload categories |
-| Action overview | `ActionOverview` | Common action entry points |
+| Only the line "Select a region and workspace to view overview data" | No workspace selected yet | Use the top-left selector to pick a workspace |
+| All numbers are 0 | The current workspace really has no instances | Create instances from the corresponding menu, or switch to another workspace |
+| "Some overview data is temporarily unavailable" at the top | An individual data source is briefly failing | Click **Refresh** in the top-right and retry |
+| Accelerator / utilization shows no data | That metric is temporarily unavailable | Check again later, or use **Monitoring** on the instance detail page |
 
-If some data sources fail, a warning is shown at the top of the page (`overview:partial_data_warning`: "Some overview data is temporarily unavailable; the remaining modules still work normally.").
+## Related
 
-> ⚠️ Note: The old documentation mentioned "Recent Activities" and "Resource Usage Trend" blocks, but the current home page does not render the corresponding components (`recent-activities.tsx` and `resource-usage-chart.tsx` exist in the codebase but are not rendered by `dashboard.tsx`). The blocks listed above reflect the actual implementation.
-
-## Top Context Selection
-
-The upper-left of the dashboard shows, together with the product configuration:
-
-- Region/cluster selector: switches the currently operable cluster.
-- Workspace selector: switches the current workspace; all block data updates accordingly.
-
-> 💡 Tip: If the page appears empty or asks you to select a workspace, first check whether you switched to the wrong workspace, or whether the current cluster has no workspaces yet.
-
-## Common Operations
-
-1. Open the dashboard to confirm the current working context.
-2. Use the overview cards and resource overview to judge whether quotas are sufficient.
-3. Use the workload status to locate abnormal instances, then drill into the corresponding list or detail page.
-4. Use the action overview to quickly reach deployment or management pages.
-
-## Related Pages
-
-- [Workspaces](/rune/console/workspace)
-- [Quota Management](/rune/console/quota)
-- [Run Logs](/rune/console/logging)
+- [Workspace](/rune/console/workspace)
+- [Quota](/rune/console/quota)
+- [Logs](/rune/console/logging)
+- [Inference](/rune/console/inference)

@@ -1,85 +1,61 @@
 ---
 title: 'Multi-Factor Authentication (MFA)'
 updated: '2026-09-12'
-description: TOTP-based MFA binding and reset in the Personal Center.
+description: How to scan the QR code with your phone, type the code, and save the recovery code.
 ---
 
-## Overview
+# Multi-Factor Authentication (MFA)
 
-The Personal Center provides TOTP-based multi-factor authentication binding: on page load the server generates a secret and an otpauth URL, the front-end renders the URL as a QR code, and the user scans it and enters a dynamic code to finish binding.
+Multi-factor authentication adds another lock to your account: besides your password, you also enter a 6-digit number from your phone that changes every 30 seconds. Even if someone learns your password, they still cannot sign in without the code on your phone.
 
-- Route: `/iam/account/mfa`
-- View: `src/pages/iam/account/mfa.tsx`
+:::tip A comparison
+Your password is like the key to your front door, and multi-factor authentication is like a fingerprint lock beside it. Both must match before the door opens; the key alone is not enough.
+:::
 
-## Navigation
+## Before you start
 
-Personal Center (avatar menu → Settings) → top Tab "Multi-factor Authentication"
+- Install an authenticator app on your phone, for example Google Authenticator.
+- Make sure you can sign in to the platform normally.
 
-## Initialized on Page Load
+## Binding multi-factor authentication
 
-> ⚠️ Note: This page has **no** "Enable MFA" button. Entering the page automatically calls `POST /api/iam/init-mfa` with `{ "provider": "" }` (`mfa.tsx:75`).
+1. Click your avatar in the top-right corner → **Settings** to open the Personal Center.
+2. Click the **Multi-factor Authentication** tab at the top.
+3. The page shows a QR code right away, with the hint "Scan the QR code with your authenticator app (e.g., Google Authenticator)". You do not need to click any button first.
+4. Open the authenticator app on your phone, choose "Scan QR code", and scan the code on screen.
+5. The app shows a 6-digit number that changes every 30 seconds.
+6. Back on the platform page, type the current 6-digit number into the **Verification Code** field.
+7. Click **Bind**.
 
-The response (`MFAConf`) contains:
+:::info Already bound?
+If the account is already bound, opening the page shows the "Enabled" state directly and no QR code appears.
+:::
 
-| Field | Description |
-|-------|-------------|
-| `url` | otpauth URL, rendered as a 220px canvas QR code via `qrcode` |
-| `secret` | Secret key |
-| `recoveryCodes` | Recovery code array |
-| `username`, `provider` | Account and provider |
+## What you see after binding succeeds
 
-## Step Structure
+After a successful bind a green alert appears at the top of the page:
 
-The Stepper has only **2 steps** (`mfa.tsx:55-62`):
+- "You have successfully enabled multi-factor authentication!"
+- "Please save this recovery code. If your device cannot provide verification codes, you can log in using this recovery code."
+- One **Recovery Code** line
 
-| # | Label | Content |
-|---|-------|---------|
-| 1 | `enter_code` | QR code + code input + Bind button |
-| 2 | `enabled` | Bound-success state |
+:::warning Write the recovery code down now
+The recovery code is the only backup way in if you lose your phone. The page shows only the first recovery code and has no copy or download button, so write it down with pen and paper or save it in your password manager before you close the page.
+:::
 
-It starts at step 1; if the current user's `mfa.enabled` is true, it starts at step 2 (`mfa.tsx:94-96`).
+## Binding again
 
-## Step 1: Scan and Bind
+If you switch to a new phone, you can bind again:
 
-| Area | Description |
-|------|-------------|
-| QR code | Canvas rendered from `mfa.url`, with the platform logo centered |
-| Hint | `enter_code_tip` |
-| Code input | Field `code`, required |
-| Action | "Bind" (`bind`), submits the form |
+1. On the "Multi-factor Authentication" page, confirm that the state is **Enabled**.
+2. Click **Reset**.
+3. The page returns to the first step and shows the QR code again; scan it following the binding steps above.
 
-Bind request:
+:::warning There is no way to disable it here
+This page has no "disable multi-factor authentication" button and you cannot turn the feature off here. The reset button only lets you scan and bind again; it does not remove the protection.
+:::
 
-```json
-{
-  "code": "<current 6-digit TOTP code>",
-  "action": "bind",
-  "provider": "app"
-}
-```
+## Related
 
-Endpoint: `POST /api/iam/verify-mfa` (`mfa.tsx:174-179`). On success the form resets, a success message shows, and the step advances to step 2.
-
-> ⚠️ Note: The page only renders the QR canvas. It does **not** render the secret as text, and there is no "can't scan / manual entry" entry.
-
-## Step 2: Bound and Recovery Code
-
-Step 2 shows the bound-success state and, in the success alert:
-
-- The `mfa_success_tip` text
-- The recovery code: **only the first one**, `recoveryCodes[0]` (`mfa.tsx:190`)
-
-> ⚠️ Note: The code only shows `recoveryCodes[0]`, not the full list, and there are no copy/download buttons.
-
-## Re-bind
-
-Step 2 provides a "Reset" (`reset`) button that returns to step 1 for re-scanning and re-binding (`mfa.tsx:207-217`).
-
-> ⚠️ Note: There is **no** "Disable MFA" button and **no** "disable with verification code" flow. The code only offers a re-bind path back to step 1.
-
-## Notes
-
-- The page calls `init-mfa` on entry — do not expect a "click the button first" flow
-- The bind request always sends `action: 'bind'` and `provider: 'app'`
-- Only the first recovery code is displayed
-- The MFA check during login is not implemented by this page and is unconfirmed here
+- [Security Settings](/account/iam/security)
+- [Login](/account/auth/login)

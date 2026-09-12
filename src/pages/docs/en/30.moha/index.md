@@ -1,7 +1,7 @@
 ---
 title: 'Moha Repository'
 updated: '2026-09-12'
-description: 'Moha Repository user documentation for model, dataset, image and Space collaboration, covering the home page, repository browsing, collaboration, file management and settings publishing.'
+description: 'What Moha is, what you can host on it, where to start, and what repository, version and card mean.'
 tags:
   - moha
   - overview
@@ -9,39 +9,50 @@ tags:
 
 # Moha Repository
 
-Moha Repository is the AI asset collaboration center within the platform, used for unified management of models, datasets, images and Spaces. It also provides a personal home page, organization space, repository details, file browsing, discussion collaboration and repository settings, supporting both resource discovery and team collaboration.
+Moha is the platform's **hosting platform for models and datasets**. Upload a model you trained or a dataset you prepared, add a description, and share it with your team or the whole world. You can also search the hub for other people's work and download it directly.
 
-## Current product information architecture
+You do not need to know anything about servers or storage. A few clicks on the page, or one copied command, moves anything from a few hundred MB to tens of GB.
 
-Based on the front-end implementation, the main Moha entrances are:
+:::tip Think of Moha as a folder
+A **repository** is a folder. Every time it changes, the platform saves a snapshot of that folder (called a **version**).
+Moha keeps the whole history, so you can always go back to an earlier state.
+:::
 
-| Module | Purpose | Typical entry |
-| --- | --- | --- |
-| Home page and personal workbench | View recommended resources, announcements, access tokens, resources I created and resources I liked | `/moha/home` |
-| Model repository | Browse and maintain model resources | `/moha/models` |
-| Datasets | Browse and maintain dataset resources | `/moha/datasets` |
-| Image repository | Manage image resources | `/moha/images` |
-| Space workspace | Browse and deploy interactive application resources | `/moha/spaces` |
-| Organization space | Browse the resources of an organization from a team perspective | `/moha/organizations/:organization` |
-| Collaboration | View content, files, freezes, discussion and settings | `/moha/repository` |
+## Learn these words first
 
-## Typical workflow
+| Term | What it means |
+| --- | --- |
+| Repository | A folder that holds a model or a dataset, named like `ai-lab/qwen2-7b` |
+| Version | One saved state of that folder; you can switch back to it at any time |
+| Card | The detail page introduction for a repository, so others know what it is and how to use it |
+| Git LFS | An extension of Git that moves multi-gigabyte files, which plain Git cannot handle |
+| Access token | A pass that replaces your password; the command line and SDK use it to prove who you are |
 
-1. Sign in and open the Moha home page to review recommended resources and platform announcements.
-2. Enter a personal or organization view and locate the model, dataset, image or Space you want to manage.
-3. Create a new repository and fill in the alias, description, visibility and member permissions.
-4. Maintain files, start discussions, update the README or configure members in the repository details.
-5. Space resources can be deployed and linked to Rune for delivery.
+## What you can do in Moha
+
+| I want to... | Go to |
+| --- | --- |
+| Find a model someone else built | Top navigation **Models** |
+| Find a dataset someone else prepared | Top navigation **Datasets** |
+| See what I have uploaded | Left sidebar **Created by Me** |
+| Upload local files | The **File** tab of a repository, or the command line / SDK |
+| Download a model | **Download Models** at the top right of a model detail page |
+
+## Before you start
+
+- Sign in with your platform account so you can see your own and your private resources.
+- To reach a private model or dataset, create an **access token** first, see [Access Tokens](/moha/quickstart/token).
+- To transfer files with the command line or SDK, install Git, Git LFS and the SDK on your machine first, see [Upload Models](/moha/models/upload).
 
 ## Recommended reading
 
-- [Quickstart](/moha/quickstart)
-- [Home page and personal workbench](/moha/home)
+- [Quickstart](/moha/quickstart/guide)
+- [Access Tokens](/moha/quickstart/token)
 - [Resources created by me](/moha/home/created-by-me)
-- [Liked by me](/moha/home/liked-by-me)
-- [Model repository](/moha/models)
+- [My Favorites](/moha/home/liked-by-me)
+- [Models](/moha/models)
 - [Datasets](/moha/datasets)
-- [Image repository](/moha/images)
-- [Space workspace](/moha/spaces)
+- [Images](/moha/images)
+- [Spaces](/moha/spaces)
 - [Repository detail page structure](/moha/repository/detail)
-- [Freezes](/moha/repository/freezes)
+- [Snapshots](/moha/repository/freezes)

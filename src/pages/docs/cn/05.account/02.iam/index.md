@@ -1,36 +1,47 @@
 ---
 title: 个人中心
 updated: '2026-09-12'
-description: 用户中心的 Tab 结构与各页说明。
+description: 个人设置里有哪些页签、每项用来做什么，以及去哪一篇看详细步骤。
 tags:
   - account
   - iam
 ---
 
-## 概述
+# 个人中心
 
-个人中心（用户中心）集中管理当前账号的资料、凭据与界面偏好。页面由顶部一排 Tab 组织，路由前缀为 `/iam/account`。
+个人中心是管理「你自己」的地方：头像昵称、密码、邮箱手机号、访问密钥、二次验证和界面外观，
+都在这里改。它和租户管理不同——这里的每一项都只影响你自己，不会动到同事。
 
-## 进入路径
+:::tip 类比
+租户管理像公司行政，改的是整家公司的信息；个人中心像你的工牌和办公桌，只调你一个人的东西。
+:::
 
-头像菜单 → 个人设置 → `/iam/account/general`
+## 怎么进入
 
-## Tab 一览
+1. 点击右上角头像。
+2. 在弹出的菜单里点击 **个人设置**。
+3. 进入后页面顶部是一排页签，点击页签名即可切换。
 
-| Tab | 路由 | 说明 |
-|-----|------|------|
-| [基本信息](/account/iam/profile) | `/iam/account/general` | 头像、昵称；用户名为只读 |
-| [密码](/account/iam/security) | `/iam/account/change-password` | 通过旧密码修改新密码 |
-| 邮箱 | `/iam/account/change-email` | 新邮箱 + 邮箱验证码 |
-| 手机号码 | `/iam/account/change-mobile` | 新手机号 + 验证码 |
-| [API Key](/account/iam/api-key) | `/iam/account/api-key` | AccessKey / SecretKey |
-| [SSH 密钥](/account/iam/ssh-key) | `/iam/account/ssh-key` | SSH 公钥管理 |
-| [多因素认证](/account/auth/mfa) | `/iam/account/mfa` | 多因素认证绑定 |
-| [主题](/account/iam/theme) | `/iam/account/theme` | 外观偏好，自动保存 |
+## 个人设置里有什么
 
-> ⚠️ 注意: 代码中**没有**名为「安全设置」的独立 Tab。安全相关功能分散在「密码 / 邮箱 / 手机号码 / 多因素认证」四个 Tab 中；[安全设置](/account/iam/security) 文档是这几项的集合说明。
+| 页签 | 用来做什么 | 详细步骤 |
+| --- | --- | --- |
+| 基本信息 | 改头像和昵称，用户名只能看不能改 | [个人信息](/account/iam/profile) |
+| 密码 | 用旧密码换一个新密码 | [安全设置](/account/iam/security) |
+| 邮箱 | 换绑邮箱，需要邮箱验证码 | [安全设置](/account/iam/security) |
+| 手机号码 | 换绑手机号，需要短信验证码 | [安全设置](/account/iam/security) |
+| API Key | 生成给程序调接口用的访问密钥 | [API 密钥](/account/iam/api-key) |
+| SSH 密钥 | 添加公钥，用于免密连接 | [SSH 密钥](/account/iam/ssh-key) |
+| 多因素认证 | 用手机认证器给账号再加一道锁 | [多因素认证](/account/auth/mfa) |
+| 主题 | 换亮色 / 暗色、字体和主题色 | [主题设置](/account/iam/theme) |
 
-## 相关说明
+:::info 租户管理不在这一排页签里
+查看租户信息和成员管理的入口在头像菜单里的 **租户** 项，点开才是租户管理页，
+它不属于个人设置的页签。用法见 [租户管理](/account/iam/tenant)。
+:::
 
-- 租户管理不在个人中心的 Tab 中，入口在头像菜单的租户项（详见 [租户管理](/account/iam/tenant)）
-- 各 Tab 切换时会保留 URL 上的 `provider` 参数
+## 相关
+
+- [账号与权限总览](/account)
+- [角色与权限](/account/auth/roles)
+- [术语表](/guide/glossary)

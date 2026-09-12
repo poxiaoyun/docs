@@ -1,18 +1,25 @@
 ---
 title: '参考文档'
 updated: '2026-09-12'
-description: 'API 概览、权限设计、构建与环境、常见问题。'
+description: 接口怎么调、权限怎么判断、本地怎么跑起来、出错怎么办，都在这四篇里。
 tags:
   - reference
 ---
 
-## 概述
+# 参考文档
 
-本章节汇集平台的技术参考资料：后端 API 的路径划分与鉴权方式、前端 RBAC 权限模型、构建与部署环境，以及按模块整理的常见问题。
+这里放的是操作性资料，不需要从头读，按需要查。四篇分别解决一类问题：
 
-## 章节导航
+| 页面 | 解决什么问题 | 谁需要 |
+| --- | --- | --- |
+| [API 概览](/reference/api-overview) | 平台有哪几组接口、分别给谁用、怎么认证、从哪拿文档 | 要用程序调用模型的开发者 |
+| [权限说明](/reference/permissions) | 三种角色分别能做什么、按钮为什么不见了、怎么申请权限 | 所有用户，尤其是管理员 |
+| [构建与环境](/reference/build-and-env) | 本地要把控制台跑起来需要装什么、有哪些环境变量、改了会怎样 | 部署和维护控制台的人 |
+| [常见问题](/reference/faq) | 按主题分组的「现象 → 原因 → 怎么办」 | 遇到问题时的第一站 |
 
-- [API 概览](/reference/api-overview) — 管理面 `/api` 与数据面 `/airouter-data` 两条链路、鉴权方式与典型端点
-- [权限设计](/reference/permissions) — 权限表达式 `resource:action`、角色推导规则与作用域模型
-- [构建与环境](/reference/build-and-env) — 双构建产物、环境变量、本地代理与容器化部署
-- [常见问题](/reference/faq) — 按模块分类的 FAQ
+## 建议阅读顺序
+
+1. 只是想知道「按钮为什么没有」→ 直接看[权限说明](/reference/permissions)。
+2. 要用程序调用模型 → 先看 [API 概览](/reference/api-overview)，再看 [API 密钥](/rune/chatapp/token)。
+3. 要把控制台部署到自己的环境 → 看[构建与环境](/reference/build-and-env)。
+4. 遇到报错 → 看[常见问题](/reference/faq)；那里没有的，在[术语表](/guide/glossary)里把名词搞懂再回头看。

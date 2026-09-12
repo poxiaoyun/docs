@@ -1,97 +1,129 @@
 ---
 title: Models
 updated: '2026-09-12'
-description: 'Model repository list columns at the BOSS level, type-specific columns, and visibility/recommendation management.'
+description: How a platform administrator views, unlists, recommends, edits and deletes models across the whole Moha Hub.
 ---
 
-## Overview
+# Models
 
-BOSS-level model repository management provides **platform-level** global management of model repositories. Unlike the Console side, it is aimed at system administrators who can view, review, and manage repositories created by **all tenants / users / organizations** (including private models).
+The Models page lists the model repositories uploaded by users across the **whole platform**, including private models set to Private. Here you can see which models exist, how much space they take and how many times they have been downloaded, and also unlist non-compliant models or delete them outright.
 
-## Access Path
+:::tip How a model relates to the model library
 
-BOSS Console → Data Repository → **Models**
+A "model" is a packaged set of model files, usually containing many files and a version history. In the platform a model is a **repository**, like a folder in a cloud drive that you can keep committing new versions to.
 
-Frontend route: `/moha/models`
+:::
 
----
+## Before you start
 
-## List and Tabs
+- You need the **System Administrator** role.
+- In the left sidebar click **Asset Management** → **Models**.
 
-Models, Datasets, Image Registry, and Spaces share the same "Data Management" list component (`data-managers`), distinguished by the `type` in the URL:
+## A few terms first
 
-| type | Page |
+| Term | Plain explanation |
 | --- | --- |
-| `models` | Models |
-| `datasets` | Datasets |
-| `images` | Image Registry |
-| `spaces` | Spaces |
+| Repository | A collection of model files with a version history |
+| Organization | The team account this model belongs to |
+| Visibility | Who can see this model |
+| Recommendation Index | The score an administrator gives the model, shown on the user side |
+| Encryption | An encryption mark the platform puts on this model |
+| Mirroring | This model was synced from an external platform and the sync has not finished |
 
-### Statistics Cards Above the List
+Visibility has three values, which decide who can see and who can push:
 
-Cards above the list are five: total resources (the helper text shows the current page's total repository storage), public count, **encrypted or private count** (encrypted for `models` / `datasets`, private for the other types), downloads, and popular resource count.
-
-### Columns
-
-The columns differ by `type`. First, the columns shared by models and datasets:
-
-| Column | Field Path | Description |
+| Shown as | Who can see and download | Who can push new versions |
 | --- | --- | --- |
-| Alias / Name | `name` / `alias` | The name column shows `alias || name`; includes a description tooltip; encrypted models show a 🔒 icon; mirror origin (`hidden-from-index = true`) shows a "Mirroring..." tag |
-| Organization | `organization` | Organization avatar + name |
-| Visibility | `visibility` | Public / private / tenant-only tag; private adds the creator |
-| Repository Storage | `repositoryStorageSize` | Shown only when the repository stats `status = ready`, otherwise `-` |
-| Downloads | `annotations.downloads` | Formatted number |
-| Tasks | `metadata.tasks` | Collapsible tag group |
-| Tags | `metadata.tags` | Collapsible tag group |
-| Recommendation Score | `annotations.recommendation-score` | Recommendation status |
-| Updated At | `modified` | Time |
+| Public | Anyone, including visitors who are not signed in | Only members of the owning organization or repository administrators |
+| Tenant Only | Only members of the owning organization | Members of the owning organization |
+| Private | Only the creator | Only the creator |
 
-> ⚠️ Note: The list has **no "license" column**.
+## What is on the list
 
-### Type-Specific Columns
+Above the list are 5 statistics cards. Except for "Total Models", the other cards **count only the models on the current page**, and the numbers change when you turn the page.
 
-| type | Exclusive Columns |
+| Card | Meaning |
 | --- | --- |
-| `spaces` | Run status (`spaceMetadata.status.phase`), domain (`metadata.domain`), scene (`metadata.scene`) |
-| `images` | Category (`metadata.category`), accelerate (`metadata.accelerate`), arch (`metadata.arch`), and **no** recommendation-score column |
-| `models` / `datasets` | Tasks, tags, recommendation score |
+| Total Models | The number of models on the whole platform; the subtitle shows the total capacity of the current page's models |
+| Public Models | How many models on the current page have visibility Public |
+| Encrypted Models | How many models on the current page carry the encryption mark |
+| Total Downloads | The combined download count of all models on the current page |
+| Hot Models | How many models on the current page have any downloads |
 
-### Filtering
+Each row of the list shows:
 
-- **Name search**, **organization filter**, **visibility filter**.
-- **Advanced filter**: filter by metadata facets (task category, tags, etc.); applied conditions are shown as chips.
+| Column | Meaning |
+| --- | --- |
+| Alias / Name | The model name; when there is an info icon next to it, hover to see the description |
+| Organization | The organization the model belongs to |
+| Visibility | Public / Tenant Only / Private; Private also shows the creator after it |
+| Used Capacity | The space the repository already occupies; shows `-` until the statistics finish |
+| Download Count | The cumulative downloads |
+| Task | The technical tasks the model can do, collapsed when there are several |
+| Tags | The model's custom tags |
+| Recommendation Index | The score set by an administrator; hover to see the recommendation reason |
+| Updated At | The time of the most recent change |
 
----
+## Find the model you want to work on
 
-## Management Operations
+1. Type the model's name or alias into the search box; the search runs as you type.
+2. When needed, use the **Organization**, **Visibility** and **Task** drop-downs to filter.
+3. Click **Advanced search** to the right of the search box; in the panel you can filter by **Industry / business domain**, **Use cases**, **Model precision**, **Hardware backends**, **Accelerators**, and **Created from / Created to**, then click **Apply filters**.
+4. Filters that are already in effect are shown as small chips; click the cross on a chip to remove it alone, or go back to the **Advanced search** panel and click **Clear advanced filters** to remove them all.
 
-The actions column contains:
+## Unlist a model (change visibility)
 
-| Action | Description | Applicable Types |
+The platform has no separate "approve / reject" button. For a non-compliant model or one that should not be public, an administrator takes it off the user side by changing its visibility.
+
+1. On the target model's row, click the **⋯** button on the far right (the actions menu).
+2. Click **Update Visibility**.
+3. In the **Visibility** drop-down choose the target value: **Public**, **Tenant Only** or **Private**.
+4. Click **Confirm**.
+
+Confirming the result: the visibility tag on that row changes immediately; once it is Tenant Only or Private, ordinary users can no longer see or search for the model.
+
+## Set a recommendation
+
+1. On the target model's row, click the **⋯** button on the far right.
+2. Click **Recommendation**.
+3. Fill in the **Recommendation Index**, an integer from 0 to 100.
+4. Write the recommendation note in **Recommendation Reason**; rich-text editing is supported.
+5. Click **Confirm**.
+
+Confirming the result: the Recommendation Index column shows the score, and hovering over it pops up the recommendation reason.
+
+## Edit model information
+
+1. Click the **⋯** button on the far right → **Edit**.
+2. The page has three cards, **Model**, **Metadata** and **Visibility**, which can be collapsed and expanded:
+   - **Name** cannot be changed; its input box is greyed out.
+   - You can change the **Description** and the metadata (task, tags, and so on).
+   - You can switch Private / Tenant Only / Public under **Visibility**.
+3. Click **Confirm** when done and you return automatically to the Models list.
+
+## Delete a model
+
+1. Click the **⋯** button on the far right → **Delete**; you can also tick several rows first and use the batch delete above the list.
+2. The confirmation dialog shows "Delete model xxx?".
+3. Type the model's name as prompted; only then does **Confirm** become clickable.
+4. Click **Confirm**.
+
+:::warning Deleted means gone
+
+Deletion permanently removes this model repository and every file and historical version inside it, and **it cannot be recovered**. Make sure you really no longer need it, or have backed it up elsewhere first.
+
+:::
+
+## Common questions
+
+| Symptom | Likely cause | What to do |
 | --- | --- | --- |
-| Visibility | Opens the visibility dialog to toggle public / private | All |
-| Recommend | Opens the recommendation dialog to configure the score and screenshot | All except `images` |
-| Edit | Opens the edit page | All |
-| Delete | With a confirmation dialog; batch supported | All |
+| Used Capacity keeps showing `-` | The platform is still measuring this repository | Refresh the page and look again later |
+| There is a "Mirroring..." tag next to the name | This model came from an external platform and the sync has not finished | Check the sync status on [Mirror](/boss/moha-admin/mirrors) |
+| There is a lock icon next to the name | This model carries the encryption mark | This is a normal state, not an error |
 
-> ⚠️ Note: Models / datasets have **no runtime operations such as "Restart", "Stop", or "View Logs"**; those are not provided in the data management list.
+## Related
 
----
-
-## Differences from the Console Moha View
-
-| Dimension | BOSS Model Management | Console Model Management |
-| --- | --- | --- |
-| Data Scope | All platform models (including private) | Only models the current user / organization can access |
-| Visibility Management | Can modify any model | Can only manage models created by oneself |
-| Recommendation Management | Can set recommendation score and screenshot | Not available |
-| Deletion Permission | Can delete any model repository | Can only delete one's own |
-
----
-
-## Permission Requirements
-
-Requires the **System Administrator** role. Regular users should manage their own model repositories through Console → Moha.
-
-Related pages: [Dataset Management](./datasets), [Image Registry Management](./images), [Space Management](./spaces).
+- [Datasets](/boss/moha-admin/datasets)
+- [Mirror](/boss/moha-admin/mirrors)
+- [Audit Logs](/boss/moha-admin/audit)

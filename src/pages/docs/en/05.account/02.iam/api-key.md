@@ -1,63 +1,68 @@
 ---
 title: 'IAM API Key (AK/SK)'
 updated: '2026-09-12'
-description: Generate / regenerate AccessKey and SecretKey; display only, no delete.
+description: What an API key is for, how to generate one, why it is shown only once, and what to do if it leaks.
 ---
 
-## Overview
+# IAM API Key (AK/SK)
 
-IAM API Key is an account-level API credential composed of **AccessKey (AK)** and **SecretKey (SK)**. The Personal Center provides generate and regenerate capabilities.
+An API key is a pair of account credentials meant for **programs**, made up of an AccessKey (AK for short) and a SecretKey (SK for short). When you want a script, an external tool, or your own application to call the platform API on your behalf, this pair proves who you are instead of a person typing an account and password. This page walks you through generating it and explains why it appears only once.
 
-- Route: `/iam/account/api-key`
-- View: `src/pages/iam/account/api-key.tsx`
+:::tip A comparison
+An account and password is the key a person uses; an API key is the access card a machine uses. A machine cannot type a password, so it comes and goes with this card.
+:::
 
-## Navigation
+## Before you start
 
-Top-right avatar → Settings → top Tab "API Key"
+- This is a setting for your own account, so you can use it as soon as you sign in; no extra tenant role is needed.
+- Decide first which program will use the pair, because you will need to fill it in over there after generating it.
 
-## Endpoints
+## Two words to understand first
 
-| Action | Endpoint |
-|--------|----------|
-| List keys | `GET /api/iam/current/apikeys` |
-| Generate key | `POST /api/iam/current/apikeys` (body `{}`) |
+| Term | Plain meaning |
+| --- | --- |
+| AccessKey | The "username" of the pair; it may appear in requests and stays visible in the page list |
+| SecretKey | The "password" of the pair; it appears only at the moment you generate it and is never shown again |
 
-## Page Description
+## Generating a key
 
-The page is a **single-key view**:
+1. Click your avatar in the top-right corner → **Settings**.
+2. Click the **API Key** tab at the top.
+3. When there is no key yet the middle of the page is empty; when a key exists, the key name and the AccessKey are listed here.
+4. Click the **Generate** button at the bottom of the page. If a key already exists, this button reads **Regenerate**.
+5. A green "Generated successfully" alert appears at the top, listing this run's **AccessKey** and **SecretKey**, each with a copy button.
 
-| Area | Description |
-|------|-------------|
-| Empty state | Shown when no key exists |
-| Key area | Shows the key `name` and the full `accessKey` with a copy button |
-| Bottom button | "Generate" when empty, "Regenerate" when a key exists |
+:::warning The SecretKey is shown only this once
+The success alert says plainly: "Please remember the following Access Key and Secret Key. The Secret Key will only appear this one time!" Once you close the alert, that SecretKey is gone from the page for good, so copy it right away and save it in your password manager.
+:::
 
-> ⚠️ Note: The list shows only `name` and `accessKey`. There is **no** "Created At" column, **no** delete button, and **no** expiry / last-used fields. When a key exists, the button label becomes "Regenerate" (`api-key.tsx:169`).
+## Confirming the result
 
-## Generating a Key
+Two things happen at the same time after a successful generation:
 
-1. Click "Generate" / "Regenerate" at the bottom
-2. The front-end calls `POST /api/iam/current/apikeys`
-3. A success alert appears with:
-   - `accessKey` + copy button
-   - `secretKey` + copy button
+- A green **Generated successfully** alert appears at the top and shows the AccessKey and SecretKey.
+- The AccessKey in the list below updates to the value from this run.
 
-> ⚠️ Note: The SecretKey only appears in the success alert (the copy says it is shown once). It cannot be viewed again from the list.
+Back on the **API Key** tab, the list shows only the key name and the AccessKey; the SecretKey appeared only in that success alert.
 
-## Usage
+## If the key is lost or leaked
 
-The generated AK/SK is used for API authentication. The header names below are illustrative only — actual field names follow the backend contract:
+| Situation | What to do |
+| --- | --- |
+| You forgot to save the SecretKey | The page cannot show it again, so click **Regenerate** for a new pair |
+| You suspect someone has seen the key | Click **Regenerate** immediately and update every program that uses the old key |
+| You want to void the key completely | The page has no delete button; use **Regenerate** to replace it with a new pair |
 
-```bash
-curl -X GET https://your-domain/api/resource \
-  -H "X-Access-Key: YOUR_ACCESS_KEY" \
-  -H "X-Secret-Key: YOUR_SECRET_KEY"
-```
+:::warning Update your programs after regenerating
+Regenerating gives you a brand-new AccessKey and SecretKey. Change every script and application configuration that used the old key to the new values, or those programs may fail because they no longer hold valid credentials.
+:::
 
-> ⚠️ Note: The header names and signing/validation are not represented in the front-end code covered here; they are a backend contract and unconfirmed.
+:::warning Never commit a key to Git
+Once an AccessKey and SecretKey are written into code and committed to a Git repository, anyone who can see the repository effectively holds your credentials. The right approach is to keep keys in environment variables or a local configuration file, and to make sure those files are never committed.
+:::
 
-## Notes
+## Related
 
-- Generating immediately refreshes the list and shows the new AK/SK
-- The page provides no way to delete a key
-- SecretKey is only shown at generation time
+- [Security Settings](/account/iam/security)
+- [SSH Key Management](/account/iam/ssh-key)
+- [API overview](/reference/api-overview)

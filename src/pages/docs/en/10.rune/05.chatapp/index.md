@@ -1,99 +1,83 @@
 ---
 title: 'ChatApp'
 updated: '2026-09-12'
-description: 'Top navigation, core concepts and request path of ChatApp.'
+description: 'What ChatApp is, what each of its five top entries does, and how to finish your first conversation.'
 ---
 
-## Introduction
+# ChatApp
 
-ChatApp is the **LLM Playground** built into Rune Console. It lets developers and business users pick a model and an API key, tune inference parameters, chat with streaming output, compare two models side by side, and integrate the same capability into external applications through an API key.
+ChatApp is the **web-based chat tool** built into the platform. Open it, pick a model, type a sentence, and watch the model write its answer one character at a time — no code, no software to install, and no need to understand how the model is deployed.
 
-All conversation requests go through the **LLM Gateway (AI Router) data plane**, which exposes an OpenAI-compatible Chat Completions endpoint:
+It is a **sibling subsystem** of the AI Platform (Rune), not a part of it. The AI Platform manages the foundations — compute, clusters, instances and storage; ChatApp only does two things: chat with models, and connect models to external programs. The models themselves are configured by the platform administrator in the gateway, and you simply pick a ready-made one inside ChatApp.
 
-```text
-POST {origin}/airouter-data/v1/chat/completions
-```
+:::tip An analogy
+The AI Platform is like an office building: utilities, rooms and access control all belong to it. ChatApp is like a service counter inside the building — walk in, take a seat (a model), and ask your question.
+:::
 
-The front-end route prefix is `/chatapp`. Switch to **ChatApp** from the top navigation bar to enter.
+## How to get into ChatApp
 
-## Top navigation (5 items)
+1. Look at the **top-left corner** and find the button showing "current product name + dropdown arrow".
+2. Click it to open a menu titled **Products**.
+3. In the menu, choose the conversation app (named **Playground** by default).
+4. You land on the **Models** page by default.
 
-ChatApp has exactly 5 top-level navigation items (`src/pages/chatapp/layout.tsx:24-50`):
+## What the five top entries do
 
-| Item | Route | Description |
-|------|-------|-------------|
-| **Marketplace** | `/chatapp/marketplace` | Browse the models visible to you, inspect model cards, channels and prices, and find the API docs and a "Go to playground" entry |
-| **Experience** | `/chatapp/experience` | Single-model streaming chat with a model list, message list, parameter popover and model info panel |
-| **Comparison** | `/chatapp/contrast` | Two columns that each select their own model and parameters; one message is sent to both sides |
-| **My Tokens** | `/chatapp/tokens` | Create and manage ChatApp API access tokens, with RPM/TPM limits and an IP allowlist |
-| **Usage** | `/chatapp/analysis` | Dashboard for request volume, tokens, cost and success rate |
+ChatApp has no left-hand menu; everything lives in **the single row at the top of the page**:
 
-> ⚠️ **Note**: ChatApp has **no standalone "Debug" page** and no `/chatapp/compare` route. "Parameter debugging" is the parameter popover at the top of the Experience page (`ChatParamsPopover`); the comparison page is served at `/chatapp/contrast` and the token list at `/chatapp/tokens`.
+| Entry | What you do here |
+| --- | --- |
+| **Models** | Pick models. See which models are available, each model's context length and price, copy model IDs, and view call samples |
+| **Playground** | Chat with a single model. Choose a model, send messages, attach images, turn deep thinking on, and adjust parameters |
+| **Comparison** | Ask two models the same question at once and compare the results side by side |
+| **API Keys** | Create and manage the keys used by programs, and view the log of each call |
+| **Usage analysis** | Your usage dashboard: call count, token consumption, cost and success rate |
 
-## Core concepts
+## Before you start
 
-### OpenAI-compatible API
+- Any signed-in account works; ChatApp applies no extra role restrictions.
+- Your account needs **at least one API key**. Without one, the **Playground** page shows "No API Key Found" and you can click **Create API Key** in that message (see [API Keys](./token.md)).
+- Your account needs **at least one available model**. If you see none, the administrator has not opened a model channel for you yet.
 
-Every conversation request uses the OpenAI-compatible Chat Completions endpoint. The request body matches OpenAI and supports both streaming (`stream: true`) and non-streaming calls. Browser requests carry these headers:
+## Complete your first conversation
 
-| Header | Description |
-|--------|-------------|
-| `Authorization: Bearer {token}` | ChatApp token (created under My Tokens) |
-| `X-Tenant` | Tenant that owns the model (non-ASCII values are URL-encoded) |
-| `X-Workspace` | Workspace that owns the model (same encoding) |
-| `X-Channel` | Channel that serves the model (same encoding) |
+1. In the top-left corner click **Products**, choose the conversation app, and land on **Models**.
+2. In **Models**, pick a model (the larger the Context on the card, the more it can remember), and click the card to open the detail panel on the right.
+3. In the detail panel, click **Try model**.
+4. The page jumps to **Playground** with that model already selected.
+5. Type your question in the input box at the bottom and press **Enter**.
+6. The answer appears token by token. To see how it reasoned, expand **Show thoughts**.
+7. To change topic, click **Clear conversation** in the top-right corner; to see what it cost, switch to **Usage analysis**.
 
-> 💡 **Tip**: The console itself authenticates with the `user_session` cookie (`src/lib/axios.ts:21-28` does **not** inject `Authorization`); the Bearer + `X-*` header set above belongs to the **conversation data plane**.
+## Confirm it worked
 
-### Model visibility
+The assistant bubble shows an answer, and a row of token usage numbers appears under the reply — that means the conversation succeeded.
 
-Models are grouped by `visibility`, shown in the UI as "Public / Tenant / Private":
+## Terms to learn first
 
-| Visibility | UI label | Description |
-|------------|----------|-------------|
-| `public` | Public | Platform-wide model |
-| `tenant` | Tenant | Visible inside the current tenant |
-| `private` | Private | Visible to the current workspace/owner |
+| Term | Plain explanation |
+| --- | --- |
+| Model | The "brain" that answers questions. Models differ in what they are good at, their price, and how much they can remember |
+| Channel | The same model may be served from several sources, with different prices and availability |
+| Token | The smallest unit models are billed in — think of it roughly as "characters". Cost is calculated per token |
+| Context length | The most content a model can remember within one conversation; beyond that it forgets the earliest part |
+| System prompt | The rules or persona you give the model before a conversation, for example "You are an AI assistant" |
+| Deep Thinking | Lets the model work through its reasoning before answering. More reliable answers, but more tokens |
+| API key | A credential for programs, so external programs can call these models too |
 
-The model list is a tree ordered **visibility → channel → model** (`model-list-panel.tsx:59-110`), not a set of tabs.
+## Common issues
 
-### LLM Gateway capabilities
+| Symptom | Possible cause | What to do |
+| --- | --- | --- |
+| **Playground** shows "No API Key Found" | The account has no key yet | Click **Create API Key** in that message and create one first |
+| **Playground** shows "No Models Available" | The account has no model channel at all | Ask the platform administrator to open a model for you in the gateway |
+| Sending a message returns an error | Rate limiting, insufficient quota, content moderation and so on | Open [Playground](./experience.md) and match the error text against its common issues |
 
-Requests are routed by the LLM Gateway, which provides channel management, RPM/TPM rate limiting, content moderation and audit logging.
+## Related
 
-## Feature modules
-
-| Module | Documentation | Description |
-|--------|---------------|-------------|
-| Marketplace | [Model Marketplace](./marketplace.md) | Browse models, inspect channels and prices, copy model IDs, view API samples |
-| Experience | [Model Playground](./experience.md) | Streaming chat, deep thinking, token usage display |
-| Parameters | [Parameter Tuning](./debug.md) | The Experience page parameter popover: System Prompt / Top P / Temperature / Max Tokens / Stop |
-| Comparison | [Model Comparison](./compare.md) | Two independently configured columns fed by one message |
-| Tokens | [Token Management](./token.md) | Create/edit/delete tokens, RPM/TPM limits and IP allowlist |
-| Usage | [Usage Statistics](./usage-statistics.md) | Usage dashboard, default today, auto-refresh every 30 seconds |
-
-## Request path
-
-```mermaid
-sequenceDiagram
- participant User as Browser (ChatApp)
- participant Gateway as LLM Gateway
- participant Model as Upstream model service
-
- User->>Gateway: POST /airouter-data/v1/chat/completions<br/>Authorization: Bearer {token}<br/>X-Tenant / X-Workspace / X-Channel
- Gateway->>Gateway: Auth & rate-limit check
- Gateway->>Model: Route to the target channel
- Model-->>Gateway: SSE: data: {...delta...}
- Gateway-->>User: SSE: data: {...delta...} / data: [DONE]
-```
-
-## Quick start
-
-1. Switch to **ChatApp** in the top navigation and open **Marketplace** to see which models and channels are available
-2. Open **Experience**, pick a model from the left-hand list, and choose a token in the token/API key selector
-3. To tune parameters, click the **parameters** icon at the top to open the popover
-4. Type your question and press **Enter** to send; watch the streaming reply and the token usage
-5. To compare side by side, open **Comparison** and chat with two columns at once
-6. To call the model from your own application, open **My Tokens** and create an access key
-
-> ⚠️ **Note**: If the model list is empty, no model channel is available for the current tenant/workspace. Channels are maintained by the platform administrator in **BOSS → Gateway → Model List / Model Metadata**.
+- [Models](./marketplace.md)
+- [Playground](./experience.md)
+- [Comparison](./compare.md)
+- [API Keys](./token.md)
+- [Usage analysis](./usage-statistics.md)
+- [Parameter Configuration](./debug.md)

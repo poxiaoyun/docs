@@ -1,106 +1,97 @@
 ---
 title: 'License'
 updated: '2026-09-12'
-description: 'View cluster fingerprint and product entitlement, update the license and drill into license records.'
+description: 'Check the license status and expiry date, learn what an expired license limits, and paste a new license to renew.'
 tags:
   - boss
   - settings
   - license
 ---
 
-## Feature overview
+# License
 
-The license page shows the cluster fingerprint, license status and product quota status, and allows pasting a new license to update it. Each feature in the product quotas links to a resource authorization detail page.
+A license is the **product entitlement credential** for the platform: it decides **which features this platform may use** and **how much of each resource it may use** (for example the number of clusters, nodes and accelerators).
 
-This page corresponds to **Platform management → License** in the Boss console (menu label from `navbar.license`).
+You can think of it as an **authorisation certificate with an expiry date** — it states the licensed products and their quantity limits, and once it expires or a limit is exceeded the corresponding features are restricted.
 
-## Access path
+This page shows the current entitlement status and expiry date, and lets you paste a new certificate to renew. It is under **System Settings → License** in the left-hand menu (the page heading is **License Management**).
 
-Boss console → Platform management → **License**
+## Before you start
 
-| Action | Console route |
-|--------|--------------|
-| License home | `/settings/license` |
-| Resource authorization detail | `/settings/license/records?product=...&feature=...` (or `&service=...`) |
+- Your account must be a **system administrator**.
+- Before renewing, get the **new license string** from whoever issued the license; if the cluster changed, they will also need the **cluster fingerprint**.
 
-> ⚠️ Note: these are the real console routes. The docs-site page URL is `/boss/settings/license`.
+## Page structure
 
-## Cluster fingerprint
+| Section | What it is for |
+| --- | --- |
+| Cluster Fingerprint | Shows and copies the unique identifier of this cluster, which you give to the issuer so the license matches |
+| License Status | Whether the entitlement is healthy, when it expires, which company it was issued to, and so on |
+| Product Quota Status | Usage and limits per feature; click a feature name to see its resource details |
 
-The fingerprint returned by `getClusterSerial` (`fingerprint`) is shown in a monospace box with a copy button.
+## Where to see the expiry date
 
-> 💡 Tip: the page says "provide this fingerprint to the license issuer" — a license must match the cluster.
+The **License Status** card shows the following:
 
-## License status
+| Item | Meaning |
+| --- | --- |
+| Status | Shown as a label: Active, Warning, Checking, Invalid, Check Failed |
+| Serial Number | The unique number of the license |
+| Company | Which company the license was issued to |
+| Email | The contact email on the license |
+| Edition | The licensed product edition |
+| Issued At | The date the certificate was issued |
+| **Expires** | **The certificate expiry date — this is what you watch for renewal** |
 
-| Item | Field | Notes |
-|------|-------|-------|
-| Status indicator | `status.phase` | See the enum below |
-| Status message | `status.code` / `status.message` | Message per error code |
-| Serial | `serial` | — |
-| Company | `company` | — |
-| Email | `email` | — |
-| Edition | `edition` | — |
-| Issued at | `issueAt` | Date-time |
-| Expires | `expires` | Date-time |
+If this shows "No license configured", the platform has no license imported yet and you need to follow the update steps below.
 
-When no license is configured (`serial` empty), only a "no license configured" message is shown.
+## What an expired license limits
 
-### Status enum (`LicensePhase`)
+Once the license expires, becomes invalid, no longer matches the current cluster, or usage exceeds the licensed limit, **some features are restricted**. Typical symptoms:
 
-| Id | Label |
-|----|-------|
-| `Active` | Normal |
-| `Warning` | Needs attention |
-| `Pending` | Checking |
-| `Invalid` | Invalid |
-| `Error` | Check failed |
+- Creating or expanding resources (clusters, nodes, accelerators and so on) is restricted.
+- Products or features that are not part of the entitlement become unavailable.
+- The page shows a message such as "The product license validation failed. Some features may be unavailable.".
 
-Codes cover: valid, expiring, not installed, not ready, read failed, invalid, fingerprint mismatch, expired, usage check failed, product not entitled, feature not entitled, limit exceeded.
-
-## Product quota status
-
-When the license includes product statuses, quotas are grouped per product:
-
-| Column | Field | Notes |
-|--------|-------|-------|
-| Feature | `feature.name` | Clickable link to the resource authorization detail |
-| Usage | `feature.used` | Used / limit |
-| Status | `feature.phase` | Same enum as license status |
-
-Built-in feature labels: `clusters`, `nodes`, `accelerators`.
+:::warning Renew in good time before it expires
+A license in "Warning" usually means it is **about to expire**. Contact the issuer to renew and update it before that happens, so users are not blocked from creating and expanding resources.
+:::
 
 ## Update the license
 
-Click **Update license** in the top-right corner:
+1. Click **Update License** in the top-right corner of the page.
+2. In the dialog, **paste** the new license string into the multiline field (the placeholder is "Paste the license string here").
+3. Click **Submit**.
+4. A successful submission shows "License updated successfully", the dialog closes automatically and the entitlement status on the page refreshes.
 
-1. Paste the license string into the multiline field
-2. Click **Submit**, which calls `POST /api/license/global` with `{ license }`
-3. On success the page shows "License updated", closes the dialog and refreshes the status
+Things to know:
 
-> ⚠️ Note: Submit is disabled while the field is empty, and the dialog cannot be closed during submission.
+- While the field is empty, the **Submit** button cannot be clicked.
+- The dialog **cannot be closed** while the submission is in progress, so wait for the result.
+- If something goes wrong, the error appears inside the dialog; check the license contents or contact the issuer as the message suggests.
 
-## Resource authorization detail
+## Check resource usage details
 
-Clicking a feature name (or opening a URL with `service`) opens the resource authorization detail page, which requires:
+When the license includes product quotas, a **Product Quota Status** section appears at the bottom of the page, one table per product:
 
-- `product` plus (`feature` or `service`)
+| Column | Meaning |
+| --- | --- |
+| Feature | Shown as a clickable link, for example Clusters, Nodes, Accelerators |
+| Resource Usage | Used amount / licensed limit |
+| Status | The entitlement status of that feature |
 
-Without context the page shows an empty state asking you to return to the license page and pick a quota entry.
+Clicking a feature name opens the **Licensed Resource Details** page, which lists the individual resource records. On that page you can click **Refresh License Records** to request a usage check; the result is updated in the background.
 
-Requests:
+## Common questions
 
-| Request | Method | Notes |
-|---------|--------|-------|
-| `/api/license/global` | `GET` | Read license info |
-| `/api/license/cluster-serial` | `GET` | Read the cluster fingerprint |
-| `/api/license/global` | `POST` | Update the license |
-| `/api/license/records` | `GET` | Query license records |
-| `/api/license/record-scopes` | `GET` | Query record scopes |
-| `/api/license/records:refresh` | `POST` | Request a usage check (updated in the background) |
+| What you see | Likely cause | What to do |
+| --- | --- | --- |
+| Status shows "Invalid" | The license contents are wrong or corrupted | Get a fresh license from the issuer and paste it again |
+| "Does not match this cluster" appears | The license was issued for a different cluster | Give the **Cluster Fingerprint** at the top of the page to the issuer and have it reissued |
+| Status shows usage exceeded | Used resources exceed the licensed limit | Remove resources you no longer use, or ask the issuer for a larger entitlement |
+| The Submit button cannot be clicked | The field is empty | Paste the license string first |
 
-> ⚠️ Note: an expired or invalid license restricts part of the product; the page shows "license validation failed, some features may be limited".
+## Related
 
-## Permissions
-
-Requires the **system administrator** role.
+- [AI Assistant Settings](/boss/settings/ai-assistant)
+- [System Member](/boss/settings/members)

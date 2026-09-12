@@ -41,7 +41,7 @@ export const MOHA_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         icon: 'ic-course',
         product: 'moha',
         children: [
-          { title: '模型广场介绍', path: '/moha/models/intro' },
+          { title: '模型库介绍', path: '/moha/models/intro' },
           { title: '模型的下载', path: '/moha/models/download' },
           { title: '模型的上传', path: '/moha/models/upload' },
           { title: '模型卡片', path: '/moha/models/card' },
@@ -74,13 +74,13 @@ export const MOHA_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         ],
       },
       {
-        title: 'Space 工作空间',
+        title: '空间',
         path: '/moha/spaces',
         icon: 'ic-subpaths',
         product: 'moha',
         children: [
-          { title: 'Space 工作空间', path: '/moha/spaces' },
-          { title: 'Space 列表与筛选', path: '/moha/spaces/list' },
+          { title: '空间', path: '/moha/spaces' },
+          { title: '空间列表与筛选', path: '/moha/spaces/list' },
         ],
       },
       {
@@ -93,7 +93,7 @@ export const MOHA_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
           { title: '文件浏览与版本查看', path: '/moha/repository/files' },
           { title: '讨论与协作', path: '/moha/repository/discussion' },
           { title: '仓库设置与发布', path: '/moha/repository/settings' },
-          { title: '版本冻结', path: '/moha/repository/freezes' },
+          { title: '快照', path: '/moha/repository/freezes' },
         ],
       },
       {

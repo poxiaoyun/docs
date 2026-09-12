@@ -1,105 +1,126 @@
 ---
 title: Tenant Quotas
 updated: '2026-09-12'
-description: 'Allocate cluster resource quotas to tenants and manage workspaces: list columns, quota form, and workspace form.'
+description: Hand out cluster resources to tenants and workspaces as quotas, controlling how much CPU, memory and accelerator capacity they can use.
 ---
 
-## Overview
+# Tenant Quotas
 
-Rune Tenant Resource Management extends standard tenant information with **cluster resource quota** and **workspace** management, used to control each tenant's resource allocation across clusters.
+To use the platform's compute, a tenant (think of it as a company's own account space) must first be given an allowance. This page is where you hand out that allowance: you grant a usage cap for CPU, memory and accelerators at the "cluster + resource pool + resource item" level, and then subdivide the tenant's allowance down to its workspaces.
 
-Unlike [IAM Tenant Management](/boss/iam/tenants), this page focuses on the **compute resource layer**.
+By the end of this page you can: assign resource quotas to a tenant, create a workspace, and subdivide the quota into workspaces.
 
-## Access Path
+:::tip Three terms compared
 
-BOSS Console → Tenant Resources
+- **Tenant** is a company's own account space.
+- **Workspace** is one office inside the building, shared by colleagues.
+- **Quota** is the spending cap you have for this month.
 
-Frontend route: `/rune/tenants`
+:::
 
----
+## Before you start
 
-## Tenant List
+- You need a **System Administrator** account.
+- Prerequisite: the cluster is connected to the platform and a [Resource Pool](/boss/rune-admin/resource-pools) has already been created (a quota must pick a resource pool).
 
-| Column | Field Path | Description |
-| --- | --- | --- |
-| Name | `name` | Avatar + name + tenant ID; click to open tenant details (defaults to "Quotas") |
-| Quota | `quota` | `TenantQuota` component (600px wide), showing per-cluster quota usage for each resource type |
-| Created At | `creationTimestamp` | Tenant creation time |
+## Getting there
 
-> ⚠️ Note: The list has **only these three columns**; there is no "members" column and **no actions column**. All detail operations are reached by clicking the tenant name.
+In the left sidebar, under the **AI Platform** group, click **Tenant Resource**.
 
----
+## Tenant list
 
-## Tenant Detail Subpages
-
-The sidebar actually has only **2 subpages**:
-
-| Subpage | Frontend Route |
+| Column | Meaning |
 | --- | --- |
-| Quotas | `/rune/tenants/:tenant/quotas` |
-| Workspaces | `/rune/tenants/:tenant/workspaces` |
+| Name | Avatar + tenant name + tenant ID; click to open the details, which start on **Quota** |
+| Quota | This tenant's quota usage per resource type, shown per cluster |
+| Created At | When the tenant was created |
 
-> ⚠️ Note: The "Overview" and "Flavors" navigation items are **commented out and disabled** in the code and are not currently shown.
+:::info The list has no actions column
 
----
+Every operation is done after clicking the tenant name to open the details; the list itself only has the three columns above.
 
-## Quota Management
+:::
 
-### Filtering
+## The two subpages in tenant details
 
-- **Cluster selection**: switch the target cluster (left side of the toolbar).
-- **Quota filter bar**: filter by type / vendor / model (options come from the tenant quota selector).
+After entering a tenant, there are two subpages on the left:
 
-### Columns
+| Subpage | Purpose |
+| --- | --- |
+| Quota | Assign resource allowance to this tenant |
+| Workspace | Manage the workspaces under this tenant |
 
-| Column | Field Path | Description |
+## Assign a quota to a tenant
+
+1. In the tenant details, click **Quota** on the left.
+2. On the left of the toolbar, select a **Cluster** (the quota list follows when you switch clusters).
+3. Click **Create Quota** in the top right.
+4. Fill in the form:
+
+| Form item | What to enter | Notes |
 | --- | --- | --- |
-| Type | `type` | Resource type |
-| Model | `model` | Model (combined with `vendor`) |
-| Resource Pool | `resourcePool` | Associated resource pool |
-| Quota | `quota` | Quota usage component |
+| Cluster | Choose which cluster the resources go to | Selected at creation |
+| Resource Pool | Choose the pool to draw the allowance from | **Switching the cluster clears this, so pick it again** |
+| Resource Configuration | Fill in the allowance for each resource item one by one | Similar to a flavor; enter a limit per resource type |
 
-Actions: create (top right), edit, delete.
+5. Click **Confirm** to save.
 
-### Create / Edit Quota
+:::tip You do not pick a flavor here
 
-| Field | Field Name | Description |
+A quota does not choose a ready-made flavor; instead you pick "cluster + resource pool + per-item resources". The selectable resource items are given dynamically by the platform for the current cluster and resource pool, and CPU / memory come with default values you can change directly.
+
+:::
+
+Each row in the quota list can be **Edit**ed or **Delete**d; the top of the list can also be filtered by **Type / Vendor / Model** to help you locate rows.
+
+## Create a workspace
+
+1. In the tenant details, click **Workspace** on the left.
+2. Click **Create Workspace** in the top right.
+3. Fill in the form:
+
+| Form item | What to enter | Notes |
 | --- | --- | --- |
-| Cluster | `cluster` | Select the target cluster on creation |
-| Resource Pool | `resourcePool` | Switching the cluster clears the resource pool |
-| Resource Configuration | `config[]` | Array of resource items with the same fields as a flavor: `resourceName` / `name` / `type` / `limit` / `request`, etc. |
+| Name | e.g. "Algorithm Team 1" | Required; the ID below is generated automatically and can be adjusted by hand |
+| Cluster | Choose the owning cluster | Required; **cannot be changed when editing** (a lock indicator is shown) |
+| Description | Optional | One sentence about what it is for |
 
-> ⚠️ Note: The quota form **does not select a Flavor**; instead it selects cluster + resource pool + per-item resource configuration. The selectable resource items are returned dynamically by `listClusterQuotaResources(cluster, tenant, resourcePool)`.
+4. Click **Confirm** to save.
 
-> 💡 Tip: On creation, the default values for CPU / memory come from the resource item's own `default` (then `min`), falling back to `2` and `4Gi`.
+Each row in the workspace list can:
 
----
+| Action | Meaning |
+| --- | --- |
+| Quota | Jumps to this workspace's quota page |
+| Edit | Change the name or description (the cluster cannot be changed) |
+| Delete | Deletes the workspace, with a confirmation dialog |
 
-## Workspace Management
+At the top left of the list you can filter by **Cluster**.
 
-### Columns
+## Subdivide the quota into workspaces
 
-| Column | Field Path | Description |
+After a tenant receives its total quota, you usually still need to share the allowance out among its workspaces:
+
+1. In the **Workspace** list, find the target workspace and click **Quota**.
+2. You enter the workspace details, which have two subpages: **Quota** and **Member**.
+3. On the **Quota** page, create a workspace quota the same way to split the tenant's allowance down.
+
+## Confirming the result
+
+- The **Quota** column in the tenant list shows the allowance usage per cluster.
+- The records you just created appear on the tenant details' **Quota** page.
+- The new workspace appears in the **Workspace** list with a normal status.
+
+## Common questions
+
+| Symptom | Likely cause | What to do |
 | --- | --- | --- |
-| Name | `name` | Name + description in the same column |
-| Namespace | `namespace` | Kubernetes Namespace; shows `-` when empty |
-| Status | `status` | Status component |
-| Created At | `creationTimestamp` | — |
+| The resource pool drop-down is empty | No cluster is selected in the quota form, or that cluster has no resource pool | Select a cluster first; if there is no pool, go and create a [Resource Pool](/boss/rune-admin/resource-pools) |
+| The resource pool is cleared after switching clusters | This is intentional | Pick the target resource pool again |
+| The cluster is greyed out when editing a workspace | The cluster cannot be changed after creation | This is normal |
 
-Actions: Quota (navigates to workspace quotas), Edit, Delete; the left side of the toolbar allows filtering by cluster.
+## Related
 
-### Create / Edit Workspace
-
-| Field | Field Name | Required | Description |
-| --- | --- | --- | --- |
-| Name | `name` | ✅ | Workspace name (ID auto-generated, manually adjustable) |
-| Cluster | `cluster` | ✅ | Select the owning cluster; disabled in edit mode (with a lock indicator) |
-| Description | `description` | — | Textarea |
-
-> 💡 Tip: The workspace detail page (frontend `/rune/tenants/:tenant/clusters/:cluster/workspaces/:workspace`) also has **Workspace Quotas** and **Members** subpages for subdividing tenant quota into workspaces.
-
----
-
-## Permission Requirements
-
-Requires the **System Administrator** role. You can view all tenants' resource allocations and manage quotas and workspaces.
+- [Resource Pool](/boss/rune-admin/resource-pools)
+- [Flavor](/boss/rune-admin/flavors)
+- [Cluster](/boss/rune-admin/clusters)
