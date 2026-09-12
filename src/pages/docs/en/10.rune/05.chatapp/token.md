@@ -128,4 +128,4 @@ When troubleshooting a failed call, the **Request ID** and **Result** columns ar
 - [Models](./marketplace.md)
 - [Playground](./experience.md)
 - [Usage analysis](./usage-statistics.md)
-- [Parameter Configuration](./debug.md)
+- [Parameter Settings](./debug.md)

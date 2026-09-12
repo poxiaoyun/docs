@@ -68,7 +68,7 @@ The model lists work the same as in [Playground](./experience.md): grouped by vi
 | Errors and stopping | Independent; an error on one side does not affect the other | Independent |
 | **Deep Thinking** | One shared toggle | One shared toggle |
 
-Chat parameters are opened through the **Parameter Settings** icon at the top of each column, and the two sides do not affect each other. For what each item does, see [Parameter Configuration](./debug.md).
+Chat parameters are opened through the **Parameter Settings** icon at the top of each column, and the two sides do not affect each other. For what each item does, see [Parameter Settings](./debug.md).
 
 ## Stop and clear
 
@@ -97,5 +97,5 @@ Both sides start streaming their answers, which means the comparison was sent su
 
 - [Playground](./experience.md)
 - [Models](./marketplace.md)
-- [Parameter Configuration](./debug.md)
+- [Parameter Settings](./debug.md)
 - [API Keys](./token.md)

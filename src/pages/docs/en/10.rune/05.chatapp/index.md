@@ -80,4 +80,4 @@ The assistant bubble shows an answer, and a row of token usage numbers appears u
 - [Comparison](./compare.md)
 - [API Keys](./token.md)
 - [Usage analysis](./usage-statistics.md)
-- [Parameter Configuration](./debug.md)
+- [Parameter Settings](./debug.md)

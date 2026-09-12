@@ -128,5 +128,5 @@ The page shows "Start with a question" and four ready-made prompt cards (Explain
 
 - [Models](./marketplace.md)
 - [Comparison](./compare.md)
-- [Parameter Configuration](./debug.md)
+- [Parameter Settings](./debug.md)
 - [API Keys](./token.md)

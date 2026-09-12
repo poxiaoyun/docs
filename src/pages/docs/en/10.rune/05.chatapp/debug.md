@@ -1,10 +1,10 @@
 ---
-title: 'Parameter Configuration'
+title: 'Parameter Settings'
 updated: '2026-09-12'
 description: 'Where to open the parameters, what each one controls, and which to change when the answers are not right.'
 ---
 
-# Parameter Configuration
+# Parameter Settings
 
 When a model's answers are not right — too rambling, too rigid, or cut off mid-sentence — do not rush to switch models. Changing a few parameters is often enough. This page explains where the parameters are, what each one controls, and which to change for a given symptom.
 

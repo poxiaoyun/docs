@@ -79,7 +79,7 @@ export const RUNE_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       { title: 'Comparison', path: '/rune/chatapp/compare' },
       { title: 'API Keys', path: '/rune/chatapp/token' },
       { title: 'Usage analysis', path: '/rune/chatapp/usage-statistics' },
-      { title: 'Parameter Configuration', path: '/rune/chatapp/debug' },
+      { title: 'Parameter Settings', path: '/rune/chatapp/debug' },
     ],
   },
 ];
