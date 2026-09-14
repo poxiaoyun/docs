@@ -3,7 +3,7 @@ import rehypeSlug from 'rehype-slug';
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { useParams, useLocation } from 'react-router';
+import { Navigate, useParams, useLocation } from 'react-router';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -212,6 +212,13 @@ export default function DocsViewer() {
   const isBossHomePage = productHome === 'boss';
   const isProductHomePage = isMohaHomePage || isRuneHomePage || isBossHomePage;
 
+  // 旧路径兼容：AIRouter 原本挂在 /rune/chatapp 下，老链接与外部引用继续可用。
+  const legacyRedirect = legacyPathRedirect(pathname);
+
+  if (legacyRedirect) {
+    return <Navigate to={legacyRedirect} replace />;
+  }
+
   if (loading) {
     return <LoadingScreen />;
   }
@@ -298,6 +305,20 @@ function getProductHomeType(pathname: string): 'rune' | 'moha' | 'boss' | null {
   if (normalized === 'rune') return 'rune';
   if (normalized === 'moha') return 'moha';
   if (normalized === 'boss') return 'boss';
+
+  return null;
+}
+
+// 内容搬家后保留的旧地址映射：[旧前缀, 新前缀]
+const LEGACY_PATH_PREFIXES: [string, string][] = [['/rune/chatapp', '/airouter']];
+
+function legacyPathRedirect(pathname: string): string | null {
+  const normalized = `/${pathname.replace(/^\/+|\/+$/g, '')}`;
+
+  for (const [from, to] of LEGACY_PATH_PREFIXES) {
+    if (normalized === from) return to;
+    if (normalized.startsWith(`${from}/`)) return to + normalized.slice(from.length);
+  }
 
   return null;
 }

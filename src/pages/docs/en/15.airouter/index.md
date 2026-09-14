@@ -1,29 +1,29 @@
 ---
-title: 'ChatApp'
+title: 'AIRouter'
 updated: '2026-09-12'
-description: 'What ChatApp is, what each of its five top entries does, and how to finish your first conversation.'
+description: 'What AIRouter is, what it is called on screen, what each of its five top entries does, and how to finish your first conversation.'
 ---
 
-# ChatApp
+# AIRouter
 
-ChatApp is the **web-based chat tool** built into the platform. Open it, pick a model, type a sentence, and watch the model write its answer one character at a time — no code, no software to install, and no need to understand how the model is deployed.
+AIRouter is the **web-based chat tool** built into the platform (it appears as **Playground** by default; an administrator can change that name in the Boss operations console). Open it, pick a model, type a sentence, and watch the model write its answer one character at a time — no code, no software to install, and no need to understand how the model is deployed.
 
-It is a **sibling subsystem** of the AI Platform (Rune), not a part of it. The AI Platform manages the foundations — compute, clusters, instances and storage; ChatApp only does two things: chat with models, and connect models to external programs. The models themselves are configured by the platform administrator in the gateway, and you simply pick a ready-made one inside ChatApp.
+It is a **sibling subsystem** of the AI Platform (Rune), not a part of it. The AI Platform manages the foundations — compute, clusters, instances and storage; AIRouter only does two things: chat with models, and connect models to external programs. The models themselves are configured by the platform administrator in the gateway, and you simply pick a ready-made one inside AIRouter.
 
 :::tip An analogy
-The AI Platform is like an office building: utilities, rooms and access control all belong to it. ChatApp is like a service counter inside the building — walk in, take a seat (a model), and ask your question.
+The AI Platform is like an office building: utilities, rooms and access control all belong to it. AIRouter is like a service counter inside the building — walk in, take a seat (a model), and ask your question.
 :::
 
-## How to get into ChatApp
+## How to get into AIRouter
 
 1. Look at the **top-left corner** and find the button showing "current product name + dropdown arrow".
 2. Click it to open a menu titled **Products**.
-3. In the menu, choose the conversation app (named **Playground** by default).
+3. In the menu, choose **AIRouter** (shown as **Playground** by default).
 4. You land on the **Models** page by default.
 
 ## What the five top entries do
 
-ChatApp has no left-hand menu; everything lives in **the single row at the top of the page**:
+AIRouter has no left-hand menu; everything lives in **the single row at the top of the page**:
 
 | Entry | What you do here |
 | --- | --- |
@@ -35,13 +35,13 @@ ChatApp has no left-hand menu; everything lives in **the single row at the top o
 
 ## Before you start
 
-- Any signed-in account works; ChatApp applies no extra role restrictions.
+- Any signed-in account works; AIRouter applies no extra role restrictions.
 - Your account needs **at least one API key**. Without one, the **Playground** page shows "No API Key Found" and you can click **Create API Key** in that message (see [API Keys](./token.md)).
 - Your account needs **at least one available model**. If you see none, the administrator has not opened a model channel for you yet.
 
 ## Complete your first conversation
 
-1. In the top-left corner click **Products**, choose the conversation app, and land on **Models**.
+1. In the top-left corner click **Products**, choose **AIRouter**, and land on **Models**.
 2. In **Models**, pick a model (the larger the Context on the card, the more it can remember), and click the card to open the detail panel on the right.
 3. In the detail panel, click **Try model**.
 4. The page jumps to **Playground** with that model already selected.

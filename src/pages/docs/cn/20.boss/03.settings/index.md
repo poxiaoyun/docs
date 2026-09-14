@@ -31,7 +31,7 @@ tags:
 | [平台设置](/boss/settings/platform) | 改平台名称、副标题、Logo，控制顶部「文档」入口与语言切换、是否允许自助注册 | 登录页、浏览器标签、所有页面的顶部栏 |
 | [智算平台设置](/boss/settings/rune) | 改「智算平台」的名称、Logo、简介、内部服务地址，设置开发服务闲置自动暂停 | 「产品与服务」入口与智算平台页面；闲置监控影响用户正在用的开发服务 |
 | [魔哈Hub设置](/boss/settings/moha) | 改魔哈Hub 的名称、Logo、简介，以及空间域名与 HTTPS 证书 | 魔哈Hub 入口与所有访问空间的人 |
-| [网关设置](/boss/settings/chatapp) | 改「模型体验」的名称、Logo、简介 | 对话/模型体验相关的产品入口 |
+| [网关设置](/boss/settings/chatapp) | 改 AIRouter 的名称、Logo、简介（默认显示为「模型体验」） | AIRouter 的产品入口与对话相关页面 |
 | [AI助手设置](/boss/settings/ai-assistant) | 设置 AI 助手的头像、名称，配置鉴权密钥，控制是否启用 | 智算平台页面右侧的 AI 助手悬浮入口 |
 | [许可证](/boss/settings/license) | 查看许可证状态与到期时间、更新许可证 | 全平台可用功能范围与资源上限 |
 

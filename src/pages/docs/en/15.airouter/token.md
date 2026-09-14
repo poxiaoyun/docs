@@ -1,12 +1,12 @@
 ---
 title: 'API Keys'
 updated: '2026-09-12'
-description: 'Create and manage the keys used to call ChatApp models: how to create them, what they can do, how cost is counted and where to see the logs.'
+description: 'Create and manage the keys used to call AIRouter models: how to create them, what they can do, how cost is counted and where to see the logs.'
 ---
 
 # API Keys
 
-**API Keys** manages the credential used to **call the ChatApp model API**. You need it to chat by hand on the [Playground](./experience.md) page, and even more so to connect models to your own programs — a program uses this key to prove "this call came from me".
+**API Keys** manages the credential used to **call the AIRouter model API**. You need it to chat by hand on the [Playground](./experience.md) page, and even more so to connect models to your own programs — a program uses this key to prove "this call came from me".
 
 :::warning This is not the same as the API key in the Account Center
 The API key in the Account Center is used for the platform's own management APIs; the keys here are used only for the **conversation model API**. The two cannot be interchanged.

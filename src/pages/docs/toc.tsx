@@ -8,9 +8,11 @@ import Link from '@mui/material/Link';
 import { RUNE_SIDEBAR_SECTIONS as RUNE_SIDEBAR_SECTIONS_EN } from './en/10.rune/toc';
 import { BOSS_SIDEBAR_SECTIONS as BOSS_SIDEBAR_SECTIONS_EN } from './en/20.boss/toc';
 import { MOHA_SIDEBAR_SECTIONS as MOHA_SIDEBAR_SECTIONS_EN } from './en/30.moha/toc';
+import { AIROUTER_SIDEBAR_SECTIONS as AIROUTER_SIDEBAR_SECTIONS_EN } from './en/15.airouter/toc';
 import { RUNE_SIDEBAR_SECTIONS as RUNE_SIDEBAR_SECTIONS_CN } from './cn/10.rune/toc';
 import { BOSS_SIDEBAR_SECTIONS as BOSS_SIDEBAR_SECTIONS_CN } from './cn/20.boss/toc';
 import { MOHA_SIDEBAR_SECTIONS as MOHA_SIDEBAR_SECTIONS_CN } from './cn/30.moha/toc';
+import { AIROUTER_SIDEBAR_SECTIONS as AIROUTER_SIDEBAR_SECTIONS_CN } from './cn/15.airouter/toc';
 import { ECOSYSTEM_SIDEBAR_SECTIONS as ECOSYSTEM_SIDEBAR_SECTIONS_EN } from './en/40.ecosystem/toc';
 import { REFERENCE_SIDEBAR_SECTIONS as REFERENCE_SIDEBAR_SECTIONS_EN } from './en/50.reference/toc';
 import { ECOSYSTEM_SIDEBAR_SECTIONS as ECOSYSTEM_SIDEBAR_SECTIONS_CN } from './cn/40.ecosystem/toc';
@@ -23,7 +25,7 @@ export type DocsSidebarItem = {
   path: string;
   icon?: string;
   deepMatch?: boolean;
-  product?: 'rune' | 'boss' | 'moha' | 'ecosystem' | 'faq';
+  product?: 'rune' | 'airouter' | 'boss' | 'moha' | 'ecosystem' | 'faq';
   children?: DocsSidebarItem[];
 };
 
@@ -129,6 +131,7 @@ export function getDocsSidebarSections(lang?: string): DocsSidebarSection[] {
   return [
     ...(isEnglish ? OVERVIEW_SIDEBAR_SECTIONS_EN : OVERVIEW_SIDEBAR_SECTIONS_CN),
     ...(isEnglish ? RUNE_SIDEBAR_SECTIONS_EN : RUNE_SIDEBAR_SECTIONS_CN),
+    ...(isEnglish ? AIROUTER_SIDEBAR_SECTIONS_EN : AIROUTER_SIDEBAR_SECTIONS_CN),
     ...(isEnglish ? BOSS_SIDEBAR_SECTIONS_EN : BOSS_SIDEBAR_SECTIONS_CN),
     ...(isEnglish ? MOHA_SIDEBAR_SECTIONS_EN : MOHA_SIDEBAR_SECTIONS_CN),
     ...(isEnglish ? ECOSYSTEM_SIDEBAR_SECTIONS_EN : ECOSYSTEM_SIDEBAR_SECTIONS_CN),

@@ -88,6 +88,7 @@ function getProductFromPath(pathname: string): DocsSidebarItem['product'] | unde
 
   if (segments[0] === 'moha') return 'moha';
   if (segments[0] === 'rune') return 'rune';
+  if (segments[0] === 'airouter') return 'airouter';
   if (segments[0] === 'boss') return 'boss';
   if (segments[0] === 'ecosystem') return 'ecosystem';
 

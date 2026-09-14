@@ -31,7 +31,7 @@ Members, quotas and workspaces inside a tenant are tenant-level settings — cha
 | [Platform Settings](/boss/settings/platform) | Change the platform title, subtitle and logo; control the top **Document** entry, the language switcher and self-registration | Sign-in page, browser tab, the top bar of every page |
 | [AI Platform Settings](/boss/settings/rune) | Change the title, logo, description and internal service addresses of the AI Platform; set automatic pausing of idle development instances | The **Products** entry and the AI Platform pages; idle monitoring affects development instances users are working in |
 | [Moha Hub Settings](/boss/settings/moha) | Change the title, logo and description of Moha Hub, plus the Space base domain and HTTPS certificate | The Moha Hub entry and everyone who opens a Space |
-| [Gateway Settings](/boss/settings/chatapp) | Change the title, logo and description of the chat product | The product entry for chat and model playground pages |
+| [Gateway Settings](/boss/settings/chatapp) | Change the title, logo and description of AIRouter (shown as **Playground** by default) | The AIRouter product entry and its chat pages |
 | [AI Assistant Settings](/boss/settings/ai-assistant) | Set the assistant avatar and name, configure the authentication key and control whether it is enabled | The floating AI assistant on the right edge of AI Platform pages |
 | [License](/boss/settings/license) | Check the license status and expiry date, and update the license | The features available platform-wide and the resource limits |
 

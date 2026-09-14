@@ -6,7 +6,7 @@ description: 'Pick the right model in the Models page: read the cards, filter an
 
 # Models
 
-**Models** is where you pick a model in ChatApp. Visit this page before you start chatting: you can see which models you may use, how much content each one can remember, what each costs per 1M tokens, and then jump straight into a conversation.
+**Models** is where you pick a model in AIRouter. Visit this page before you start chatting: you can see which models you may use, how much content each one can remember, what each costs per 1M tokens, and then jump straight into a conversation.
 
 :::tip An analogy
 Models is like the list page of an app store: the card tells you what the "app" does, how big it is and what it costs; open the details to decide whether to install it (start chatting).

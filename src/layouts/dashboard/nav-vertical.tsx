@@ -49,10 +49,11 @@ export function NavVertical({
   const { state } = useGlobalSettingsContext();
   const settings = useSettingsContext();
 
-  // 检测是否为产品/栏目文档页面（魔哈仓库、Rune、Boss、生态文档）
+  // 检测是否为产品/栏目文档页面（魔哈仓库、Rune、AIRouter、Boss、生态文档）
   const isProductPage =
     pathname.includes('/moha') ||
     pathname.includes('/rune') ||
+    pathname.includes('/airouter') ||
     pathname.includes('/boss') ||
     pathname.includes('/ecosystem');
   const renderNavVertical = () => (

@@ -20,6 +20,6 @@ tags:
 ## 建议阅读顺序
 
 1. 只是想知道「按钮为什么没有」→ 直接看[权限说明](/reference/permissions)。
-2. 要用程序调用模型 → 先看 [API 概览](/reference/api-overview)，再看 [API 密钥](/rune/chatapp/token)。
+2. 要用程序调用模型 → 先看 [API 概览](/reference/api-overview)，再看 [API 密钥](/airouter/token)。
 3. 要把控制台部署到自己的环境 → 看[构建与环境](/reference/build-and-env)。
 4. 遇到报错 → 看[常见问题](/reference/faq)；那里没有的，在[术语表](/guide/glossary)里把名词搞懂再回头看。

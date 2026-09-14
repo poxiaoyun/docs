@@ -20,6 +20,6 @@ This chapter holds practical reference material. You do not read it from start t
 ## Suggested order
 
 1. If you only want to know "why is this button missing" → go straight to the [Permission Guide](/reference/permissions).
-2. If you want to call a model from a program → read the [API Overview](/reference/api-overview) first, then [API Keys](/rune/chatapp/token).
+2. If you want to call a model from a program → read the [API Overview](/reference/api-overview) first, then [API Keys](/airouter/token).
 3. If you want to deploy the console into your own environment → read [Build & Environment](/reference/build-and-env).
 4. If you hit an error → read the [FAQ](/reference/faq). If it is not there, look up the term in the [Glossary](/guide/glossary) and come back.
