@@ -535,17 +535,72 @@ function buildChildrenIndex(pages) {
   return map;
 }
 
+const IMAGE_TITLE_MAX = 120;
+
+/**
+ * 从渲染好的页面 HTML 里抽出图片（src + alt），供 image sitemap 使用。
+ *
+ * 从**渲染结果**里取而不是重新解析 markdown：这样 sitemap 声明的图片与页面里
+ * 真实出现的 <img> 严格一致，不会因为链接改写规则调整而两边错位。
+ *
+ * 只保留站内绝对路径 —— Google 硬性要求 image:loc 与 sitemap 同域，外链图和
+ * data: URI 一律不进本站 sitemap。
+ */
+function extractPageImages(html) {
+  const seen = new Set();
+  const images = [];
+
+  for (const m of html.matchAll(/<img\b[^>]*>/g)) {
+    const src = /\bsrc="([^"]*)"/.exec(m[0])?.[1];
+
+    if (!src || !src.startsWith('/')) continue;
+
+    const url = `${SITE_URL}${src}`;
+
+    if (seen.has(url)) continue; // 同一页同一张图只声明一次
+
+    seen.add(url);
+
+    const alt = /\balt="([^"]*)"/.exec(m[0])?.[1] ?? '';
+
+    images.push({
+      url,
+      alt: alt.length > IMAGE_TITLE_MAX ? `${alt.slice(0, IMAGE_TITLE_MAX)}…` : alt,
+    });
+  }
+
+  return images;
+}
+
+/**
+ * 生成 sitemap（含 image 扩展，Google 与 Bing 都支持）。
+ *
+ * 为什么值得带图片声明：它解决的是**发现**问题。页面刚上线、还没有任何外链时，
+ * sitemap 是最强的发现信号；带上 image:loc 后 Googlebot-Image / Bingbot 可以
+ * 直接把 142 张图排进抓取队列，不必等爬完 177 个页面再逐个解析 <img>。
+ * 对更依赖 sitemap 的 Bing 尤其有意义。
+ */
 function buildSitemap(pages) {
   const entries = pages
     .map((page) => {
       const url = `${SITE_URL}${page.route ? `/${page.route}` : ''}/`;
       const lastmod = page.updated ? `<lastmod>${page.updated}</lastmod>` : '';
-      return `  <url><loc>${url}</loc>${lastmod}<changefreq>weekly</changefreq></url>`;
+      const images = (page.images || [])
+        .map(
+          (img) =>
+            `\n    <image:image><image:loc>${escapeHtml(img.url)}</image:loc>` +
+            (img.alt ? `<image:title>${escapeHtml(img.alt)}</image:title>` : '') +
+            `</image:image>`
+        )
+        .join('');
+
+      return `  <url><loc>${url}</loc>${lastmod}<changefreq>weekly</changefreq>${images}</url>`;
     })
     .join('\n');
 
   return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 ${entries}
 </urlset>
 `;
@@ -647,6 +702,41 @@ function selfCheck(pages) {
     if (/application\/ld\+json/.test(html)) problems.push('404.html: 不应出现 JSON-LD');
   }
 
+  // image sitemap 自检。声明了却抓不到的图，搜索引擎会直接把它从图片索引里剔除 ——
+  // 而这类问题在构建日志里同样完全看不出来，必须在这里拦住。
+  const sitemapPath = path.join(OUT_DIR, 'sitemap.xml');
+
+  if (fs.existsSync(sitemapPath)) {
+    const xml = fs.readFileSync(sitemapPath, 'utf8');
+    const locs = [...xml.matchAll(/<image:loc>([^<]+)<\/image:loc>/g)].map((m) => m[1]);
+
+    if (locs.length === 0) {
+      problems.push('sitemap: 一张图片都没声明 —— 图片收集逻辑失效了');
+    }
+
+    // 注意：同一张图出现在多个页面上是**合法**的（image sitemap 的语义是
+    // 「这张图出现在这个页面上」），所以跨页重复不该报错。要查的是同一页内重复声明。
+    for (const block of xml.matchAll(/<url>([\s\S]*?)<\/url>/g)) {
+      const inner = [...block[1].matchAll(/<image:loc>([^<]+)<\/image:loc>/g)].map((m) => m[1]);
+
+      if (new Set(inner).size !== inner.length) {
+        const pageUrl = /<loc>([^<]+)<\/loc>/.exec(block[1])?.[1] ?? '?';
+        problems.push(`sitemap: ${pageUrl} 同一页内重复声明了同一张图`);
+      }
+    }
+
+    for (const loc of new Set(locs)) {
+      if (!loc.startsWith(`${SITE_URL}/`)) {
+        problems.push(`sitemap: image:loc 不在本站域名下 ${loc}`);
+        continue;
+      }
+
+      if (!existsInDist(loc.slice(SITE_URL.length))) {
+        problems.push(`sitemap: image:loc 指向不存在的文件 ${loc}`);
+      }
+    }
+  }
+
   return problems;
 }
 
@@ -676,7 +766,11 @@ function main() {
 
   for (const page of pages) {
     const target = path.join(OUT_DIR, page.route, 'index.html');
-    writeFile(target, renderPage(page, tmpl, childrenByRoute));
+    const html = renderPage(page, tmpl, childrenByRoute);
+
+    writeFile(target, html);
+    // 顺手收集本页图片供 image sitemap 用：复用刚渲染出的 HTML，避免为了取图再解析一遍 markdown
+    page.images = extractPageImages(html);
     written += 1;
   }
 

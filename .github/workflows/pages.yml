@@ -72,7 +72,16 @@ jobs:
             echo "::error::缺少 dist/sitemap.xml"
             exit 1
           fi
-          echo "SSG 产出 $pages 个静态页面 + sitemap.xml（$(grep -c '<loc>' dist/sitemap.xml) 条 URL）"
+          # 守卫：图片索引入口同样不能静默失效。
+          # 计数统一用 '<url><loc>'（精确到 url 条目）：虽然 '<image:loc>' 并不含子串 '<loc>'，
+          # 不会污染计数，但写精确一点更不容易在以后改格式时踩空。
+          urls=$(grep -c '<url><loc>' dist/sitemap.xml | tr -d ' ')
+          imgs=$(grep -c '<image:loc>' dist/sitemap.xml | tr -d ' ')
+          if [ "$imgs" -lt 100 ]; then
+            echo "::error::sitemap 只声明了 $imgs 张图片，预期 142 张 —— 图片索引入口失效"
+            exit 1
+          fi
+          echo "SSG 产出 $pages 个静态页面 + sitemap.xml（$urls 条 URL / $imgs 张图片）"
 
       - name: Setup Pages
         uses: actions/configure-pages@v6
