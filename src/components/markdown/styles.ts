@@ -79,27 +79,27 @@ export const MarkdownRoot = styled('div')(({ theme }) => ({
   },
   /**
    * @Blockquote
+   *
+   * 视觉语言与 AlertBox（:::tip 等）一致：左侧色条 + 浅灰底。
+   * 三个刻意不做的点，改动前都踩过：
+   * 1. 不设 maxWidth。引用块必须和正文、表格同宽、同左边缘；一旦限宽 640 再配
+   *    `margin: 24px auto`，在宽屏上会缩成居中的窄卡片，左右都不对齐、还提前折行。
+   * 2. 不用 3em 的 `::before` 引号。它撑出 64px 左内边距，且引号浮在首行上方
+   *    （top: -8 配 3em 字号），看着像残留字符而不是设计元素。
+   * 3. `& p` 必须显式 `color: 'inherit'`。正文的 `p { color: text.primary }` 会盖掉
+   *    这里的 text.secondary，不写这一条则引用文字仍是主色，灰色底失去意义。
    */
   '& blockquote': {
-    lineHeight: 1.5,
-    margin: '24px auto',
     position: 'relative',
-    padding: theme.spacing(3, 3, 3, 8),
+    margin: '20px 0',
+    lineHeight: 1.7,
+    padding: theme.spacing(1.5, 2.5),
     color: theme.vars.palette.text.secondary,
-    borderRadius: Number(theme.shape.borderRadius) * 2,
+    borderRadius: Number(theme.shape.borderRadius),
     backgroundColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
-    borderLeft: `solid 8px ${varAlpha(theme.vars.palette.grey['500Channel'], 0.08)}`,
-    [theme.breakpoints.up('md')]: { width: '100%', maxWidth: 640 },
-    '& p': { margin: 0, fontSize: 'inherit', fontFamily: 'inherit' },
-    '&::before': {
-      left: 16,
-      top: -8,
-      display: 'block',
-      fontSize: '3em',
-      content: '"\\201C"',
-      position: 'absolute',
-      color: theme.vars.palette.text.disabled,
-    },
+    borderLeft: `3px solid ${varAlpha(theme.vars.palette.grey['500Channel'], 0.32)}`,
+    '& p': { margin: 0, color: 'inherit', fontSize: 'inherit', fontFamily: 'inherit' },
+    '& p + p': { marginTop: '0.75em' },
   },
   /**
    * @Code inline

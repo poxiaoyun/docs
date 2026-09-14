@@ -9,6 +9,9 @@ index.md 映射到其父目录的 URL，viewer 用 Object.keys(files).find() 取
 相对链接按「当前页面 URL 的目录」为基准，逐段剥离 ^\\d+\\. 与 \\.md 后缀，
 处理 . / ..，末尾 index 段丢弃；绝对链接直接当站内 URL。
 
+表格规则来自同一文件的 remarkGfm：GFM 切单元格时不保护代码段，行内 code 里的
+裸 | 会被当成分隔符，多切出来的格子被直接丢弃 ⇒ 页面上静默少内容。
+
 用法: python3 check-docs-consistency.py [--root docs 仓库根]
 """
 import os
@@ -42,7 +45,39 @@ MD_LINK_RE = re.compile(r'(!?)\[[^\]]*\]\(([^)\s]+)\)')
 # 告示块语法由 src/components/markdown/remark-alerts.ts 实现，只认这 5 种类型
 ALERT_OPEN_RE = re.compile(r'^:::(info|success|warning|error|tip)(\s+.+)?$')
 ALERT_ANY_RE = re.compile(r'^:::')
+# markdown 管线是 react-markdown + remark-gfm（src/components/markdown/markdown.tsx），
+# 表格按 GFM 切单元格，分隔行形如 | --- | :--: |
+TABLE_DELIM_RE = re.compile(r'^\s*\|[\s:|-]+\|\s*$')
 SKIP_SCHEME = ('http://', 'https://', 'mailto:', 'tel:', 'data:', '#', '//')
+
+
+def split_table_row(row):
+    """按 GFM 规则切一行表格的单元格。
+
+    关键：`\\|` 是字面竖线，但**代码段不保护竖线** —— 行内的 `error|exception`
+    照样是分隔符，会把这一行多切出一格，多出来的格子被 GFM 直接丢弃，页面上
+    就静默少了内容。所以这里不能先剥代码段再切。
+    """
+    s = row.strip()
+    if s.startswith('|'):
+        s = s[1:]
+    if s.endswith('|') and not s.endswith('\\|'):
+        s = s[:-1]
+    cells, cur, i = [], '', 0
+    while i < len(s):
+        if s[i] == '\\' and i + 1 < len(s):
+            cur += s[i:i + 2]
+            i += 2
+            continue
+        if s[i] == '|':
+            cells.append(cur)
+            cur = ''
+            i += 1
+            continue
+        cur += s[i]
+        i += 1
+    cells.append(cur)
+    return [c.strip() for c in cells]
 
 
 def strip(part: str) -> str:
@@ -287,6 +322,35 @@ def main():
             if opened > 0:
                 alerts.append((rel, 0, f'{opened} 个告示块未闭合'))
 
+    # 6b. 表格行的竖线：GFM 切单元格时不保护代码段，行内 code 里的裸 `|`
+    #（例：`error|exception`）会成为分隔符，多切出来的格子被 GFM 直接丢掉 —— 页面上
+    # 静默少内容、单元格里还留一个没配对的 `。判据取「本行列数 > 表头列数」，零误报。
+    table_pipes = []
+    for dirpath, _d, filenames in os.walk(CONTENT):
+        for fn in sorted(filenames):
+            if not fn.endswith('.md'):
+                continue
+            full = os.path.join(dirpath, fn)
+            rel = os.path.relpath(full, ROOT)
+            lines = open(full, encoding='utf-8').read().split('\n')
+            i = 0
+            while i < len(lines):
+                if (lines[i].lstrip().startswith('|')
+                        and i + 1 < len(lines) and TABLE_DELIM_RE.match(lines[i + 1])):
+                    width = len(split_table_row(lines[i]))
+                    j = i + 2
+                    while j < len(lines) and lines[j].lstrip().startswith('|'):
+                        got = len(split_table_row(lines[j]))
+                        if got > width:
+                            codes = re.findall(r'`[^`]*\|[^`]*`', lines[j])
+                            why = f'代码段内有未转义的 |：{codes[0]}' if codes else '列数与表头不一致'
+                            table_pipes.append(
+                                (rel, j + 1, f'表头 {width} 列 / 本行 {got} 列，尾部单元格会被丢弃（{why}）'))
+                        j += 1
+                    i = j
+                else:
+                    i += 1
+
     # 7. 侧边栏文案与页面 title 差异（仅提示，不计入问题）
     file_titles = {}
     for dirpath, _d, filenames in os.walk(CONTENT):
@@ -341,6 +405,7 @@ def main():
     section('孤儿文件（无任何 toc 引用）', orphans, lambda r: f'[{r[0]}] {r[1]}  ({r[2]})')
     section('markdown 内链失效', broken_links, lambda r: f'{r[0]}:{r[1]}  {r[2]}  ({r[3]})')
     section('告示块语法（::: 类型非法 / 未闭合）', alerts, lambda r: f'{r[0]}:{r[1]}  {r[2]}')
+    section('表格行竖线（裸 | 拆格致内容丢失）', table_pipes, lambda r: f'{r[0]}:{r[1]}  {r[2]}')
 
     uncovered = check_archive_coverage(archived)
     if uncovered is None:

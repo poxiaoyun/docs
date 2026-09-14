@@ -35,7 +35,7 @@ The top of the Logs page is a toolbar. From left to right:
 
 | Control | What it does |
 | --- | --- |
-| Query box | Type what to match; simple regex is supported, for example `error|exception`; press Enter or click **Query** to run |
+| Query box | Type what to match; simple regex is supported, for example `error\|exception`; press Enter or click **Query** to run |
 | Time Range | Pick the last 1 minute / 5 minutes / 15 minutes / 1 hour / 6 hours / 1 day / 7 days, or set a custom start and end time |
 | Limit | How many entries to return at most: 50 / 100 / 200 / 500 / 1000 (default 100) |
 | Sort | Switch between "Newest first" and "Newest last" |
