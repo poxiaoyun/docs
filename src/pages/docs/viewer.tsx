@@ -212,7 +212,7 @@ export default function DocsViewer() {
   const isBossHomePage = productHome === 'boss';
   const isProductHomePage = isMohaHomePage || isRuneHomePage || isBossHomePage;
 
-  // 旧路径兼容：AIRouter 原本挂在 /rune/chatapp 下，老链接与外部引用继续可用。
+  // 旧路径兼容：聚合网关原本挂在 /rune/chatapp 下，老链接与外部引用继续可用。
   const legacyRedirect = legacyPathRedirect(pathname);
 
   if (legacyRedirect) {

@@ -1,7 +1,9 @@
 import type { DocsSidebarSection } from '../../toc';
 
 // ----------------------------------------------------------------------
-// AIRouter：由原「对话应用（ChatApp）」独立出来的顶级入口（原挂在 10.rune 下）。
+// 聚合网关（英文 AIrouter）：由原「对话应用（ChatApp）」独立出来的顶级入口（原挂在 10.rune 下）。
+// 这是文档对该子系统的统一称呼；它在界面上默认显示为「模型体验」（英文 Playground），
+// 名称可由管理员在 Boss 运营平台 → 网关设置里修改。
 //
 // 体例（与 10.rune / 20.boss / 30.moha 的 toc 保持一致）：
 //   1. subheader = 一级分组名，取产品界面真源文案；不与本节任何条目重名，
@@ -20,7 +22,7 @@ import type { DocsSidebarSection } from '../../toc';
 
 export const AIROUTER_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
   {
-    subheader: 'AIRouter',
+    subheader: '聚合网关',
     items: [
       {
         title: '概览',

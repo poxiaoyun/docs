@@ -63,4 +63,4 @@ If you can only see **Home** and **Marketplace** after signing in, your role is 
 - [Getting Started](/rune/guide)
 - [Rune Console](/rune/console)
 - [Resources & Quotas](/rune/resources)
-- [AIRouter](/airouter)
+- [AIrouter](/airouter)

@@ -23,7 +23,7 @@ This chapter is for people using XiaoShi AI for the first time. You do not need 
 
 | You are | Recommended path |
 | --- | --- |
-| **Developer** | [Quick Start](/guide/quick-start) → [Glossary](/guide/glossary) → [Inference](/rune/console/inference) → [AIRouter](/airouter/) |
+| **Developer** | [Quick Start](/guide/quick-start) → [Glossary](/guide/glossary) → [Inference](/rune/console/inference) → [AIrouter](/airouter/) |
 | **Tenant admin** | [Quick Start](/guide/quick-start) → [Permission Guide](/account/auth/roles) → [Workspace](/rune/console/workspace) → [Tenant Management](/account/iam/tenant) |
 | **Platform admin** | [Platform Concepts](/guide/architecture) → [Cluster Management](/boss/rune-admin/clusters) → [Resource Pools](/boss/rune-admin/resource-pools) → [Model Gateway](/boss/gateway/) |
 | **Just want to try a model** | The "Run your first inference service" stage in [Quick Start](/guide/quick-start) → [Playground](/airouter/experience) |

@@ -63,4 +63,4 @@ Rune 是一个把「准备模型和数据 → 训练调优 → 部署成服务 �
 - [开始使用](/rune/guide)
 - [Rune 控制台](/rune/console)
 - [资源与配额](/rune/resources)
-- [AIRouter](/airouter)
+- [聚合网关](/airouter)

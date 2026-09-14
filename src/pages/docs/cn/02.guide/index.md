@@ -23,7 +23,7 @@ tags:
 
 | 你的身份 | 推荐路径 |
 | --- | --- |
-| **开发者** | [快速开始](/guide/quick-start) → [术语表](/guide/glossary) → [在线推理](/rune/console/inference) → [AIRouter](/airouter/) |
+| **开发者** | [快速开始](/guide/quick-start) → [术语表](/guide/glossary) → [在线推理](/rune/console/inference) → [聚合网关](/airouter/) |
 | **租户管理员** | [快速开始](/guide/quick-start) → [权限说明](/account/auth/roles) → [工作空间](/rune/console/workspace) → [租户管理](/account/iam/tenant) |
 | **平台管理员** | [平台概念](/guide/architecture) → [集群管理](/boss/rune-admin/clusters) → [资源池](/boss/rune-admin/resource-pools) → [大模型网关](/boss/gateway/) |
 | **只想体验一下模型** | [快速开始](/guide/quick-start) 的「跑通第一个推理服务」 → [模型体验](/airouter/experience) |

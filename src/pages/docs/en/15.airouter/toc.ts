@@ -1,8 +1,10 @@
 import type { DocsSidebarSection } from '../../toc';
 
 // ----------------------------------------------------------------------
-// AIRouter: a top-level entry split out of the former "ChatApp" section
-// (which used to live under 10.rune).
+// AIrouter: a top-level entry split out of the former "ChatApp" section
+// (which used to live under 10.rune). This is the name the docs use for the
+// subsystem; on screen it defaults to "Playground" and an administrator can
+// rename it under Boss Operations Platform -> Gateway Settings.
 //
 // Conventions (same as the 10.rune / 20.boss / 30.moha toc files):
 //   1. subheader = the top-level group name, taken from the product UI; it must not
@@ -26,7 +28,7 @@ import type { DocsSidebarSection } from '../../toc';
 
 export const AIROUTER_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
   {
-    subheader: 'AIRouter',
+    subheader: 'AIrouter',
     items: [
       {
         title: 'Overview',

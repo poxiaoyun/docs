@@ -9,7 +9,7 @@ description: 'Where to open the parameters, what each one controls, and which to
 When a model's answers are not right — too rambling, too rigid, or cut off mid-sentence — do not rush to switch models. Changing a few parameters is often enough. This page explains where the parameters are, what each one controls, and which to change for a given symptom.
 
 :::info This is not a standalone page
-There is no "debug" entry in the AIRouter top navigation. Parameters are adjusted on the [Playground](./experience.md) and [Comparison](./compare.md) pages, through the **Parameter Settings** dialog at the top. This page describes that dialog.
+There is no "debug" entry in the AIrouter top navigation. Parameters are adjusted on the [Playground](./experience.md) and [Comparison](./compare.md) pages, through the **Parameter Settings** dialog at the top. This page describes that dialog.
 :::
 
 ## Where to open the parameters

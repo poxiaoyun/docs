@@ -6,7 +6,7 @@ description: 'Walk through a full conversation: choose a model and key, send mes
 
 # Playground
 
-**Playground** is AIRouter's main conversation page. Pick a model here, type a question, and watch it write its answer one character at a time. Choosing a model, uploading images, toggling deep thinking and adjusting parameters all happen on this page.
+**Playground** is AIrouter's main conversation page. Pick a model here, type a question, and watch it write its answer one character at a time. Choosing a model, uploading images, toggling deep thinking and adjusting parameters all happen on this page.
 
 :::tip An analogy
 This page is like the chat window of a messaging app: on the left is the "contact list" (the model list), in the middle is the message history, and at the bottom is the input box.

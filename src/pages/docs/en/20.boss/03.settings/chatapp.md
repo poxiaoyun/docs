@@ -1,7 +1,7 @@
 ---
 title: 'Gateway Settings'
 updated: '2026-09-12'
-description: 'Set the name, logo and description of AIRouter — the chat sub-system — as users see it in the console.'
+description: 'Set the name, logo and description of AIrouter — the chat sub-system — as users see it in the console.'
 tags:
   - boss
   - settings
@@ -9,12 +9,12 @@ tags:
 
 # Gateway Settings
 
-Gateway Settings decide **how AIRouter — the platform's chat sub-system — appears to users**: its name, its logo and its description. These values appear wherever users see the chat and model playground product.
+Gateway Settings decide **how AIrouter — the platform's chat sub-system — appears to users**: its name, its logo and its description. These values appear wherever users see the chat and model playground product.
 
 This page is under **System Settings → Gateway Settings** in the left-hand menu.
 
 :::tip Gateway Settings is the signboard of the chat product
-The menu entry is called **Gateway Settings**, but what it maintains is the **chat sub-system** — called **AIRouter** in this documentation, and titled **Playground** by default in the product. That is the sub-system users open to chat, compare models and read call analytics.
+The menu entry is called **Gateway Settings**, but what it maintains is the **chat sub-system** — called **AIrouter** in this documentation, and titled **Playground** by default in the product. That is the sub-system users open to chat, compare models and read call analytics.
 If you change the product title to something else, that is the name users will see.
 :::
 
@@ -51,7 +51,7 @@ All three pages have exactly the same structure — a **Title and Logo** card �
 | --- | --- |
 | [AI Platform Settings](/boss/settings/rune) | The AI Platform |
 | [Moha Hub Settings](/boss/settings/moha) | Moha Hub |
-| Gateway Settings | AIRouter (the chat sub-system) |
+| Gateway Settings | AIrouter (the chat sub-system) |
 
 ## Common questions
 
@@ -62,7 +62,7 @@ All three pages have exactly the same structure — a **Title and Logo** card �
 
 ## Related
 
-- [AIRouter](/airouter)
+- [AIrouter](/airouter)
 - [Platform Settings](/boss/settings/platform)
 - [AI Platform Settings](/boss/settings/rune)
 - [Moha Hub Settings](/boss/settings/moha)

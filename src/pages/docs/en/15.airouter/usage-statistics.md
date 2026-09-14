@@ -6,7 +6,7 @@ description: 'Understand your call volume, token consumption and cost: how to fi
 
 # Usage analysis
 
-**Usage analysis** is your account's usage dashboard in AIRouter. If you want to know how many times the model was called these past few days, how many tokens were burned and what that amounts to in money, come here — no need to tally it up yourself.
+**Usage analysis** is your account's usage dashboard in AIrouter. If you want to know how many times the model was called these past few days, how many tokens were burned and what that amounts to in money, come here — no need to tally it up yourself.
 
 :::tip An analogy
 Like a phone bill: a few big numbers for "this month's charges" at the top, and a bar chart of daily usage below, so you can see at a glance which day used the most.
