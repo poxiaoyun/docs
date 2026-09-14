@@ -22,11 +22,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # action 一律取 node24 运行时的大版本：Node 20 运行时已被 GitHub 弃用，
+      # checkout@v4 / setup-node@v4 / configure-pages@v5 / upload-pages-artifact@v3
+      # 会在每次运行产生 "Node.js 20 is deprecated" 告警。升级时按住这一条选版本。
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: '20'
           cache: 'yarn'
@@ -56,12 +59,12 @@ jobs:
           fi
 
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
         with:
           enablement: true
 
       - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: ./dist
 
@@ -74,4 +77,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

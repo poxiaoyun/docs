@@ -23,13 +23,16 @@ jobs:
       packages: write
 
     steps:
+      # action 一律取 node24 运行时的大版本：Node 20 运行时已被 GitHub 弃用，
+      # checkout@v4 / setup-node@v4 / docker/*@v3 会在每次运行产生
+      # "Node.js 20 is deprecated" 告警。升级时按住这一条选版本。
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: '20'
           cache: 'yarn'
@@ -44,10 +47,10 @@ jobs:
         run: make build
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       - name: Docker Setup Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Login to Registries
         run: make login
