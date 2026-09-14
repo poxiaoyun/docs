@@ -1,6 +1,6 @@
 ---
 title: 'Rune Console'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'Using Rune for the first time? Learn the whole sidebar, the Region and Workspace selectors, and the one deployment flow every instance shares.'
 tags:
   - rune
@@ -24,6 +24,10 @@ The Rune console is where you use the AI platform in a browser: deploying models
 - Sign in first and select a tenant.
 - **Home** and **Marketplace** are open to all members; the **Workbench** and **Observability** groups require your tenant role to be **Administrator** or **Developer**, and regular members cannot see them.
 - Before using any feature, confirm that **Region** and **Workspace** are selected in the top-left of the page.
+
+![The two selectors at the top left: Region (Chengdu A here) and Workspace (abc here), with the three sidebar groups on the left and the current workspace data on the right](/assets/screenshots/rune/dashboard-01.png)
+
+Both selectors are global: switching the **region** swaps the pool of machines, and switching the **workspace** swaps the office. Note the **resource quota** card on the home page — it reports the tenant usage for the current space, so the numbers change with the selector.
 
 ## First, get to know the two selectors at the top
 

@@ -1,6 +1,6 @@
 ---
 title: Audit Logs
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: See who did what and when in Moha Hub — filter the records, inspect a detail view, and export them to a file.
 ---
 
@@ -17,7 +17,7 @@ The audit log records **management actions on content** (create, update, delete,
 ## Before you start
 
 - You need the **System Administrator** role.
-- In the left sidebar click **Security Audit** → **Audit Logs**.
+- Click **Moha Hub** in the top navigation bar, then click **Audit Logs** under the **Security Audit** group in the left sidebar.
 
 ## Filter the records
 
@@ -56,6 +56,10 @@ There is **no** search box for users here. To track down a particular person, na
 ### Resource types
 
 The drop-down lets you pick Model, Dataset, Image, Space, Organization, Favorite, Comments, Commit, Snapshots, Image Scans, Announcements, Banners, Mirror Sites, Members, Users, Runtime Instances, Logs, Downloads, Encryption, Rating, README and more; when unsure, leave it at **All Resources**.
+
+![Audit log: five filters (start / end date, organisation, action type, resource type) above a table of operations](/assets/screenshots/boss/moha-audit-01.png)
+
+The audit log is an append-only trail: who, in which organisation, performed what action on which resource, and how it turned out. **Action type** and **Resource type** are enum dropdowns, and **Export** at the top right dumps the current filtered result.
 
 ## What is on the list
 

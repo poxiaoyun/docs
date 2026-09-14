@@ -31,10 +31,14 @@ The names here are fairly technical, so use this table for reference:
 
 ## How to open it
 
-1. In the left-hand menu, click **AI Platform** → **Cluster**, then open the target cluster.
+1. Click **AI Platform** in the top navigation bar, then click **Cluster** under the **AI Platform** group in the left sidebar, then open the target cluster.
 2. In the left-hand **Operations Management** group, click **Workloads**.
 
 The page opens on the **Pod** tab by default, and the top bar switches between 14 resource types.
+
+![Workloads page: a vertical strip of resource tabs (pods, nodes, deployments, stateful sets, …) with filters and a list on the right](/assets/screenshots/boss/cluster-resources-01.png)
+
+The Workloads page compresses a whole set of Kubernetes resources into one page, switched by the vertical tab strip on the left. **Pods** is selected in the screenshot and the URL follows as `/resources/core/v1/pods`. The tabs you will use most are **Pods**, **Nodes**, **Deployments** and **Services**.
 
 ## Supported tabs
 

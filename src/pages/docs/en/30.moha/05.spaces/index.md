@@ -1,6 +1,6 @@
 ---
 title: 'Spaces'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'What a Space is, how to browse and open one, and how to publish your own app online.'
 tags:
   - moha
@@ -31,6 +31,10 @@ Model and dataset repositories mainly hold files that others download and use th
 | Publish | Actually start the app and give it an address — the equivalent of opening for business |
 | Snapshot | Take an archival photo of the repository's current state so you can return to it later |
 
+![Space list: the four-step strip (Create / Build / Publish / Share) and the Create space button on top, domain and scenario filters below](/assets/screenshots/moha/spaces-list-01.png)
+
+That four-step strip is itself the how-to: create, build, publish, share. Spaces filter by **Domain** and **Scenario**, a taxonomy of their own rather than the categories used by models and datasets.
+
 ## Browse Spaces others published
 
 1. Click **Spaces** in the Moha top navigation to open the Space list.
@@ -47,6 +51,10 @@ Inside a Space's details page the top shows these tabs:
 | Snapshot | Look at archived versions, compare differences or roll back |
 | Discussion & Feedback | Ask questions, give feedback, or open a merge request for a code change |
 | Settings | Change visibility, members, the cover and deployment parameters (requires permission) |
+
+![Create Space form: the Space block (name, ID, organization, description), the Metadata block (licence, domain, scenario), and the Deploy configuration below](/assets/screenshots/moha/create-space-01.png)
+
+A Space adds a **deploy configuration** block over a model: pick the SDK to use (streamlit / gradio / docker-template) and the resource flavour there, or the Space will never actually run. The other fields match models and datasets.
 
 ## Publish your own Space
 

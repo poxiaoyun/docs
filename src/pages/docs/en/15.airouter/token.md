@@ -36,6 +36,10 @@ The API key in the Account Center is used for the platform's own management APIs
 | **Expiration time** | **Never expires** means it stays valid long term; an expired key is flagged in red as "Expired", after which it can no longer call |
 | **Created at** | When the key was created |
 
+![API Keys list: two tabs on top, then a table of name, key, RPM, TPM, IP allowlist and expiry](/assets/screenshots/airouter/token-01.png)
+
+The list page looks like this: two tabs under the title with **API Keys** selected by default, and the **Add API Key** button at the top right. The key column only exposes the leading characters, and they are blurred further in the screenshot.
+
 ## Create a key
 
 1. Click **API Keys** in the top navigation.
@@ -63,6 +67,10 @@ Once created, the new key appears back in the list.
 | All IPs | `*` |
 
 Separate multiple values with a **comma** or a **newline**. Note that each number must be 0 ~ 255 and **must not have leading zeros** (`01` will fail validation).
+
+![The API Key configuration form opened by Add API Key](/assets/screenshots/airouter/token-02.png)
+
+That is the creation form: **Name** (required), **RPM**, **TPM(K)**, **IP allowlist**, and the **Never expires** toggle which is on by default. **Cancel** at the bottom left, **Confirm** at the bottom right.
 
 ## Get the full value of a key
 
@@ -112,6 +120,10 @@ Switch to the **Request Logs** tab to see a record of every call under your acco
 5. To see a row's details, click the eye icon next to the time column.
 
 When troubleshooting a failed call, the **Request ID** and **Result** columns are the most useful: give the request ID to the administrator and they can locate that exact call.
+
+![The Request logs tab: time range and four filter dropdowns on top, one row per call below](/assets/screenshots/airouter/token-03.png)
+
+The **Request logs** tab looks like this. It shares a page with **API Keys**, so switching tabs does not reload anything. This account had no calls that day, so the table is empty; with traffic it lists every request newest first.
 
 ## Security advice
 

@@ -1,6 +1,6 @@
 ---
 title: 'Resources & Quotas'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'Understand how much resource and which configurations you can use: what templates, quota, flavors, and workspaces are and where to find them.'
 tags:
   - rune
@@ -16,6 +16,10 @@ After reading it you will be able to tell these four concepts apart and know whe
 :::tip The one-line difference
 A template decides **how to deploy**, quota decides **how much you can deploy**, flavor decides **how good a machine you get**, and the workspace decides **where it is deployed**.
 :::
+
+![Tenant quota list: the cluster switchable in the page header, and each resource listed as quota type / model / resource pool / quota with used and total](/assets/screenshots/rune/quota-01.png)
+
+Quotas are counted **per cluster**, hence the **Cluster** dropdown at the top; CPU reads as used / total. This table is the answer to "can I deploy one more?", and it is worth a look before creating anything.
 
 ## The four pages at a glance
 

@@ -22,7 +22,7 @@ These two pages are everyday tools for running a cluster:
 
 ## How to open them
 
-1. In the left-hand menu, click **AI Platform** → **Cluster**, then open the target cluster.
+1. Click **AI Platform** in the top navigation bar, then click **Cluster** under the **AI Platform** group in the left sidebar, then open the target cluster.
 2. Under the **Operations Management** group in the left-hand menu:
    - Click **Log Management** to query logs.
    - Click **Scheduler Management** to change the policy.
@@ -50,6 +50,10 @@ When the page has no data, first confirm that the log-collection component has b
 
 :::
 
+![Log Management: pick all logs or node logs, set the time range and line count, then query, with live tail and download](/assets/screenshots/boss/cluster-logs-01.png)
+
+The page works in two steps: narrow the scope, then fetch. Choose **All logs** or **Node logs**, set the range and line count, press **Query**; turn on **Live** for a tail. **Wrap**, **Download** and **Clear log** sit to the right. The screenshot reads "No logs found" because that query matched nothing in the window — switch to **All logs** or widen the range.
+
 ## Adjust the scheduling policy
 
 Scheduler Management is aimed at administrators who are already comfortable with scheduling. Its left side holds the available configurations, and the middle holds two editing areas: **Action** (the action pipeline) and **Plugin** (plugins, grouped into "plugin layers"). To use it:
@@ -71,6 +75,10 @@ The scheduling configuration directly changes how jobs in the cluster are queued
 On a narrow screen, Scheduler Management tells you that it is not suitable for use on a phone. Please use a computer.
 
 :::
+
+![Scheduler management: custom or recommended configuration, split into actions (enqueue / allocate / backfill / reclaim / preempt) and plugins](/assets/screenshots/boss/cluster-schedulers-01.png)
+
+The scheduler page splits policy into **Actions** and **Plugins**, each entry documenting what it does (`enqueue` is expanded in the screenshot). **Preview** shows the resulting configuration before you commit with **Save**. Switching to **Recommended** first is a good way to see the defaults.
 
 ## Two reserved pages
 

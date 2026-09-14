@@ -11,7 +11,7 @@ tags:
 
 Gateway Settings decide **how AIrouter — the platform's chat sub-system — appears to users**: its name, its logo and its description. These values appear wherever users see the chat and model playground product.
 
-This page is under **System Settings → Gateway Settings** in the left-hand menu.
+This page lives in the **Platform Settings** area: click **Platform Settings** in the top navigation bar, then click **Gateway Settings** under the **System Settings** group in the left sidebar.
 
 :::tip Gateway Settings is the signboard of the chat product
 The menu entry is called **Gateway Settings**, but what it maintains is the **chat sub-system** — called **AIrouter** in this documentation, and titled **Playground** by default in the product. That is the sub-system users open to chat, compare models and read call analytics.
@@ -36,6 +36,10 @@ If you change the product title to something else, that is the name users will s
 2. Choosing a logo file **triggers an immediate save**.
 
 3. If you only changed the text, click **Confirm** at the bottom of the card.
+
+![Gateway settings: a product title and a product description, saved with Confirm](/assets/screenshots/boss/settings-chatapp-01.png)
+
+This is the shortest settings page of the lot: just **Product title** and **Product description**, saved with **Confirm**. The title is the product name shown at the top left of [AIrouter](../../15.airouter/index.md) — it reads "Model Gateway" in the demo environment.
 
 ## Confirming the result
 

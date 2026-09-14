@@ -1,6 +1,6 @@
 ---
 title: 'Storage'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'Manage storage volumes as network drives: create, expand, upload files, and import data from external sources.'
 tags:
   - rune
@@ -26,9 +26,15 @@ Think of a storage volume as a USB drive: the inference service, fine-tuning job
 1. In the left menu, find the **Workbench** group.
 2. Click **Storage**.
 
+![Storage list: four stat cards on top (usage, volumes, files, storage types) with the volume table below](/assets/screenshots/rune/storage-01.png)
+
+Each row is one volume, with columns for name, status, storage cluster, usage, file count and read/write permission. Both volumes in this screenshot are still unattached, so their status reads **Unmounted**.
+
 ## Create a storage volume
 1. Click **Create Storage Volume** at the top right of the list.
 2. Fill in the form:
+
+   ![Create Storage Volume form: name, storage class, capacity, read/write permission, volume type and description](/assets/screenshots/rune/storage-02.png)
 
    | Field | What to enter | Notes |
    | --- | --- | --- |

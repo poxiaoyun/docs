@@ -50,5 +50,5 @@ If you have just taken over this platform, read the chapters in this order: **co
 
 ## How to tell you are in the right place
 
-- The left-hand menu shows the **AI Platform** group, with **Cluster**, **Tenant Resource** and **App Template** under it.
+- After clicking **AI Platform** in the top navigation bar, the left sidebar shows the **AI Platform** group, with **Cluster**, **Tenant Resource** and **App Template** under it.
 - After opening a cluster from **Cluster**, the left-hand menu gains three sub-groups: **Cluster Status**, **Resource Management** and **Operations Management**.

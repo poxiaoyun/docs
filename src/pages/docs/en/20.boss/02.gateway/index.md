@@ -46,7 +46,7 @@ Every provider behind the gateway is represented on the platform as a **channel*
 
 ## The menu groups at a glance
 
-The **Model Gateway** menu on the left of the BOSS console is split into five groups. Here is what each page is for.
+After you click **Model Gateway** in the top navigation bar of the BOSS console, the sidebar menu is split into five groups. Here is what each page is for.
 
 | Group | Page | What this page solves for you | Details |
 | --- | --- | --- | --- |

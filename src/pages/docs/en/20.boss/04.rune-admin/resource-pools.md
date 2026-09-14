@@ -1,6 +1,6 @@
 ---
 title: Resource Pool
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: Divide a cluster's machines into resource pools for different teams, and create, re-partition or delete a pool step by step.
 ---
 
@@ -26,7 +26,7 @@ By the end of this page you can: create a resource pool, move machines into it, 
 
 ## Getting there
 
-1. In the left sidebar click **AI Platform** → **Cluster**, then open the target cluster.
+1. Click **AI Platform** in the top navigation bar, then click **Cluster** under the **AI Platform** group in the left sidebar, then open the target cluster.
 2. In the left sidebar under **Resource Management**, click **Resource Pool**.
 
 ## What the page looks like
@@ -56,6 +56,10 @@ The **Resource capacity view** on the right can be switched:
 Normally it refreshes every 30 seconds. If the cluster is still initializing resource pools it refreshes every 2 seconds instead; if initialization fails, refreshing stops and a hint is shown.
 
 :::
+
+![Resource pool management: the Default pool pinned on top, Create pool and Refresh at the top right, capacity snapshots below](/assets/screenshots/boss/cluster-pools-01.png)
+
+The header reads "partition cluster nodes and inspect each pool's capacity, health and monitoring; scheduling is not included yet" — that last clause matters, the pools you draw here do not affect scheduling immediately. The **Default** pool aggregates unassigned nodes and is always pinned first.
 
 ## Create a resource pool
 

@@ -35,7 +35,7 @@ One "support number" can sit in front of several lines. The switchboard decides 
 
 ## Open Channel Management
 
-1. Click **Model Gateway** in the left sidebar.
+1. Click **Model Gateway** in the top navigation bar.
 2. Expand **Model Services** and click **Channel Management**.
 3. The **Create Channel** button is in the top-right corner, and the list below shows the channels that already exist.
 
@@ -55,6 +55,10 @@ One "support number" can sit in front of several lines. The switchboard decides 
 | Created At | When the channel was created |
 
 The list supports multi-select, and there is a **refresh** button in the top-right corner to pull the data again manually. Above it you can filter by **Visibility** and by **Provider**.
+
+![Channel list: name, provider / endpoint, visibility, applicable models, priority and RPM / TPM](/assets/screenshots/boss/gateway-channel-01.png)
+
+The channel list packs provider and endpoint into one cell: the provider type on top, the endpoint URL below. Only `pipellm` has a non-zero **Priority** (`10`) in the screenshot — higher wins. `RPM / TPM` reading `∞ / ∞` means neither channel is rate limited. Further right the table also has **Status**, **Tenant / Workspace** and **Owner** columns, which need horizontal scrolling on a narrow window.
 
 ## Create a channel
 
@@ -80,6 +84,10 @@ The list supports multi-select, and there is a **refresh** button in the top-rig
 4. When everything looks right, click **Create**.
 
 Nothing is lost if you get it wrong: go back to the list, click **Edit** and change it.
+
+![The top half of the Create channel form: tenant / workspace, workspace, name, provider / endpoint and endpoint](/assets/screenshots/boss/gateway-channel-02.png)
+
+The first field, **Tenant / Workspace**, is required. Once you pick a **Provider**, the **Endpoint** field below is prefilled with that provider's default address. The credential fields are further down and need a scroll.
 
 ### Supported providers
 

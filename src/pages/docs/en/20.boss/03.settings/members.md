@@ -11,7 +11,7 @@ tags:
 
 System members are the **platform administrators**: they can sign in to the BOSS operations portal and manage all tenants, clusters, resource pools and global settings. Think of it as **the list holding the highest platform privileges**.
 
-This page lets you view the list, add administrators, adjust their roles and remove people from the list. It is under **System Settings → System Member** in the left-hand menu.
+This page lets you view the list, add administrators, adjust their roles and remove people from the list. It lives in the **Platform Settings** area: click **Platform Settings** in the top navigation bar, then click **System Member** under the **System Settings** group in the left sidebar.
 
 :::tip This is not the same as tenant members
 System members are **platform-level** and cover the whole platform.
@@ -35,6 +35,10 @@ Each row shows:
 | Joined At | When they became a system member |
 
 On the right of each row there are **Edit** and **Delete** actions.
+
+![System members list: username, email, role and join time](/assets/screenshots/boss/settings-members-01.png)
+
+System members are the people who administer the platform, a far wider scope than tenant membership. The **Role** column holds platform-level values such as `Viewer`, `Developer` and `service-integration`, which are a different set from tenant roles. Email addresses are blurred.
 
 ## Add a system member
 

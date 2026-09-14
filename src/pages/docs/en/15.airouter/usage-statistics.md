@@ -62,6 +62,10 @@ The row at the top holds summary numbers, and each card shows the change "vs. pr
 First use **Call trend** to find the usage peak, then use **Model usage** to see which model drove it, and finally use **Model ranking** to confirm that model's cumulative cost.
 :::
 
+![Usage analysis dashboard: filter bar on top, five metric cards, then call trend, model usage, cost trend and model ranking](/assets/screenshots/airouter/analysis-01.png)
+
+Here is the whole dashboard: time range plus **Time granularity**, **Refresh** and **Reset filters** at the top; five metric cards in the middle; then the **Call trend**, **Model usage** and **Cost trend** charts, ending with the **Model ranking** table. The account in the screenshot had no calls that day, so every number is 0 and only empty axes show.
+
 ## Where these numbers come from
 
 - The dashboard aggregates the call records of the **current account** in the selected time range; sign in with another account and you see that account's data.

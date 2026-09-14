@@ -1,6 +1,6 @@
 ---
 title: 'Metrics'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'Deploy an experiment tracking service in the console, get its access address, and record training metrics into it.'
 tags:
   - rune
@@ -26,9 +26,16 @@ Think of it as the "record book server" of a lab: the training job does the writ
 1. In the left menu, find the **Observability** group.
 2. Click **Metrics** to open the metrics service list.
 
+![Metrics service list: the create button sits in the top-right, and an empty list reads "No data"](/assets/screenshots/rune/experiment-01.png)
+
+A metrics service is an instance like any other, so the columns match: name, metrics service, resource flavor, status, access, creator and creation time.
+
 ## Deploy a metrics service
 1. Click **Create Metrics** at the top right of the list.
 2. The page jumps to the template selection page; pick a metrics template and its version.
+
+![Metrics template picker: one card per template with a framework tag, a version dropdown and a Deploy button](/assets/screenshots/rune/experiment-02.png)
+
 3. Fill in the basic information, then the template parameters. The parameters depend on the template, and you can switch between form and JSON modes while filling them in.
 4. Submit, then go back to the **Metrics** list and wait for the deployment to finish.
 

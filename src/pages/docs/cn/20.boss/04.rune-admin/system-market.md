@@ -31,6 +31,10 @@ description: 从市场里挑一个系统模版，一键部署监控、日志、�
 
 进入后页面标题会根据类别显示为 **系统应用模版** 或 **存储集群模版**。
 
+![系统应用模版：每张卡片是一个可部署的系统组件（如 vpa），带版本与语言标签，右侧是部署按钮](/assets/screenshots/boss/cluster-market-system-01.png)
+
+系统模版市场是一张张卡片，每张卡片给出组件名、一句话说明、语言和版本，点卡片右侧的 **部署** 直接装到集群里。截图里第一张是 `vpa`（Kubernetes Vertical Pod Autoscaler，1.6.0 版本）。
+
 ## 一键部署
 
 1. 在市场里找到目标模版卡片，点击 **部署**。
@@ -45,6 +49,10 @@ description: 从市场里挑一个系统模版，一键部署监控、日志、�
 市场页只展示「系统」域的模版，所以不提供分类筛选；具体是系统类还是存储类，由模版自身的分类决定。
 
 :::
+
+![存储集群模版：卡片列出 storage-nfs、storagevolume 等存储组件与其版本](/assets/screenshots/boss/cluster-market-storage-01.png)
+
+存储模版和系统应用模版是同一个市场的两个分类，切换靠顶部地址末段（`system` 与 `storage`）。存储类模版部署出来的是存储底座（如 `storage-nfs`、`storagevolume`），供后续的存储卷使用。
 
 ## 和用户应用市场的区别
 

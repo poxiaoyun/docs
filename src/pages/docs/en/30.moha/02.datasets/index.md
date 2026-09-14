@@ -1,6 +1,6 @@
 ---
 title: 'Datasets'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'What datasets do, where to enter them, and which page covers creation, upload, download and maintenance.'
 tags:
   - moha
@@ -22,6 +22,10 @@ Datasets use the same repository framework as models, so the way you work with t
 ## Where to enter
 
 Click **Datasets** in the top navigation to open the dataset hub (the list page).
+
+![Dataset list: filter by category / domain / licence / organization on the left, with category, domain, language and size on each result card](/assets/screenshots/moha/datasets-list-01.png)
+
+Dataset filters have no **Framework** — that dimension belongs to models and images — but add **Domain**. In the screenshot alpaca-gpt4-data-zh is tagged both "Transport & Logistics" and "Arabic (Algeria)".
 
 ## First time uploading a dataset? Follow these steps
 

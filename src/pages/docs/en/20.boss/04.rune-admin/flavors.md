@@ -24,7 +24,7 @@ By the end of this page you can: create a flavor, understand every field, enable
 
 ## Getting there
 
-1. In the left sidebar click **AI Platform** → **Cluster**, then open the target cluster.
+1. Click **AI Platform** in the top navigation bar, then click **Cluster** under the **AI Platform** group in the left sidebar, then open the target cluster.
 2. In the left sidebar under **Resource Management**, click **Flavor**.
 
 ## Reading the flavor list
@@ -50,6 +50,10 @@ Actions on each row:
 | Enable / Disable | Toggles the flavor status, with a confirmation dialog |
 | Edit | Opens the edit page |
 | Delete | Deletes the flavor, with a confirmation dialog; multi-select batch deletion is supported |
+
+![Flavor list: filtered by three dimensions — type (Accelerator / CPU / GPU / Shared GPU), vendor and model](/assets/screenshots/boss/cluster-flavors-01.png)
+
+There is no table here, just three groups of filter buttons: **Type**, **Vendor** and **Model**, plus a **Status** dropdown. Use **Create flavor** to add one, or open an entry to edit, enable or disable it. Filters stack — "GPU + Nvidia + A100" narrows to that family of flavors.
 
 ## Create a flavor
 

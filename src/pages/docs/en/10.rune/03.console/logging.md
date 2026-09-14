@@ -1,6 +1,6 @@
 ---
 title: 'Logs'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'Read instance and workspace logs: filter by time and content, follow live, and recover when the stream drops.'
 ---
 
@@ -32,6 +32,10 @@ Clicking the log icon in the **Overview** container list opens a window titled s
 
 ## Filter logs by time and content
 The top of the Logs page is a toolbar. From left to right:
+
+![Logs page: the toolbar holds the query box, time range, limit, sort, query and live toggle, with the log output area underneath](/assets/screenshots/rune/logging-01.png)
+
+Below the toolbar is the output area, which streams matching entries in time order. In this screenshot it reads "No logs found" because the workspace had no running workloads at the time — no workloads means no logs, so switch the time range or workspace and try again.
 
 | Control | What it does |
 | --- | --- |

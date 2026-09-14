@@ -1,6 +1,6 @@
 ---
 title: 'Quota'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'Understand tenant and workspace quotas — how much you may spend this period and where to see what is left.'
 tags:
   - rune
@@ -30,9 +30,13 @@ If the upper layer does not give you an allocation, the lower layer cannot use i
 - Region: select a **cluster** at the top of the page first. With no cluster selected, quotas are not queried.
 
 ## View tenant quota
-1. Click your avatar in the top-right corner.
-2. In the menu, go to **Tenant**.
-3. On the tenant page, click the **Quota** tab.
+1. Click **Account Center** in the top navigation.
+2. In the left **Account Center** group, click **Tenant** to open the tenant list.
+3. Open your tenant, then click **Quota** in the left **Tenant Management** group.
+
+![Tenant quota list: the cluster switcher sits in the header, and the table shows type, model, resource pool and used / total for each resource](/assets/screenshots/rune/quota-01.png)
+
+This table is scoped to the currently selected cluster: accelerators, storage, CPU and memory each get a row, and the **Quota** column shows "used / total" with a progress bar underneath. The **Type** tabs (CPU / Disk / Memory) narrow it to one kind.
 
 The page shows the allowance for the currently selected cluster. Meaning of each column:
 
@@ -52,7 +56,7 @@ The progress bar shows the used ratio: above 80% it turns yellow, above 90% it t
 ## View and adjust workspace quota
 A workspace quota is the share allocated to a particular workspace, and it is the layer tenant administrators work with most often.
 
-1. Avatar → **Tenant** → **Workspace** tab.
+1. **Account Center** → **Tenant**, open your tenant, then click **Workspace** on the left.
 2. Open a workspace and click the **Quota** tab to see that workspace's allowance.
 3. If you are a **tenant administrator**, a **Create Quota** button appears in the top-right corner, and each row also has edit and delete actions.
 

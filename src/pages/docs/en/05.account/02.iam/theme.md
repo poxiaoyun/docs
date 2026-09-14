@@ -1,6 +1,6 @@
 ---
 title: 'Theme & Preferences'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: How to adjust each appearance setting, where the settings are stored, and who they affect.
 ---
 
@@ -41,6 +41,10 @@ Details for each item:
 :::info Compact mode is not always visible
 Compact applies to the main layout only, and it is noticeable only when the screen is wider than 1600px. On a narrower window it is normal for the switch to seem to do nothing.
 :::
+
+The Theme page collects every appearance switch on one screen, and changes apply immediately:
+
+![Theme page: Mode, Contrast and Compact toggle cards, preset colour swatches, four font cards (Public Sans, Inter, DM Sans, Nunito Sans) and a font size slider](/assets/screenshots/account/theme-01.png)
 
 ## Where the settings are stored
 

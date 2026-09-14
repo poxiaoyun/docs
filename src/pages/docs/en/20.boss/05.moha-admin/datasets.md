@@ -17,7 +17,7 @@ The two work almost the same way: both are versioned repositories. The differenc
 ## Before you start
 
 - You need the **System Administrator** role.
-- In the left sidebar click **Asset Management** → **Datasets**.
+- Click **Moha Hub** in the top navigation bar, then click **Datasets** under the **Asset Management** group in the left sidebar.
 
 ## A few terms first
 
@@ -62,6 +62,10 @@ Each row of the list shows:
 | Tags | The dataset's custom tags |
 | Recommendation Index | The score set by an administrator; hover to see the recommendation reason |
 | Updated At | The time of the most recent change |
+
+![Dataset management: five stat cards on top, advanced search plus organisation / visibility / category filters, then the list](/assets/screenshots/boss/moha-datasets-01.png)
+
+The datasets, models, images and spaces pages share one layout: five stat cards (total, capacity, public, encrypted, downloads), a filter bar and the list. The **current page only** note on the cards matters — those numbers are not a global total and change as you page through.
 
 ## Find the dataset you want to work on
 

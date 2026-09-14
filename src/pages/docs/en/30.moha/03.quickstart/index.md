@@ -1,6 +1,6 @@
 ---
 title: 'Quick Start'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'Your first lesson: sign in, pick an organization, copy a token and download your first model, in about 15 minutes.'
 tags:
   - moha
@@ -20,6 +20,10 @@ The whole thing takes about 15 minutes. You only need a browser and a terminal â
 - **Access token**: a pass that replaces your password, so the command line can prove who you are.
 
 :::
+
+![The Moha home page you land on after signing in â€” the starting point of this path](/assets/screenshots/moha/home-overview-01.png)
+
+The three pages below form one continuous checklist: prepare the account and the client (Quick start), locate your personal settings (Account settings), then get hold of the access token (Access tokens). After those three steps the command line can download your first model.
 
 ## The whole path
 

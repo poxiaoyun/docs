@@ -50,10 +50,14 @@ flowchart LR
 
 ### Get there and see the overview
 
-1. Click **Model Gateway** in the left sidebar.
+1. Click **Model Gateway** in the top navigation bar.
 2. Expand **Security Services** and click **Sensitive Word Management**.
 
 Four statistic cards sit at the top of the page: **Total Terms**, **Enabled** (with an enabled ratio), **New This Month** and **Hits in 7 Days**.
+
+![Sensitive word management: four stat cards, category tabs and a filter bar above the word table](/assets/screenshots/boss/gateway-lexicon-01.png)
+
+The top of the page holds four stat cards (total words, enabled, added this month, hits in the last 7 days), then the search box with category tabs (**All / Politics / Terrorism / Livelihood …**), then four filter dropdowns for **Category / Risk level / Tag / Updated**. The **Word**, **Category** and **Tag** columns are blurred — this page explains how those columns work, and the actual terms do not belong in public documentation.
 
 ### What the list shows
 
@@ -105,9 +109,13 @@ Deleting entries removes them from detection immediately and cannot be reversed.
 
 ## Step 2: decide what happens on a hit (Policy Management)
 
+![Policy management list: policy name, trigger condition, action, priority, enabled state and update time](/assets/screenshots/boss/gateway-policy-01.png)
+
+Each row is one rule: **Trigger condition** is a score threshold (`≥ 50` in the screenshot), **Action** is what happens on a hit ("Block the request" here), and a smaller **Priority** number matches first. The toggle in the first column flips it on or off.
+
 ### Get there and read the list
 
-1. Click **Model Gateway** in the left sidebar.
+1. Click **Model Gateway** in the top navigation bar.
 2. Expand **Security Services** and click **Policy Management**.
 
 The list shows each policy's name and description, its **Trigger Condition** (shown like `≥ 50`), its action, its priority, its status and when it was last updated. You can search by name or description above, and filter by status.

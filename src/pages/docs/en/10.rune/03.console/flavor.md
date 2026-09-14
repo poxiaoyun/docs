@@ -1,6 +1,6 @@
 ---
 title: 'Flavor'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'What a flavor is, how it decides the size of machine you can request, and how to filter the list.'
 tags:
   - rune
@@ -27,9 +27,16 @@ Only when both are satisfied can an instance be created.
 - Region: select a **cluster** at the top of the page first. With no cluster selected, the Flavor page issues no query and shows no data.
 
 ## Where to find flavors
-1. Click your avatar in the top-right corner.
-2. In the menu, go to **Tenant** (your tenant name appears next to it).
-3. On the tenant page, click the **Flavor** tab.
+
+Flavors belong to a **cluster**, so pick the cluster first.
+
+1. Click **AI Platform** in the top navigation to open the cluster list.
+2. Open the cluster you want.
+3. In the left **Resource Management** group, click **Flavor**.
+
+![Flavor list: Flavor selected under Resource Management in the left nav, with the cluster switcher in the top-right](/assets/screenshots/rune/flavor-01.png)
+
+The **Cluster** selector in the top-right decides which cluster's flavors you are looking at; the create button beside it is only available to platform administrators. Each row is one flavor configured for that cluster.
 
 ## Reading the flavor list
 | Column | Description |
@@ -38,11 +45,13 @@ Only when both are satisfied can an instance be created.
 | Type | The resource category, for example CPU, GPU, VGPU |
 | Model | The accelerator card model (including the vendor) |
 | Flavor | The resource combination this flavor contains, for example how many CPU cores, how much memory, how many cards |
+| Resource Pool | Which resource pool the flavor belongs to |
+| Status | **Enabled** means the flavor can be picked; **Disabled** flavors cannot be selected |
 
-This page has no search. Use the filter bar to narrow the list.
+A search box sits at the left of the toolbar for finding flavors by name, with a **Status** filter beside it.
 
 ## Filtering flavors
-Above the list there is a filter bar that narrows results step by step through **Type → Vendor → Model**:
+Below the toolbar there is a filter bar that narrows results step by step through **Type → Vendor → Model**:
 
 1. Click **Type** first (for example GPU); the Vendor and Model options below change accordingly.
 2. Then click **Vendor**.
@@ -51,12 +60,12 @@ Above the list there is a filter bar that narrows results step by step through *
 Click a condition that is already selected to clear it again.
 
 ## Where to see how much allowance is left
-The Flavor page only tells you **what you can pick**; it does not show usage. To see how much is left, go to **Quota** in the same set of tenant tabs:
+The Flavor page only tells you **what you can pick**; it does not show usage. To see how much is left, go to your tenant's **Quota** page:
 
-1. Avatar → **Tenant** → **Quota** tab.
-2. In the **Quota** column you see "used / total" and a progress bar — that is the usage.
+1. **Account Center** → **Tenant**, then open your tenant.
+2. On the **Quota** page, the **Quota** column shows "used / total" plus a progress bar — that is the usage.
 
-To see how much allowance a particular **workspace** received, open **Workspace** in the tenant tabs, open that workspace, and then click the **Quota** tab.
+To see how much allowance a particular **workspace** received, open **Workspace** in the same place, open that workspace, and then click the **Quota** tab.
 
 :::tip Why can't I select a certain flavor
 Even if a flavor appears in the list, that does not guarantee it can be deployed. The current workspace must also have remaining quota on the matching resource. When creation fails, check your allowance on the Quota page instead of only checking whether the flavor exists.

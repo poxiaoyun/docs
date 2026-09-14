@@ -1,6 +1,6 @@
 ---
 title: 'Training & Fine-tuning'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'Submit your first fine-tuning task from scratch: pick a template, choose a model and dataset, mount shared storage, and collect the artifacts.'
 tags:
   - rune
@@ -28,8 +28,17 @@ Fine-tuning is **giving an existing model extra lessons**: you keep training it 
 
 ## Submit a fine-tuning task from scratch
 
+Fine-tuning follows the same shape as inference: list page → template picker → deploy form. Start on the list page:
+
+![Fine-tuning list: the Create button sits in the top-right corner](/assets/screenshots/rune/finetune-01.png)
+
+This workspace has no fine-tuning tasks yet, so the list is empty. Once tasks exist, each row shows the name, training framework, resource flavor, status and creation time.
+
 1. In the left **Workbench** group, click **Traning&Fine tuning**.
 2. Click **Create Jobs** at the top right to open the template selection page.
+
+![Fine-tuning template picker: one card per template with a framework tag, a version dropdown and a Deploy button](/assets/screenshots/rune/finetune-02.png)
+
 3. Pick a fine-tuning template, confirm the **Version**, and click **Deploy**.
 4. Fill in the basic information:
 

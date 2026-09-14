@@ -1,6 +1,6 @@
 ---
 title: 'Rune intelligent computing platform'
-updated: '2026-09-12'
+updated: '2026-09-14'
 author: Rune Docs Team
 description: 'Start here: what the Rune platform does, what each sidebar menu is for, and which page a first-time user should open first.'
 tags:
@@ -19,6 +19,10 @@ Read this page to learn what each menu does and where a first-time user should c
 Think of Rune as an AI factory: the region is the factory site, the workspace is a workshop, a template is a standard work instruction,
 and an instance is a production line you start by following that instruction.
 :::
+
+![The platform as a whole: the Region and Workspace selectors at the top left, the sidebar split into Home / Workbench / Observability, and the current workspace home on the right](/assets/screenshots/rune/dashboard-01.png)
+
+The three sidebar groups are **Home** (Home, App market), **Workbench** (Inference, Training & fine-tuning, Development, App instances, My templates, File storage) and **Observability** (Metrics, Logs, Model evaluation). Workbench and Observability only appear for tenant administrators and developers.
 
 ## Sidebar menu at a glance
 

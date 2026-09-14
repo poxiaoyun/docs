@@ -1,6 +1,6 @@
 ---
 title: 'Evaluation Management'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'Create a model evaluation task in the console, read its status, and find where the results are.'
 tags:
   - rune
@@ -26,9 +26,16 @@ Think of it as "arranging an exam for the model": the evaluation dataset is the 
 1. In the left menu, find the **Observability** group.
 2. Click **Evaluations** to open the evaluation task list.
 
+![Evaluation task list: the create button sits in the top-right, and an empty list reads "No data"](/assets/screenshots/rune/evaluation-01.png)
+
+Evaluation tasks are instances too, so the columns are the usual ones — name, evaluation engine, resource flavor, status, access, creator and creation time — except that the engine column carries the template name.
+
 ## Create an evaluation task
 1. Click **Create Evaluations** at the top right of the list.
 2. On the template page, choose an evaluation template and its version.
+
+![Evaluation template picker: one card per template with a framework tag, a version dropdown and a Deploy button](/assets/screenshots/rune/evaluation-02.png)
+
 3. Fill in the basic information, then the template parameters (for example the model path, the evaluation dataset, and the batch size; whether a GPU is needed is also determined by the template). You can switch between form and JSON modes while filling them in.
 4. Submit, then go back to the **Evaluation Management** list and wait for the task to run.
 

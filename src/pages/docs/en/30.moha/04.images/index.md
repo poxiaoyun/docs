@@ -1,6 +1,6 @@
 ---
 title: 'Mirror warehouse'
-updated: '2026-09-12'
+updated: '2026-09-14'
 author: Rune Docs Team
 description: 'What an image is, how it differs from a model or dataset, and where to enter the Images repository.'
 tags:
@@ -31,6 +31,10 @@ Click **Images** in the top navigation to open the image list page.
 | Image Scan | A check for known security vulnerabilities in this environment |
 | Visibility | Who can see it: Public, Internal or Private |
 
+![Create image form: the Image block (name, ID, organization, description) with a readme body field, then category, framework and members](/assets/screenshots/moha/create-image-01.png)
+
+The image form carries a **readme** body field, which becomes the Markdown text on the image detail page. Models and datasets have no such field — their body comes from the README in the repository root.
+
 ## How it differs from models and datasets
 
 | | Model | Dataset | Image |
@@ -40,6 +44,10 @@ Click **Images** in the top navigation to open the image list page.
 | Detail page tabs | Card, File, Snapshot | Card, File, Snapshot | Card, **Tags**, Settings |
 
 An image detail page has no File or Snapshot tabs. Instead it has a **Tags** tab, where all versions of the same image live.
+
+![Image warehouse list: filter by category / framework / architecture / organization on the left, with category and architecture on each card](/assets/screenshots/moha/images-list-01.png)
+
+Images carry one filter dimension models and datasets do not — **Architecture** (`CPU`, `CANN (Ascend)`, `Musl (Moore Threads)` here) — because the same image is usually published per amd64 / arm64.
 
 ## What you can do here
 

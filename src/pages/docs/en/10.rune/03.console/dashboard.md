@@ -1,6 +1,6 @@
 ---
 title: 'Home'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'What to look at first after signing in: use Home to judge whether the current workspace has compute, storage, or instance problems.'
 tags:
   - rune
@@ -23,6 +23,12 @@ It does not drive the car; it tells you the fuel level (quota), the water temper
 - There is no permission restriction; every member can view Home.
 
 ## What the blocks are, top to bottom
+
+When Home opens, use the screenshot below to get your bearings:
+
+![Home: the attention banner and six overview cards sit on top, resource quota and average utilization in the middle, data storage and volume usage below](/assets/screenshots/rune/dashboard-01.png)
+
+The data in this screenshot comes from a demo workspace: the attention banner reads "No items need attention", meaning nothing was pending at the time. If you see a yellow banner instead, click **View details** on its right to work through the items.
 
 | Block | What you can see |
 | --- | --- |

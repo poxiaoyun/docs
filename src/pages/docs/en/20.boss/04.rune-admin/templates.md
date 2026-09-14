@@ -30,7 +30,7 @@ By the end of this page you can: create a template, upload its versions, publish
 
 ## Getting there
 
-In the left sidebar, under the **AI Platform** group, click **App Template**.
+Click **AI Platform** in the top navigation bar, then click **App Template** under the **AI Platform** group in the left sidebar.
 
 ## Reading the template list
 
@@ -64,6 +64,10 @@ Filters and sorting at the top:
 When you switch the domain, the currently selected category is cleared automatically if it does not belong to the new domain.
 
 Actions on each row: **Recommendation** (configure the score and screenshot), **Publish / Unpublish** (with a confirmation dialog), **Edit**, **Delete** (with a confirmation dialog, multi-select supported).
+
+![App template list: filtered by domain (user / system) and category (inference / fine-tuning / development / experiment / evaluation / app / system / storage)](/assets/screenshots/boss/rune-products-01.png)
+
+The page splits templates by **Domain** (user or system) and then narrows by **Category**. Sorting toggles between **By time** and **By recommendation**, and **Show unpublished** pulls drafts into the list. The cards in the screenshot include system components such as `vpa`.
 
 ## Create a template
 

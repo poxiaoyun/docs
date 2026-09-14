@@ -1,6 +1,6 @@
 ---
 title: Storage Cluster & Runtime
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: Manage a cluster's storage instances and platform runtime components so workloads have persistent storage.
 tags:
 - boss
@@ -29,7 +29,7 @@ By the end of this page you can: view the storage instances already in a cluster
 
 ## Getting there
 
-1. In the left sidebar click **AI Platform** → **Cluster**, then open the target cluster.
+1. Click **AI Platform** in the top navigation bar, then click **Cluster** under the **AI Platform** group in the left sidebar, then open the target cluster.
 2. In the left sidebar under **Operations Management**, click **Storage Cluster**.
 
 ## The storage cluster list
@@ -44,6 +44,10 @@ The list fields are the same as for System Apps:
 | Created At | — |
 
 Actions on each row: **Edit**, **Delete** (with a confirmation dialog).
+
+![Storage cluster list: name, version, status and creation time, with Create storage cluster at the top right](/assets/screenshots/boss/cluster-storages-01.png)
+
+Four columns, and **Status** is the one to watch: `测试juicefs` reads "Syncing status", meaning the cluster is fresh and its state has not been reported back yet — refresh in a moment. Once settled it shows a running state.
 
 ## Deploy a storage cluster
 

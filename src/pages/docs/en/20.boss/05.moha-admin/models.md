@@ -17,7 +17,7 @@ A "model" is a packaged set of model files, usually containing many files and a 
 ## Before you start
 
 - You need the **System Administrator** role.
-- In the left sidebar click **Asset Management** → **Models**.
+- Click **Moha Hub** in the top navigation bar, then click **Models** under the **Asset Management** group in the left sidebar.
 
 ## A few terms first
 
@@ -63,6 +63,10 @@ Each row of the list shows:
 | Tags | The model's custom tags |
 | Recommendation Index | The score set by an administrator; hover to see the recommendation reason |
 | Updated At | The time of the most recent change |
+
+![Model management: five stat cards (57 models, 35.36 GB, public, encrypted, downloads) above advanced search and the list](/assets/screenshots/boss/moha-models-01.png)
+
+This is the busiest page of the Moha repository admin group (57 models, 35.36 GB in the screenshot). The three dropdowns **Organisation / Visibility / Category** stack with the **Advanced search** panel to pin down a single model.
 
 ## Find the model you want to work on
 

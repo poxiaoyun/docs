@@ -14,7 +14,7 @@ A license is the **product entitlement credential** for the platform: it decides
 
 You can think of it as an **authorisation certificate with an expiry date** — it states the licensed products and their quantity limits, and once it expires or a limit is exceeded the corresponding features are restricted.
 
-This page shows the current entitlement status and expiry date, and lets you paste a new certificate to renew. It is under **System Settings → License** in the left-hand menu (the page heading is **License Management**).
+This page shows the current entitlement status and expiry date, and lets you paste a new certificate to renew. It lives in the **Platform Settings** area: click **Platform Settings** in the top navigation bar, then click **License** under the **System Settings** group in the left sidebar (the page heading is **License Management**).
 
 ## Before you start
 
@@ -28,6 +28,10 @@ This page shows the current entitlement status and expiry date, and lets you pas
 | Cluster Fingerprint | Shows and copies the unique identifier of this cluster, which you give to the issuer so the license matches |
 | License Status | Whether the entitlement is healthy, when it expires, which company it was issued to, and so on |
 | Product Quota Status | Usage and limits per feature; click a feature name to see its resource details |
+
+![License management: cluster fingerprint, license status (serial, company, email, edition, issue and expiry dates) and product quota status](/assets/screenshots/boss/settings-license-01.png)
+
+The expiry date is the second-to-last row of the **License status** card (25 Feb 2027 in the screenshot), with the **issue date** above it. The **cluster fingerprint**, **serial number** and **email** are blurred — the fingerprint identifies the machine to the issuer and does not belong in public docs. The lower **Product quota status** block lists usage per feature (24 / 30 nodes here), and the bar turns amber then red as a quota fills up.
 
 ## Where to see the expiry date
 

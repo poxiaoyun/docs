@@ -24,7 +24,7 @@ Your bank account really holds one currency, but you can switch the app to show 
 
 ## Open Currency Configuration
 
-1. Click **Model Gateway** in the left sidebar.
+1. Click **Model Gateway** in the top navigation bar.
 2. Expand **Platform Settings** and click **Currency Configuration**.
 
 ## The two settings
@@ -36,6 +36,10 @@ Your bank account really holds one currency, but you can switch the app to show 
 
 - **Currency display mode** affects display only: choose `CNY` to show Chinese yuan, or `USD` to convert and show US dollars at the rate.
 - **USD exchange rate** is the CNY-to-USD ratio. The system converts with fixed-point integers to avoid rounding drift.
+
+![Currency configuration: the display mode (CNY) and the USD exchange rate](/assets/screenshots/boss/gateway-currency-01.png)
+
+The page has exactly two settings: **Display mode** and **USD exchange rate**. The mode is `CNY` in the screenshot, so every amount on the platform is shown in renminbi; switching to USD changes every place that converts through the rate. Press **Save** when done.
 
 ## Change and save
 

@@ -44,6 +44,10 @@ Go to **Account Center → Account**. The list has these columns:
 
 On the right of each row you can **edit** the profile, **reset password** or **delete** the account; selecting several rows lets you delete them in bulk.
 
+![User management list: username, email, phone number, MFA enabled and creation time](/assets/screenshots/boss/user-list-01.png)
+
+The user list has five columns. The **Username** cell holds two lines: the short name on top is what the user signs in with, the `Nick` line below is the display nickname. **MFA enabled** reading "No" means the user has not bound an authenticator yet. The email and phone columns are blurred.
+
 ## Create a user
 
 1. Go to **Account Center → Account**.
@@ -58,6 +62,10 @@ On the right of each row you can **edit** the profile, **reset password** or **d
    | Mobile Number | For example `13800000000` | Required, and must be a valid mobile number |
 
 4. Click **Confirm**.
+
+![The Add user form: username, nickname, email and phone number](/assets/screenshots/boss/user-create-01.png)
+
+Creating a user takes four fields: **Username** (used to sign in, required), **Nickname**, **Email** (required) and **Phone number** (required). The initial password is generated afterwards — hand it over the way this section describes.
 
 ### Hand over the initial password
 
@@ -100,6 +108,10 @@ The old password stops working at once and the user must sign in with the new on
    | Mobile Number | Yes | Must be a valid mobile number |
 
 4. Click **Confirm** to save.
+
+![Tenant members list: username, email, role and join time](/assets/screenshots/boss/tenant-members-01.png)
+
+The role actually lives on the **tenant members** tab, not in the user list. The column in the screenshot is the **Role** field this section is about, and the three roles — **Administrator**, **Developer** and **Member** — all appear in it.
 
 ## Change a user's role
 

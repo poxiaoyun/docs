@@ -1,6 +1,6 @@
 ---
 title: 'Moha Repository'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'What Moha is, what you can host on it, where to start, and what repository, version and card mean.'
 tags:
   - moha
@@ -17,6 +17,10 @@ You do not need to know anything about servers or storage. A few clicks on the p
 A **repository** is a folder. Every time it changes, the platform saves a snapshot of that folder (called a **version**).
 Moha keeps the whole history, so you can always go back to an earlier state.
 :::
+
+![Moha home: a personal column on the left (Overview / Created by me / Liked by me / Access token / Announcements), four quick-create entries and the announcements block on top, recommended models below](/assets/screenshots/moha/home-overview-01.png)
+
+The top navigation only has **Home / Models / Datasets / Images / Spaces**; everything else lives in the left column of the home page. In the screenshot the **Recommended models** and **Joined organizations** blocks carry most of the page.
 
 ## Learn these words first
 

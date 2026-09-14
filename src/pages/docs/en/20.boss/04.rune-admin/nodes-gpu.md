@@ -25,7 +25,7 @@ They are the main entry points for working out "is a machine broken, or have we 
 
 ## How to open them
 
-1. In the left-hand menu, click **AI Platform** → **Cluster**, then open the target cluster.
+1. Click **AI Platform** in the top navigation bar, then click **Cluster** under the **AI Platform** group in the left sidebar, then open the target cluster.
 2. Under the **Cluster Status** group in the left-hand menu:
    - To look at machines, click **Node Status**.
    - To look at cards, click **Accelerator Status**.
@@ -45,6 +45,10 @@ Node Status gathers the monitoring dashboards whose names contain `node`, and is
 - Node pressure alerts (memory pressure, disk pressure and so on).
 - Whether load is balanced across nodes.
 
+![Node Status page: a server resource overview table (5 hosts) above 7-day P99 utilisation and load trends](/assets/screenshots/boss/cluster-nodes-01.png)
+
+This page examines the physical machines: the overview table lists every host and the charts below show trends. The line at the top (`selected host k8s-node8, instance 192.168.0.107:9100`) is the node-exporter scrape target — a useful address when you go after one specific machine.
+
 ## What Accelerator Status shows
 
 Accelerator Status gathers the monitoring dashboards whose **name or title contains `gpu` or `npu`**, and is the right place to watch:
@@ -59,6 +63,10 @@ Accelerator Status gathers the monitoring dashboards whose **name or title conta
 If a cluster has both NPU dashboards and NVIDIA GPU dashboards, **the NPU dashboards are placed before the NVIDIA GPU dashboards** (the platform moves a later NPU dashboard forward), so that domestic accelerator cards are shown first.
 
 :::
+
+![Accelerator Status page (NPU cluster monitoring): five summary cards over utilisation, memory and power trends](/assets/screenshots/boss/cluster-gpu-01.png)
+
+The top of the page holds five summary cards: **total NPUs**, **NPU nodes**, **average NPU utilisation**, **average HBM utilisation** and **cluster power draw**. Everything reads 0 in this screenshot because the cluster has no NPU cards (it is a CPU + GPU cluster), which is the correct state for this page — the page is not broken. See this section for the order to investigate in.
 
 ## A recommended investigation order
 

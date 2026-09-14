@@ -25,7 +25,7 @@ By the end of this page you can: assign resource quotas to a tenant, create a wo
 
 ## Getting there
 
-In the left sidebar, under the **AI Platform** group, click **Tenant Resource**.
+Click **AI Platform** in the top navigation bar, then click **Tenant Resource** under the **AI Platform** group in the left sidebar.
 
 ## Tenant list
 
@@ -40,6 +40,10 @@ In the left sidebar, under the **AI Platform** group, click **Tenant Resource**.
 Every operation is done after clicking the tenant name to open the details; the list itself only has the three columns above.
 
 :::
+
+![Tenant resources list: one row per tenant, with progress bars for CPU / memory / GPU / storage usage against quota](/assets/screenshots/boss/rune-tenant-list-01.png)
+
+**Tenant Resources** and **Tenant Management** cover the same tenants with different emphasis: here every row lays out four quota progress bars. `chart-test` shows CPU at `18core / 20core` (90%) with the bar turned amber — the kind of tenant worth checking for a quota increase.
 
 ## The two subpages in tenant details
 
@@ -73,6 +77,10 @@ A quota does not choose a ready-made flavor; instead you pick "cluster + resourc
 
 Each row in the quota list can be **Edit**ed or **Delete**d; the top of the list can also be filtered by **Type / Vendor / Model** to help you locate rows.
 
+![Tenant quota page: a cluster dropdown at the top, then a table of quota type, model, resource pool and used / total](/assets/screenshots/boss/rune-tenant-quota-01.png)
+
+Quotas are counted **per cluster**, hence the **Cluster** dropdown at the top (Beijing A here) — switching it swaps the whole table. A **Type** filter (CPU / memory / disk) sits on the left, and the **Quota** column reads as used / total, such as `0 / 3`.
+
 ## Create a workspace
 
 1. In the tenant details, click **Workspace** on the left.
@@ -96,6 +104,10 @@ Each row in the workspace list can:
 | Delete | Deletes the workspace, with a confirmation dialog |
 
 At the top left of the list you can filter by **Cluster**.
+
+![Workspaces inside a tenant: cluster, name, namespace, status and creation time](/assets/screenshots/boss/rune-tenant-workspace-01.png)
+
+This list also carries a **Cluster** dropdown, since a workspace belongs to a cluster, and shows every space the tenant owns there. The **Namespace** column is the underlying Kubernetes namespace (`dev` here), and **Status** must read `Ready` before the workspace is usable.
 
 ## Subdivide the quota into workspaces
 

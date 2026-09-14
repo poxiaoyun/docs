@@ -31,6 +31,12 @@ Your password is like the key to your front door, and multi-factor authenticatio
 If the account is already bound, opening the page shows the "Enabled" state directly and no QR code appears.
 :::
 
+At this step the page shows the QR code directly; you do not click anything first:
+
+![Multi-factor authentication page: a two-step progress bar reading "1 Enter verification code / 2 Enabled", the hint to scan the QR code with an authenticator app, the QR code itself, then the verification code field and the Bind button](/assets/screenshots/account/mfa-01.png)
+
+The two-step progress bar at the top also shows the flow: scan the code in your app first, and only after the code is accepted does the state move to "Enabled".
+
 ## What you see after binding succeeds
 
 After a successful bind the multi-factor authentication card switches to **Enabled**, and the page shows:

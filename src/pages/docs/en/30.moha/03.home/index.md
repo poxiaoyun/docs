@@ -1,6 +1,6 @@
 ---
 title: 'Home page and personal workbench'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'What the Moha home workbench contains, what each of the five pages shows, and how to open an organization page.'
 tags:
   - moha
@@ -14,6 +14,10 @@ The Moha home page is not a welcome poster — it is your **personal workbench**
 ## How to get there
 
 Click **Home** in the top navigation of Moha.
+
+![The left column of the home page: the avatar and organization-home entry, the five items Overview / Created by me / Liked by me / Access token / Announcements, and the Joined organizations list below](/assets/screenshots/moha/home-overview-01.png)
+
+This column only exists under the **Home** group; it collapses once you go to Models, Datasets or any other page. The number in brackets after **Joined organizations** is how many organizations the account belongs to, and clicking a tile jumps straight to that organization page.
 
 ## What the left column contains
 
@@ -35,6 +39,10 @@ If **Joined Organization** is empty it shows **No Organizations**, which means y
 | My Favorites | The resources you have starred | [Liked by Me](/moha/home/liked-by-me) |
 | Access Tokens | The token for the current session and its copy button | [Access tokens and announcements](/moha/home/token-announcements) |
 | Announcements | All announcements published by the platform | [Access tokens and announcements](/moha/home/token-announcements) |
+
+![Top-right avatar menu: avatar and account name, Home, Personal settings, the tenant (Demo project), plus Switch tenant and Sign out at the bottom](/assets/screenshots/moha/avatar-menu-01.png)
+
+The menu has two layers: **Home / Personal settings** are personal, while the **tenant** row is the team. **Personal settings** opens the user centre, clicking the tenant name switches to that tenant's view, and **Switch tenant** at the bottom re-selects one when there is no default.
 
 ## Personal view and team view
 

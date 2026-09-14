@@ -72,6 +72,10 @@ The public key is usually a **single line** that starts with `ssh-ed25519`, `ssh
 If you paste the public key before typing a name, the page fills the name in for you from the comment at the end of the key (usually the email you typed when generating it). The name cannot be empty; if the key has no comment at the end, just type one yourself.
 :::
 
+After you paste a public key, the page splits into two parts: the add form on top and the saved key cards below:
+
+![SSH key page: Key Name and Public Key fields with a Save button on top; below, one card per saved key showing its name, creation time, fingerprint and a Delete action](/assets/screenshots/account/ssh-key-01.png)
+
 ## Confirming the result
 
 - A green **SSH key added successfully** alert appears at the top of the page.

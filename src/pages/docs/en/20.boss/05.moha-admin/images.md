@@ -20,7 +20,7 @@ The two names look alike, but one manages a "system disk" and the other "moves d
 ## Before you start
 
 - You need the **System Administrator** role.
-- In the left sidebar click **Asset Management** → **Images**.
+- Click **Moha Hub** in the top navigation bar, then click **Images** under the **Asset Management** group in the left sidebar.
 
 ## A few terms first
 
@@ -65,6 +65,10 @@ Each row of the list shows:
 | Accelerates | The acceleration frameworks the image supports, collapsed when there are several |
 | Architecture | The machine architecture the image suits, X86 or ARM |
 | Updated At | The time of the most recent change |
+
+![Image management: stat cards plus organisation / visibility / category / framework filters above the list](/assets/screenshots/boss/moha-images-01.png)
+
+The images page adds one filter dimension over its three siblings — **Framework** — because images are naturally grouped by the framework they ship (PyTorch, TensorFlow and so on). Everything else matches the models and datasets pages.
 
 ## Find the image you want to work on
 

@@ -21,6 +21,10 @@ The AI Platform is like an office building: utilities, rooms and access control 
 3. In the menu, choose this entry — these docs call it **AIrouter**, and on screen it reads **Playground** by default (if an administrator renamed it, go by the label you actually see).
 4. You land on the **Models** page by default.
 
+!["Product & Services" menu at the top left, listing AI Platform, Moha Hub and Model Gateway](/assets/screenshots/airouter/index-01.png)
+
+That menu is the entry point itself: click **Product & Services** at the top left and pick the third item. It is labelled **Model Gateway** in the UI; the name is configurable by an administrator in [Gateway Settings](../20.boss/03.settings/chatapp.md), so trust whatever your menu actually shows.
+
 ## What the five top entries do
 
 AIrouter has no left-hand menu; everything lives in **the single row at the top of the page**:

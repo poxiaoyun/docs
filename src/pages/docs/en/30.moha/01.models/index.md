@@ -1,6 +1,6 @@
 ---
 title: 'Model Repositories'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'What model repositories do, where to enter them, and which page covers upload, download, cards and versions.'
 tags:
   - moha
@@ -24,6 +24,10 @@ Click **Models** in the top navigation to open the model hub (the model list pag
 3. Open the repository's **File** tab and upload your model files. For large files use the command line or SDK, see [Upload Models](/moha/models/upload).
 4. On the **Model card** tab, write the README so others understand what the model does, see [Model Cards](/moha/models/card).
 5. When you need to pin a stable release, create a snapshot on the **Snapshot** tab, see [Model Versions](/moha/models/version).
+
+![The Files tab of a model repository: name, tags and every tab (model card / Files / Snapshots / Discussions / Settings) on top, with Download model, Deploy and Use model at the right](/assets/screenshots/moha/repo-model-file-01.png)
+
+Of the five tabs, **the model card** is what others see first, **Files** is where the files actually live, and **Settings** decides visibility. The three buttons at the top right are Use model, Deploy and Download model.
 
 ## Tabs inside a repository
 

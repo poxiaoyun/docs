@@ -17,8 +17,12 @@ A large banner image at the top of the home page, switching to the next one ever
 ## Before you start
 
 - You need the **System Administrator** role.
-- In the left sidebar click **System Settings** → **Banners**.
+- Click **Moha Hub** in the top navigation bar, then click **Banners** under the **System Settings** group in the left sidebar.
 - Prepare the image file in advance (a horizontal image around 4:1 is recommended, for example 1600×400).
+
+![Banner list: image, title, content, link, start time and end time](/assets/screenshots/boss/moha-banners-01.png)
+
+Banners add two columns over announcements: the **image** thumbnail and the **link** a click should open. Both are empty in the screenshot, meaning those two banners carry artwork and copy but no destination. The start / end rules match announcements.
 
 ## What is on the list
 

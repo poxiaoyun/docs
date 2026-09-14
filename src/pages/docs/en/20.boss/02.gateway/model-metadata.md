@@ -28,7 +28,7 @@ This page only maintains display information and prices; it **never decides whic
 
 ## Open Model Configuration
 
-1. Click **Model Gateway** in the left sidebar.
+1. Click **Model Gateway** in the top navigation bar.
 2. Expand **Model Services** and click **Model Configuration**.
 
 ## Reading the model list
@@ -45,6 +45,10 @@ This page only maintains display information and prices; it **never decides whic
 | Channel vendors | How many channels serve this model; hover to see their names and priorities |
 
 Above the list you can filter by **Type** and **Vendor**. The actions menu at the end of each row has **Edit** and **Delete**.
+
+![Model configuration list: model name, type, vendor, categories, context, size, price and providers](/assets/screenshots/boss/gateway-modelmeta-01.png)
+
+Model configuration only maintains **metadata**, as the on-page hint says: this page takes no part in model routing. The **Provider** column shows which channels a model is attached to; for the models you can actually call, see [Channel Management](./channels.md).
 
 ## Create a model
 
@@ -75,6 +79,10 @@ Above the list you can filter by **Type** and **Vendor**. The actions menu at th
 5. Click **Create model** to finish. On the edit page the button reads **Save** instead.
 
 When you edit an existing model that already has channels using it, the form also shows a **Channel vendors** block listing those channels and their priorities, so you can judge the impact of your change. When no channel references the model, the block is not shown.
+
+![The Create model form: Basic information (name, type, vendor, description, categories, tags, context, size, icon) and Price](/assets/screenshots/boss/gateway-modelmeta-02.png)
+
+The form is split into **Basic information** and **Price**. Only **Model name** is required; everything else can be filled in later. The size field carries a `B` unit hint, and both **Categories** and **Custom tags** are multi-select, feeding the filters users see in the model marketplace.
 
 ### Type
 

@@ -56,6 +56,10 @@ Switching back to the previous tenant brings back the original data and permissi
 2. Click **Tenant** in the menu (followed by the current tenant name).
 3. Tenant management opens with a row of tabs at the top.
 
+The **Overview** tab puts tenant information, compute resources, workspaces and members on one screen:
+
+![Tenant management overview: tabs for Overview, Members, Quota, Flavor and Workspace; a left card showing the tenant avatar, name, email, mobile number and creation time (email and mobile are redacted), and panels on the right for compute resources, workspace statistics, recent workspaces and the member list](/assets/screenshots/account/tenant-01.png)
+
 ## What the tabs can do
 
 | Tab | Role needed | What you can do |
@@ -112,6 +116,10 @@ Tick the members to remove (multiple selections are allowed), click delete, and 
 :::warning Deleting a member takes effect immediately
 The person you remove no longer sees this tenant in the dropdown the next time they switch tenants. Before deleting, make sure they really no longer need access.
 :::
+
+Member management lives on the **Members** tab, where the table has four columns by default: Username, Email, Role and Joined At.
+
+![Tenant management Members tab: a search box and Add Member button on top, and a table with Username, Email, Role and Joined At columns, with the email column redacted](/assets/screenshots/account/roles-01.png)
 
 ## How someone adds me to a tenant
 

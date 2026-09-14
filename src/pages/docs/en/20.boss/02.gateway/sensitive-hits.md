@@ -24,8 +24,12 @@ An airport scanner sweeps thousands of bags a day; to review "what set that alar
 
 ## Open Hit Records
 
-1. Click **Model Gateway** in the left sidebar.
+1. Click **Model Gateway** in the top navigation bar.
 2. Expand **Security Services** and click **Hit Records**.
+
+![Hit records: the range is prefilled to the last month, with user and provider filters and rows newest first](/assets/screenshots/boss/gateway-hits-01.png)
+
+This is what you see on arrival: **Start** and **End** are prefilled to the last month and there is no extra switch on top. A `-` in the **Word** column means the request was caught by a policy on its **total risk score** rather than on a single term; the **Risk level** column shows which band that score fell into.
 
 ## This page is already filtered for you
 

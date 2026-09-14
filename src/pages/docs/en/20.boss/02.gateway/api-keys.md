@@ -25,7 +25,7 @@ The pass says **who you are** (the owner) and **which doors you may walk through
 
 ## Open Token Management
 
-1. Click **Model Gateway** in the left sidebar.
+1. Click **Model Gateway** in the top navigation bar.
 2. Expand **User Management** and click **Token Management**.
 
 ## Reading the key list
@@ -47,6 +47,10 @@ The list supports multi-select, and there is a **refresh** button in the top-rig
 In the list a key shows only its first 6 characters, followed by a fixed 12 asterisks. The **copy button** on the right copies the **complete key**, so do not send screenshots of this page to anyone who should not see it.
 :::
 
+![Token management list: name, API key, owner, RPM, TPM(K), IP allowlist and expiry](/assets/screenshots/boss/gateway-token-01.png)
+
+Token management in Boss looks almost identical to the end-user [API keys](../../15.airouter/token.md) page, with one extra **Owner** column — this page covers keys across the whole platform, so you need to see whose each one is.
+
 ## Create an API key
 
 1. On the **Token Management** page click **Add API Keys** in the top-right corner.
@@ -63,6 +67,10 @@ In the list a key shows only its first 6 characters, followed by a fixed 12 aste
    | Expiration time | Pick down to the minute | Appears only when "Never expires" is off |
 
 3. Click **Confirm**. On success the page returns to the list.
+
+![The Create API key form: name, owner, RPM, TPM(K) and the IP allowlist](/assets/screenshots/boss/gateway-token-02.png)
+
+The create form adds a required **Owner** field; every other field (name, RPM, TPM(K), IP allowlist, never expires) means exactly what it means on the user-facing page.
 
 ### Small rules for the number fields
 

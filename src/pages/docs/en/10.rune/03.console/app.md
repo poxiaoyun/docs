@@ -1,6 +1,6 @@
 ---
 title: 'Apps'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'Deploy general-purpose apps and understand the extra PVC list this instance type has.'
 tags:
   - rune
@@ -29,8 +29,17 @@ Pick from the shelf first, then manage the result in the app list.
 
 ## Deploy an app instance
 
+Start on the list page. This workspace already has one app instance:
+
+![App instance list: each row shows name, app, resource flavor, status, creator and creation time, with the create button in the top-right](/assets/screenshots/rune/app-01.png)
+
+The `test-app` row is **Paused**, meaning it was stopped manually; click **Start** in the row menu whenever you need it running again.
+
 1. In the left **Workbench** group, click **Apps**.
 2. Click **Create Apps** at the top right to open the template selection page.
+
+![App template picker: one card per template with a tool tag, a version dropdown and a Deploy button](/assets/screenshots/rune/app-02.png)
+
 3. Pick an app template, confirm the **Version**, and click **Deploy**.
 4. Fill in the basic information:
 

@@ -24,10 +24,14 @@ When you drive you do not stare at the engine — you watch the speedometer and 
 
 ## Open the Dashboard
 
-1. Click **Model Gateway** in the left sidebar.
+1. Click **Model Gateway** in the top navigation bar.
 2. Click **Dashboard**.
 
 The page refreshes automatically every **30 seconds**, and you can also refresh it manually at any time.
+
+![Dashboard: time range plus tenant / channel / model filters and time granularity, with seven metric cards below](/assets/screenshots/boss/gateway-operations-01.png)
+
+Compared with the user-facing [usage analysis](../../15.airouter/usage-statistics.md) page, this one adds **Tenant**, **Channel** and **Model** filters, so you can look at the whole platform or drill into one tenant. Below the filter bar sit seven metric cards, each carrying a period-over-period delta.
 
 ## How to filter
 

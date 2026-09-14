@@ -263,9 +263,15 @@ def main():
         lang = os.path.relpath(rel, CONTENT).split(os.sep)[0]
         known = langs.get(lang, {})
 
-        # 5a. 静态资源（图片等）走 public/，并经过 baseUri 处理
-        if path.startswith('/assets/') or path.startswith('/screenshots/') or is_img:
-            if not os.path.exists(os.path.join(ROOT, 'public', path.lstrip('/'))):
+        # 5a. 静态资源（图片等）走 public/，并经过 baseUri 处理。
+        #     前缀必须是 /assets/：渲染器 resolveAssetPath 只对这一个前缀补 base，
+        #     而 Docker 部署的 base 是 /docs，写成 /screenshots/ 之类在 Docker 下会 404。
+        if is_img or path.startswith('/assets/'):
+            if is_img and not path.startswith('/assets/'):
+                broken_links.append(
+                    (rel, lineno, raw, '图片前缀必须是 /assets/（Docker 部署 base=/docs，其他前缀会 404）')
+                )
+            elif not os.path.exists(os.path.join(ROOT, 'public', path.lstrip('/'))):
                 broken_links.append((rel, lineno, raw, 'public 资源缺失'))
             continue
         if os.path.splitext(path)[1].lower() in ('.png', '.jpg', '.jpeg', '.webp', '.svg', '.gif', '.ico'):

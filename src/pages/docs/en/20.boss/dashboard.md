@@ -25,6 +25,10 @@ Treat it as your dashboard. Glance at it when you start work: is the **Attention
 | LLM Gateway Overview | Request volume, latency, token usage and error rate of model calls | Last 24 hours |
 | Platform Management | Number of tenants, clusters and users, plus anything that needs your attention | Whole platform |
 
+![The three cards on the home page: Moha resources top left, LLM gateway overview bottom left, hot ranking and platform management on the right](/assets/screenshots/boss/dashboard-01.png)
+
+This is the first screen after signing in. The four numbers in the top-left card (models / datasets / spaces / images) sit above a **Distribution** bar; the bottom-left **LLM gateway overview** shows the last 24 hours of requests, average latency, token consumption and error rate, followed by the traffic trend and model ranking; the hot ranking sits top right and platform management bottom right. The figures in the screenshot come from a demo environment — yours will be real.
+
 ## Moha Resources card
 
 The card title is **Moha Resources** and the subtitle is **Asset Statistics**.

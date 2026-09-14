@@ -11,7 +11,7 @@ tags:
 
 This group of pages is the **master control panel for the whole platform**: what the platform is called, which logo it uses, how each sub-system appears in the interface, whether the AI assistant is switched on, whether the license has expired, and who the platform administrators are.
 
-You will find them in the **System Settings** group in the left-hand menu. The changes you make here are usually **visible across the entire platform** — including the sign-in page, the top title bar and the product entries that ordinary users see — so think about who will be affected before you start.
+They live in the **Platform Settings** area: click **Platform Settings** in the top navigation bar, and the **System Settings** group in the left sidebar is exactly these pages. The changes you make here are usually **visible across the entire platform** — including the sign-in page, the top title bar and the product entries that ordinary users see — so think about who will be affected before you start.
 
 :::tip These settings are not tenant settings
 Every item here is **platform-wide**: one change affects all tenants and all users.
@@ -20,7 +20,7 @@ Members, quotas and workspaces inside a tenant are tenant-level settings — cha
 
 ## Before you start
 
-- Your account must be a **system administrator**. Ordinary users do not see the **System Settings** group in the left-hand menu, and cannot open these pages even with a direct link.
+- Your account must be a **system administrator**. Ordinary users do not see the **System Settings** group in the **Platform Settings** area, and cannot open these pages even with a direct link.
 - Before changing a sub-system, work out where its entry appears, so that you do not lose track of the button afterwards.
 
 ## What each settings page does

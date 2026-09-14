@@ -41,6 +41,10 @@ Go to **Account Center → Tenant**. The list has these columns:
 
 On the right of each row you can **edit** the tenant, or **disable / enable** it.
 
+![Tenant management list: name, email, member count, status and creation time](/assets/screenshots/boss/tenant-list-01.png)
+
+The list is a single table with five columns. The email column is blurred here — the real page shows the full address, but screenshots ship with the docs, so any column carrying personal data is masked before capture.
+
 ## Create a tenant
 
 1. Go to **Account Center → Tenant**.
@@ -59,6 +63,10 @@ On the right of each row you can **edit** the tenant, or **disable / enable** it
 :::warning The tenant ID cannot be changed after creation
 The ID is the tenant's unique identifier in the system. You may set it yourself while creating the tenant, but it is **locked once creation finishes** — you cannot change it later when editing the tenant. If you intend to choose it yourself, decide before you create the tenant.
 :::
+
+![The Add tenant form: name, ID, email, phone number and description](/assets/screenshots/boss/tenant-create-01.png)
+
+The form is short: **Name**, **ID** (auto-generated from the name if you leave it blank), **Email**, **Phone number** and **Description**. Fill them in and press **Confirm**. The ID field is empty in the screenshot, which is how you know it is generated for you.
 
 ### What happens after creation
 
@@ -145,6 +153,10 @@ The member list has four columns: **Username**, **Email**, **Role** and **Joined
 :::tip Keep at least two administrators
 People take leave and people leave. Give every tenant at least 2 administrators so that there is always someone who can take over when one is unavailable.
 :::
+
+![Tenant overview: avatar and basic information on the left, member statistics and list on the right](/assets/screenshots/boss/tenant-overview-01.png)
+
+The overview is split in two: on the left the tenant avatar plus **name / email / phone / creation time**, each with a pencil button to edit in place; on the right three role counters (administrator / member / developer) above the **Members** list, with **See more** jumping to the members tab. Email and phone are blurred in the screenshot.
 
 ## Tenant overview page
 

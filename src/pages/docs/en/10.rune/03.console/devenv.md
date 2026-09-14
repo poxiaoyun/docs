@@ -1,6 +1,6 @@
 ---
 title: 'Development'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'Open a browser-based dev environment, get into it from the console, and understand the difference between stop, restart, and delete.'
 tags:
   - rune
@@ -24,8 +24,17 @@ An inference service "stays open and serves requests", a fine-tuning job "runs a
 
 ## Create a dev environment
 
+Creation follows the same path as other workloads: list page → template picker → deploy form. Start on the list page:
+
+![Development Service list: the create button sits in the top-right corner](/assets/screenshots/rune/devenv-01.png)
+
+This workspace has no dev environments yet, so the footer reads "0 of 0". Once instances exist, each row shows the name, environment, resource flavor, status, connection method, creator and creation time.
+
 1. In the left **Workbench** group, click **Runebox**.
 2. Click **Create Runebox** at the top right to open the template selection page.
+
+![Development template picker: one card per template with a framework tag, a version dropdown and a Deploy button](/assets/screenshots/rune/devenv-02.png)
+
 3. Pick a dev environment template (for example a Notebook template with Jupyter), confirm the **Version**, and click **Deploy**.
 4. Fill in the basic information:
 

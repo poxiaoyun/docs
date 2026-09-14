@@ -47,6 +47,10 @@ Rules for the new password: at least 8 characters, only letters, digits, and com
 After changing it you stay signed in and an **Updated successfully** message appears at the top of the page. Remember the new password right away; if you forget it, the only way back is the password recovery flow.
 :::
 
+The Password page has just three fields:
+
+![Password page: one card with Old Password, New Password and Confirm Password fields, then a Save button](/assets/screenshots/account/security-01.png)
+
 ## Changing your email
 
 1. Click the **Email** tab.
@@ -61,6 +65,10 @@ After changing it you stay signed in and an **Updated successfully** message app
 4. Click **Save**; the page shows **Updated successfully**.
 
 After you send an email code the button turns into a countdown such as `60s`, and you can click it again only when the countdown ends.
+
+The Email page requires a code first before the change is applied:
+
+![Email page: one card with the email field, the verification code field and a Send Code button, then a Save button](/assets/screenshots/account/security-02.png)
 
 ## Changing your mobile number
 
@@ -78,6 +86,10 @@ After you send an email code the button turns into a countdown such as `60s`, an
 :::info You may need to pass a graphic code too
 If the platform considers the operation risky, a graphic verification code window opens when you click **Send code**. Type the characters from the image and click **Next** to continue sending.
 :::
+
+The Mobile Number page has the same layout as the email page; only the code is delivered by SMS:
+
+![Mobile number page: one card with the mobile number field, the verification code field and a Send Code button, then a Save button](/assets/screenshots/account/security-03.png)
 
 ## Turning on multi-factor authentication
 
@@ -102,6 +114,10 @@ The recovery code is shown only once, when binding succeeds, and the page gives 
 :::
 
 After a successful bind, opening this tab again shows the enabled state directly, plus a **Reset** button. The page has no "turn off multi-factor authentication" switch; **Reset** only takes you back to the first step to bind once more.
+
+When MFA is not yet bound, the page shows the QR code and a code field right away:
+
+![Multi-factor authentication page: a two-step progress bar, the QR code with a scan hint, then the verification code field and the Bind button](/assets/screenshots/account/mfa-01.png)
 
 ## Common questions
 

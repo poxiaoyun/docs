@@ -1,6 +1,6 @@
 ---
 title: 'App Market'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'Pick a template from the shelf and deploy it in one click as your own instance.'
 tags:
   - rune
@@ -28,7 +28,11 @@ Pick a template in the market, then manage the running result in the instance li
 
 ## Browse the market
 
-In the left **Home** group, click **Marketplace**.
+In the left **Home** group, click **Marketplace**. The recommended carousel sits at the top, with the category buttons and template cards below:
+
+![Marketplace: the recommended template carousel on top, category buttons and a grid of template cards below](/assets/screenshots/rune/app-market-01.png)
+
+This market holds 50 templates; the small number after each category button is how many templates are in that category.
 
 | Area | How to use it |
 | --- | --- |

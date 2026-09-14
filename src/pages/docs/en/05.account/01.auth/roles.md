@@ -1,6 +1,6 @@
 ---
 title: 'Roles and Permissions'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: What administrators, developers, and members can each do, and where to check your own role.
 ---
 
@@ -27,10 +27,14 @@ There is one more special kind of administrator: an administrator who belongs to
 ## Where to see your own role
 
 1. Click your avatar in the top-right corner. In the menu that opens, click **Tenant**; the entry is followed by the name of your current tenant.
-2. Open tenant management and find your own username in the member list on the **Overview** tab.
-3. The role shown with your username is your role in this tenant.
+2. Open tenant management and switch to the **Members** tab (only an administrator can see this tab).
+3. Find your own username in the member table; the **Role** column is your role in this tenant.
 
-If you cannot open tenant management, or you cannot find your role in the list, your current role is not allowed to see member information; in that case ask a tenant administrator to confirm your role.
+If you are not an administrator and cannot see the **Members** tab, fall back to the member list on the **Overview** tab: the small text under each username is the role as well, it is just not laid out as a column. If neither place shows it, your current role is not allowed to see member information; in that case ask a tenant administrator to confirm your role.
+
+The member table looks like this — the first column is **Username** and the third is **Role**:
+
+![Tenant management Member tab: a search box and Add Member button on top, a table with Username, Email, Role and Joined At columns; the visible rows are Member, Developer and Administrator](/assets/screenshots/account/roles-01.png)
 
 ## Why a role change does not take effect immediately
 

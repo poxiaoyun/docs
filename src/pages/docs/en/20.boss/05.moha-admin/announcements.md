@@ -17,7 +17,7 @@ When a user opens the Moha Hub home page, there is an Announcements card on the 
 ## Before you start
 
 - You need the **System Administrator** role.
-- In the left sidebar click **System Settings** → **Announcements**.
+- Click **Moha Hub** in the top navigation bar, then click **Announcements** under the **System Settings** group in the left sidebar.
 
 ## What is on the list
 
@@ -29,6 +29,10 @@ When a user opens the Moha Hub home page, there is an Announcements card on the 
 | Invalid Date | Until when it stops showing |
 
 Announcements whose **Invalid Date** has passed are **greyed out entirely**, meaning they no longer show.
+
+![Announcements list: title, content, start time and end time](/assets/screenshots/boss/moha-announcements-01.png)
+
+Four columns, and the last two do the real work — **start** and **end** together decide when the announcement shows up on users' Moha Hub. Outside that window it hides itself, with no manual unpublishing needed.
 
 ## Publish an announcement
 

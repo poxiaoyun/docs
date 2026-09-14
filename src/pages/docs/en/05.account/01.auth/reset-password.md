@@ -1,6 +1,6 @@
 ---
 title: 'Reset Password'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: Where to click when you forget your password, what happens next, and why an administrator must reset it for now.
 ---
 
@@ -27,6 +27,10 @@ The screen is built, but it is not connected to email sending: after you enter y
 | **Email** field | The email address you registered with |
 | **Send** button | Shows "Sending..." after you click it |
 | **Back to login** link | Returns to the sign-in page |
+
+The page is just this one card, with no other entry points:
+
+![Reset password page: a card with a question-mark lock icon and the heading "Forgot password?", a line of explanation, the email field, the Send button and a back-to-sign-in link](/assets/screenshots/account/reset-password-01.png)
 
 ## What actually happens now
 

@@ -1,6 +1,6 @@
 ---
 title: 'Inference Services'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'Deploy a model as an online service from scratch: pick a template, fill in parameters, wait for Healthy, and find the access address.'
 tags:
   - rune
@@ -28,9 +28,23 @@ An inference service is **opening a model for business**: once deployed, your mo
 
 ## Deploy an inference service from scratch
 
+The whole flow is three steps: list page → template picker → deploy form. Start on the list page:
+
+![Inference list: status cards on top, search and filter toolbar below, and the Create Inference button in the top-right](/assets/screenshots/rune/inference-01.png)
+
+Every status card reads 0 and the list says "No inference services yet" — this workspace has never deployed a service, which is exactly what you see on your first visit.
+
 1. In the **Workbench** group in the left sidebar, click **Inference**.
 2. Click **Create Inference** in the top-right to open the template picker.
+
+![Inference engine template picker: one card per template with a framework tag, a version dropdown and a Deploy button](/assets/screenshots/rune/inference-02.png)
+
+Each template decides which inference framework runs and which fields you have to fill. The version dropdown at the bottom-right of a card switches versions right there; you can also switch inside the detail page.
+
 3. Click into an inference template card, confirm the **Version** to use, and click **Deploy**.
+
+   ![Template introduction page: the description on the left, a card on the right with the version dropdown and the Deploy button](/assets/screenshots/rune/inference-03.png)
+
 4. When the form appears, fill in the basic info first:
 
    | Field | What to fill | Notes |
@@ -41,6 +55,12 @@ An inference service is **opening a model for business**: once deployed, your mo
 
 5. Fill in the template parameters (see "How to fill in the parameters" below).
 6. Click **Confirm** at the bottom of the page to submit.
+
+The deploy form has two halves: basic info first, then the template parameters.
+
+![Top half of the deploy form: template info, then Name, ID, Description and the resource flavor](/assets/screenshots/rune/inference-04.png)
+
+![Bottom half of the deploy form: model, task type, GPU memory utilization, inference service settings, tool calling and custom configuration](/assets/screenshots/rune/inference-05.png)
 
 :::tip You do not have to use the Inference menu to get an address
 You can also pick a template directly in the **Marketplace**: open the template detail, choose the **Version**, and click **Deploy** — the result is exactly the same.

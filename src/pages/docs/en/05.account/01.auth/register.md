@@ -1,6 +1,6 @@
 ---
 title: 'Registration'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: How to register a platform account with an email verification code, and what each field expects.
 ---
 
@@ -17,6 +17,12 @@ Registration only creates the account; it does not sign you in automatically. Af
 - An email address that can receive mail normally.
 - A mobile number that can receive text messages (the mobile number is required).
 - Note that the registration entry is not open on every platform. If the sign-in page has no "Don't have an account? Register now" link, this platform does not allow self-service registration, so ask an administrator to create an account for you.
+
+The registration page puts everything you need to fill in on a single card:
+
+![Registration page: one card with username, password, email, mobile number and verification code fields, then the terms checkbox and the Create Account button](/assets/screenshots/account/register-01.png)
+
+The eye icon on the right of the password field toggles between plain text and dots so you can check for typos.
 
 ## How to register
 

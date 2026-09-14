@@ -26,6 +26,12 @@ First you prove who you are on the sign-in page, then you choose a company on th
 | [Roles and Permissions](/account/auth/roles) | You want to know what you can do, or check someone else's role |
 | [Select / Register Tenant](/account/auth/select-tenant) | Choosing a company space after sign-in, or creating a new one |
 
+Signing in happens in two steps; this is what the second one (tenant selection) looks like:
+
+![Tenant selection page: the card on the right greets "Admin", then shows the tenant dropdown, the Enter Platform button, the Create Tenant button and a sign-out link](/assets/screenshots/account/select-tenant-01.png)
+
+Besides the **Tenant** dropdown and **Enter Platform**, there is a fallback: if you have no tenant at all, click **Create Tenant** to open one for yourself.
+
 ## A few rules worth knowing
 
 - After a successful sign-in you always pass through the tenant selection page first; if you belong to only one tenant, it enters that tenant automatically.

@@ -1,6 +1,6 @@
 ---
 title: 'AI Diagnostics Assistant'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'Use the floating AI assistant on the right of the page to find out why an instance will not start or a service is unreachable.'
 tags:
   - rune
@@ -27,6 +27,12 @@ Think of it as an operations colleague sitting next to you who can look through 
 1. Find the vertical assistant tab on the **right edge** of the page (hovering it shows the assistant's name, which the platform administrator sets).
 2. Click the tab and the chat panel slides out on the right.
 3. The tab can be **dragged up and down**; drop it wherever suits you and it stays there.
+
+Once open, it looks like this:
+
+![AI diagnostics drawer: the header names the current workspace and how many resources it can see, the middle holds quick entries and suggested questions, and the bottom has the input box and model picker](/assets/screenshots/rune/diagnostics-01.png)
+
+The header tells you which **workspace** it read and how many resources it can reach; the middle lists clickable quick entries and suggested questions; the bottom is the input box plus the **Model** currently in use. The screenshot shows `deepseek-v4-flash`; your environment shows whichever model is actually configured.
 
 ## Run a diagnosis
 1. At the bottom of the panel, make sure a usable model is selected in the **Model** dropdown (once loaded, the first one is selected by default).

@@ -1,6 +1,6 @@
 ---
 title: 'Getting Started'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'A three-step path for new users: prepare your account and resources, learn the workload types, then run one inference end to end.'
 tags:
   - rune
@@ -32,6 +32,10 @@ Their list pages, creation flow, and detail views are identical; the only differ
 :::info What this means for you
 Learn to create any one kind of instance and you can create the others. Step 3 uses an inference service only because its result is the most visible — once deployed you can call it straight from the browser.
 :::
+
+![App market: a recommended-template carousel on top, template cards laid out by category below, each deployable straight from its card](/assets/screenshots/rune/app-market-01.png)
+
+**App market** is the second item under the **Home** group and gathers every available template in one page. The per-type instance lists live under the **Workbench** group, where you inspect instances you already created and open a detail page to troubleshoot.
 
 ## The two entry points you will use
 

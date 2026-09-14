@@ -1,6 +1,6 @@
 ---
 title: 'Collaboration'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'What each tab does once you open someone else''s repository, and what you can do there.'
 tags:
   - moha
@@ -18,6 +18,10 @@ Models, datasets, images and Spaces are four different kinds of resource, but th
 - Open it from **Created by Me** or **My Favorites** on the home page.
 
 Once it opens, the repository name appears at the top, the like count and download count sit in the top right, and the tabs are below.
+
+![Every tab of a model repository: model card / Files / Snapshots / Discussions / Settings, with Download model, Deploy and Use model at the top right](/assets/screenshots/moha/repo-model-content-01.png)
+
+The five resource types do not share one tab set: models and datasets use "card / Files / Snapshots / Discussions / Settings", Spaces use "Overview / Files / Snapshots / Discussions / Settings", and images have the fewest — just "card / Tags / Settings".
 
 ## Which tabs each resource has
 

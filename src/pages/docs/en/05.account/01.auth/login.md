@@ -19,6 +19,14 @@ First you prove who you are on the sign-in page, then you choose a company on th
 
 ## How to sign in
 
+Here is what the sign-in page looks like when it opens:
+
+![Sign-in page: platform introduction on the left, sign-in form on the right](/assets/screenshots/account/login-01.png)
+
+The left side introduces the platform. The right side holds, from top to bottom, the account field, the password field,
+the agreement checkbox and the **Login** button. Note that **Login** stays grey and unclickable until you tick the agreement
+— that is expected, not a broken page.
+
 1. Open the platform sign-in address. On a wide screen the left side introduces the platform and the right side holds the sign-in form.
 2. Type your account into the **Username/Email/Mobile Number** field.
 3. Type your password into the **Password** field. Characters show as dots by default; click the eye icon on the right of the field to reveal them.

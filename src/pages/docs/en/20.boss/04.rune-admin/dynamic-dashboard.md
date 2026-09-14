@@ -1,6 +1,6 @@
 ---
 title: 'Dynamic dashboard'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: Build your own monitoring dashboard in a YAML box — edit the config on the left and watch the charts render on the right.
 tags:
   - boss
@@ -44,6 +44,10 @@ This page has **no save button** and does not store the config on the server. **
 So: **your changes are lost when you refresh the page.** If you want to keep using them, copy the config somewhere else yourself.
 
 :::
+
+![Dynamic dashboard: a YAML editor on the left, the cluster summary and node resource charts rendered from it on the right](/assets/screenshots/boss/cluster-dashboard-01.png)
+
+This dashboard is configuration-driven: the YAML editor on the left defines data sources, charts and groups, and the right side renders them live. **Reset** discards your edits, `YAML Configuration` titles the editor, and the preview opens with the **Cluster summary** block — the blocks below it come from the groups you configure.
 
 ## Create a dashboard
 

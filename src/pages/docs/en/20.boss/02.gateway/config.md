@@ -24,7 +24,7 @@ Channel Management and Model Configuration deal with individual parts; Gateway C
 
 ## Open Gateway Configuration
 
-1. Click **Model Gateway** in the left sidebar.
+1. Click **Model Gateway** in the top navigation bar.
 2. Expand **Platform Settings** and click **Gateway Configuration**.
 
 ## What the page contains, top to bottom
@@ -37,6 +37,10 @@ Channel Management and Model Configuration deal with individual parts; Gateway C
 6. Cache Management
 
 At the bottom are two buttons, **Reset** and **Save Changes**. The save button stays grey until something changes, and **Reset** restores the form to the last configuration loaded from the server.
+
+![Gateway configuration: routing, core switches, security, caching and channel fallback](/assets/screenshots/boss/gateway-config-01.png)
+
+The page is one long form: **Routing**, **Core switches**, **Security**, **Caching**, **Channel fallback policy**, then **Cache management**. Of the five core switches, **Enable content moderation** is the partner of [the lexicon and policies](./moderation.md) — turn it off and those rules stop applying. Remember to save at the bottom; see the last section of this page for when changes take effect.
 
 ## Core Switches
 

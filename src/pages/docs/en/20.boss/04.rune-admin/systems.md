@@ -1,6 +1,6 @@
 ---
 title: System Apps
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: Manage the infrastructure components deployed in a cluster, such as monitoring, logging or a gateway, and view, edit or delete them.
 ---
 
@@ -24,7 +24,7 @@ By the end of this page you can: view the system apps already deployed, deploy a
 
 ## Getting there
 
-1. In the left sidebar click **AI Platform** → **Cluster**, then open the target cluster.
+1. Click **AI Platform** in the top navigation bar, then click **Cluster** under the **AI Platform** group in the left sidebar, then open the target cluster.
 2. In the left sidebar under **Operations Management**, click **System Apps**.
 
 ## Reading the instance list
@@ -37,6 +37,10 @@ By the end of this page you can: view the system apps already deployed, deploy a
 | Created At | — |
 
 Actions on each row: **Edit**, **Delete** (with a confirmation dialog); multi-select batch deletion is supported.
+
+![System apps list: name, version, status and creation time](/assets/screenshots/boss/cluster-systems-01.png)
+
+The system apps list shows the components already installed in the cluster, with **Status** reading "Installed". Adding new ones goes through the **Deploy** button in the [system template market](./system-market.md); this page is for viewing and managing.
 
 ## Deploy a new system app
 

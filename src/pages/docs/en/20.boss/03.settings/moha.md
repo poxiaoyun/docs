@@ -13,7 +13,7 @@ Moha Hub Settings decide **how Moha Hub appears to users** (name, logo, descript
 
 The page has two cards: display information on top and space configuration below. They **save independently**, so changing one never affects the other.
 
-This page is under **System Settings → Moha Hub Settings** in the left-hand menu.
+This page lives in the **Platform Settings** area: click **Platform Settings** in the top navigation bar, then click **Moha Hub Settings** under the **System Settings** group in the left sidebar.
 
 :::tip What the two cards control
 The upper card only changes what Moha Hub is called and how it looks; users see this directly.
@@ -46,6 +46,10 @@ The lower card controls how the Spaces feature is reached — a wrong domain or 
 2. Choosing a logo file **triggers an immediate save**.
 
 3. If you only changed the text, click **Confirm** at the bottom of the card.
+
+![Moha Hub settings: title and logo, plus space configuration (base domain, TLS certificate and key)](/assets/screenshots/boss/settings-moha-01.png)
+
+This page adds a **Space configuration** block over the platform page: the **Base domain** decides where user Spaces are served, and turning on **Enable TLS** reveals the certificate and private key fields. Each block has its own **Confirm** button — save the block you edited.
 
 ## Set the space configuration
 

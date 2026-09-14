@@ -17,7 +17,7 @@ Think of a Space as "an online mini-app someone else has built": a user writes c
 ## Before you start
 
 - You need the **System Administrator** role.
-- In the left sidebar click **Asset Management** → **Spaces**.
+- Click **Moha Hub** in the top navigation bar, then click **Spaces** under the **Asset Management** group in the left sidebar.
 
 ## A few terms first
 
@@ -76,6 +76,10 @@ The values Running Status can take (the same names users see on the Space detail
 | Terminating | The Space is being deleted |
 | Installed | The component has finished installing |
 | Unknown | The status cannot be read at the moment |
+
+![Space management: stat cards plus organisation / visibility / domain / scenario filters above the list](/assets/screenshots/boss/moha-spaces-01.png)
+
+The spaces page filters by **Domain** and **Scenario** — application-context tags specific to Spaces, not the categories used by models and datasets. The screenshot shows 32 spaces, the second-largest group in this section.
 
 ## Find the Space you want to work on
 

@@ -24,7 +24,7 @@ The Dashboard gives you the statistics of "how many people entered the building 
 
 ## Open Call Logs
 
-1. Click **Model Gateway** in the left sidebar.
+1. Click **Model Gateway** in the top navigation bar.
 2. Expand **User Management** and click **Call Logs**.
 
 ## How to filter
@@ -65,6 +65,10 @@ Any row whose result is not a success shows a fixed red vertical line on the lef
 :::info Cost is a calculated number
 The cost here is a **cost snapshot** calculated from the model price, used for reconciliation and analysis. The gateway itself does no top-ups or deductions; the cost column is just a monetary statistic.
 :::
+
+![Call logs: time range and five filters on top, one row per call newest first](/assets/screenshots/boss/gateway-audit-01.png)
+
+The filter bar adds two dimensions over the user-facing page — **User** and **Provider** — because this view covers the whole platform. In the table, the **Token** column is the key used for the call and **User** is the person who made it.
 
 ## View the details of a call
 

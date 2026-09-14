@@ -19,7 +19,7 @@ Cluster Status is the main dashboard you get after stepping into a "data-centre 
 
 ## Open the cluster overview
 
-1. In the left-hand menu, click **Cluster** under the **AI Platform** group.
+1. Click **AI Platform** in the top navigation bar, then click **Cluster** under the **AI Platform** group in the left sidebar.
 2. In the cluster list, click the name of the cluster you want to inspect.
 3. In the left-hand sub-menu, click **Cluster Status**.
 
@@ -28,6 +28,10 @@ Cluster Status is the main dashboard you get after stepping into a "data-centre 
 The Cluster Status page renders only baseline monitoring dashboards and **does not include accelerator dashboards**. To see utilisation, VRAM and temperature per card, open the **Accelerator Status** sub-page.
 
 :::
+
+![Cluster information page: a cluster summary row (nodes, ready nodes, pods, CPU capacity) above hourly monitoring charts](/assets/screenshots/boss/cluster-overview-01.png)
+
+This is the cluster health report: the four **Cluster summary** cards give the current snapshot, the trend charts below default to a one-hour window, and the top right lets you shorten the interval from `1 hour` or flip `refresh` from `off` to automatic.
 
 ## What is on the page
 

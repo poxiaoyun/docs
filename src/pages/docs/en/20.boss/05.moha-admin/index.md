@@ -1,6 +1,6 @@
 ---
 title: 'Moha Repository Management'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: The platform administrator's console for governing the Moha Hub — models, datasets, images, Spaces and operations content.
 tags:
   - boss
@@ -20,7 +20,7 @@ Think of it as a company-internal "app store plus cloud drive": models and datas
 ## Before you start
 
 - Your account needs the **System Administrator** role. Ordinary users cannot see this menu group; they can only manage their own content inside their own Moha Hub.
-- These pages are spread across four groups in the left sidebar: **Asset Management**, **Data Sync**, **Security Audit** and **System Settings**.
+- After clicking **Moha Hub** in the top navigation bar, you will find these pages spread across four groups in the left sidebar: **Asset Management**, **Data Sync**, **Security Audit** and **System Settings** (the Moha Hub one).
 
 ## A few terms first
 

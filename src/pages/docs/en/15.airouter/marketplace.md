@@ -27,6 +27,10 @@ Models is like the list page of an app store: the card tells you what the "app" 
 | Model cards | Center | Arranged into 1 to 4 columns by window width; each card is one model |
 | Model count | Below the cards | Shows "N models" |
 
+![The Model Marketplace: grouped filters on the left, scope tabs, search and sort on top, model cards in the middle](/assets/screenshots/airouter/marketplace-01.png)
+
+The layout is as above: the left column holds the five filter groups (**Type / Category / Vendor / Context / Size**), the top left holds the scope tabs (the screenshot shows 35 under **All**), the top right holds search and sort, and the middle area is filled with model cards.
+
 ## Pick a model
 
 1. Click **Models** in the top navigation.
@@ -79,6 +83,10 @@ There is no separate "supports images" switch. Check the **Category** tag: **Vis
 :::tip Why does one model have several channels
 A model may be connected through more than one source. They are merged into a single card, and the details list them by **Priority** from high to low; clicking **Try model** uses the highest-priority channel by default.
 :::
+
+![Model detail panel: name and tags on top, available channels in the middle, four price tiles below](/assets/screenshots/airouter/marketplace-02.png)
+
+The **Price** block in the screenshot has four tiles: **Input**, **Output**, **Cache read** and **Cache write**, each showing a unit of `CNY / 1M`. The table below explains what each one covers.
 
 ## How to read the prices
 

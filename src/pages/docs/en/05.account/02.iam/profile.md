@@ -1,6 +1,6 @@
 ---
 title: 'User Profile'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: What the profile page can change, how to change it, and whether you need to sign in again.
 ---
 
@@ -36,6 +36,10 @@ For the detailed steps of password, email, mobile number, and multi-factor authe
 1. Click your avatar in the top-right corner.
 2. In the menu that slides out, click **Settings**.
 3. You land on the **General** tab by default.
+
+The Basic Info page has your avatar on the left and your username plus nickname on the right:
+
+![Basic Info page: avatar upload area on the left; username (greyed out with a lock icon) and nickname field on the right, with a Save button at the bottom](/assets/screenshots/account/profile-01.png)
 
 ## Changing your avatar and nickname
 

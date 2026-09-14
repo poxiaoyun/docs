@@ -29,6 +29,10 @@ Like interviewing two candidates: ask them the same question at once, then compa
 | Conversation columns | Center | Two columns, each showing the answers of one model |
 | Shared input | Bottom | One input box; a single message goes to both sides |
 
+![Model Comparison in its initial state: two stacked model lists on the far left, both panes asking you to pick a model](/assets/screenshots/airouter/compare-01.png)
+
+This is the page before any model is chosen: the far-left column holds two stacked lists labelled **Left model** and **Right model**; the middle shows two panes reading "Select the left model / Select the right model"; the shared input box sits at the very bottom and only becomes active when both sides have a model.
+
 ## Choose both models
 
 1. Click **Comparison** in the top navigation.
@@ -58,6 +62,10 @@ The model lists work the same as in [Playground](./experience.md): grouped by vi
 | Reasoning | With **Deep Thinking** on, expand **Show thoughts** on each side and compare their reasoning |
 | Token cost | Look at the usage numbers under each answer |
 | Instruction following | Type the same System into both sides' **Parameter Settings** and compare which obeys better |
+
+![The same question sent to deepseek-v4-flash and deepseek-v4-pro, each pane showing its own reasoning and answer](/assets/screenshots/airouter/compare-02.png)
+
+Above is the result of picking one model per side and sending a single question: each pane names its model, and each answer carries its own collapsed reasoning block and token row. In the screenshot `deepseek-v4-flash` used 158 tokens (34 in / 124 out) while `deepseek-v4-pro` used 169 (87 in / 82 out) — same question, different input and output lengths, which is exactly what this page is for.
 
 ## What is shared and what is independent
 

@@ -13,7 +13,7 @@ AI Platform Settings decide **how the AI Platform (Rune) appears to users**: its
 
 Further down the page there is a separate card, **Development Instance Idle Monitor**, which can automatically pause development instances that nobody has used for a long time and free up compute.
 
-This page is under **System Settings → AI Platform Settings** in the left-hand menu.
+This page lives in the **Platform Settings** area: click **Platform Settings** in the top navigation bar, then click **AI Platform Settings** under the **System Settings** group in the left sidebar.
 
 :::tip This page changes the signboard, not the switch
 The title, logo and description here only make the entry **look** like your own product.
@@ -56,6 +56,10 @@ Top to bottom the page has two cards, each saved on its own:
 The Moha Address and KMS Address are used by the platform to call those two services internally; a wrong value makes the related features unavailable.
 If you are not sure of the correct addresses, ask the deployment or operations team first instead of guessing.
 :::
+
+![AI Platform settings: product title and description, plus Moha and KMS addresses](/assets/screenshots/boss/settings-rune-01.png)
+
+Compared with the gateway settings, this page adds two address fields: **Moha address** and **KMS address**, the internal endpoints the subsystems call each other on. The **Development instance idle monitor** block below configures how long an idle development service may sit before it is paused.
 
 ## Set the development instance idle monitor
 

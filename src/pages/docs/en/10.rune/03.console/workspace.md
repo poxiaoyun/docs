@@ -1,6 +1,6 @@
 ---
 title: 'Workspace Management'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'Understand the region-to-workspace relationship, learn how to switch and create workspaces, and how to add colleagues with roles.'
 tags:
   - rune
@@ -53,19 +53,29 @@ If a region has no workspaces at all, the page shows an empty state where an adm
 
 ## Create a workspace
 
-1. Click the avatar in the top-right and click **Tenant** in the menu to open tenant settings.
-2. Click the **Workspace** tab at the top.
-3. Click **Add Workspace**.
-4. Fill in the form:
+Workspaces are created by a tenant administrator in the admin console.
+
+1. Click **Account Center** in the top navigation.
+2. In the left **Account Center** group, click **Tenant** and open your tenant.
+3. In the left **Tenant Management** group, click **Workspace**.
+4. Click **Create Workspace** in the top-right corner.
+
+   ![Create Workspace form: fill in the name, the ID is generated to match, then pick the cluster and add a description](/assets/screenshots/rune/workspace-02.png)
+
+5. Fill in the form:
 
    | Field | What to fill | Notes |
    | --- | --- | --- |
    | Name | For example `algorithm team space` | Required and for display; Chinese or English both work |
    | ID | Generated automatically from the name by default | A system identifier that cannot be changed after creation; click the pencil icon below the name to edit it manually |
-   | Region | Choose which building this "office" belongs to | Required; cannot be changed after creation |
+   | Cluster | Pick the cluster this workspace belongs to | Required; determines which cluster's compute it can use |
    | Description | For example "for the algorithm team's daily experiments" | Optional |
 
-5. Click **Confirm**.
+6. Click **Confirm**.
+
+![Workspace list: each row shows name, namespace, status and creation time](/assets/screenshots/rune/workspace-01.png)
+
+Each row is one workspace: the **Name** carries the description underneath, **Namespace** is its technical identifier inside the cluster, and a **Status** of **Ready** means it is available. This workspace's namespace is `dev`, and the platform uses it to associate resources from that point on.
 
 :::warning Follow the ID rules
 The ID must start with a lowercase letter, may contain only lowercase letters, numbers, and the hyphen `-`, and is at most 32 characters. A mistake shows a format error; it takes part in the system's internal naming and **cannot be changed after creation** — the only fix is to recreate the workspace.
@@ -73,12 +83,12 @@ The ID must start with a lowercase letter, may contain only lowercase letters, n
 
 ## Confirming the result
 
-Back on the **Workspace** list, you can see the workspace you just created, with the **Status** column moving from creating to ready; the list also shows its **Namespace** and **Created At**. Afterwards you can switch to it with the **Workspace** selector in the top-left.
+Back on the **Workspace** list, you can see the workspace you just created, with the **Status** column moving from creating to ready. Afterwards you can switch to it with the **Workspace** selector in the top-left.
 
 ## Add members to a workspace
 
 1. Use the top-left selector to switch to the target **Workspace**.
-2. Click the avatar in the top-right, open **Tenant**, then click the **Workspace** tab to reach that workspace's detail page.
+2. **Account Center** → **Tenant**, open your tenant, then click **Workspace** on the left to reach that workspace's detail page.
 3. On the **Member** tab, click **Create Member**.
 4. Fill in the form:
 

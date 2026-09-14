@@ -27,6 +27,10 @@ In the dialog: **Temperature** tops out at `1.999`, and **Max Tokens** moves 10 
 Both edit the same value — only the dragging granularity differs, and the model receives the same number either way.
 :::
 
+![The parameter popover opened from the conversation header on a narrow window: System, Top P, Temperature, Max Tokens, Stop](/assets/screenshots/airouter/debug-01.png)
+
+Above is the popover form of **Parameters**: **System** (multi-line), **Top P**, **Temperature**, **Max Tokens** and **Stop** in that order, each slider paired with a number box for exact values. The popover covering part of the conversation is normal — close it when done.
+
 ## When changes take effect
 
 - Changes are **remembered immediately**; closing the dialog does not lose them.
@@ -49,6 +53,10 @@ Both edit the same value — only the dragging granularity differs, and the mode
 - A number outside the allowed range is pulled back into it automatically (typing `2` for **Top P** becomes `1`), so you do not have to watch the bounds yourself.
 
 :::
+
+![Widening the window past 1536px brings out the Model info and Parameters panel on the right](/assets/screenshots/airouter/debug-02.png)
+
+On a wide window the right-hand **Model info** + **Parameters** panels appear automatically. The panel only exposes `Temperature`, `Max Tokens` and `Top P`; `System` and `Stop` live under **More parameters** at the bottom, and the key is switched with the **API Key / Access credential** dropdown at the top of the panel. It edits the same state as the popover, so a change in one shows up in the other.
 
 ## When you see this, change that
 

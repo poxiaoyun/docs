@@ -1,6 +1,6 @@
 ---
 title: 'System Template Market'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: Pick a system template from the market and deploy cluster middleware such as monitoring, logging or a gateway in one click.
 ---
 
@@ -31,6 +31,10 @@ The market has no menu entry of its own; you reach it through the create button 
 
 Once inside, the page title shows **System App Template** or **Storage Cluster Template** depending on the category.
 
+![System app templates: one card per deployable component (e.g. vpa) with version and language tags, and a deploy button](/assets/screenshots/boss/cluster-market-system-01.png)
+
+The system market is a wall of cards; each gives a component name, a one-line description, a language and a version, and the **Deploy** button on the right installs it into the cluster. The first card is `vpa` (Kubernetes Vertical Pod Autoscaler, 1.6.0).
+
 ## Deploy in one click
 
 1. Find the target template card in the market and click **Deploy**.
@@ -45,6 +49,10 @@ Once deployment finishes, go back to the **System Apps** or **Storage Cluster** 
 The market page only shows templates in the System domain, so it does not offer a category filter. Whether a template is a system type or a storage type is decided by the template's own category.
 
 :::
+
+![Storage cluster templates: cards for storage components such as storage-nfs and storagevolume with their versions](/assets/screenshots/boss/cluster-market-storage-01.png)
+
+Storage templates and system app templates are two categories of the same market, switched by the last URL segment (`system` vs `storage`). Deploying a storage template lays down a storage backend (`storage-nfs`, `storagevolume`) for storage volumes to use.
 
 ## Differences from the user app market
 

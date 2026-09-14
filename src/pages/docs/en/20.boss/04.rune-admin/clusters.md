@@ -26,7 +26,7 @@ By the end of this page you will be able to: connect a new cluster, test whether
 
 ## Reading the cluster list
 
-In the left-hand menu, click **Cluster** under the **AI Platform** group. The list has these columns:
+Click **AI Platform** in the top navigation bar, then click **Cluster** under the **AI Platform** group in the left sidebar. The list has these columns:
 
 | Column | Meaning |
 | --- | --- |
@@ -45,9 +45,13 @@ The actions on each row:
 | Edit | Open the edit page |
 | Delete | Delete the cluster; a confirmation dialog appears |
 
+![Cluster management list: name, version, publish state, connection state and creation time](/assets/screenshots/boss/cluster-list-01.png)
+
+Only two clusters here, but all five columns matter: **Publish state** is published or unpublished (whether tenants may use it) and **Connection state** is connected or not (whether the platform can reach it). Beijing A reads "unpublished + connected" — onboarded but not yet opened to tenants, exactly what a fresh cluster looks like.
+
 ## Connect a new cluster
 
-1. In the left-hand menu, click **AI Platform** → **Cluster**.
+1. Click **AI Platform** in the top navigation bar, then click **Cluster** under the **AI Platform** group in the left sidebar.
 2. Click **Create Cluster** in the top-right corner.
 3. Fill in the **Cluster Configuration** card in order:
 
@@ -76,6 +80,10 @@ The two possible test results:
 There is **no** "Test Connection" in the action column of the list — it only appears in the create and edit forms. In addition, the **Test Connection** button only becomes clickable once both **Name** and **kubeconfig** are filled in.
 
 :::
+
+![The Create cluster form: name, ID, description, kubeconfig, and a connection test button](/assets/screenshots/boss/cluster-create-01.png)
+
+Four fields, of which **kubeconfig** is a required block of YAML. Press **Test connection** first to prove the credentials work, then **Confirm**. Leaving **ID** empty generates one from the name.
 
 ### Where to get the kubeconfig
 
@@ -160,6 +168,10 @@ Among them:
 - **Workloads** browses the cluster's resources by object type — see [Workloads](/boss/rune-admin/resources).
 - **Storage Cluster** and **System Apps** are both one-click entries for deploying middleware and storage — see [Storage & Runtime](/boss/rune-admin/storage-runtime) and [System Apps](/boss/rune-admin/systems).
 - **Scheduler Management** and **Log Management** are covered in [Logs & Scheduler](/boss/rune-admin/observability).
+
+![The Tenant Quotas sub-page inside a cluster: quota type, model, resource pool and used / total, per tenant](/assets/screenshots/boss/cluster-quotas-01.png)
+
+This cluster-side view slices quotas **by tenant**: the same data is organised by tenant under **Tenant Resources** and by cluster here. `tenant-4k70tg` shows a CPU quota of `0 / 4`, meaning nothing consumed yet.
 
 ## Confirming the result
 

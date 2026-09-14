@@ -32,6 +32,12 @@ Think of the platform as an office building: signing in is swiping your card at 
 2. After signing in you land on the tenant selection page. Choose your tenant in the dropdown and click **Enter Platform**.
 3. Once inside, click your avatar in the top-right corner → **Settings**. There you can complete your avatar and nickname, and set your password and keys.
 
+The very first step of the whole flow is the sign-in page:
+
+![Sign-in page: product introduction and four capability cards on the left, sign-in card on the right with account field, password field, terms checkbox and Sign In button](/assets/screenshots/account/login-01.png)
+
+After a successful sign-in you do not land in the platform directly — you pass through the tenant selection page first. See [Select/Register Tenant](/account/auth/select-tenant).
+
 ## Page navigation
 
 ### Authentication

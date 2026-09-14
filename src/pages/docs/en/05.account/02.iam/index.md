@@ -1,6 +1,6 @@
 ---
 title: 'Personal Center'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: Which tabs the Personal Center has, what each one is for, and where to find the detailed steps.
 tags:
 - account
@@ -20,6 +20,10 @@ Tenant management is like the company's administration desk, changing things for
 1. Click your avatar in the top-right corner.
 2. In the menu that opens, click **Settings**.
 3. The page opens with a row of tabs at the top; click a tab name to switch.
+
+Once inside, the top of the page is a row of tabs, starting on **Basic Info**:
+
+![Personal settings page: the heading "User Center" with a horizontal row of tabs — Basic Info, Password, Email, Mobile Number, API Key, SSH Key, Multi-Factor Authentication, Theme](/assets/screenshots/account/profile-01.png)
 
 ## What is in the Personal Center
 

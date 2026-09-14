@@ -26,6 +26,10 @@ This page is like the chat window of a messaging app: on the left is the "contac
 | Conversation | Center | Top info bar + message list + bottom input box |
 | **Model information** / **Parameter settings** | Right | Shown only when the window is wide enough; on a narrow window the right side collapses and you open them with icons at the top of the conversation area |
 
+![Model Playground with no model selected: model list on the left, four prompt cards in the middle, input box at the bottom](/assets/screenshots/airouter/experience-01.png)
+
+This is the initial state: the left **Model list** has only the "Public" group expanded, the middle says "Select a model", and the four prompt cards stay greyed out until a model is picked. Note there is no right-hand panel here — below `1536px` it collapses and is replaced by the two icons in the conversation header.
+
 ## Choose a model
 
 1. Click **Playground** in the top navigation.
@@ -37,6 +41,10 @@ This page is like the chat window of a messaging app: on the left is the "contac
 Switching a model wipes the current chat history. Copy anything you need to keep first.
 :::
 
+![After selecting deepseek-v4-flash: the model name, key selector and Clear conversation appear in the header](/assets/screenshots/airouter/experience-02.png)
+
+Once a model is selected the page becomes live: the left entry is highlighted with its `LLM` badge, scope and owning tenant; the header shows the model name, provider, **key selector** and **Clear conversation**; the middle now reads "Using deepseek-v4-flash. Type to start chatting."
+
 ## Confirm which key is used
 
 The conversation is sent under the identity of an **API key**, so check the selected key before sending.
@@ -44,6 +52,10 @@ The conversation is sent under the identity of an **API key**, so check the sele
 - On a narrow window: open the key selector at the top of the conversation area and pick a key.
 - On a wide window: the **API Key / credential** dropdown in the right-hand **Parameter settings** panel is the same setting.
 - By default the first key in the account is selected automatically. Expired keys in the dropdown are marked `Expired` — do not pick them.
+
+![The key selector opened, listing both keys of the account](/assets/screenshots/airouter/experience-03.png)
+
+The key selector expanded is shown above: each row is a key name plus a masked value. This account has two keys, `link` and `test`, with the currently selected one highlighted. The key values are blurred in the screenshot; the page itself shows the first 8 and last 4 characters.
 
 ## Start a conversation
 
@@ -54,6 +66,10 @@ The conversation is sent under the identity of an **API key**, so check the sele
 5. For a new line, press **Shift + Enter** (with an IME, an Enter that has not finished composing does not send by mistake).
 
 If no model is selected or the input box is empty, the send button is grey and cannot be clicked.
+
+![A completed exchange: your question on the right, the answer with a collapsed reasoning block and a token usage row](/assets/screenshots/airouter/experience-04.png)
+
+A complete exchange looks like this: your message on the right, and on the left the assistant bubble starting with a **Hide thinking** toggle (the reasoning trace, expandable), then the answer, then a row of token counts. On follow-up turns all of this is sent to the model along with your next message.
 
 ## Follow up (multi-turn conversation)
 

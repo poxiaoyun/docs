@@ -1,6 +1,6 @@
 ---
 title: 'IAM API Key (AK/SK)'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: What an API key is for, how to generate one, why it is shown only once, and what to do if it leaks.
 ---
 
@@ -35,6 +35,10 @@ An account and password is the key a person uses; an API key is the access card 
 :::warning The SecretKey is shown only this once
 The success alert says plainly: "Please remember the following Access Key and Secret Key. The Secret Key will only appear this one time!" Once you close the alert, that SecretKey is gone from the page for good, so copy it right away and save it in your password manager.
 :::
+
+Before you ever generate a key, the page shows "No data" with a single **Generate** button:
+
+![API Key page: the card shows "No data" in the middle with a Generate button at the bottom](/assets/screenshots/account/api-key-01.png)
 
 ## Confirming the result
 

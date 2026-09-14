@@ -1,6 +1,6 @@
 ---
 title: 'Select / Register Tenant'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: How to choose a company space after signing in, and how to create a new tenant for yourself.
 ---
 
@@ -28,6 +28,10 @@ Picture the platform as an office building and a tenant as one company in it. Yo
 :::tip One tenant enters automatically
 If your account belongs to only one tenant, the page skips the choice and enters it for you, so you may barely notice this step.
 :::
+
+The card on the right is everything you need to operate:
+
+![Tenant selection page: the card greets you and says "Please select your tenant or create a new one", then the tenant dropdown and the Enter Platform button, then the Create Tenant button and a sign-out link](/assets/screenshots/account/select-tenant-01.png)
 
 ## About disabled tenants
 

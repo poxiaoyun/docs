@@ -13,7 +13,7 @@ Platform Settings decide **what the sign-in page and the top bar of every page l
 
 These changes are visible platform-wide. Ordinary users see them the **moment they open the sign-in page**, so confirm that this is the information you want to show publicly.
 
-This page is under **System Settings → Platform Settings** in the left-hand menu.
+This page lives in the **Platform Settings** area: click **Platform Settings** in the top navigation bar, then click **Platform Settings** under the **System Settings** group in the left sidebar.
 
 ## Before you start
 
@@ -29,6 +29,10 @@ Top to bottom the page has three cards, and each card has **its own Confirm butt
 | Title and Logo | Platform title, subtitle and logo |
 | Platform Header Configuration | The document entry and language switcher in the top bar |
 | IAM Configuration | Whether users may self-register |
+
+![Platform settings: title and logo, header bar configuration, and access management](/assets/screenshots/boss/settings-platform-01.png)
+
+The page has three blocks: **Title and logo** (platform title, subtitle), **Header bar configuration** (show the docs entry, docs URL, enable the language switcher) and **Access management** (allow BOSS self-registration). Each block has its own **Confirm** — save the one you edited.
 
 ## Set the title and logo
 

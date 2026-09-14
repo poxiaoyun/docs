@@ -13,7 +13,7 @@ The AI assistant is a **small helper that diagnoses problems for users**. It app
 
 This page is where you set the assistant's **avatar, name and authentication key**, and decide **whether it is enabled for users**.
 
-This page is under **System Settings → AI Assistant Settings** in the left-hand menu.
+This page lives in the **Platform Settings** area: click **Platform Settings** in the top navigation bar, then click **AI Assistant Settings** under the **System Settings** group in the left sidebar.
 
 :::tip Where it appears
 Once enabled, users see a small vertical bar on the right edge of any AI Platform page (a tenant and workspace must be selected first), showing the assistant avatar; clicking it slides the chat panel out from the right.
@@ -48,6 +48,10 @@ When it is off, that vertical bar **is not shown** and users have no entry point
    | Not configured… | Nothing has been set up yet; enter the API Key from the Holmes plugin |
 
 4. Click **Confirm** at the bottom of the page. If you entered a new key, the platform saves the key first, then the avatar, name and switch state.
+
+![AI assistant settings: avatar, name, Holmes API key, plus the assistant enable switch and service status](/assets/screenshots/boss/settings-aiassistant-01.png)
+
+The page holds two groups: appearance (avatar, name) and the **Holmes API key** on top, then the **AI assistant** switch and **Service status** below. The screenshot reads **Ready 1 / Holmes is ready**, meaning the backend is reachable; if not, press **Refresh status**. Leaving the key field empty keeps the server-side configuration — only a new value saved here moves it under Boss management.
 
 ## Enable or disable the assistant
 

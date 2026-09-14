@@ -1,6 +1,6 @@
 ---
 title: Mirror
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: Sync ready-made models and datasets from HuggingFace and ModelScope into the platform by managing mirror tasks.
 ---
 
@@ -17,7 +17,7 @@ A mirror source is "where the content comes from". One mirror task = one externa
 ## Before you start
 
 - You need the **System Administrator** role.
-- In the left sidebar click **Data Sync** → **Mirror**.
+- Click **Moha Hub** in the top navigation bar, then click **Mirror** under the **Data Sync** group in the left sidebar.
 
 ## Mirror is not the same as image registry
 
@@ -29,6 +29,10 @@ A mirror source is "where the content comes from". One mirror task = one externa
 ## The two content types are managed separately
 
 The top of the page has two tabs, **Model** and **Dataset**, listing model mirror tasks and dataset mirror tasks respectively. Switching a tab switches to the matching list.
+
+![Mirror station: two tabs for models and datasets, then name, source, organisation, status and last sync time](/assets/screenshots/boss/moha-mirrors-01.png)
+
+A mirror station is not an image registry: this page pulls content **in from outside platforms**. The **Source** column says where it came from ("ModelScope" in the screenshot), **Status** reads "Synced", and **Last sync** shows 12 hours ago.
 
 ## What is on the list
 

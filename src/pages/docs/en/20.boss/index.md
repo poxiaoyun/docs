@@ -27,27 +27,29 @@ BOSS decides **who may use the platform and how much they get** (accounts, tenan
 
 Both sides share the same accounts and tenants, so any change you make in BOSS immediately affects what users see in the AI Platform.
 
-## The sidebar groups at a glance
+## Navigation layout and sidebar groups
 
-After you sign in to BOSS, the left sidebar is divided into groups from top to bottom. The first 15 groups are always there; the last 4 appear only after you enter a specific tenant or cluster.
+BOSS navigation has two levels. The **top navigation bar** is the product-level entry point (**Home / AI Platform / Moha Hub / Model Gateway / Account Center / Platform Settings**) — clicking one switches the whole area. The **left sidebar** only shows the groups and pages of the area you are currently in, and is replaced wholesale when you switch areas.
 
-| Group | When it appears | What it controls | Menus inside |
+So "I cannot see menu X in the sidebar" usually just means you have not switched to the area it belongs to. The table below groups everything by top-navigation area:
+
+| Group (left sidebar) | Area it appears in | What it controls | Menus inside |
 | --- | --- | --- | --- |
-| Overview | Always | Overall platform status | Home |
-| Model Gateway | Always | Volume, latency and rankings of external model calls | Dashboard |
-| Model Services | Always | Connecting and managing the models you expose | Channel Management, Model Configuration |
-| User Management | Always | Gateway credentials and call history | Token Management, Call Logs |
-| Security Services | Always | Content screening for model calls | Sensitive Word Management, Policy Management, Hit Records |
-| Platform Settings | Always | Gateway runtime parameters and billing currency | Gateway Configuration, Currency Configuration |
-| Asset Management | Always | Platform-wide models, datasets, images and Spaces | Models, Datasets, Images, Spaces |
-| Data Sync | Always | Syncing models from external mirrors | Mirror |
-| Security Audit | Always | Finding out who changed what and when | Audit Logs |
-| System Settings | Always | Announcements and homepage banners shown to users | Announcements, Banners |
-| Tenant | Always | Reserved group with no menu items yet | — |
-| Cluster | Always | Reserved group with no menu items yet | — |
-| AI Platform | Always | Compute clusters and tenant compute allocation | Cluster, Tenant Resource, App Template |
-| Account Center | Always | User accounts and tenants | Account, Tenant |
-| System Settings | Always | Platform-level configuration | System Member, Platform Settings, AI Platform Settings, Moha Hub Settings, Gateway Settings, AI Assistant Settings, License |
+| Overview | Home | Overall platform status | Home |
+| Model Gateway | Model Gateway | Volume, latency and rankings of external model calls | Dashboard |
+| Model Services | Model Gateway | Connecting and managing the models you expose | Channel Management, Model Configuration |
+| User Management | Model Gateway | Gateway credentials and call history | Token Management, Call Logs |
+| Security Services | Model Gateway | Content screening for model calls | Sensitive Word Management, Policy Management, Hit Records |
+| Platform Settings | Model Gateway | Gateway runtime parameters and billing currency | Gateway Configuration, Currency Configuration |
+| Asset Management | Moha Hub | Platform-wide models, datasets, images and Spaces | Models, Datasets, Images, Spaces |
+| Data Sync | Moha Hub | Syncing models from external mirrors | Mirror |
+| Security Audit | Moha Hub | Finding out who changed what and when | Audit Logs |
+| System Settings | Moha Hub | Announcements and homepage banners shown to users | Announcements, Banners |
+| Tenant | — (reserved, not shown) | Reserved group with no menu items yet | — |
+| Cluster | — (reserved, not shown) | Reserved group with no menu items yet | — |
+| AI Platform | AI Platform | Compute clusters and tenant compute allocation | Cluster, Tenant Resource, App Template |
+| Account Center | Account Center | User accounts and tenants | Account, Tenant |
+| System Settings | Platform Settings | Platform-level configuration | System Member, Platform Settings, AI Platform Settings, Moha Hub Settings, Gateway Settings, AI Assistant Settings, License |
 | Tenant Management | After entering a tenant | Members and compute quota of that tenant | Overview, Member, Quota, Workspace |
 | Cluster Status | After entering a cluster | Health of that cluster | Cluster Status, Node Status, Accelerator Status |
 | Resource Management | After entering a cluster | How compute is divided inside that cluster | Resource Pool, Flavor, Tenant Quotas |
