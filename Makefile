@@ -12,13 +12,16 @@ IMAGE_NAME?=rune-docs
 DOCS_BASE_URL?=/docs
 
 build:
+	# 不要写成 `yarn build --mode production`：npm/yarn 会把额外参数追加到脚本串末尾，
+	# 于是 --mode 落到末尾的 `node scripts/ssg.mjs` 上，vite build 反而拿不到。
+	# vite build 默认 mode 就是 production，这里直接 yarn build 即可（ssg 已在 build 脚本里）。
 	yarn install
 	VITE_BASE_URL=${DOCS_BASE_URL} \
 	BUILD_DATE=${BUILD_DATE} \
 	GIT_VERSION=${GIT_VERSION} \
 	GIT_COMMIT=${GIT_COMMIT} \
 	GIT_BRANCH=${GIT_BRANCH} \
-	yarn build --mode production
+	yarn build
 
 FULL_IMAGE_NAME?=$(IMAGE_REGISTRY)/$(IMAGE_REPOSITORY)/$(IMAGE_NAME):$(GIT_VERSION)
 ifeq ($(GIT_BRANCH), main)

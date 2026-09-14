@@ -7,7 +7,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DIST_DIR = path.resolve(__dirname, '..', 'dist');
 const HOST = process.env.HOST || '0.0.0.0';
 const PORT = Number(process.env.PORT || 8080);
-const DOCS_BASE = '/doc';
+// 与 vite.config.ts 的 DOCS_BASE_URL 默认值保持一致：产物里的资源都挂在 /docs/ 下，
+// 预览服务器若用别的前缀（原值是 '/doc'），静态资源请求会全部落进 404。
+// 需要别的前缀时用 DOCS_BASE 环境变量覆盖。
+const DOCS_BASE = process.env.DOCS_BASE || '/docs';
 
 const MIME_TYPES = {
   '.css': 'text/css; charset=utf-8',
@@ -103,6 +106,25 @@ const server = createServer((req, res) => {
   }
 
   if (pathname.startsWith(`${DOCS_BASE}/`)) {
+    const relative = pathname.slice(DOCS_BASE.length + 1);
+    const target = path.resolve(DIST_DIR, relative);
+    const withinDist = target === DIST_DIR || target.startsWith(DIST_DIR + path.sep);
+
+    // 优先返回 ssg.mjs 生成的静态页面（dist/<route>/index.html），
+    // 否则本地预览会把每个页面都显示成根 index.html（内容对不上，像是改动没生效）。
+    if (relative && withinDist) {
+      if (existsSync(target) && statSync(target).isFile()) {
+        sendFile(req, res, target);
+        return;
+      }
+      const pageIndex = path.join(target, 'index.html');
+      if (existsSync(pageIndex)) {
+        sendFile(req, res, pageIndex);
+        return;
+      }
+    }
+
+    // 兜底：SPA 外壳，交给前端路由（未知路径 / 尚未静态化的页面）
     sendFile(req, res, path.join(DIST_DIR, 'index.html'));
     return;
   }

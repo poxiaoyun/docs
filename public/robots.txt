@@ -1,0 +1,12 @@
+# https://docs.poxiaoshi.cn — 晓石 AI 智算平台文档站
+User-agent: *
+Allow: /
+
+# 显式放行主流搜索引擎，便于站长平台核对抓取状态
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+Sitemap: https://docs.poxiaoshi.cn/sitemap.xml

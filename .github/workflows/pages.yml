@@ -47,9 +47,14 @@ jobs:
         # 不要改那个默认值，只在这里覆盖。
         env:
           VITE_BASE_URL: "/"
+          SSG_SITE_URL: "https://docs.poxiaoshi.cn"
         run: |
           npx tsc --noEmit
           npx vite build --mode production
+          # 静态预渲染：把 177 个文档路由写成 dist/<route>/index.html。
+          # 不做这一步的话，GitHub Pages 对任何深层路径都返回 404.html ——
+          # 站点在搜索引擎眼里只剩首页一个 URL，其余全是 404 空壳。
+          node scripts/ssg.mjs
           # 守卫：base 写错时 CI 绿、部署绿、HTTP 也返回 200，只有浏览器白屏，
           # 所以必须在这里拦下来。dist/index.html 里不允许出现 /docs 前缀。
           if grep -qE '(src|href)="/docs/' dist/index.html; then
@@ -57,6 +62,17 @@ jobs:
             grep -oE '(src|href)="/docs/[^"]*"' dist/index.html
             exit 1
           fi
+          # 守卫：SSG 必须真的产出页面与 sitemap，否则 SEO 会静默失效（部署照样绿）。
+          pages=$(find dist -name index.html | wc -l | tr -d ' ')
+          if [ "$pages" -lt 170 ]; then
+            echo "::error::SSG 只产出 $pages 个 index.html，预期 178 个 —— 静态化没生效"
+            exit 1
+          fi
+          if [ ! -f dist/sitemap.xml ]; then
+            echo "::error::缺少 dist/sitemap.xml"
+            exit 1
+          fi
+          echo "SSG 产出 $pages 个静态页面 + sitemap.xml（$(grep -c '<loc>' dist/sitemap.xml) 条 URL）"
 
       - name: Setup Pages
         uses: actions/configure-pages@v6
