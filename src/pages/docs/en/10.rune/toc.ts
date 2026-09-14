@@ -18,7 +18,11 @@ import type { DocsSidebarSection } from '../../toc';
 //   4. landing pages whose path prefixes sibling items must set deepMatch: false
 //      (/rune, /rune/console, /rune/resources), otherwise they stay highlighted everywhere;
 //   5. every section needs at least one top-level item with `product`, otherwise the layout's
-//      filteredSections silently drops the whole section.
+//      filteredSections silently drops the whole section;
+//   6. every top-level item carries an `icon` — depth=1 rows are laid out with an icon gutter,
+//      so a missing icon shifts that title 34px left and makes one list look ragged. Names come
+//      from the 27 two-tone glyphs in public/assets/icons/navbar; an icon is not repeated inside
+//      one subheader section (they are compared on a single screen) but may be reused across them.
 // ----------------------------------------------------------------------
 
 export const RUNE_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
@@ -56,8 +60,8 @@ export const RUNE_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         deepMatch: false,
         product: 'rune',
       },
-      { title: 'Home', path: '/rune/console/dashboard' },
-      { title: 'App Market', path: '/rune/console/app-market' },
+      { title: 'Home', path: '/rune/console/dashboard', icon: 'ic-kanban' },
+      { title: 'App Market', path: '/rune/console/app-market', icon: 'ic-ecommerce' },
     ],
   },
   {
@@ -65,12 +69,17 @@ export const RUNE_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
     // Templates (navbar.instance_template) also sits under this group in the product.
     subheader: 'Rune Console · Workbench',
     items: [
-      { title: 'Inference Services', path: '/rune/console/inference', product: 'rune' },
-      { title: 'Training & Fine-tuning', path: '/rune/console/finetune' },
-      { title: 'Development', path: '/rune/console/devenv' },
-      { title: 'Apps', path: '/rune/console/app' },
-      { title: 'Templates', path: '/rune/resources/templates' },
-      { title: 'Storage', path: '/rune/console/storage' },
+      {
+        title: 'Inference Services',
+        path: '/rune/console/inference',
+        icon: 'ic-chat',
+        product: 'rune',
+      },
+      { title: 'Training & Fine-tuning', path: '/rune/console/finetune', icon: 'ic-job' },
+      { title: 'Development', path: '/rune/console/devenv', icon: 'ic-subpaths' },
+      { title: 'Apps', path: '/rune/console/app', icon: 'ic-product' },
+      { title: 'Templates', path: '/rune/resources/templates', icon: 'ic-label' },
+      { title: 'Storage', path: '/rune/console/storage', icon: 'ic-folder' },
     ],
   },
   {
@@ -79,10 +88,10 @@ export const RUNE_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
     // it is grouped here because it is another "go back and inspect the data" entry point.
     subheader: 'Rune Console · Observability',
     items: [
-      { title: 'Metrics', path: '/rune/console/experiment', product: 'rune' },
-      { title: 'Logs', path: '/rune/console/logging' },
-      { title: 'Evaluations', path: '/rune/console/evaluation' },
-      { title: 'AI Diagnostics Assistant', path: '/rune/console/diagnostics' },
+      { title: 'Metrics', path: '/rune/console/experiment', icon: 'ic-analytics', product: 'rune' },
+      { title: 'Logs', path: '/rune/console/logging', icon: 'ic-menu-item' },
+      { title: 'Evaluations', path: '/rune/console/evaluation', icon: 'ic-order' },
+      { title: 'AI Diagnostics Assistant', path: '/rune/console/diagnostics', icon: 'ic-user' },
     ],
   },
   {
@@ -96,9 +105,9 @@ export const RUNE_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         deepMatch: false,
         product: 'rune',
       },
-      { title: 'Quota', path: '/rune/console/quota' },
-      { title: 'Flavor', path: '/rune/console/flavor' },
-      { title: 'Workspace Management', path: '/rune/console/workspace' },
+      { title: 'Quota', path: '/rune/console/quota', icon: 'ic-invoice' },
+      { title: 'Flavor', path: '/rune/console/flavor', icon: 'ic-params' },
+      { title: 'Workspace Management', path: '/rune/console/workspace', icon: 'ic-subpaths' },
     ],
   },
 ];

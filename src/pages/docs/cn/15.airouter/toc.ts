@@ -14,7 +14,10 @@ import type { DocsSidebarSection } from '../../toc';
 //      本分区各页平铺在同一层、路径互不为前缀，故不用 children；
 //   4. 路径是同级其它条目前缀的落地页要显式写 deepMatch: false（这里是 /airouter），
 //      否则它会常驻高亮；
-//   5. 每个 subheader 至少一个顶层条目带 product，否则布局层 filteredSections 会把整节静默滤掉。
+//   5. 每个 subheader 至少一个顶层条目带 product，否则布局层 filteredSections 会把整节静默滤掉；
+//   6. 一级条目一律带 icon —— 模板里 depth=1 的行按「带图标」排版，漏写会让该行标题左移 34px、
+//      同一个列表左右参差。图标名取自 public/assets/icons/navbar 的 27 个双色图标；
+//      同一个 subheader 分段内不重复（侧边栏一屏能对比到），分段之间可以复用。
 //
 // 条目文案 = 该子系统顶部导航的真实文案（模型广场 / 模型体验 / 模型对比 /
 // API 密钥 / 调用分析），参数配置是页内弹窗、无顶部入口，但文档有独立页，故一并列出。
@@ -27,16 +30,16 @@ export const AIROUTER_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: '概览',
         path: '/airouter',
-        icon: 'ic-chat',
+        icon: 'ic-tour',
         deepMatch: false,
         product: 'airouter',
       },
-      { title: '模型广场', path: '/airouter/marketplace' },
-      { title: '模型体验', path: '/airouter/experience' },
-      { title: '模型对比', path: '/airouter/compare' },
-      { title: 'API 密钥', path: '/airouter/token' },
-      { title: '调用分析', path: '/airouter/usage-statistics' },
-      { title: '参数配置', path: '/airouter/debug' },
+      { title: '模型广场', path: '/airouter/marketplace', icon: 'ic-ecommerce' },
+      { title: '模型体验', path: '/airouter/experience', icon: 'ic-chat' },
+      { title: '模型对比', path: '/airouter/compare', icon: 'ic-kanban' },
+      { title: 'API 密钥', path: '/airouter/token', icon: 'ic-lock' },
+      { title: '调用分析', path: '/airouter/usage-statistics', icon: 'ic-analytics' },
+      { title: '参数配置', path: '/airouter/debug', icon: 'ic-params' },
     ],
   },
 ];

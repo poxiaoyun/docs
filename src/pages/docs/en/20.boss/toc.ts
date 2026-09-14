@@ -22,7 +22,11 @@ import type { DocsSidebarSection } from '../../toc';
 //      (/boss, /boss/gateway, /boss/moha-admin, /boss/rune-admin, /boss/settings),
 //      otherwise they stay highlighted everywhere;
 //   6. every section needs at least one top-level item with `product`, otherwise the layout's
-//      filteredSections silently drops the whole section.
+//      filteredSections silently drops the whole section;
+//   7. every top-level item carries an `icon` — depth=1 rows are laid out with an icon gutter,
+//      so a missing icon shifts that title 34px left and makes one list look ragged. Names come
+//      from the 27 two-tone glyphs in public/assets/icons/navbar; an icon is not repeated inside
+//      one subheader section (they are compared on a single screen) but may be reused across them.
 // ----------------------------------------------------------------------
 
 export const BOSS_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
@@ -70,15 +74,19 @@ export const BOSS_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         deepMatch: false,
         product: 'boss',
       },
-      { title: 'Dashboard', path: '/boss/gateway/operations' },
-      { title: 'Channel Management', path: '/boss/gateway/channels' },
-      { title: 'Model Configuration', path: '/boss/gateway/model-metadata' },
-      { title: 'Token Management', path: '/boss/gateway/api-keys' },
-      { title: 'Call Logs', path: '/boss/gateway/audit' },
-      { title: 'Content Moderation', path: '/boss/gateway/moderation' },
-      { title: 'Hit Records', path: '/boss/gateway/sensitive-hits' },
-      { title: 'Gateway Configuration', path: '/boss/gateway/config' },
-      { title: 'Currency Configuration', path: '/boss/gateway/currency-settings' },
+      { title: 'Dashboard', path: '/boss/gateway/operations', icon: 'ic-analytics' },
+      { title: 'Channel Management', path: '/boss/gateway/channels', icon: 'ic-external' },
+      { title: 'Model Configuration', path: '/boss/gateway/model-metadata', icon: 'ic-product' },
+      { title: 'Token Management', path: '/boss/gateway/api-keys', icon: 'ic-lock' },
+      { title: 'Call Logs', path: '/boss/gateway/audit', icon: 'ic-file' },
+      { title: 'Content Moderation', path: '/boss/gateway/moderation', icon: 'ic-label' },
+      { title: 'Hit Records', path: '/boss/gateway/sensitive-hits', icon: 'ic-order' },
+      { title: 'Gateway Configuration', path: '/boss/gateway/config', icon: 'ic-params' },
+      {
+        title: 'Currency Configuration',
+        path: '/boss/gateway/currency-settings',
+        icon: 'ic-banking',
+      },
     ],
   },
   {
@@ -93,14 +101,14 @@ export const BOSS_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         deepMatch: false,
         product: 'boss',
       },
-      { title: 'Models', path: '/boss/moha-admin/models' },
-      { title: 'Datasets', path: '/boss/moha-admin/datasets' },
-      { title: 'Images', path: '/boss/moha-admin/images' },
-      { title: 'Spaces', path: '/boss/moha-admin/spaces' },
-      { title: 'Mirror', path: '/boss/moha-admin/mirrors' },
-      { title: 'Audit Logs', path: '/boss/moha-admin/audit' },
-      { title: 'Announcements', path: '/boss/moha-admin/announcements' },
-      { title: 'Banners', path: '/boss/moha-admin/banners' },
+      { title: 'Models', path: '/boss/moha-admin/models', icon: 'ic-product' },
+      { title: 'Datasets', path: '/boss/moha-admin/datasets', icon: 'ic-folder' },
+      { title: 'Images', path: '/boss/moha-admin/images', icon: 'ic-menu-item' },
+      { title: 'Spaces', path: '/boss/moha-admin/spaces', icon: 'ic-subpaths' },
+      { title: 'Mirror', path: '/boss/moha-admin/mirrors', icon: 'ic-external' },
+      { title: 'Audit Logs', path: '/boss/moha-admin/audit', icon: 'ic-file' },
+      { title: 'Announcements', path: '/boss/moha-admin/announcements', icon: 'ic-mail' },
+      { title: 'Banners', path: '/boss/moha-admin/banners', icon: 'ic-blog' },
     ],
   },
   {
@@ -115,9 +123,13 @@ export const BOSS_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         deepMatch: false,
         product: 'boss',
       },
-      { title: 'Cluster', path: '/boss/rune-admin/clusters' },
-      { title: 'App Template', path: '/boss/rune-admin/templates' },
-      { title: 'System Template Market', path: '/boss/rune-admin/system-market' },
+      { title: 'Cluster', path: '/boss/rune-admin/clusters', icon: 'ic-subpaths' },
+      { title: 'App Template', path: '/boss/rune-admin/templates', icon: 'ic-label' },
+      {
+        title: 'System Template Market',
+        path: '/boss/rune-admin/system-market',
+        icon: 'ic-ecommerce',
+      },
     ],
   },
   {
@@ -127,19 +139,29 @@ export const BOSS_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: 'Cluster Overview',
         path: '/boss/rune-admin/cluster-overview',
+        icon: 'ic-tour',
         product: 'boss',
       },
-      { title: 'Dynamic dashboard', path: '/boss/rune-admin/dynamic-dashboard' },
-      { title: 'Nodes & Accelerators', path: '/boss/rune-admin/nodes-gpu' },
+      {
+        title: 'Dynamic dashboard',
+        path: '/boss/rune-admin/dynamic-dashboard',
+        icon: 'ic-analytics',
+      },
+      { title: 'Nodes & Accelerators', path: '/boss/rune-admin/nodes-gpu', icon: 'ic-product' },
     ],
   },
   {
     // Cluster detail sub-menu 2: Resource Management (Resource Pool / Flavor / Tenant Quotas)
     subheader: 'Rune Admin · Resource Management',
     items: [
-      { title: 'Resource Pool', path: '/boss/rune-admin/resource-pools', product: 'boss' },
-      { title: 'Flavor', path: '/boss/rune-admin/flavors' },
-      { title: 'Tenant Quotas', path: '/boss/rune-admin/tenants' },
+      {
+        title: 'Resource Pool',
+        path: '/boss/rune-admin/resource-pools',
+        icon: 'ic-folder',
+        product: 'boss',
+      },
+      { title: 'Flavor', path: '/boss/rune-admin/flavors', icon: 'ic-params' },
+      { title: 'Tenant Quotas', path: '/boss/rune-admin/tenants', icon: 'ic-invoice' },
     ],
   },
   {
@@ -147,10 +169,14 @@ export const BOSS_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
     // System Apps / Scheduler / Logs)
     subheader: 'Rune Admin · Operations Management',
     items: [
-      { title: 'Workloads', path: '/boss/rune-admin/resources', product: 'boss' },
-      { title: 'Storage Cluster & Runtime', path: '/boss/rune-admin/storage-runtime' },
-      { title: 'System Apps', path: '/boss/rune-admin/systems' },
-      { title: 'Logs & Scheduler', path: '/boss/rune-admin/observability' },
+      { title: 'Workloads', path: '/boss/rune-admin/resources', icon: 'ic-job', product: 'boss' },
+      {
+        title: 'Storage Cluster & Runtime',
+        path: '/boss/rune-admin/storage-runtime',
+        icon: 'ic-folder',
+      },
+      { title: 'System Apps', path: '/boss/rune-admin/systems', icon: 'ic-product' },
+      { title: 'Logs & Scheduler', path: '/boss/rune-admin/observability', icon: 'ic-menu-item' },
     ],
   },
   {
@@ -165,13 +191,13 @@ export const BOSS_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         deepMatch: false,
         product: 'boss',
       },
-      { title: 'System Member', path: '/boss/settings/members' },
-      { title: 'Platform Settings', path: '/boss/settings/platform' },
-      { title: 'AI Platform Settings', path: '/boss/settings/rune' },
-      { title: 'Moha Hub Settings', path: '/boss/settings/moha' },
-      { title: 'Gateway Settings', path: '/boss/settings/chatapp' },
-      { title: 'AI Assistant Settings', path: '/boss/settings/ai-assistant' },
-      { title: 'License', path: '/boss/settings/license' },
+      { title: 'System Member', path: '/boss/settings/members', icon: 'ic-user' },
+      { title: 'Platform Settings', path: '/boss/settings/platform', icon: 'ic-menu-item' },
+      { title: 'AI Platform Settings', path: '/boss/settings/rune', icon: 'ic-tour' },
+      { title: 'Moha Hub Settings', path: '/boss/settings/moha', icon: 'ic-course' },
+      { title: 'Gateway Settings', path: '/boss/settings/chatapp', icon: 'ic-blog' },
+      { title: 'AI Assistant Settings', path: '/boss/settings/ai-assistant', icon: 'ic-chat' },
+      { title: 'License', path: '/boss/settings/license', icon: 'ic-lock' },
     ],
   },
 ];

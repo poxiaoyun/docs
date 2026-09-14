@@ -33,7 +33,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: 'Hygon (DCU)',
         path: '/ecosystem/hygon',
-        icon: 'ic-file',
+        icon: 'ic-product',
         product: 'ecosystem',
         children: [
           { title: 'Driver Installation', path: '/ecosystem/hygon/driver-runtime' },

@@ -15,7 +15,7 @@ export const REFERENCE_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: 'API 概览',
         path: '/reference/api-overview',
-        icon: 'ic-file',
+        icon: 'ic-external',
         product: 'faq',
       },
       {

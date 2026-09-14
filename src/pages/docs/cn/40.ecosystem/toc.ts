@@ -35,7 +35,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: '海光（DCU）',
         path: '/ecosystem/hygon',
-        icon: 'ic-file',
+        icon: 'ic-product',
         product: 'ecosystem',
         children: [
           { title: 'DCU 驱动安装', path: '/ecosystem/hygon/driver-runtime' },

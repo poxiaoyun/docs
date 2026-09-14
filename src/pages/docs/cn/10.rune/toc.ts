@@ -15,7 +15,10 @@ import type { DocsSidebarSection } from '../../toc';
 //      本分区只有「开始使用」满足，控制台的三组用 subheader 承载；
 //   4. 路径是同级其它条目前缀的落地页要显式写 deepMatch: false（如 /rune、/rune/console、
 //      /rune/resources），否则它会常驻高亮；
-//   5. 每个 subheader 至少一个顶层条目带 product，否则布局层 filteredSections 会把整节静默滤掉。
+//   5. 每个 subheader 至少一个顶层条目带 product，否则布局层 filteredSections 会把整节静默滤掉；
+//   6. 一级条目一律带 icon —— 模板里 depth=1 的行按「带图标」排版，漏写会让该行标题左移 34px、
+//      同一个列表左右参差。图标名取自 public/assets/icons/navbar 的 27 个双色图标；
+//      同一个 subheader 分段内不重复（侧边栏一屏能对比到），分段之间可以复用。
 // ----------------------------------------------------------------------
 
 export const RUNE_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
@@ -53,8 +56,8 @@ export const RUNE_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         deepMatch: false,
         product: 'rune',
       },
-      { title: '首页', path: '/rune/console/dashboard' },
-      { title: '应用市场', path: '/rune/console/app-market' },
+      { title: '首页', path: '/rune/console/dashboard', icon: 'ic-kanban' },
+      { title: '应用市场', path: '/rune/console/app-market', icon: 'ic-ecommerce' },
     ],
   },
   {
@@ -62,12 +65,12 @@ export const RUNE_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
     // 「我的模板」（navbar.instance_template）在产品里同样挂在这一组下。
     subheader: 'Rune 控制台 · 工作台',
     items: [
-      { title: '推理服务', path: '/rune/console/inference', product: 'rune' },
-      { title: '训练与微调', path: '/rune/console/finetune' },
-      { title: '开发服务', path: '/rune/console/devenv' },
-      { title: '应用实例', path: '/rune/console/app' },
-      { title: '我的模板', path: '/rune/resources/templates' },
-      { title: '文件存储', path: '/rune/console/storage' },
+      { title: '推理服务', path: '/rune/console/inference', icon: 'ic-chat', product: 'rune' },
+      { title: '训练与微调', path: '/rune/console/finetune', icon: 'ic-job' },
+      { title: '开发服务', path: '/rune/console/devenv', icon: 'ic-subpaths' },
+      { title: '应用实例', path: '/rune/console/app', icon: 'ic-product' },
+      { title: '我的模板', path: '/rune/resources/templates', icon: 'ic-label' },
+      { title: '文件存储', path: '/rune/console/storage', icon: 'ic-folder' },
     ],
   },
   {
@@ -76,10 +79,10 @@ export const RUNE_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
     // （都是「出问题回头看数据」的入口）。
     subheader: 'Rune 控制台 · 可观测性',
     items: [
-      { title: '指标', path: '/rune/console/experiment', product: 'rune' },
-      { title: '日志', path: '/rune/console/logging' },
-      { title: '模型评测', path: '/rune/console/evaluation' },
-      { title: 'AI 诊断助手', path: '/rune/console/diagnostics' },
+      { title: '指标', path: '/rune/console/experiment', icon: 'ic-analytics', product: 'rune' },
+      { title: '日志', path: '/rune/console/logging', icon: 'ic-menu-item' },
+      { title: '模型评测', path: '/rune/console/evaluation', icon: 'ic-order' },
+      { title: 'AI 诊断助手', path: '/rune/console/diagnostics', icon: 'ic-user' },
     ],
   },
   {
@@ -93,9 +96,9 @@ export const RUNE_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         deepMatch: false,
         product: 'rune',
       },
-      { title: '配额', path: '/rune/console/quota' },
-      { title: '规格', path: '/rune/console/flavor' },
-      { title: '工作空间', path: '/rune/console/workspace' },
+      { title: '配额', path: '/rune/console/quota', icon: 'ic-invoice' },
+      { title: '规格', path: '/rune/console/flavor', icon: 'ic-params' },
+      { title: '工作空间', path: '/rune/console/workspace', icon: 'ic-subpaths' },
     ],
   },
 ];

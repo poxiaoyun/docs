@@ -99,7 +99,7 @@ export const MOHA_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: 'Advanced Integration',
         path: '/moha/advanced',
-        icon: 'ic-tour',
+        icon: 'ic-external',
         product: 'moha',
         children: [
           { title: 'API Integration', path: '/moha/advanced/api' },

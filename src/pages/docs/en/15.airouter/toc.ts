@@ -19,7 +19,11 @@ import type { DocsSidebarSection } from '../../toc';
 //   4. a landing page whose path prefixes its siblings must set deepMatch: false
 //      (that is /airouter here), otherwise it stays highlighted on every child page;
 //   5. each subheader needs at least one top-level item carrying `product`, or the
-//      layout's filteredSections drops the whole section silently.
+//      layout's filteredSections drops the whole section silently;
+//   6. every top-level item carries an `icon` — depth=1 rows are laid out with an icon gutter,
+//      so a missing icon shifts that title 34px left and makes one list look ragged. Names come
+//      from the 27 two-tone glyphs in public/assets/icons/navbar; an icon is not repeated inside
+//      one subheader section (they are compared on a single screen) but may be reused across them.
 //
 // Item labels are the real top-navigation wording of this subsystem (Models /
 // Playground / Comparison / API Keys / Usage analysis). Parameter Settings is an
@@ -33,16 +37,16 @@ export const AIROUTER_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: 'Overview',
         path: '/airouter',
-        icon: 'ic-chat',
+        icon: 'ic-tour',
         deepMatch: false,
         product: 'airouter',
       },
-      { title: 'Models', path: '/airouter/marketplace' },
-      { title: 'Playground', path: '/airouter/experience' },
-      { title: 'Comparison', path: '/airouter/compare' },
-      { title: 'API Keys', path: '/airouter/token' },
-      { title: 'Usage analysis', path: '/airouter/usage-statistics' },
-      { title: 'Parameter Settings', path: '/airouter/debug' },
+      { title: 'Models', path: '/airouter/marketplace', icon: 'ic-ecommerce' },
+      { title: 'Playground', path: '/airouter/experience', icon: 'ic-chat' },
+      { title: 'Comparison', path: '/airouter/compare', icon: 'ic-kanban' },
+      { title: 'API Keys', path: '/airouter/token', icon: 'ic-lock' },
+      { title: 'Usage analysis', path: '/airouter/usage-statistics', icon: 'ic-analytics' },
+      { title: 'Parameter Settings', path: '/airouter/debug', icon: 'ic-params' },
     ],
   },
 ];

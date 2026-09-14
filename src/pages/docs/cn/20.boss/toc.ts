@@ -18,7 +18,10 @@ import type { DocsSidebarSection } from '../../toc';
 //   5. 路径是同级其它条目前缀的落地页要显式写 deepMatch: false
 //      （/boss、/boss/gateway、/boss/moha-admin、/boss/rune-admin、/boss/settings），
 //      否则它会常驻高亮；
-//   6. 每个 subheader 至少一个顶层条目带 product，否则布局层 filteredSections 会把整节静默滤掉。
+//   6. 每个 subheader 至少一个顶层条目带 product，否则布局层 filteredSections 会把整节静默滤掉；
+//   7. 一级条目一律带 icon —— 模板里 depth=1 的行按「带图标」排版，漏写会让该行标题左移 34px、
+//      同一个列表左右参差。图标名取自 public/assets/icons/navbar 的 27 个双色图标；
+//      同一个 subheader 分段内不重复（侧边栏一屏能对比到），分段之间可以复用。
 // ----------------------------------------------------------------------
 
 export const BOSS_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
@@ -64,15 +67,15 @@ export const BOSS_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         deepMatch: false,
         product: 'boss',
       },
-      { title: '数据看板', path: '/boss/gateway/operations' },
-      { title: '渠道管理', path: '/boss/gateway/channels' },
-      { title: '模型配置', path: '/boss/gateway/model-metadata' },
-      { title: '令牌管理', path: '/boss/gateway/api-keys' },
-      { title: '调用日志', path: '/boss/gateway/audit' },
-      { title: '内容审查', path: '/boss/gateway/moderation' },
-      { title: '命中记录', path: '/boss/gateway/sensitive-hits' },
-      { title: '网关配置', path: '/boss/gateway/config' },
-      { title: '货币配置', path: '/boss/gateway/currency-settings' },
+      { title: '数据看板', path: '/boss/gateway/operations', icon: 'ic-analytics' },
+      { title: '渠道管理', path: '/boss/gateway/channels', icon: 'ic-external' },
+      { title: '模型配置', path: '/boss/gateway/model-metadata', icon: 'ic-product' },
+      { title: '令牌管理', path: '/boss/gateway/api-keys', icon: 'ic-lock' },
+      { title: '调用日志', path: '/boss/gateway/audit', icon: 'ic-file' },
+      { title: '内容审查', path: '/boss/gateway/moderation', icon: 'ic-label' },
+      { title: '命中记录', path: '/boss/gateway/sensitive-hits', icon: 'ic-order' },
+      { title: '网关配置', path: '/boss/gateway/config', icon: 'ic-params' },
+      { title: '货币配置', path: '/boss/gateway/currency-settings', icon: 'ic-banking' },
     ],
   },
   {
@@ -87,14 +90,14 @@ export const BOSS_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         deepMatch: false,
         product: 'boss',
       },
-      { title: '模型库', path: '/boss/moha-admin/models' },
-      { title: '数据集', path: '/boss/moha-admin/datasets' },
-      { title: '镜像仓库', path: '/boss/moha-admin/images' },
-      { title: '空间管理', path: '/boss/moha-admin/spaces' },
-      { title: '镜像站', path: '/boss/moha-admin/mirrors' },
-      { title: '审计日志', path: '/boss/moha-admin/audit' },
-      { title: '公告', path: '/boss/moha-admin/announcements' },
-      { title: 'Banner', path: '/boss/moha-admin/banners' },
+      { title: '模型库', path: '/boss/moha-admin/models', icon: 'ic-product' },
+      { title: '数据集', path: '/boss/moha-admin/datasets', icon: 'ic-folder' },
+      { title: '镜像仓库', path: '/boss/moha-admin/images', icon: 'ic-menu-item' },
+      { title: '空间管理', path: '/boss/moha-admin/spaces', icon: 'ic-subpaths' },
+      { title: '镜像站', path: '/boss/moha-admin/mirrors', icon: 'ic-external' },
+      { title: '审计日志', path: '/boss/moha-admin/audit', icon: 'ic-file' },
+      { title: '公告', path: '/boss/moha-admin/announcements', icon: 'ic-mail' },
+      { title: 'Banner', path: '/boss/moha-admin/banners', icon: 'ic-blog' },
     ],
   },
   {
@@ -109,9 +112,9 @@ export const BOSS_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         deepMatch: false,
         product: 'boss',
       },
-      { title: '集群管理', path: '/boss/rune-admin/clusters' },
-      { title: '应用模版', path: '/boss/rune-admin/templates' },
-      { title: '系统模版市场', path: '/boss/rune-admin/system-market' },
+      { title: '集群管理', path: '/boss/rune-admin/clusters', icon: 'ic-subpaths' },
+      { title: '应用模版', path: '/boss/rune-admin/templates', icon: 'ic-label' },
+      { title: '系统模版市场', path: '/boss/rune-admin/system-market', icon: 'ic-ecommerce' },
     ],
   },
   {
@@ -121,29 +124,35 @@ export const BOSS_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: '集群概览',
         path: '/boss/rune-admin/cluster-overview',
+        icon: 'ic-tour',
         product: 'boss',
       },
-      { title: '动态仪表盘', path: '/boss/rune-admin/dynamic-dashboard' },
-      { title: '节点与加速卡状态', path: '/boss/rune-admin/nodes-gpu' },
+      { title: '动态仪表盘', path: '/boss/rune-admin/dynamic-dashboard', icon: 'ic-analytics' },
+      { title: '节点与加速卡状态', path: '/boss/rune-admin/nodes-gpu', icon: 'ic-product' },
     ],
   },
   {
     // 集群详情三级菜单之二：资源管理（资源池 / 资源规格 / 租户配额）
     subheader: 'Rune 智算管理 · 资源管理',
     items: [
-      { title: '资源池', path: '/boss/rune-admin/resource-pools', product: 'boss' },
-      { title: '资源规格', path: '/boss/rune-admin/flavors' },
-      { title: '租户配额', path: '/boss/rune-admin/tenants' },
+      {
+        title: '资源池',
+        path: '/boss/rune-admin/resource-pools',
+        icon: 'ic-folder',
+        product: 'boss',
+      },
+      { title: '资源规格', path: '/boss/rune-admin/flavors', icon: 'ic-params' },
+      { title: '租户配额', path: '/boss/rune-admin/tenants', icon: 'ic-invoice' },
     ],
   },
   {
     // 集群详情三级菜单之三：运维管理（工作负载 / 存储集群 / 系统应用 / 调度器 / 日志）
     subheader: 'Rune 智算管理 · 运维管理',
     items: [
-      { title: '工作负载', path: '/boss/rune-admin/resources', product: 'boss' },
-      { title: '存储集群与运行时', path: '/boss/rune-admin/storage-runtime' },
-      { title: '系统应用', path: '/boss/rune-admin/systems' },
-      { title: '日志与调度器', path: '/boss/rune-admin/observability' },
+      { title: '工作负载', path: '/boss/rune-admin/resources', icon: 'ic-job', product: 'boss' },
+      { title: '存储集群与运行时', path: '/boss/rune-admin/storage-runtime', icon: 'ic-folder' },
+      { title: '系统应用', path: '/boss/rune-admin/systems', icon: 'ic-product' },
+      { title: '日志与调度器', path: '/boss/rune-admin/observability', icon: 'ic-menu-item' },
     ],
   },
   {
@@ -158,13 +167,13 @@ export const BOSS_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         deepMatch: false,
         product: 'boss',
       },
-      { title: '系统成员', path: '/boss/settings/members' },
-      { title: '平台设置', path: '/boss/settings/platform' },
-      { title: '智算平台设置', path: '/boss/settings/rune' },
-      { title: '魔哈Hub设置', path: '/boss/settings/moha' },
-      { title: '网关设置', path: '/boss/settings/chatapp' },
-      { title: 'AI助手设置', path: '/boss/settings/ai-assistant' },
-      { title: '许可证', path: '/boss/settings/license' },
+      { title: '系统成员', path: '/boss/settings/members', icon: 'ic-user' },
+      { title: '平台设置', path: '/boss/settings/platform', icon: 'ic-menu-item' },
+      { title: '智算平台设置', path: '/boss/settings/rune', icon: 'ic-tour' },
+      { title: '魔哈Hub设置', path: '/boss/settings/moha', icon: 'ic-course' },
+      { title: '网关设置', path: '/boss/settings/chatapp', icon: 'ic-blog' },
+      { title: 'AI助手设置', path: '/boss/settings/ai-assistant', icon: 'ic-chat' },
+      { title: '许可证', path: '/boss/settings/license', icon: 'ic-lock' },
     ],
   },
 ];
