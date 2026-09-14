@@ -1,7 +1,7 @@
 ---
 title: AI助手设置
-updated: '2026-09-12'
-description: '配置智算平台右侧 AI 诊断助手的头像、名称与鉴权密钥，并控制是否启用。'
+updated: '2026-09-14'
+description: '教你配置 AI 助手的头像、名称和鉴权密钥，并按服务状态决定是否启用。'
 tags:
   - boss
   - settings

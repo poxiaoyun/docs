@@ -1,7 +1,7 @@
 ---
 title: 'Getting Started Guide'
-updated: '2026-09-12'
-description: 'Which of the three starter pages to read, in what order, to run your first flow fast.'
+updated: '2026-09-14'
+description: 'Tells you what each of the three starter pages solves and in what order to read them, so you can run your first flow fast.'
 tags:
   - guide
   - getting-started

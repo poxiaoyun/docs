@@ -1,7 +1,7 @@
 ---
 title: Cluster
-updated: '2026-09-12'
-description: 'Connect a Kubernetes cluster to the platform: fill in kubeconfig, test the connection, publish it and confirm its nodes.'
+updated: '2026-09-14'
+description: 'Connect a Kubernetes cluster to the platform: fill in kubeconfig, test the connection, publish it, and confirm its nodes are up.'
 ---
 
 # Cluster
@@ -26,7 +26,7 @@ By the end of this page you will be able to: connect a new cluster, test whether
 
 ## Reading the cluster list
 
-In the left-hand menu, click **Cluster Management** under the **AI Platform** group. The list has these columns:
+In the left-hand menu, click **Cluster** under the **AI Platform** group. The list has these columns:
 
 | Column | Meaning |
 | --- | --- |
@@ -47,9 +47,9 @@ The actions on each row:
 
 ## Connect a new cluster
 
-1. In the left-hand menu, click **AI Platform** → **Cluster Management**.
+1. In the left-hand menu, click **AI Platform** → **Cluster**.
 2. Click **Create Cluster** in the top-right corner.
-3. Fill in the **Configuration** card in order:
+3. Fill in the **Cluster Configuration** card in order:
 
 | Field | What to fill in | Notes |
 | --- | --- | --- |

@@ -1,7 +1,7 @@
 ---
 title: 'Tenant Management'
-updated: '2026-09-12'
-description: Create a tenant, then assign its admin and quota.
+updated: '2026-09-14'
+description: Create a tenant, fill the form correctly, then add its members and quota.
 ---
 
 # Tenant Management
@@ -36,7 +36,7 @@ Go to **Account Center → Tenant**. The list has these columns:
 | Name | Tenant avatar and name (clickable). The small grey text under the name is the tenant ID |
 | Email | The tenant's administrative contact email |
 | Members | How many members the tenant currently has |
-| Status | **Enable** (green) or **Disable** (red) |
+| Enabled | **Enable** (green) or **Disable** (red) |
 | Created At | When the tenant was created |
 
 On the right of each row you can **edit** the tenant, or **disable / enable** it.

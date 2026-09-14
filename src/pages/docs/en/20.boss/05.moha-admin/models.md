@@ -1,7 +1,7 @@
 ---
 title: Models
-updated: '2026-09-12'
-description: How a platform administrator views, unlists, recommends, edits and deletes models across the whole Moha Hub.
+updated: '2026-09-14'
+description: Unlist, recommend, edit or delete model repositories across the Moha Hub and take anything that should not be public off the user side.
 ---
 
 # Models
@@ -34,7 +34,7 @@ Visibility has three values, which decide who can see and who can push:
 
 | Shown as | Who can see and download | Who can push new versions |
 | --- | --- | --- |
-| Public | Anyone, including visitors who are not signed in | Only members of the owning organization or repository administrators |
+| Public | Anyone, including visitors who are not signed in | Only the creator when the repository is personal; every member of the organization when it belongs to one |
 | Tenant Only | Only members of the owning organization | Members of the owning organization |
 | Private | Only the creator | Only the creator |
 

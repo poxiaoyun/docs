@@ -1,7 +1,7 @@
 ---
 title: Home
-updated: '2026-09-12'
-description: What each number on the three home cards means.
+updated: '2026-09-14'
+description: What each number on the three Home cards means, where it leads, and how fresh the data is.
 ---
 
 # Home
@@ -74,6 +74,8 @@ The card title is **LLM Gateway Overview** and the subtitle is **Traffic and usa
 
 The change is calculated against the previous window of the same length. When the change is extremely small (essentially 0) the card shows `0%` with no sign.
 
+A token is the billing unit model APIs use for text: a paragraph is chopped into small pieces and each piece counts as one token. The fewer calls you make and the shorter the text, the fewer tokens you burn.
+
 ### Traffic Trend (24h) in the middle
 
 An area chart whose horizontal axis is the most recent 24 hours (formatted like `14:00`), with two series: **Request Count** and **Token Usage**. Hover over the chart to read the value at a specific time. When there are no calls at all it shows **No data**.
@@ -111,7 +113,7 @@ The snapshot appears only after the matching list has loaded completely. If an i
 
 ### Attention Needed at the bottom
 
-Only real problems are listed here, and each row has a **Detail** button that takes you straight to the page where you can fix it:
+Only real problems are listed here. Each row shows the names of the objects involved (at most two, with the rest summarised as `+2` and so on) plus a **Detail** button that takes you straight to the page where you can fix it:
 
 | Attention item | When it appears | Where Detail takes you |
 | --- | --- | --- |
@@ -119,7 +121,7 @@ Only real problems are listed here, and each row has a **Detail** button that ta
 | Disconnected Clusters | Some clusters cannot connect | Cluster list |
 | Unpublished Clusters | Some clusters have not been published | Cluster list |
 
-When none of these exist, the bottom shows a green **No attention items right now**, which means the platform is in good shape.
+When none of these exist, the bottom shows a green **No attention items right now**, which means the platform is in good shape. If neither the tenant nor the cluster data could be loaded, you get a grey **No data** instead — that only means nothing could be checked, not that everything is fine.
 
 :::info What happens when data is incomplete
 If any one of the tenant, user or cluster lists fails to load, a yellow warning appears at the top of the card naming the unavailable source. Everything else still displays normally.

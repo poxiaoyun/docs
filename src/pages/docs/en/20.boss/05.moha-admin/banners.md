@@ -1,6 +1,6 @@
 ---
 title: Banners
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: Maintain the banners at the top of the Moha Hub home page — create one, upload an image, and set its link and active time.
 ---
 
@@ -10,7 +10,7 @@ A banner is shown **at the very top of the Moha Hub home page** and cycles autom
 
 :::tip What a banner looks like
 
-A large banner image at the top of the home page, switching to the next one every 5 seconds, with small dots in the bottom right you can click. A **title** and a line of **content** can be overlaid on the image; if a **link** is set, clicking the image opens that link.
+A large banner image at the top of the home page, switching to the next one every 5 seconds, with small dots in the bottom left you can click. A **title** and a line of **content** can be overlaid on the image; if a **link** is set, clicking the image opens that link.
 
 :::
 

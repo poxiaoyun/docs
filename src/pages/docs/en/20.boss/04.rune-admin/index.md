@@ -1,6 +1,6 @@
 ---
 title: 'Rune intelligent computing management'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'Connect clusters, divide resource pools, define flavors and hand quotas to tenants — the admin home for the compute base.'
 tags:
   - boss
@@ -34,7 +34,7 @@ If you have just taken over this platform, read the chapters in this order: **co
 
 | Page | What it helps you with |
 | --- | --- |
-| [Cluster Management](/boss/rune-admin/clusters) | Connect a new data-centre building to the platform |
+| [Cluster](/boss/rune-admin/clusters) | Connect a new data-centre building to the platform |
 | [Cluster Status](/boss/rune-admin/cluster-overview) | See whether one cluster's CPU, memory, nodes and services are healthy |
 | [Nodes & Accelerators](/boss/rune-admin/nodes-gpu) | See the state of every machine and every card |
 | [Resource Pools](/boss/rune-admin/resource-pools) | Divide the machines into functional zones |
@@ -50,5 +50,5 @@ If you have just taken over this platform, read the chapters in this order: **co
 
 ## How to tell you are in the right place
 
-- The left-hand menu shows the **AI Platform** group, with **Cluster Management**, **Tenant Resource** and **App Template** under it.
-- After opening a cluster from **Cluster Management**, the left-hand menu gains three sub-groups: **Cluster Status**, **Resource Management** and **Operations Management**.
+- The left-hand menu shows the **AI Platform** group, with **Cluster**, **Tenant Resource** and **App Template** under it.
+- After opening a cluster from **Cluster**, the left-hand menu gains three sub-groups: **Cluster Status**, **Resource Management** and **Operations Management**.

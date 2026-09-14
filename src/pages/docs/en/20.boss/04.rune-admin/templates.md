@@ -1,6 +1,6 @@
 ---
 title: App Template
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: Maintain user and system app templates — create a template, upload its versions and publish them so users can deploy in one click.
 ---
 
@@ -36,11 +36,11 @@ In the left sidebar, under the **AI Platform** group, click **App Template**.
 
 | Column | Meaning |
 | --- | --- |
-| Name | Avatar + name (with the ID in brackets) + description; click to open the introduction page |
+| Name | Avatar + name; the ID is appended in brackets when it differs from the name, with the description underneath. Click the name to open the introduction page |
 | App Version | The latest version's app version number, with the chart version shown below |
 | Domain | User / System |
 | Category | Template category, e.g. inference, fine-tuning, storage |
-| Published | Whether it has been published |
+| Published | A green tick when published, a grey cross when not |
 | Recommendation Index | The recommendation score |
 | Recommendation Screenshot | Whether a recommendation screenshot is configured |
 | Created At | — |

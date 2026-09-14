@@ -1,7 +1,7 @@
 ---
 title: Account Center
-updated: '2026-09-12'
-description: Users vs tenants, and the order to set them up.
+updated: '2026-09-14'
+description: How users and tenants relate, which one to create first, and what the two subpages cover.
 tags:
   - boss
   - iam

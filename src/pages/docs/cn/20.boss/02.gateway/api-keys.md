@@ -1,7 +1,7 @@
 ---
 title: '令牌管理'
-updated: '2026-09-12'
-description: '发放和管理调用网关要用的 API 密钥：限流、IP 白名单与过期时间。'
+updated: '2026-09-14'
+description: '教你在哪发放调用网关的 API 密钥，以及怎么设限流、IP 白名单和过期时间。'
 tags:
   - boss
   - gateway

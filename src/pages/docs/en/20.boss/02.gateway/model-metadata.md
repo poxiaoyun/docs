@@ -1,7 +1,7 @@
 ---
 title: Model Configuration
-updated: '2026-09-12'
-description: Give a model its card: context length and prices.
+updated: '2026-09-14'
+description: Give a model its business card: name, type, context length and unit prices.
 tags:
   - boss
   - gateway
@@ -74,7 +74,7 @@ Above the list you can filter by **Type** and **Vendor**. The actions menu at th
 
 5. Click **Create model** to finish. On the edit page the button reads **Save** instead.
 
-When you edit an existing model, the form also shows a **Channel vendors** block listing every channel that currently uses this model and its priority, so you can judge the impact of your change.
+When you edit an existing model that already has channels using it, the form also shows a **Channel vendors** block listing those channels and their priorities, so you can judge the impact of your change. When no channel references the model, the block is not shown.
 
 ### Type
 

@@ -1,7 +1,7 @@
 ---
 title: 魔哈仓库
-updated: '2026-09-12'
-description: 魔哈是什么、能托管什么、从哪里进入，以及仓库、版本、卡片等名词的意思。
+updated: '2026-09-14'
+description: 第一次用魔哈：先弄清它托管什么、几个名词什么意思、从哪进入。
 tags:
   - moha
   - overview
@@ -49,7 +49,7 @@ tags:
 - [快速开始](/moha/quickstart/guide)
 - [访问令牌](/moha/quickstart/token)
 - [我创建的资源](/moha/home/created-by-me)
-- [我的收藏](/moha/home/liked-by-me)
+- [我喜欢的](/moha/home/liked-by-me)
 - [模型仓库](/moha/models)
 - [数据集](/moha/datasets)
 - [镜像仓库](/moha/images)

@@ -1,7 +1,7 @@
 ---
 title: Dashboard
-updated: '2026-09-12'
-description: See gateway health: requests, errors and cost.
+updated: '2026-09-14'
+description: See gateway health at a glance: requests, success rate, tokens, cost and uptime.
 tags:
   - boss
   - gateway
@@ -61,15 +61,17 @@ The row of cards across the top of the page, from left to right:
 | --- | --- |
 | Requests | Total requests in the range, with a "vs previous" change rate |
 | Success rate | Share of successful requests, expressed as a change in percentage points |
-| Token usage | Total tokens consumed in the range, abbreviated with K / M |
+| Token usage | Total tokens consumed in the range, abbreviated with K / M and similar |
 | Sensitive hits | Number of requests that tripped content moderation |
-| TTFT | Time to first token, showing the max over the recent window; lower is better |
+| TTFT | Time to first token, showing the max over the **last 1 minute**; lower is better |
 | Active API Keys | How many keys made calls during the period |
 | Runtime | How long the gateway has been running, shown as days / hours / minutes |
 
 :::info What "No previous data" means
 If there is no comparable data before the selected range, the success-rate card shows **No previous data**. It means there is no period-over-period figure to compute for that item — it is not an error.
 :::
+
+TTFT is the time from sending a request to receiving the first character — the closest thing to the "is it laggy?" that a user actually feels. Values under 1 second are written as `300ms`; anything longer switches to seconds, such as `1.5s`.
 
 ## Charts and rankings
 

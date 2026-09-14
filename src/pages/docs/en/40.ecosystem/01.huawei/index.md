@@ -1,6 +1,6 @@
 ---
 title: 'Huawei (Ascend)'
-updated: '2026-09-12'
+updated: '2026-09-14'
 author: Rune Docs Team
 description: 'The order for connecting an Ascend NPU server to the platform: driver and runtime first, MindCluster components after.'
 tags:
@@ -14,6 +14,13 @@ tags:
 This chapter covers how to connect a server with Ascend NPUs to the platform cluster. It has two parts:
 **the first part installs the driver and runtime on the host**, so the machine itself can use the cards;
 **the second part installs MindCluster components in the cluster**, so Kubernetes can schedule those cards.
+
+## Two words to tell apart first
+
+| Term | Plain explanation |
+| --- | --- |
+| NPU | Neural Processing Unit: an accelerator card designed for the tensor math inside large models. It and a general-purpose GPU both do parallel computing; the difference is focus — an NPU does matrix multiplication very efficiently but is good at little else. Think of it as a calculator built specifically for matrices. |
+| CANN | Ascend's heterogeneous computing software stack (Compute Architecture for Neural Networks): it exposes interfaces upward to frameworks such as PyTorch and drives the NPU downward. It is the equivalent of a graphics card's driver plus runtime layer, so install it only after the driver is verified. |
 
 :::info Decide three things before you start
 

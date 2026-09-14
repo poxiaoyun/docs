@@ -1,7 +1,7 @@
 ---
 title: 'IAM API Key（AK/SK）'
-updated: '2026-09-12'
-description: 讲清 API 密钥是干什么的、怎么生成、为什么只显示一次，以及丢了和泄露了怎么办。
+updated: '2026-09-14'
+description: API 密钥是干什么的、怎么生成、为什么只显示一次，以及丢了或泄露了怎么办。
 ---
 
 # IAM API Key（AK/SK）

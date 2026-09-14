@@ -1,7 +1,7 @@
 ---
 title: 'License'
-updated: '2026-09-12'
-description: 'Check the license status and expiry date, learn what an expired license limits, and paste a new license to renew.'
+updated: '2026-09-14'
+description: 'Check the license status and expiry date, and paste a new license to renew it.'
 tags:
   - boss
   - settings

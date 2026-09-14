@@ -1,7 +1,7 @@
 ---
 title: 资源与配额
-updated: '2026-09-12'
-description: 看清能用多少资源、能用哪些配置：我的模板、配额、规格、工作空间的作用与入口。
+updated: '2026-09-14'
+description: 分清模板、配额、规格、工作空间各管什么，以及分别去哪里查看和调整。
 tags:
   - rune
   - resources

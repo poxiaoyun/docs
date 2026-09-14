@@ -1,7 +1,7 @@
 ---
 title: 账户管理
-updated: '2026-09-12'
-description: 说明 BOSS 里「用户」和「租户」是什么关系、该按什么顺序创建，以及两个子页面各管什么。
+updated: '2026-09-14'
+description: 讲清用户和租户是什么关系、该先建谁后建谁，以及两个子页面各管什么。
 tags:
   - boss
   - iam

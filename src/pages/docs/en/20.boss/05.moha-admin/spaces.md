@@ -1,7 +1,7 @@
 ---
 title: 'Spaces'
-updated: '2026-09-12'
-description: How a platform administrator views, unlists, recommends, edits and deletes Spaces across the whole Moha Hub.
+updated: '2026-09-14'
+description: Browse every online AI app (Space) on the platform and unlist, recommend, edit or delete the ones you need to.
 ---
 
 # Spaces
@@ -33,7 +33,7 @@ Visibility has three values:
 
 | Shown as | Who can see | Who can change it |
 | --- | --- | --- |
-| Public | Anyone, including visitors who are not signed in | Only members of the owning organization or repository administrators |
+| Public | Anyone, including visitors who are not signed in | Only the creator when the repository is personal; every member of the organization when it belongs to one |
 | Tenant Only | Only members of the owning organization | Members of the owning organization |
 | Private | Only the creator | Only the creator |
 

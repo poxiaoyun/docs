@@ -1,7 +1,7 @@
 ---
 title: AI Assistant Settings
-updated: '2026-09-12'
-description: 'Configure the AI diagnostics assistant avatar, name and authentication key, and control whether it is enabled.'
+updated: '2026-09-14'
+description: 'Set the AI assistant avatar, name and key, and enable it when the service is ready.'
 tags:
   - boss
   - settings

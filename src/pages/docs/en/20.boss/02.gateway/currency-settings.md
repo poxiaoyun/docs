@@ -1,7 +1,7 @@
 ---
 title: Currency Configuration
-updated: '2026-09-12'
-description: Choose the display currency and the CNY/USD rate.
+updated: '2026-09-14'
+description: Decide whether prices and costs are shown in CNY or USD, and where to change that rate.
 tags:
   - boss
   - gateway
@@ -53,7 +53,7 @@ Currency settings mainly affect the three places that show amounts:
 | --- | --- |
 | The price columns in [Model Configuration](/boss/gateway/model-metadata) | Prices are shown in the selected currency |
 | The cost columns in [Call Logs](/boss/gateway/audit) | Each record's cost is shown in the selected currency |
-| The cost metrics on the [Dashboard](/boss/gateway/operations) | Amounts in the rankings and metrics are shown in the selected currency |
+| The model ranking cost column on the [Dashboard](/boss/gateway/operations) | The cost column is shown in the selected currency |
 
 Prices themselves are always stored in Chinese yuan, so enter them in yuan as usual — no need to convert to dollars.
 

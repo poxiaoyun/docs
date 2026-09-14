@@ -1,7 +1,7 @@
 ---
 title: 'Models'
-updated: '2026-09-12'
-description: 'Pick the right model in the Models page: read the cards, filter and search, check prices, and start a chat in one click.'
+updated: '2026-09-14'
+description: 'Too many models to choose from? Read the cards, filter by type and price, check the price, then start chatting in one click.'
 ---
 
 # Models
@@ -45,12 +45,16 @@ Models is like the list page of an app store: the card tells you what the "app" 
 
 | Card element | What it means |
 | --- | --- |
-| Model icon + model name | This ID is what you use when calling the API. The copy button next to the name copies it in one click; hover shows **Copy model ID** |
+| Model icon + model name | This ID is what you use when calling the API. The card itself has no copy button |
 | Provider | Who provides this model |
 | **New** (top right) | A recently added model |
 | Colored tag (top right) | Visibility: **Public** (available platform-wide), **Tenant** (this tenant only), **Private** (only you or this workspace) |
 | Description | A one-line introduction to the model, shown on at most two lines |
 | Bottom tags | Type, categories (up to 2), **Context**, parameter scale and custom tags (up to 2); the full set is in the details |
+
+:::info Need to copy a model ID
+Neither the cards nor the detail panel on this page have a copy button. Go to the model list on the left of [Playground](./experience.md) or [Comparison](./compare.md) and click the copy icon next to the model name (hover shows **Copy model ID**).
+:::
 
 ### What context length means
 

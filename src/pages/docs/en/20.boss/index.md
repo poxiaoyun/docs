@@ -1,8 +1,8 @@
 ---
 title: Overview
-updated: '2026-09-12'
+updated: '2026-09-14'
 author: Rune Docs Team
-description: Who BOSS is for, and what its menus control.
+description: Who BOSS is for, how it differs from the AI Platform, and what each sidebar group controls.
 tags:
   - boss
   - overview

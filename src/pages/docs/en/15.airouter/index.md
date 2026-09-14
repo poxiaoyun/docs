@@ -1,12 +1,12 @@
 ---
 title: 'AIrouter'
-updated: '2026-09-12'
-description: 'What AIrouter is, what it is called on screen, what each of its five top entries does, and how to finish your first conversation.'
+updated: '2026-09-14'
+description: 'Not sure what AIrouter is, where to open it, what its five entries do, or how to finish a first chat? Start here.'
 ---
 
 # AIrouter
 
-AIrouter is the **web-based chat tool** built into the platform (it appears as **Playground** by default; an administrator can change that name in the Boss operations console). Open it, pick a model, type a sentence, and watch the model write its answer one character at a time — no code, no software to install, and no need to understand how the model is deployed.
+AIrouter is the **web-based chat tool** built into the platform (it appears as **Playground** by default; an administrator can change that name in the Boss console under **Gateway Settings**). Open it, pick a model, type a sentence, and watch the model write its answer one character at a time — no code, no software to install, and no need to understand how the model is deployed.
 
 It is a **sibling subsystem** of the AI Platform (Rune), not a part of it. The AI Platform manages the foundations — compute, clusters, instances and storage; AIrouter only does two things: chat with models, and connect models to external programs. The models themselves are configured by the platform administrator in the gateway, and you simply pick a ready-made one inside AIrouter.
 
@@ -18,7 +18,7 @@ The AI Platform is like an office building: utilities, rooms and access control 
 
 1. Look at the **top-left corner** and find the button showing "current product name + dropdown arrow".
 2. Click it to open a menu titled **Products**.
-3. In the menu, choose **AIrouter** (shown as **Playground** by default).
+3. In the menu, choose this entry — these docs call it **AIrouter**, and on screen it reads **Playground** by default (if an administrator renamed it, go by the label you actually see).
 4. You land on the **Models** page by default.
 
 ## What the five top entries do
@@ -27,7 +27,7 @@ AIrouter has no left-hand menu; everything lives in **the single row at the top 
 
 | Entry | What you do here |
 | --- | --- |
-| **Models** | Pick models. See which models are available, each model's context length and price, copy model IDs, and view call samples |
+| **Models** | Pick models. See which models are available, each model's context length and price, and view call samples |
 | **Playground** | Chat with a single model. Choose a model, send messages, attach images, turn deep thinking on, and adjust parameters |
 | **Comparison** | Ask two models the same question at once and compare the results side by side |
 | **API Keys** | Create and manage the keys used by programs, and view the log of each call |
@@ -41,7 +41,7 @@ AIrouter has no left-hand menu; everything lives in **the single row at the top 
 
 ## Complete your first conversation
 
-1. In the top-left corner click **Products**, choose **AIrouter**, and land on **Models**.
+1. In the top-left corner click **Products**, choose **Playground** (the entry these docs call AIrouter), and land on **Models**.
 2. In **Models**, pick a model (the larger the Context on the card, the more it can remember), and click the card to open the detail panel on the right.
 3. In the detail panel, click **Try model**.
 4. The page jumps to **Playground** with that model already selected.

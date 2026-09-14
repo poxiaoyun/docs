@@ -1,7 +1,7 @@
 ---
 title: 'Authentication'
-updated: '2026-09-12'
-description: Explains what each sign-in page is for, and the order in which you use them.
+updated: '2026-09-14'
+description: What each sign-in page is for, and the order in which you use them.
 tags:
 - account
 - auth

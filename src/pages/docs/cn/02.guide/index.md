@@ -1,7 +1,7 @@
 ---
 title: 入门指南
-updated: '2026-09-12'
-description: 三篇入门文档怎么读、按什么顺序读，帮你最快跑通第一套流程。
+updated: '2026-09-14'
+description: 告诉你三篇入门文档分别解决什么问题、按什么顺序读，帮你最快跑通第一套流程。
 tags:
   - guide
   - getting-started

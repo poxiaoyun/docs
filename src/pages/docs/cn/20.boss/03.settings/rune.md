@@ -1,7 +1,7 @@
 ---
 title: 智算平台设置
-updated: '2026-09-12'
-description: '设置智算平台的名称、Logo、简介与内部服务地址，并开启开发服务闲置自动暂停。'
+updated: '2026-09-14'
+description: '帮你改智算平台的招牌与内部服务地址，并设置开发服务闲置自动暂停。'
 tags:
   - boss
   - settings

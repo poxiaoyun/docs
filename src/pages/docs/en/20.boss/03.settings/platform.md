@@ -1,7 +1,7 @@
 ---
 title: 'Platform Settings'
-updated: '2026-09-12'
-description: 'Set the platform title, subtitle and logo, and control the document entry, language switcher and self-registration.'
+updated: '2026-09-14'
+description: 'Change the platform title, logo, top-bar entries and sign-up switch, and know when to refresh.'
 tags:
   - boss
   - settings

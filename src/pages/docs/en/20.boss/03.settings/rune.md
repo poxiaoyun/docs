@@ -1,7 +1,7 @@
 ---
 title: AI Platform Settings
-updated: '2026-09-12'
-description: 'Set the AI Platform title, logo and description, its internal service addresses, and idle auto-pause for development instances.'
+updated: '2026-09-14'
+description: 'Rebrand the AI Platform, set its internal service addresses, and enable idle auto-pause.'
 tags:
   - boss
   - settings

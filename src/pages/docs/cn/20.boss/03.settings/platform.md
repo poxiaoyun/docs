@@ -1,7 +1,7 @@
 ---
 title: '平台设置'
-updated: '2026-09-12'
-description: '设置平台名称、副标题与 Logo，并控制顶部文档入口、语言切换和是否允许自助注册。'
+updated: '2026-09-14'
+description: '帮你改平台名称、Logo、顶部栏入口与注册开关，并知道改完为什么要刷新。'
 tags:
   - boss
   - settings

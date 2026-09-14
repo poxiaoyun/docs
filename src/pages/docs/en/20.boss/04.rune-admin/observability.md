@@ -1,6 +1,6 @@
 ---
 title: Logs & Scheduler
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'Query logs inside a cluster to locate problems, and adjust the Volcano scheduling policy by dragging.'
 tags:
 - boss
@@ -22,7 +22,7 @@ These two pages are everyday tools for running a cluster:
 
 ## How to open them
 
-1. In the left-hand menu, click **AI Platform** → **Cluster Management**, then open the target cluster.
+1. In the left-hand menu, click **AI Platform** → **Cluster**, then open the target cluster.
 2. Under the **Operations Management** group in the left-hand menu:
    - Click **Log Management** to query logs.
    - Click **Scheduler Management** to change the policy.
@@ -52,7 +52,7 @@ When the page has no data, first confirm that the log-collection component has b
 
 ## Adjust the scheduling policy
 
-Scheduler Management is aimed at administrators who are already comfortable with scheduling. Its left side holds the available configurations, and the middle holds two editing areas: **Action** and **Plugin Layer** (plugin groups). To use it:
+Scheduler Management is aimed at administrators who are already comfortable with scheduling. Its left side holds the available configurations, and the middle holds two editing areas: **Action** (the action pipeline) and **Plugin** (plugins, grouped into "plugin layers"). To use it:
 
 1. Find the configuration you want under **Custom Config** / **Recommend Config** on the left and click **Use** to load it.
 2. Drag an **Action** or a **Plugin** from the left into the matching area on the right; you can also reorder items within the same layer by dragging.

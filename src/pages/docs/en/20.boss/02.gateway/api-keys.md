@@ -1,7 +1,7 @@
 ---
 title: Token Management
-updated: '2026-09-12'
-description: Issue API keys with limits, IP rules and expiry.
+updated: '2026-09-14'
+description: How to issue a gateway API key and set its rate limits, IP allowlist and expiry.
 tags:
   - boss
   - gateway
@@ -38,7 +38,7 @@ The pass says **who you are** (the owner) and **which doors you may walk through
 | RPM | Requests-per-minute cap; an infinity symbol means unlimited |
 | TPM (K) | Tokens-per-minute cap; an infinity symbol means unlimited, otherwise shown like `48K` |
 | Allowed IPs | Permitted source IPs; `*` means any IP |
-| Expiration time | Shows **Never expires** when unset; an expired key is flagged in red |
+| Expiration time | Shows **Never expires** when unset; an expired key is flagged in red with an **Expired** badge |
 | Created at | When the key was created |
 
 The list supports multi-select, and there is a **refresh** button in the top-right corner. Above it you can filter by **Owner** (type at least one character before any candidates appear).

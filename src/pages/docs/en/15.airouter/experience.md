@@ -1,7 +1,7 @@
 ---
 title: 'Playground'
-updated: '2026-09-12'
-description: 'Walk through a full conversation: choose a model and key, send messages, follow up, attach images, edit the system prompt and clear the chat.'
+updated: '2026-09-14'
+description: 'First time chatting with a model? Choose a model and key, send and follow up on messages, attach images, tune parameters, clear the chat.'
 ---
 
 # Playground
@@ -73,7 +73,9 @@ The system prompt is the rule you set before the conversation starts, for exampl
 
 ## Send an image to the model
 
-1. Click the image button in the input toolbar (hover shows **Upload image**).
+The input box accepts **text and images only** — there is no way to send voice or video.
+
+1. Click the leftmost image button in the toolbar under the input box.
 2. Choose one or more images; you can also paste an image from the clipboard straight into the input box.
 3. Selected images line up as thumbnails above the input box, with "N images selected" shown.
 4. To remove one, click the close icon at the top-right corner of its thumbnail.

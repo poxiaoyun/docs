@@ -1,7 +1,7 @@
 ---
 title: Call Logs
-updated: '2026-09-12'
-description: Look up one call: model, channel, latency, cost.
+updated: '2026-09-14'
+description: Look up individual gateway calls by time, user, key, provider or model, and read the details.
 tags:
   - boss
   - gateway

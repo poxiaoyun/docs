@@ -1,7 +1,7 @@
 ---
 title: 'User Management'
-updated: '2026-09-12'
-description: Create users, reset passwords, and change roles.
+updated: '2026-09-14'
+description: Create a platform account, hand over the initial password, reset passwords, and where to change a role.
 ---
 
 # User Management
@@ -126,7 +126,7 @@ The role names you will see and how they differ:
 | --- | --- |
 | Administrator | Can see and use the **Workbench** and **Observability** sidebar groups in the AI Platform, including Inference, Traning&Fine tuning, Runebox, Apps, Templates, Storage, Metrics, Logs and Evaluations |
 | Developer | Same as Administrator: both sidebar groups are visible and usable |
-| Member | **Cannot see** those two groups and can only use the remaining pages (such as the model marketplace and data marketplace) |
+| Member | **Cannot see** those two groups and can only use the remaining pages (such as Model Hub and Dataset Hub) |
 
 :::info Other role names exist
 When you pick a role for a member, the dropdown options are returned by the platform backend. You may see names other than Administrator, Member and Developer — whatever appears in the **Member** page is the authoritative list.

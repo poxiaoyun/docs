@@ -1,7 +1,7 @@
 ---
 title: 魔哈Hub设置
-updated: '2026-09-12'
-description: '设置魔哈Hub 的名称、Logo、简介，以及空间的基础域名和 HTTPS 证书。'
+updated: '2026-09-14'
+description: '帮你改魔哈Hub 的显示信息，以及空间用的基础域名与 HTTPS 证书。'
 tags:
   - boss
   - settings

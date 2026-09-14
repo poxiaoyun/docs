@@ -1,6 +1,6 @@
 ---
 title: Nodes & Accelerators
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'See the cluster from the machine side: node health on one page, and each card''s utilisation, VRAM and temperature on the other.'
 tags:
 - boss
@@ -25,7 +25,7 @@ They are the main entry points for working out "is a machine broken, or have we 
 
 ## How to open them
 
-1. In the left-hand menu, click **AI Platform** → **Cluster Management**, then open the target cluster.
+1. In the left-hand menu, click **AI Platform** → **Cluster**, then open the target cluster.
 2. Under the **Cluster Status** group in the left-hand menu:
    - To look at machines, click **Node Status**.
    - To look at cards, click **Accelerator Status**.

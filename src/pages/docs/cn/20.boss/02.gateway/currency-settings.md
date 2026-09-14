@@ -1,7 +1,7 @@
 ---
 title: 货币配置
-updated: '2026-09-12'
-description: '决定平台价格和费用用哪种货币显示，并设置人民币兑美元汇率。'
+updated: '2026-09-14'
+description: '决定价格和费用用人民币还是美元显示，以及去哪里改这个换算汇率。'
 tags:
   - boss
   - gateway
@@ -53,7 +53,7 @@ tags:
 | --- | --- |
 | [模型配置](/boss/gateway/model-metadata) 的价格列 | 价格按所选货币显示 |
 | [调用日志](/boss/gateway/audit) 的费用与标准列 | 每条记录的费用按所选货币显示 |
-| [数据看板](/boss/gateway/operations) 的成本、费用指标 | 排行与指标里的金额按所选货币显示 |
+| [数据看板](/boss/gateway/operations) 的模型排行 | 排行里的成本列按所选货币显示 |
 
 价格本身始终以人民币存储，你录入时照常填人民币即可，不需要换算成美元。
 

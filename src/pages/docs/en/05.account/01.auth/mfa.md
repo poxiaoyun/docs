@@ -1,6 +1,6 @@
 ---
 title: 'Multi-Factor Authentication (MFA)'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: How to scan the QR code with your phone, type the code, and save the recovery code.
 ---
 
@@ -33,7 +33,7 @@ If the account is already bound, opening the page shows the "Enabled" state dire
 
 ## What you see after binding succeeds
 
-After a successful bind a green alert appears at the top of the page:
+After a successful bind the multi-factor authentication card switches to **Enabled**, and the page shows:
 
 - "You have successfully enabled multi-factor authentication!"
 - "Please save this recovery code. If your device cannot provide verification codes, you can log in using this recovery code."

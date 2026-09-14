@@ -1,6 +1,6 @@
 ---
 title: 'Login'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: Walks you from the sign-in page into the platform, step by step, and explains the errors you may see.
 ---
 
@@ -39,7 +39,7 @@ If you get the slider code, in the "Security verification" window:
 
 1. Press the slider at the bottom and drag it to the right.
 2. Line the puzzle piece up with the gap and release; the platform verifies automatically and continues signing in.
-3. To stop, click **Cancel** or the close icon in the top-right corner.
+3. To stop, click the close icon in the top-right corner of the window.
 
 :::tip What if you cannot read the code
 Click the verification code image to load a new one. The old code becomes invalid immediately, so type the new one.

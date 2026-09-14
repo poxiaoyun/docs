@@ -1,7 +1,7 @@
 ---
 title: Moha Hub Settings
-updated: '2026-09-12'
-description: 'Set the Moha Hub title, logo and description, plus the base domain and HTTPS certificate used by Spaces.'
+updated: '2026-09-14'
+description: 'Rebrand Moha Hub and set the base domain and HTTPS certificate used by Spaces.'
 tags:
   - boss
   - settings

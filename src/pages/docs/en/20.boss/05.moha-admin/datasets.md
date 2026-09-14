@@ -1,7 +1,7 @@
 ---
 title: Datasets
-updated: '2026-09-12'
-description: How a platform administrator views, unlists, recommends, edits and deletes datasets across the whole Moha Hub.
+updated: '2026-09-14'
+description: Unlist, recommend, edit or delete dataset repositories across the Moha Hub and take anything that should not be public off the user side.
 ---
 
 # Datasets
@@ -33,7 +33,7 @@ Visibility has three values:
 
 | Shown as | Who can see and download | Who can push new versions |
 | --- | --- | --- |
-| Public | Anyone, including visitors who are not signed in | Only members of the owning organization or repository administrators |
+| Public | Anyone, including visitors who are not signed in | Only the creator when the repository is personal; every member of the organization when it belongs to one |
 | Tenant Only | Only members of the owning organization | Members of the owning organization |
 | Private | Only the creator | Only the creator |
 
@@ -67,7 +67,7 @@ Each row of the list shows:
 
 1. Type the dataset's name or alias into the search box; the search runs as you type.
 2. When needed, use the **Organization**, **Visibility** and **Task** drop-downs to filter.
-3. Click **Advanced search** to the right of the search box; in the panel you can filter by **Industry / business domain**, **Project stage**, **Languages**, **Text types**, **Acquisition methods**, **Custom tags**, **Data quality level**, and **Created from / Created to**, then click **Apply filters**.
+3. Click **Advanced search** to the right of the search box; in the panel you can filter by **Industry / business domain**, **Project stage**, **Languages**, **Text types**, **Acquisition methods**, **Custom tags** and **Data quality level**, then click **Apply filters**.
 4. Filters that are already in effect are shown as small chips; click the cross on a chip to remove it alone, or go back to the **Advanced search** panel and click **Clear advanced filters** to remove them all.
 
 ## Unlist a dataset (change visibility)

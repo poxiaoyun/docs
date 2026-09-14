@@ -1,8 +1,8 @@
 ---
 title: 概览
-updated: '2026-09-12'
+updated: '2026-09-14'
 author: Rune Docs Team
-description: 看懂 BOSS 是给谁用的、和智算平台 Console 有什么不同，以及左侧 19 个菜单分组分别管什么。
+description: 看懂 BOSS 是给谁用的、和智算平台有什么不同，以及左侧 19 个菜单分组分别管什么。
 tags:
   - boss
   - overview

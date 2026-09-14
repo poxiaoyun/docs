@@ -1,7 +1,7 @@
 ---
 title: '网关设置'
-updated: '2026-09-12'
-description: '设置聚合网关（对话子系统，默认显示名「模型体验」）在用户端的名称、Logo 和简介。'
+updated: '2026-09-14'
+description: '帮你改聚合网关在用户端的名称、Logo 和简介。'
 tags:
   - boss
   - settings

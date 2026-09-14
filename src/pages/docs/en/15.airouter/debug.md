@@ -1,7 +1,7 @@
 ---
 title: 'Parameter Settings'
-updated: '2026-09-12'
-description: 'Where to open the parameters, what each one controls, and which to change when the answers are not right.'
+updated: '2026-09-14'
+description: 'Answers too rambling, too rigid or cut off mid-sentence? Know where the parameters are, which one to change and by how much.'
 ---
 
 # Parameter Settings
@@ -21,11 +21,17 @@ There is no "debug" entry in the AIrouter top navigation. Parameters are adjuste
 
 Within one page, the two entry points (the dialog and the right-hand panel) edit the same set of parameters — change one and the other follows.
 
+:::info The sliders in the two entry points differ
+Right-hand panel: **Temperature** reaches `2`, and **Max Tokens** moves 128 per step.
+In the dialog: **Temperature** tops out at `1.999`, and **Max Tokens** moves 10 per step.
+Both edit the same value — only the dragging granularity differs, and the model receives the same number either way.
+:::
+
 ## When changes take effect
 
 - Changes are **remembered immediately**; closing the dialog does not lose them.
 - But they only apply to **messages sent afterwards**. Messages already sent and answers already received are unaffected.
-- To undo a change, reopen the dialog and change it back; once **System** or **Stop** has content, a clear button appears on the right of the field to wipe it in one click.
+- To undo a change, reopen the dialog and change it back; in the dialog, once **System** or **Stop** has content, a clear button appears at its top-right corner to wipe it in one click (the right-hand panel has no such button).
 
 ## What the five parameters control
 
@@ -40,7 +46,7 @@ Within one page, the two entry points (the dialog and the right-hand panel) edit
 :::tip Two rules of thumb
 
 - **Temperature** and **Top P** both affect randomness, so change only one of them and leave the other at its default; otherwise it is hard to tell which one made the difference.
-- The number fields take plain integers or decimals — type them directly (letters such as `e` are not accepted and reset the field).
+- A number outside the allowed range is pulled back into it automatically (typing `2` for **Top P** becomes `1`), so you do not have to watch the bounds yourself.
 
 :::
 

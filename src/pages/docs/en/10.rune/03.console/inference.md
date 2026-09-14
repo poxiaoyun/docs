@@ -88,7 +88,7 @@ Once you have a few services, use the toolbar above the list:
 | **Status** | Switch between All / Healthy / Needs attention / Paused |
 | **Template** | Show only services deployed from one template |
 | **Resource** | Filter by the resource in use |
-| **Visibility** | Filter by the service's visibility (for example Public / Tenant only / Private) |
+| **Visibility** | Filter by the service's visibility (Public / Tenant visible / Private) |
 
 To clean up several at once: tick the checkboxes at the start of the rows, then the toolbar shows a bin icon (**Batch Delete**) — click it and confirm.
 
@@ -111,7 +111,7 @@ On the instance detail page, **Endpoints** in **Overview** shows the access addr
 To let callers reach the model through the unified gateway, click **Publish Service** in the row action menu or the **Actions** menu on the detail page:
 
 1. The instance status must be **Healthy** or **Installed**, otherwise the menu item is greyed out.
-2. In the dialog, confirm the **Endpoint** (choose from the instance addresses or type one), and choose the **Visibility** (Public / Tenant / Workspace / Private).
+2. In the dialog, confirm the **Endpoint** (choose from the instance addresses or type one), and choose the **Visibility** (Public / Tenant visible / Private).
 3. If needed, expand the LoRA configuration, choose the engine, and fill in the adapter name and path.
 4. Click **Confirm**.
 

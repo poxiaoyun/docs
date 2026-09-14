@@ -1,7 +1,7 @@
 ---
 title: Content Moderation
-updated: '2026-09-12'
-description: Set up the word list, policies and hit review.
+updated: '2026-09-14'
+description: Set up the whole moderation chain: word list, actions and hit review.
 tags:
   - boss
   - gateway
@@ -60,7 +60,7 @@ Four statistic cards sit at the top of the page: **Total Terms**, **Enabled** (w
 | Column | Meaning |
 | --- | --- |
 | Term | The word itself |
-| Enabled Status | A green check means enabled, grey means paused |
+| Enabled Status | A green check means enabled, a grey cross means paused |
 | Risk Score | High (≥ 8) / Medium (≥ 5) / Low, coloured automatically from the score |
 | Category | Which category the word belongs to; there can be several |
 | Tags | Your own tags; there can be several |

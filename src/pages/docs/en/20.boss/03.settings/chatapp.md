@@ -1,7 +1,7 @@
 ---
 title: 'Gateway Settings'
-updated: '2026-09-12'
-description: 'Set the name, logo and description of AIrouter — the chat sub-system — as users see it in the console.'
+updated: '2026-09-14'
+description: 'Change the name, logo and description users see for the chat sub-system.'
 tags:
   - boss
   - settings

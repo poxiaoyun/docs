@@ -1,7 +1,7 @@
 ---
 title: '网关配置'
-updated: '2026-09-12'
-description: '网关的全局开关与运行参数：限流、审核、缓存、回退和白名单。'
+updated: '2026-09-14'
+description: '把网关的全局开关、IP 白名单、缓存与重试策略一次配好，并知道改动何时生效。'
 tags:
   - boss
   - gateway

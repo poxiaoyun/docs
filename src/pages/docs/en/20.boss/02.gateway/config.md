@@ -1,7 +1,7 @@
 ---
 title: Gateway Configuration
-updated: '2026-09-12'
-description: Gateway-wide switches and runtime settings.
+updated: '2026-09-14'
+description: Configure the gateway-wide switches, IP allowlist, caching and retry policy, and know when each change applies.
 tags:
   - boss
   - gateway

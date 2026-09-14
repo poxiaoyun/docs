@@ -1,7 +1,7 @@
 ---
 title: Images
-updated: '2026-09-12'
-description: How a platform administrator views, unlists, edits and deletes container image registries across the whole Moha Hub.
+updated: '2026-09-14'
+description: Browse every container image registry on the platform and unlist, edit or delete the ones that should not be public.
 ---
 
 # Images
@@ -36,7 +36,7 @@ Visibility has three values:
 
 | Shown as | Who can see and pull | Who can push new versions |
 | --- | --- | --- |
-| Public | Anyone, including visitors who are not signed in | Only members of the owning organization or repository administrators |
+| Public | Anyone, including visitors who are not signed in | Only the creator when the repository is personal; every member of the organization when it belongs to one |
 | Tenant Only | Only members of the owning organization | Members of the owning organization |
 | Private | Only the creator | Only the creator |
 
@@ -84,9 +84,10 @@ Confirming the result: the visibility tag on that row changes immediately; once 
 ## Edit image information
 
 1. Click the **⋯** button on the far right → **Edit**.
-2. The page has three cards, **Image**, **Tags** and **Visibility**, which can be collapsed and expanded:
-   - **Name** cannot be changed; its input box is greyed out.
-   - You can change the **Description** and the tags such as **Category** and **Framework**.
+2. The page has four cards, **Image**, **Readme**, **Label** and **Visibility**, which can be collapsed and expanded:
+   - **Name** and **Organization** cannot be changed; their input boxes are greyed out.
+   - You can change the **Description** and the **Readme** (the repository's long-form text).
+   - You can change the tags such as **Category** and **Accelerates**.
    - You can switch Private / Tenant Only / Public under **Visibility**.
 3. Click **Confirm** when done and you return automatically to the Images list.
 

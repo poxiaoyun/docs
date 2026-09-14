@@ -1,7 +1,7 @@
 ---
 title: 'API Keys'
-updated: '2026-09-12'
-description: 'Create and manage the keys used to call AIrouter models: how to create them, what they can do, how cost is counted and where to see the logs.'
+updated: '2026-09-14'
+description: 'Wiring a program up to the models, or unsure how keys are created, managed or billed? Start here.'
 ---
 
 # API Keys

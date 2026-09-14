@@ -1,7 +1,7 @@
 ---
 title: Model Gateway
-updated: '2026-09-12'
-description: How a model call flows and what each menu does.
+updated: '2026-09-14'
+description: How a model call flows through the Model Gateway, and what each menu controls.
 tags:
   - boss
   - gateway
@@ -75,7 +75,7 @@ The **Model Gateway** menu on the left of the BOSS console is split into five gr
 | API key | A door pass issued to a tenant or application, carried with every request |
 | Rate limit | A speed cap set for a caller (requests and tokens per minute) |
 | Content moderation | The security check at the door, inspecting content going in and out |
-| Audit log | The security camera footage: who called what, and when |
+| Call log | The security camera footage: who called what, and when |
 
 :::warning The gateway only measures and prices
 The AI Gateway counts how many tokens each call used and converts that into a cost using the model price (a cost snapshot). It does **not** offer top-ups, deductions or online payment — a billing number and a money transfer are two different things.

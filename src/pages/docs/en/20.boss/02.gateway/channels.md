@@ -1,7 +1,7 @@
 ---
 title: Channel Management
-updated: '2026-09-12'
-description: Connect a provider: build a channel and verify it.
+updated: '2026-09-14'
+description: Connect a provider: build a channel, fill in the address and keys, bind models and verify it works.
 tags:
   - boss
   - gateway
@@ -28,7 +28,7 @@ One "support number" can sit in front of several lines. The switchboard decides 
 | Term | Plain explanation |
 | --- | --- |
 | Channel | One upstream configuration: address, key, usable models, who may use it |
-| Visibility | Who this channel is open to (everyone / one tenant / only you) |
+| Visibility | Who this channel is open to (everyone / one tenant / only you). The tenant option is labelled **Tenant / Workspace** in the UI |
 | Priority | When several channels can serve the same model, which one is tried first |
 | RPM / TPM | Speed caps: at most how many requests / tokens per minute |
 | Endpoint | The provider's interface address; requests are actually sent here |
@@ -45,11 +45,11 @@ One "support number" can sit in front of several lines. The switchboard decides 
 | --- | --- |
 | Name | A channel name for you to tell channels apart |
 | Provider / Endpoint | Provider type on top, interface address underneath |
-| Visibility | Public / Tenant / Private |
+| Visibility | Public, Tenant / Workspace, Private |
 | Applicable Models | Which models this channel supports; click to expand |
 | Priority | The higher the number, the higher the priority |
 | RPM / TPM | An infinity symbol means unlimited; TPM is in units of `K` |
-| Status | A green check means enabled, a grey circle means not enabled |
+| Status | A green check means enabled, a grey cross means not enabled |
 | Tenant / Workspace | Shown for tenant-level or private channels |
 | Owner | Who created the channel |
 | Created At | When the channel was created |
@@ -68,7 +68,7 @@ The list supports multi-select, and there is a **refresh** button in the top-rig
    | Name | For example `my-openai` | Required, anything you can recognize |
    | Provider / Endpoint | Pick one from the dropdown | Required; see "Supported providers" below |
    | Endpoint | The provider's interface address | Required; on a new channel the default address is filled in for you once you pick a provider |
-   | Visibility | Public / Tenant / Private | Required, defaults to **Public** |
+   | Visibility | Public, Tenant / Workspace, Private | Required, defaults to **Public** |
    | Priority | For example `0` | Required, defaults to `0`; higher wins |
    | Enabled | On by default | When off, this channel is never selected |
    | RPM | For example `600` | Optional, `0`–`10000`; leave it empty for unlimited |
@@ -107,7 +107,7 @@ If you run your own inference service such as vLLM or TGI, choose **openai-compa
 | Choice | Who can use this channel |
 | --- | --- |
 | **Public** | Every authenticated caller |
-| **Tenant** | Only members of the selected tenant |
+| **Tenant / Workspace** | Only members of the selected tenant |
 | **Private** | Only the person who created the channel |
 
 :::warning Narrowing visibility is risky

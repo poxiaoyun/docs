@@ -1,7 +1,7 @@
 ---
 title: Cluster Status
-updated: '2026-09-12'
-description: 'See whether one cluster is healthy overall — CPU, memory, nodes and core services — and drill down from here.'
+updated: '2026-09-14'
+description: 'Judge whether one cluster is healthy overall — CPU, memory, nodes and core services — then drill down.'
 tags:
 - boss
 - rune-admin
@@ -15,11 +15,11 @@ Cluster Status is the main dashboard you get after stepping into a "data-centre 
 ## Before you start
 
 - You need a **system administrator** account.
-- Prerequisite: a cluster is already connected to the platform, see [Cluster Management](/boss/rune-admin/clusters).
+- Prerequisite: a cluster is already connected to the platform, see [Cluster](/boss/rune-admin/clusters).
 
 ## Open the cluster overview
 
-1. In the left-hand menu, click **Cluster Management** under the **AI Platform** group.
+1. In the left-hand menu, click **Cluster** under the **AI Platform** group.
 2. In the cluster list, click the name of the cluster you want to inspect.
 3. In the left-hand sub-menu, click **Cluster Status**.
 

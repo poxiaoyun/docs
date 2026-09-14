@@ -1,6 +1,6 @@
 ---
 title: 'Security Settings'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: How to change your password, email, mobile number, and multi-factor authentication, item by item.
 ---
 
@@ -95,7 +95,7 @@ Once multi-factor authentication (also called a second factor) is on, you enter 
 
 4. Type the 6-digit number currently shown in the app into the **Verification Code** field.
 5. Click **Bind**.
-6. On success a **You have successfully enabled multi-factor authentication!** message appears at the top of the page, along with one **Recovery Code**.
+6. On success the page shows **You have successfully enabled multi-factor authentication!** along with one **Recovery Code**.
 
 :::warning Save the recovery code on the spot
 The recovery code is shown only once, when binding succeeds, and the page gives you just one. If you lose your phone or switch to a new one without having written the code down, you will be locked out of signing in and will have to ask a platform administrator for help.

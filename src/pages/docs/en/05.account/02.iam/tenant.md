@@ -1,6 +1,6 @@
 ---
 title: 'Tenant Management'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: What a tenant is, how to view and switch your tenants, and how members are managed and added.
 ---
 
@@ -89,7 +89,7 @@ The **Tenant Information** card on the left of the Overview tab shows the tenant
 Tenant information is shared by all members, so everyone sees your change. Make sure you are editing the **company's** information and not your own personal details.
 :::
 
-The Overview tab also shows member statistics, the member list, quota, workspaces, and **Recent Events** (the latest operations in reverse time order).
+The Overview tab also shows member statistics, the member list, quota, workspaces, and **Recent Events** (the latest operations in reverse time order). Exactly which of these blocks appear depends on your role and on the product you entered from.
 
 ## Managing members (Administrator only)
 

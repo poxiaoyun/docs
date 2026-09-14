@@ -1,6 +1,6 @@
 ---
 title: 'Hygon (DCU)'
-updated: '2026-09-12'
+updated: '2026-09-14'
 author: Rune Docs Team
 description: 'Which components connect a Hygon DCU server to the platform, what order to install them in, and how to confirm each step worked.'
 tags:
@@ -18,7 +18,7 @@ Do the steps below in order and the card becomes selectable on the platform page
 
 :::tip Three things to remember
 
-- **DCU** is the AI accelerator card made by Hygon. It does the same kind of job as a graphics card: speeding up model training and inference.
+- **DCU** is the AI accelerator card made by Hygon, short for Deep Computing Unit: a parallel-computing accelerator for AI training and inference, using many compute units to do matrix math at once. It and a general-purpose GPU both do parallel computing; the difference is focus — a DCU targets AI workloads, while a general GPU also covers graphics and more. Think of it as an "AI-specific graphics card" inside the machine.
 - The driver serves the **machine** — install it and the machine recognizes the card. The Kubernetes components serve the **cluster** — install them and the cluster recognizes the card.
 - Only when both are in place is the card really connected to the platform.
 
@@ -54,7 +54,7 @@ These words appear throughout the chapter. Learn them once here:
 
 | Term | Plain explanation |
 | --- | --- |
-| DCU | The Hygon AI accelerator card — the "graphics card" inside the machine, used to speed up training and inference |
+| DCU | The Hygon AI accelerator card (Deep Computing Unit), a parallel-computing accelerator for AI training and inference |
 | Segmentation (virtualization) | Splitting one card into several shares so multiple tasks can use it at the same time instead of each owning the whole card |
 | vDCU | One of those shares — a "virtual card" with its own compute and memory quota |
 | MIG | A hardware-level way of splitting that gives stronger isolation between the resulting instances |

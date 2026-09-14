@@ -1,6 +1,6 @@
 ---
 title: Announcements
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: Maintain the Moha Hub home page announcements — publish one, edit rich-text content, and set when it starts and stops showing.
 ---
 
@@ -10,7 +10,7 @@ Announcements are shown in the **Announcements card on the Moha Hub home page**,
 
 :::tip Where announcements appear
 
-When a user opens the Moha Hub home page, there is an Announcements card on the right listing announcement titles by their valid date; clicking a title pops up the full text. At the bottom of the card there is also a **View all** button that opens the complete announcement list page.
+When a user opens the Moha Hub home page, there is an Announcements card on the right listing announcement titles by their valid date; clicking a title pops up the full text. At the bottom of the card there is also a **View All** button that opens the complete announcement list page.
 
 :::
 

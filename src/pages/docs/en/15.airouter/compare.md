@@ -1,12 +1,14 @@
 ---
 title: 'Comparison'
-updated: '2026-09-12'
-description: 'Send one question to two models at once and compare the side-by-side results to decide which to use.'
+updated: '2026-09-14'
+description: "Can't decide between two models? Send the same question to both at once and compare the answers side by side."
 ---
 
 # Comparison
 
 **Comparison** sends **the same question to two models at the same time** and shows their answers side by side. When you are choosing a model, comparing versions, or testing how parameters behave, this page is far more efficient than switching back and forth.
+
+The layout is fixed at two columns, so you can compare at most two models at a time — there is no "add another" entry.
 
 :::tip An analogy
 Like interviewing two candidates: ask them the same question at once, then compare their answers, speed and cost together.
@@ -16,7 +18,7 @@ Like interviewing two candidates: ask them the same question at once, then compa
 
 - Any signed-in account works; no extra role is needed.
 - Your account needs **at least one API key** (see [API Keys](./token.md)).
-- Your account needs **at least two selectable models**; both sides may also use the same model.
+- Your account needs **at least one available model**: the two sides may use different models, or the same one.
 - Use a **wide window**. On a narrow window the left-hand model list is hidden, and then you cannot choose models.
 
 ## The page has three parts

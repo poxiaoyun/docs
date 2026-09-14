@@ -1,7 +1,7 @@
 ---
 title: 'Account & Access'
-updated: '2026-09-12'
-description: Explains what signing in, tenants, and roles mean, and what each account page helps you do.
+updated: '2026-09-14'
+description: What sign-in, tenants, and roles mean, and what each account page helps you do.
 tags:
 - account
 - overview

@@ -1,6 +1,6 @@
 ---
 title: Workloads
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: 'Browse the objects running in a cluster by type, to confirm that something was created and is in the state you expect.'
 tags:
 - boss
@@ -31,7 +31,7 @@ The names here are fairly technical, so use this table for reference:
 
 ## How to open it
 
-1. In the left-hand menu, click **AI Platform** → **Cluster Management**, then open the target cluster.
+1. In the left-hand menu, click **AI Platform** → **Cluster**, then open the target cluster.
 2. In the left-hand **Operations Management** group, click **Workloads**.
 
 The page opens on the **Pod** tab by default, and the top bar switches between 14 resource types.

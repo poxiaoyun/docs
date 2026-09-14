@@ -1,7 +1,7 @@
 ---
 title: 账号与权限
-updated: '2026-09-12'
-description: 讲清登录、租户、角色这几个词是什么意思，以及账号相关页面各自能帮你做什么。
+updated: '2026-09-14'
+description: 登录、租户、角色这些词是什么意思，以及账号相关的每一页能帮你做什么。
 tags:
   - account
   - auth

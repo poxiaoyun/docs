@@ -1,7 +1,7 @@
 ---
 title: Tenant Quotas
-updated: '2026-09-12'
-description: Hand out cluster resources to tenants and workspaces as quotas, controlling how much CPU, memory and accelerator capacity they can use.
+updated: '2026-09-14'
+description: Hand out cluster CPU, memory and accelerator allowances to tenants and their workspaces.
 ---
 
 # Tenant Quotas
@@ -61,7 +61,7 @@ After entering a tenant, there are two subpages on the left:
 | --- | --- | --- |
 | Cluster | Choose which cluster the resources go to | Selected at creation |
 | Resource Pool | Choose the pool to draw the allowance from | **Switching the cluster clears this, so pick it again** |
-| Resource Configuration | Fill in the allowance for each resource item one by one | Similar to a flavor; enter a limit per resource type |
+| Resource | Fill in the allowance for each resource item one by one | Enter a limit per resource type; at least one item is required |
 
 5. Click **Confirm** to save.
 

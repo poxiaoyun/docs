@@ -1,7 +1,7 @@
 ---
 title: 许可证
-updated: '2026-09-12'
-description: '查看许可证状态和到期时间，了解过期后受限的功能，并粘贴新许可证完成更新。'
+updated: '2026-09-14'
+description: '帮你查许可证状态和到期时间，并粘贴新许可证完成更新。'
 tags:
   - boss
   - settings

@@ -1,7 +1,7 @@
 ---
 title: 'Usage analysis'
-updated: '2026-09-12'
-description: 'Understand your call volume, token consumption and cost: how to filter by time, what each chart says, and where the numbers come from.'
+updated: '2026-09-14'
+description: 'Want to know how many calls you made, how many tokens you burned and what that cost? This page has the numbers.'
 ---
 
 # Usage analysis

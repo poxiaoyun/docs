@@ -1,7 +1,7 @@
 ---
 title: Platform
-updated: '2026-09-12'
-description: 'Change the platform name, logo, sub-product branding, AI assistant, license and administrator list.'
+updated: '2026-09-14'
+description: 'Find every platform-wide setting: branding, sub-product entries, AI assistant, license and admins.'
 tags:
   - boss
   - settings

@@ -1,7 +1,7 @@
 ---
 title: System Member
-updated: '2026-09-12'
-description: 'Add platform administrators, assign their roles and remove them — including what happens if you remove yourself.'
+updated: '2026-09-14'
+description: 'Add a platform administrator, change their role, and what to check before removing one.'
 tags:
   - boss
   - settings

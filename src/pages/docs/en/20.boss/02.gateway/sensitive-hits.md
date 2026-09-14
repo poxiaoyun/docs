@@ -1,7 +1,7 @@
 ---
 title: Hit Records
-updated: '2026-09-12'
-description: See which calls tripped moderation and how.
+updated: '2026-09-14'
+description: See which calls tripped content moderation: matched words, risk level and how they were handled.
 tags:
   - boss
   - gateway
@@ -67,6 +67,8 @@ The risk level is derived from the **highest score** among the matched content:
 | 5 or above | Medium |
 | Anything else | Low |
 
+If no score is available in the report for a call, a blocked call is recorded as **High** and the rest as **Medium**.
+
 ### The possible handling methods
 
 The handling method matches the action configured in [Policy Management](/boss/gateway/moderation):
@@ -80,7 +82,7 @@ The handling method matches the action configured in [Policy Management](/boss/g
 
 ## View the details of a hit
 
-1. Click the **Time** cell of a record in the list (or the magnifier icon next to the time).
+1. Click the **Time** cell of a record in the list (or the view-details icon next to the time).
 2. The dialog lists the matched sensitive words as labels at the top.
 3. Below that is the request content, with the matched words highlighted, so you can tell a real hit from a false positive.
 

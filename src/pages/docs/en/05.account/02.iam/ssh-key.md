@@ -1,6 +1,6 @@
 ---
 title: 'SSH Key Management'
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: From generating an SSH key pair to pasting the public key here, and deleting keys you no longer use.
 ---
 
@@ -15,6 +15,7 @@ You hand the lock (public key) to the platform and keep the key (private key) yo
 ## Before you start
 
 - This is a setting for your own account, so you can use it as soon as you sign in; no tenant role is needed.
+- You can store at most **5** public keys, and the same key cannot be added twice.
 - You need to be able to open a terminal on your computer: Terminal on macOS, PowerShell on Windows.
 - If you have generated a key before, there is no need to generate another one; just use your existing public key file.
 
@@ -102,6 +103,8 @@ After you delete it, this public key is removed from the platform and any connec
 | --- | --- | --- |
 | **Please enter public key** when you click Save | The public key field is empty | Go back to the terminal and copy the whole line of the `.pub` file again |
 | **Please enter key name** when you click Save | The name is empty and the public key has no comment at the end | Type a name yourself |
+| Adding a sixth key is rejected | One account can store at most 5 public keys | Delete the keys you no longer use, then add the new one |
+| Adding the same key again is rejected | That public key is already in the list | There is no need to add it twice; use the existing entry |
 | It says the key was added but you still cannot connect | The platform holds the public key, but the local private key is not its match | Compare the fingerprint on the key card with your local private key |
 
 ## Related

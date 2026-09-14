@@ -1,6 +1,6 @@
 ---
 title: Flavor
-updated: '2026-09-12'
+updated: '2026-09-14'
 description: Define packages that say how many cores, how much memory and how many accelerators you get, then enable them for tenants.
 ---
 
@@ -54,19 +54,16 @@ Actions on each row:
 ## Create a flavor
 
 1. On the flavor list, click **Create Flavor** in the top right.
-2. The top of the page shows an **auto-generated name** in real time, so you do not type a name yourself.
+2. At the top of the **Resource Configuration** card there is a name preview box; it generates the name in real time as you fill in resource items, so you never type a name yourself.
 3. Under **Resource Configuration**, click **Create Resource** to add a resource item (at least one):
 
 | Field | Meaning | What to enter |
 | --- | --- | --- |
 | Category | The resource category, e.g. CPU / Memory / GPU | Pick from the drop-down |
 | Resource | The concrete resource, e.g. CPU or Memory | Pick after choosing the category |
-| Model | The card or device model (only when an accelerator is involved) | Pick as needed, e.g. a GPU / NPU model |
+| Model | The card or device model | Optional; when left empty it shows **All Models**, meaning every device of that resource kind in this cluster |
 | Limit | The maximum this flavor grants, **required** | For example `2` for CPU, `4Gi` for memory, `1` for a card |
-| Request | How much is actually reserved, optional | When left empty it usually follows the limit |
-| Min / Max / Default | The allowed value range | The limit must satisfy "min ≤ limit ≤ max" |
-| Ratio | The conversion factor between different units | Used for scenarios such as shared cards |
-| Node Label | Restricts the flavor to machines carrying a given label | Key and Value must be filled in as a pair; filling only one reports an error |
+| Node Label | Restricts the flavor to machines carrying a given label | Only appears for the accelerator item; Key and Value must be filled in as a pair, filling only one reports an error |
 
 4. Choose a **Resource Pool** (optional): once chosen, this flavor only lands on machines in that pool; if you leave it empty the range is wider.
 5. Fill in a **Description** (optional).
@@ -87,7 +84,7 @@ The selectable resource types and models come from what the current cluster can 
 ## Edit a flavor
 
 1. Click **Edit** on a row in the list.
-2. On the edit page the **Name** can be changed, and you can also adjust the resource configuration, the resource pool and the description.
+2. On the edit page the name is generated the same way and cannot be changed on its own; what you can adjust is the resource configuration, the resource pool and the description.
 3. Click **Confirm** to save.
 
 ## Enable / Disable a flavor
@@ -125,7 +122,7 @@ Before deleting, confirm that no tenant quota or workspace quota still reference
 
 | Symptom | Likely cause | What to do |
 | --- | --- | --- |
-| On save, "the limit must be no less than the minimum / no greater than the maximum" | The limit is out of range | Adjust the limit, or change the minimum / maximum |
+| On save, "Below minimum value" or "Exceeds maximum value" | The limit falls outside what this resource model allows | Bring the limit into range as prompted, or pick a different resource model |
 | Node Label reports an error | Only one of Key / Value was filled in | Fill both as a pair, or leave both empty |
 | Very few resource types are available | That is what the cluster can actually do | This is normal; pick from what is shown |
 | The tenant cannot see the flavor | The flavor is not enabled, or the tenant has no matching quota | Enable the flavor first, then check the quota |
