@@ -24,9 +24,10 @@ export const RUNE_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
     ],
   },
   {
-    // 顺序与标题对齐控制台真实侧边栏（src/routes/navs/rune.tsx + navbar 文案）：
-    // 首页 → 应用市场 ／ 工作台（推理服务、训练与微调、开发服务、应用实例、我的模板、文件存储）
-    // ／ 可观测性（指标、日志、模型评测）
+    // 分类与控制台真实侧边栏一致（src/routes/navs/rune.tsx 的三组 + navbar 文案）：
+    // 首页（首页、应用市场）／ 工作台（推理服务、训练与微调、开发服务、应用实例、文件存储）
+    // ／ 可观测性（指标、日志、模型评测）。这里把每一组拆成独立分段，让类别名常驻可见，
+    // 不必逐级展开。
     subheader: 'Rune 控制台',
     items: [
       {
@@ -37,12 +38,26 @@ export const RUNE_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       },
       { title: '首页', path: '/rune/console/dashboard' },
       { title: '应用市场', path: '/rune/console/app-market' },
-      { title: '推理服务', path: '/rune/console/inference' },
+    ],
+  },
+  {
+    // navbar.pai = 工作台。控制台里「我的模板」也挂在工作台下，但文档站在「资源与配额」
+    // 一节里把它和租户设置页签放在一起讲，故此处不重复列出。
+    subheader: '工作台',
+    items: [
+      { title: '推理服务', path: '/rune/console/inference', product: 'rune' },
       { title: '训练与微调', path: '/rune/console/finetune' },
       { title: '开发服务', path: '/rune/console/devenv' },
       { title: '应用实例', path: '/rune/console/app' },
       { title: '文件存储', path: '/rune/console/storage' },
-      { title: '指标', path: '/rune/console/experiment' },
+    ],
+  },
+  {
+    // navbar.observability = 可观测性。AI 诊断助手在控制台里是悬浮助手、不在侧边栏导航中，
+    // 文档里归到本组（都是「出问题回头看数据」的入口）。
+    subheader: '可观测性',
+    items: [
+      { title: '指标', path: '/rune/console/experiment', product: 'rune' },
       { title: '日志', path: '/rune/console/logging' },
       { title: '模型评测', path: '/rune/console/evaluation' },
       { title: 'AI 诊断助手', path: '/rune/console/diagnostics' },

@@ -24,9 +24,10 @@ export const RUNE_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
     ],
   },
   {
-    // Order and labels follow the real console sidebar (src/routes/navs/rune.tsx):
-    // Home → Marketplace / Workbench (Inference, Training & Fine-tuning, Runebox, Apps,
-    // Templates, Storage) / Observability (Metrics, Logs, Evaluations)
+    // Categories mirror the real console sidebar (src/routes/navs/rune.tsx):
+    // Home (Home, Marketplace) / Workbench (Inference, Training & Fine-tuning, Development,
+    // Apps, Storage) / Observability (Metrics, Logs, Evaluations). Each group is a separate
+    // section so the category label stays visible without expanding anything.
     subheader: 'Rune Console',
     items: [
       {
@@ -37,12 +38,27 @@ export const RUNE_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       },
       { title: 'Home', path: '/rune/console/dashboard' },
       { title: 'Marketplace', path: '/rune/console/app-market' },
-      { title: 'Inference', path: '/rune/console/inference' },
+    ],
+  },
+  {
+    // navbar.pai = Workbench. In the console, Templates also lives under Workbench, but the docs
+    // explain it together with the tenant tabs under "Resources & Quotas", so it is not repeated.
+    subheader: 'Workbench',
+    items: [
+      { title: 'Inference', path: '/rune/console/inference', product: 'rune' },
       { title: 'Training & Fine-tuning', path: '/rune/console/finetune' },
       { title: 'Development', path: '/rune/console/devenv' },
       { title: 'Apps', path: '/rune/console/app' },
       { title: 'Storage', path: '/rune/console/storage' },
-      { title: 'Metrics', path: '/rune/console/experiment' },
+    ],
+  },
+  {
+    // navbar.observability = Observability. The AI Diagnostics Assistant is a floating helper in
+    // the console (not a sidebar entry); it is grouped here because it is another "go back and
+    // inspect the data" entry point.
+    subheader: 'Observability',
+    items: [
+      { title: 'Metrics', path: '/rune/console/experiment', product: 'rune' },
       { title: 'Logs', path: '/rune/console/logging' },
       { title: 'Evaluations', path: '/rune/console/evaluation' },
       { title: 'AI Diagnostics Assistant', path: '/rune/console/diagnostics' },
