@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 
 import { DashboardLayout } from 'src/layouts/dashboard/layout';
 import { type DocsSidebarItem, getDocsSidebarSections } from 'src/pages/docs/toc';
+import { DocsProductSwitcher } from 'src/layouts/components/docs-product-switcher';
 
 import { icon } from './icon';
 
@@ -29,6 +30,12 @@ export function DocsLayout({ children, slotProps, ...other }: DashboardLayoutPro
         nav: {
           ...slotProps?.nav,
           data: navData,
+          slots: {
+            ...slotProps?.nav?.slots,
+            // 移动端顶栏不显示一级栏目（< lg 隐藏），抽屉里必须补上切换器，
+            // 否则手机上只能看到当前产品的目录、切不到别的产品。
+            topArea: slotProps?.nav?.slots?.topArea ?? <DocsProductSwitcher />,
+          },
         },
         header: {
           ...slotProps?.header,
@@ -44,7 +51,9 @@ export function DocsLayout({ children, slotProps, ...other }: DashboardLayoutPro
         main: {
           ...slotProps?.main,
           sx: {
-            pt: { xs: 'var(--layout-header-mobile-height)', md: 'var(--layout-header-desktop-height)' },
+            // 断点必须跟顶栏自己的高度切换断点一致（HeaderContainer 用的是 layoutQuery = lg），
+            // 写成 md 会在 900~1200px 之间多留 8px 空白。
+            pt: { xs: 'var(--layout-header-mobile-height)', lg: 'var(--layout-header-desktop-height)' },
             ...slotProps?.main?.sx,
           },
         },

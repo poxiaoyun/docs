@@ -33,6 +33,12 @@ export type DashboardLayoutProps = LayoutBaseProps & {
     header?: HeaderSectionProps;
     nav?: {
       data?: NavSectionProps['data'];
+      // 移动端抽屉里固定在顶部的附加内容（本仓用法：产品与栏目切换器）。
+      // 抽屉在移动端是唯一可达的导航入口，必须允许上层往里加东西。
+      slots?: {
+        topArea?: React.ReactNode;
+        bottomArea?: React.ReactNode;
+      };
     };
     main?: MainSectionProps;
   };
@@ -111,6 +117,7 @@ export function DashboardLayout({
             onClose={onClose}
             cssVars={navVars.section}
             checkPermissions={canDisplayItemByRole}
+            slots={slotProps?.nav?.slots}
           />
         </>
       ),

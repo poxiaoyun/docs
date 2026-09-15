@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 
 // ----------------------------------------------------------------------
 
-type TopNavLink = {
+export type TopNavLink = {
   key: string;
   path: string;
   label: {
@@ -16,7 +16,8 @@ type TopNavLink = {
   };
 };
 
-const NAV_LINKS: TopNavLink[] = [
+/** 站点一级栏目。桌面端渲染成顶栏胶囊，移动端复用成抽屉里的切换器（同一个真源）。 */
+export const TOP_NAV_LINKS: TopNavLink[] = [
   { key: 'home', path: '/', label: { cn: '首页', en: 'Home' } },
   { key: 'moha', path: '/moha', label: { cn: '魔哈仓库', en: 'Moha' } },
   { key: 'rune', path: '/rune', label: { cn: 'Rune 智算平台', en: 'Rune AI Platform' } },
@@ -37,6 +38,9 @@ export function GlobalTopNav() {
   const locale = i18n.language.startsWith('en') ? 'en' : 'cn';
   const siteTitle = locale === 'en' ? 'Docs Center' : '文档中心';
 
+  // 选中态用 currentColor 混色，而不是写死的白色 —— 文档页是浅色底，
+  // 白色 12% 压在近白背景上等于看不见；首页顶栏被强制成深色且文字变白，
+  // currentColor 跟着文字走，两种底色下都能得到正确的选中块。
   const pillStyles = (active: boolean) => ({
     opacity: active ? 1 : 0.78,
     fontWeight: active ? 700 : 600,
@@ -45,9 +49,9 @@ export function GlobalTopNav() {
     borderRadius: 999,
     px: 2.5,
     py: 0.75,
-    bgcolor: active ? 'rgba(255, 255, 255, 0.12)' : 'transparent',
+    bgcolor: active ? 'color-mix(in srgb, currentColor 12%, transparent)' : 'transparent',
     '&:hover': {
-      bgcolor: 'rgba(255, 255, 255, 0.18)',
+      bgcolor: 'color-mix(in srgb, currentColor 18%, transparent)',
     },
   });
 
@@ -57,7 +61,9 @@ export function GlobalTopNav() {
       spacing={2}
       alignItems="center"
       sx={{
-        display: { xs: 'none', lg: 'flex' },
+        // 移动端保留「文档中心」这行标题（顶栏不至于整条空着），
+        // 一级栏目胶囊只在桌面端展开 —— 移动端由抽屉里的切换器承担。
+        display: 'flex',
         width: '100%',
         justifyContent: 'flex-start',
         minWidth: 0, // 允许内容收缩
@@ -69,7 +75,7 @@ export function GlobalTopNav() {
           fontWeight: 600,
           letterSpacing: '0.1em',
           color: 'text.primary',
-          fontSize: { xs: '1.25rem', md: '1.25rem' },
+          fontSize: { xs: '1rem', md: '1.25rem' },
           lineHeight: 1.2,
           whiteSpace: 'nowrap',
           flexShrink: 0,
@@ -83,12 +89,13 @@ export function GlobalTopNav() {
         spacing={1}
         alignItems="center"
         sx={{
+          display: { xs: 'none', lg: 'flex' },
           flexGrow: 1,
           minWidth: 0,
           overflow: 'hidden',
         }}
       >
-        {NAV_LINKS.map((link) => {
+        {TOP_NAV_LINKS.map((link) => {
           const isActive =
             link.path === '/' ? pathname === link.path : pathname.startsWith(link.path);
           const label = link.label[locale];
