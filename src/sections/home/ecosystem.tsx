@@ -2,91 +2,96 @@ import { m } from 'framer-motion';
 
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
-import { alpha } from '@mui/material/styles';
-import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
 import { varFade, MotionViewport } from 'src/components/animate';
 
+import { TOKENS } from './tokens';
+import { Marquee, MicroLabel, DashDivider, SectionShell } from './primitives';
+
+// ----------------------------------------------------------------------
+// 版式取自门户首页的合作伙伴带：全宽出血、上下各一条虚线渐变分隔、
+// 中间一条无缝滚动的等宽字标长廊。这里滚动的是文档站自己的开源生态清单。
+
 const FRAMEWORKS = [
-  'PyTorch', 'TensorFlow', 'vLLM', 'HuggingFace', 'Ollama', 
-  'DeepSpeed', 'Triton', 'Ray', 'Kubernetes', 'Docker', 'ONNX'
+  'PyTorch',
+  'TensorFlow',
+  'vLLM',
+  'HuggingFace',
+  'Ollama',
+  'DeepSpeed',
+  'Triton',
+  'Ray',
+  'Kubernetes',
+  'Docker',
+  'ONNX',
 ];
 
 export function HomeEcosystemSection() {
   return (
-    <Box
-      component="section"
-      sx={{
-        py: { xs: 8, md: 12 },
-        position: 'relative',
-        overflow: 'hidden',
-        bgcolor: '#000000',
-        color: '#ffffff',
-        borderTop: `1px solid ${alpha('#ffffff', 0.05)}`,
-        borderBottom: `1px solid ${alpha('#ffffff', 0.05)}`,
-      }}
-    >
-      <Container maxWidth="lg" component={MotionViewport}>
-        <Stack spacing={4} alignItems="center" textAlign="center" mb={6}>
-          <m.div variants={varFade('inUp')}>
-            <Typography variant="overline" sx={{ color: alpha('#ffffff', 0.5), letterSpacing: 2 }}>
-              POWERING THE NEXT GENERATION OF AI
-            </Typography>
-          </m.div>
-          <m.div variants={varFade('inUp')}>
-            <Typography variant="h3" sx={{ fontWeight: 700 }}>
-              Seamlessly integrates with <br />
-              your favorite open-source tools
-            </Typography>
-          </m.div>
-        </Stack>
-      </Container>
-      
-      {/* Marquee Animation */}
-      <Box sx={{ position: 'relative', width: '100%', overflow: 'hidden' }}>
-        {/* Gradients for fade out at edges */}
-        <Box sx={{
-          position: 'absolute', top: 0, bottom: 0, left: 0, width: { xs: '60px', md: '150px' },
-          background: 'linear-gradient(to right, #000000 0%, transparent 100%)', zIndex: 2
-        }} />
-        <Box sx={{
-          position: 'absolute', top: 0, bottom: 0, right: 0, width: { xs: '60px', md: '150px' },
-          background: 'linear-gradient(to left, #000000 0%, transparent 100%)', zIndex: 2
-        }} />
+    <Box component="section" sx={{ bgcolor: TOKENS.bgPage, color: TOKENS.text, py: { xs: 7, md: 10 } }}>
+      <Box
+        component={MotionViewport}
+        sx={{
+          position: 'relative',
+          left: '50%',
+          width: '100vw',
+          transform: 'translateX(-50%)',
+          overflow: 'hidden',
+        }}
+      >
+        <SectionShell sx={{ px: { xs: 3, md: 5 } }}>
+          <DashDivider />
+        </SectionShell>
 
-        <Box
+        <Stack
           component={m.div}
-          animate={{ x: [0, -1500] }} // Arbitrary pixel value, but we just need a smooth loop block
-          transition={{
-            repeat: Infinity,
-            ease: "linear",
-            duration: 25
-          }}
-          sx={{
-            display: 'flex',
-            gap: 8,
-            width: 'max-content',
-            px: 4,
-          }}
+          variants={varFade('inUp')}
+          spacing={{ xs: 2, md: 3 }}
+          alignItems="center"
+          textAlign="center"
+          sx={{ px: { xs: 3, md: 5 }, py: { xs: 5, md: 7 } }}
         >
-          {/* Double array for infinite seamless scroll */}
-          {[...FRAMEWORKS, ...FRAMEWORKS, ...FRAMEWORKS].map((fw, index) => (
-            <Typography 
-              key={`${fw}-${index}`} 
-              variant="h5" 
-              sx={{ 
-                color: alpha('#ffffff', 0.3),
-                fontWeight: 800,
+          <MicroLabel>Powering the next generation of AI</MicroLabel>
+          <Typography
+            component="h3"
+            sx={{
+              fontWeight: 600,
+              lineHeight: 1.25,
+              fontSize: 'clamp(1.4rem, 2.6vw, 2.1rem)',
+              maxWidth: '34rem',
+              color: TOKENS.textStrong,
+            }}
+          >
+            Seamlessly integrates with <br />
+            your favorite open-source tools
+          </Typography>
+        </Stack>
+
+        <Marquee duration={60} sx={{ py: { xs: 2, md: 3 } }}>
+          {FRAMEWORKS.map((fw) => (
+            <Typography
+              key={fw}
+              component="span"
+              sx={{
+                fontFamily: TOKENS.fontMono,
+                fontSize: 'clamp(.84rem, 1vw, .98rem)',
+                fontWeight: 600,
+                lineHeight: 1,
                 whiteSpace: 'nowrap',
-                transition: 'color 0.3s',
-                '&:hover': { color: '#ffffff' }
+                color: '#ffffffba',
+                transition: `color .3s ${TOKENS.easeStandard}`,
+                '&:hover': { color: TOKENS.text },
               }}
             >
               {fw}
             </Typography>
           ))}
-        </Box>
+        </Marquee>
+
+        <SectionShell sx={{ px: { xs: 3, md: 5 } }}>
+          <DashDivider />
+        </SectionShell>
       </Box>
     </Box>
   );

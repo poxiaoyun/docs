@@ -63,6 +63,125 @@ function readSiteConfig() {
 }
 
 // ----------------------------------------------------------------------
+// 首页正文
+//
+// 首页是 React 组件（src/sections/home/*），本脚本只处理 markdown，渲染不了它。
+// 所以这里写一份与首页可见内容严格对应的静态正文：同一句主标题、同一段简介、
+// 同样四条产品线、同一批入口链接。搜索引擎拿到的是这份正文，用户打开后
+// React 挂载会把它替换掉。
+//
+// 之所以不再复用 /introduction 的正文：那等于让首页和产品概述指向同一份内容，
+// canonical 只能指到 /introduction/，首页自己反倒进不了索引。
+//
+// 改首页文案时要同步改这里；自检会校验其中每个站内链接都真实存在。
+
+const HOME_TITLE = '连接开发、运营与社区的 AI 平台';
+const HOME_LEAD =
+  'Rune 智算平台提供模型开发、推理与工作负载管理能力；配合 Boss 平台实现精细化运营，魔哈仓库打造开放的社区底座，全方位提升 AI 应用构建效能。';
+const HOME_DESCRIPTION =
+  '晓石 AI 平台官方文档中心：Rune 智算平台、魔哈仓库、聚合网关与 BOSS 运营平台的完整使用说明，含快速开始、控制台逐页指引与常见问题。';
+
+const HOME_PRODUCTS = [
+  {
+    name: 'Rune 智算平台',
+    to: '/rune',
+    tagline: '大规模 AI 推理与工作负载调度。无缝管理实例、镜像与存储计算一体化配额资源。',
+    entries: [
+      { title: '开始使用', to: '/rune/guide' },
+      { title: 'Rune 控制台', to: '/rune/console' },
+      { title: '资源与配额', to: '/rune/resources' },
+    ],
+  },
+  {
+    name: '魔哈仓库',
+    to: '/moha',
+    tagline: '模型与数据集的社区仓库体系。实现优雅的版本流转与开源协作。',
+    entries: [
+      { title: '模型仓库', to: '/moha/models' },
+      { title: '数据集', to: '/moha/datasets' },
+      { title: 'SDK 教程', to: '/moha/sdk-tutorial' },
+    ],
+  },
+  {
+    name: '聚合网关',
+    to: '/airouter',
+    tagline:
+      '平台内置的网页版对话与模型调用入口。不用写代码就能和模型对话，也能为外部程序签发密钥，统一查看调用量与费用。',
+    entries: [
+      { title: '模型体验', to: '/airouter/experience' },
+      { title: 'API 密钥', to: '/airouter/token' },
+      { title: '调用分析', to: '/airouter/usage-statistics' },
+    ],
+  },
+  {
+    name: 'Boss 运营平台',
+    to: '/boss',
+    tagline: '专为平台管理员设计，实现跨集群治理、租户网关审核和强效策略分发。',
+    entries: [
+      { title: '首页', to: '/boss/dashboard' },
+      { title: '大模型网关', to: '/boss/gateway' },
+      { title: '账户管理', to: '/boss/iam' },
+    ],
+  },
+];
+
+const HOME_ECOSYSTEM = [
+  'PyTorch',
+  'TensorFlow',
+  'vLLM',
+  'HuggingFace',
+  'Ollama',
+  'DeepSpeed',
+  'Triton',
+  'Ray',
+  'Kubernetes',
+  'Docker',
+  'ONNX',
+];
+
+const HOME_RESOURCES = [
+  { title: '开放 API / SDK', to: '/reference/api-overview' },
+  { title: '系统模板与脚本', to: '/rune/resources/templates' },
+  { title: '监控 & 反馈通道', to: '/reference/faq' },
+];
+
+/** 拼出首页的静态正文（markdown，随后交给 renderMarkdown 走与文档页同一条管线）。 */
+function buildHomeMarkdown() {
+  const lines = [`# ${HOME_TITLE}`, '', HOME_LEAD, '', '## 四条产品线', ''];
+
+  for (const product of HOME_PRODUCTS) {
+    lines.push(
+      `### [${product.name}](${product.to})`,
+      '',
+      product.tagline,
+      '',
+      product.entries.map((e) => `[${e.title}](${e.to})`).join(' · '),
+      ''
+    );
+  }
+
+  lines.push(
+    '## 生态与集成',
+    '',
+    `平台与 ${HOME_ECOSYSTEM.join('、')} 等开源组件协同工作，安装与适配步骤见[生态文档](/ecosystem)。`,
+    '',
+    '## 开发者',
+    '',
+    '我们为开发者提供轻量与快捷的命令行工具 (CLI)，只需几条简单的命令，即可轻松实现模型与数据集的下载、上传和版本管理。见 [SDK 教程](/moha/sdk-tutorial)。',
+    '',
+    '## 更多资源',
+    '',
+    HOME_RESOURCES.map((r) => `[${r.title}](${r.to})`).join(' · '),
+    '',
+    '第一次来，建议从[入门指南](/guide)开始：[快速开始](/guide/quick-start)按五个阶段带你把第一个推理服务跑起来，[平台架构](/guide/architecture)讲清各子系统怎么协作，[名词表](/guide/glossary)解释常见术语。',
+    '',
+    '遇到问题先查[常见问题 FAQ](/reference/faq)。'
+  );
+
+  return lines.join('\n');
+}
+
+// ----------------------------------------------------------------------
 // markdown -> hast
 
 /** 复刻 src/components/markdown/remark-alerts.ts 的语法，输出语义化 div。 */
@@ -386,8 +505,9 @@ function breadcrumb(route, title) {
 function renderPage(page, tmpl, childrenByRoute) {
   const { route, title, description, updated, content, segs, isIndex } = page;
   const url = `${SITE_URL}${route ? `/${route}` : ''}/`;
-  // 根路径展示的是 introduction 的内容，canonical 指到它的正式位置，避免重复内容
-  const canonical = route === '' ? `${SITE_URL}/introduction/` : url;
+  // canonical 一律自指。首页有自己独立的正文（见 buildHomeMarkdown），不再与
+  // /introduction 共用内容，把首页的权重合并过去只会让首页自己进不了索引。
+  const canonical = url;
 
   // 首页用「站点名 + 定位」而不是「产品概述 | RUNE」：首页是品牌词与站点级检索的落点，
   // 其余页面沿用「页面标题 | 站点名」，与运行时 <Helmet> 的设置保持一致。
@@ -665,13 +785,16 @@ function selfCheck(pages) {
   };
 
   for (const page of pages) {
-    if (!page.title) problems.push(`${page.route}: frontmatter 缺 title`);
-    if (!page.description) problems.push(`${page.route}: frontmatter 缺 description`);
+    // 首页 route 为空，报错信息里给个能认出来的名字
+    const label = page.route || '(首页)';
+
+    if (!page.title) problems.push(`${label}: frontmatter 缺 title`);
+    if (!page.description) problems.push(`${label}: frontmatter 缺 description`);
 
     const html = fs.readFileSync(path.join(OUT_DIR, page.route, 'index.html'), 'utf8');
 
     for (const [, href] of html.matchAll(/<(?:a|img)\b[^>]*(?:href|src)="(\/[^"]*)"/g)) {
-      if (!existsInDist(href)) problems.push(`${page.route}: 死链 ${href}`);
+      if (!existsInDist(href)) problems.push(`${label}: 死链 ${href}`);
     }
 
     // 幂等性：这几个标签每页有且只能有一份。SSG 重复运行时曾把 canonical / favicon
@@ -774,16 +897,18 @@ function main() {
     written += 1;
   }
 
-  // 根路径与 /introduction 内容相同，单独写一份（复用 introduction 的正文）
-  const intro = pages.find((p) => p.route === 'introduction');
+  // 首页（根路径）：正文由 buildHomeMarkdown 生成，与 React 首页的可见内容对应。
+  const homePage = {
+    route: '',
+    segs: [],
+    isIndex: false,
+    title: SITE_NAME,
+    description: HOME_DESCRIPTION,
+    content: buildHomeMarkdown(),
+  };
 
-  if (intro) {
-    writeFile(
-      path.join(OUT_DIR, 'index.html'),
-      renderPage({ ...intro, route: '' }, tmpl, childrenByRoute)
-    );
-    written += 1;
-  }
+  writeFile(path.join(OUT_DIR, 'index.html'), renderPage(homePage, tmpl, childrenByRoute));
+  written += 1;
 
   // 未知路径走 404.html（GitHub Pages 只把「没有对应文件」的请求交给它，由 vite.config.ts
   // 的插件从 index.html 拷出）。这里整份重新生成，保证重复构建结果一致。
@@ -793,15 +918,21 @@ function main() {
     writeFile(notFoundPath, renderNotFound(tmpl));
   }
 
-  writeFile(path.join(OUT_DIR, 'sitemap.xml'), buildSitemap(pages));
+  // 首页也要进 sitemap —— 它是最重要的入口，而 pages 只来自 markdown 文件，
+  // 根路径一直缺席。sitemapEntries 同时作为自检的输入，首页因此也会被检查链接。
+  const sitemapEntries = [homePage, ...pages];
+
+  writeFile(path.join(OUT_DIR, 'sitemap.xml'), buildSitemap(sitemapEntries));
   // 只写产物目录：SSG 永远在 vite build 之后运行，dist/assets 已经存在，
   // 不需要再往 public/ 放一份（那会变成两个真源）。robots.txt 相反 —— 它走 public/，
   // 因为两条部署链都会经过 vite build 的 public 拷贝。
   writeFile(path.join(OUT_DIR, 'assets/ssg.css'), SSG_CSS);
 
-  console.log(`[ssg] 生成 ${written} 个页面 + sitemap.xml（${pages.length} 条）+ assets/ssg.css`);
+  console.log(
+    `[ssg] 生成 ${written} 个页面 + sitemap.xml（${sitemapEntries.length} 条，含首页）+ assets/ssg.css`
+  );
 
-  const problems = selfCheck(pages);
+  const problems = selfCheck(sitemapEntries);
 
   if (problems.length) {
     console.error(`[ssg] 自检失败，共 ${problems.length} 处：`);
@@ -810,7 +941,9 @@ function main() {
     process.exit(1);
   }
 
-  console.log(`[ssg] 自检通过：${pages.length} 页的标题/摘要齐全，站内链接与图片均指向存在的文件`);
+  console.log(
+    `[ssg] 自检通过：${sitemapEntries.length} 页的标题/摘要齐全，站内链接与图片均指向存在的文件`
+  );
 }
 
 main();

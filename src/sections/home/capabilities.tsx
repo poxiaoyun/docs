@@ -1,192 +1,203 @@
 import { m } from 'framer-motion';
+import { Link as RouterLink } from 'react-router';
 
 import Box from '@mui/material/Box';
-import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
-import { alpha } from '@mui/material/styles';
-import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
-import { CONFIG } from 'src/global-config';
-
-import { SvgColor } from 'src/components/svg-color';
 import { varFade, MotionViewport } from 'src/components/animate';
+
+import { TOKENS } from './tokens';
+import { Panel, buttonSx, SectionHead, SectionShell } from './primitives';
+
+// ----------------------------------------------------------------------
+// 版式取自门户首页的四产品卡片区（四列深色面板 + 底部通栏入口）。
+// 内容仍是文档站自己的四条产品线入口 —— 门户有四块，文档站原先只写了三块，
+// 这里把缺的「聚合网关」补上。
+
+type Platform = {
+  name: string;
+  tagline: string;
+  color: string;
+  to: string;
+  cta: string;
+  entries: { title: string; to: string }[];
+};
+
+const PLATFORMS: Platform[] = [
+  {
+    name: 'Rune 智算平台',
+    tagline: '大规模 AI 推理与工作负载调度。无缝管理实例、镜像与存储计算一体化配额资源。',
+    color: TOKENS.rune,
+    to: '/rune',
+    cta: '进入 Rune 文档',
+    entries: [
+      { title: '开始使用', to: '/rune/guide' },
+      { title: 'Rune 控制台', to: '/rune/console' },
+      { title: '资源与配额', to: '/rune/resources' },
+    ],
+  },
+  {
+    name: '魔哈仓库',
+    tagline: '模型与数据集的社区仓库体系。实现优雅的版本流转与开源协作。',
+    color: TOKENS.moha,
+    to: '/moha',
+    cta: '进入魔哈文档',
+    entries: [
+      { title: '模型仓库', to: '/moha/models' },
+      { title: '数据集', to: '/moha/datasets' },
+      { title: 'SDK 教程', to: '/moha/sdk-tutorial' },
+    ],
+  },
+  {
+    name: '聚合网关',
+    tagline:
+      '平台内置的网页版对话与模型调用入口。不用写代码就能和模型对话，也能为外部程序签发密钥，统一查看调用量与费用。',
+    color: TOKENS.airouter,
+    to: '/airouter',
+    cta: '进入聚合网关文档',
+    entries: [
+      { title: '模型体验', to: '/airouter/experience' },
+      { title: 'API 密钥', to: '/airouter/token' },
+      { title: '调用分析', to: '/airouter/usage-statistics' },
+    ],
+  },
+  {
+    name: 'Boss 运营平台',
+    tagline: '专为平台管理员设计，实现跨集群治理、租户网关审核和强效策略分发。',
+    color: TOKENS.boss,
+    to: '/boss',
+    cta: '进入 BOSS 文档',
+    entries: [
+      { title: '首页', to: '/boss/dashboard' },
+      { title: '大模型网关', to: '/boss/gateway' },
+      { title: '账户管理', to: '/boss/iam' },
+    ],
+  },
+];
 
 // ----------------------------------------------------------------------
 
 export function HomeCapabilitiesSection() {
   return (
-    <Box sx={{ bgcolor: '#000000', color: 'common.white', py: { xs: 8, md: 12 } }}>
-      <Container component={MotionViewport} maxWidth="lg">
-        <Stack spacing={2} sx={{ textAlign: 'center', mb: { xs: 6, md: 8 } }}>
-          <m.div variants={varFade('inDown')}>
-            <Typography variant="overline" sx={{ color: alpha('#ffffff', 0.5), letterSpacing: 2 }}>
-              CORE PLATFORM
-            </Typography>
-          </m.div>
-          <m.div variants={varFade('inDown')}>
-            <Typography variant="h2" sx={{ fontWeight: 800 }}>一切皆为现代化 AI 服务</Typography>
-          </m.div>
-          <m.div variants={varFade('inDown')}>
-            <Typography variant="body1" sx={{ color: alpha('#ffffff', 0.6), maxWidth: 640, mx: 'auto' }}>
-              强大的基座服务协同生态管理与高效运营，提供面向未来生产的算力、模型和集群管理体验。
-            </Typography>
-          </m.div>
-        </Stack>
+    <Box component="section" sx={{ bgcolor: TOKENS.bgPage, color: TOKENS.text, py: { xs: 8, md: 12 } }}>
+      <SectionShell component={MotionViewport} sx={{ px: { xs: 3, md: 5 } }}>
+        <SectionHead
+          label="CORE PLATFORM"
+          title="一切皆为现代化 AI 服务"
+          copy="强大的基座服务协同生态管理与高效运营，提供面向未来生产的算力、模型和集群管理体验。"
+          sx={{ mb: { xs: 5, md: 7 } }}
+        />
 
         <Box
           sx={{
             display: 'grid',
-            gap: { xs: 2, md: 3 },
-            gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' },
-            gridAutoRows: { xs: 'auto', md: 'minmax(240px, auto)' },
+            gap: 2,
+            gridTemplateColumns: {
+              xs: '1fr',
+              sm: 'repeat(2, minmax(0, 1fr))',
+              lg: 'repeat(4, minmax(0, 1fr))',
+            },
           }}
         >
-          {/* Rune: Main Bento Box */}
-          <Box
-            component={m.div}
-            variants={varFade('inUp')}
-            sx={{
-              gridColumn: { xs: 'span 1', md: 'span 2' },
-              gridRow: { xs: 'span 1', md: 'span 2' },
-              borderRadius: 3,
-              p: 5,
-              position: 'relative',
-              overflow: 'hidden',
-              bgcolor: '#0a0a0a',
-              border: `1px solid ${alpha('#ffffff', 0.1)}`,
-              display: 'flex',
-              flexDirection: 'column',
-              '&::before': {
-                content: '""',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                background: `radial-gradient(ellipse at bottom left, ${alpha('#1877F2', 0.15)} 0%, transparent 60%)`,
-                pointerEvents: 'none',
-              },
-            }}
-          >
-            <Box
-              sx={{
-                width: 48,
-                height: 48,
-                borderRadius: 1.5,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                background: alpha('#1877F2', 0.1),
-                mb: 4,
-              }}
-            >
-              <SvgColor src={`${CONFIG.assetsDir}/assets/icons/navbar/ic-dashboard.svg`} sx={{ width: 24, height: 24, color: '#1877F2' }} />
-            </Box>
-            <Typography variant="h3" sx={{ fontWeight: 700, mb: 2 }}>Rune 智算平台</Typography>
-            <Typography variant="h6" sx={{ color: alpha('#ffffff', 0.6), fontWeight: 400, mb: 4, maxWidth: 400 }}>
-              大规模 AI 推理与工作负载调度。无缝管理实例、镜像与存储计算一体化配额资源。
-            </Typography>
-            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 'auto', zIndex: 1 }}>
-              {['推理托管', '工作负载调度', '镜像管理', '共享存储配置'].map((highlight) => (
-                <Chip
-                  key={highlight}
-                  label={highlight}
-                  variant="outlined"
-                  sx={{ borderColor: alpha('#1877F2', 0.3), color: '#1877F2', bgcolor: alpha('#1877F2', 0.05), fontWeight: 600 }}
-                />
-              ))}
-            </Stack>
-          </Box>
+          {PLATFORMS.map((platform) => (
+            <m.div key={platform.name} variants={varFade('inUp')} style={{ display: 'flex' }}>
+              <Panel sx={{ display: 'flex', flexDirection: 'column', p: 3, width: 1 }}>
+                <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 2, minWidth: 0 }}>
+                  <Box
+                    sx={{
+                      width: '.5rem',
+                      height: '.5rem',
+                      borderRadius: '50%',
+                      bgcolor: platform.color,
+                      boxShadow: `0 0 12px ${platform.color}`,
+                      flexShrink: 0,
+                    }}
+                  />
+                  <Typography
+                    sx={{
+                      fontFamily: TOKENS.fontMono,
+                      fontSize: '.78rem',
+                      fontWeight: 600,
+                      letterSpacing: '.08em',
+                      color: TOKENS.text,
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
+                    {platform.name}
+                  </Typography>
+                </Stack>
 
-          {/* Moha Box */}
-          <Box
-            component={m.div}
-            variants={varFade('inLeft')}
-            sx={{
-              gridColumn: { xs: 'span 1', md: 'span 1' },
-              gridRow: { xs: 'span 1', md: 'span 1' },
-              borderRadius: 3,
-              p: 4,
-              position: 'relative',
-              overflow: 'hidden',
-              bgcolor: '#0a0a0a',
-              border: `1px solid ${alpha('#ffffff', 0.1)}`,
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              '&::before': {
-                content: '""',
-                position: 'absolute',
-                top: 0,
-                right: 0,
-                width: '100%',
-                height: '100%',
-                background: `radial-gradient(circle at top right, ${alpha('#00A76F', 0.15)} 0%, transparent 70%)`,
-                pointerEvents: 'none',
-              },
-            }}
-          >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-              <Box sx={{ width: 40, height: 40, borderRadius: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'center', background: alpha('#00A76F', 0.1) }}>
-                <SvgColor src={`${CONFIG.assetsDir}/assets/icons/navbar/ic-booking.svg`} sx={{ width: 20, height: 20, color: '#00A76F' }} />
-              </Box>
-              <Typography variant="h5" sx={{ fontWeight: 700 }}>魔哈仓库</Typography>
-            </Box>
-            <Typography variant="body2" sx={{ color: alpha('#ffffff', 0.6), mb: 3 }}>
-              模型与数据集的社区仓库体系。实现优雅的版本流转与开源协作。
-            </Typography>
-            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 'auto', zIndex: 1 }}>
-              <Chip size="small" label="版本流转" variant="outlined" sx={{ borderColor: alpha('#00A76F', 0.3), color: '#00A76F' }} />
-              <Chip size="small" label="社区活动" variant="outlined" sx={{ borderColor: alpha('#00A76F', 0.3), color: '#00A76F' }} />
-            </Stack>
-          </Box>
+                <Typography sx={{ color: TOKENS.textSubtle, fontSize: '.82rem', lineHeight: 1.7, mb: 3 }}>
+                  {platform.tagline}
+                </Typography>
 
-          {/* Boss Box */}
-          <Box
-            component={m.div}
-            variants={varFade('inLeft')}
-            sx={{
-              gridColumn: { xs: 'span 1', md: 'span 1' },
-              gridRow: { xs: 'span 1', md: 'span 1' },
-              borderRadius: 3,
-              p: 4,
-              position: 'relative',
-              overflow: 'hidden',
-              bgcolor: '#0a0a0a',
-              border: `1px solid ${alpha('#ffffff', 0.1)}`,
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'center',
-              '&::before': {
-                content: '""',
-                position: 'absolute',
-                bottom: 0,
-                right: 0,
-                width: '100%',
-                height: '100%',
-                background: `radial-gradient(circle at bottom right, ${alpha('#7635DC', 0.15)} 0%, transparent 70%)`,
-                pointerEvents: 'none',
-              },
-            }}
-          >
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}>
-              <Box sx={{ width: 40, height: 40, borderRadius: 1.5, display: 'flex', alignItems: 'center', justifyContent: 'center', background: alpha('#7635DC', 0.1) }}>
-                <SvgColor src={`${CONFIG.assetsDir}/assets/icons/navbar/ic-params.svg`} sx={{ width: 20, height: 20, color: '#7635DC' }} />
-              </Box>
-              <Typography variant="h5" sx={{ fontWeight: 700 }}>Boss 运营平台</Typography>
-            </Box>
-            <Typography variant="body2" sx={{ color: alpha('#ffffff', 0.6), mb: 3 }}>
-              专为平台管理员设计，实现跨集群治理、租户网关审核和强效策略分发。
-            </Typography>
-            <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mt: 'auto', zIndex: 1 }}>
-              <Chip size="small" label="集群治理" variant="outlined" sx={{ borderColor: alpha('#7635DC', 0.3), color: '#7635DC' }} />
-              <Chip size="small" label="配额隔离" variant="outlined" sx={{ borderColor: alpha('#7635DC', 0.3), color: '#7635DC' }} />
-            </Stack>
-          </Box>
+                <Stack sx={{ mt: 'auto' }}>
+                  {platform.entries.map((entry, index) => (
+                    <Box
+                      key={entry.to}
+                      component={RouterLink}
+                      to={entry.to}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        gap: 2,
+                        py: '.7rem',
+                        borderTop: `1px solid ${TOKENS.borderFaint}`,
+                        textDecoration: 'none',
+                        color: TOKENS.textDefault,
+                        transition: `color .18s ${TOKENS.easeStandard}`,
+                        '&:hover': { color: TOKENS.text, '& .entry-index': { color: platform.color } },
+                      }}
+                    >
+                      <Typography sx={{ fontSize: '.8rem', color: 'inherit', minWidth: 0 }}>
+                        {entry.title}
+                      </Typography>
+                      <Typography
+                        className="entry-index"
+                        sx={{
+                          fontFamily: TOKENS.fontMono,
+                          fontSize: '.68rem',
+                          color: TOKENS.textDim,
+                          flexShrink: 0,
+                          transition: `color .18s ${TOKENS.easeStandard}`,
+                        }}
+                      >
+                        {String(index + 1).padStart(2, '0')}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Stack>
 
+                <Box
+                  component={RouterLink}
+                  to={platform.to}
+                  sx={{
+                    ...buttonSx('secondary'),
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    mt: 3,
+                    px: '1rem',
+                    py: '.7rem',
+                    fontSize: '.8rem',
+                    textDecoration: 'none',
+                    '& .arrow': { transition: `transform .18s ${TOKENS.easeOut}` },
+                    '&:hover .arrow': { transform: 'translateX(.25rem)' },
+                  }}
+                >
+                  <span>{platform.cta}</span>
+                  <span className="arrow" aria-hidden>
+                    →
+                  </span>
+                </Box>
+              </Panel>
+            </m.div>
+          ))}
         </Box>
-      </Container>
+      </SectionShell>
     </Box>
   );
 }

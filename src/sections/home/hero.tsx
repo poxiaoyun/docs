@@ -4,212 +4,181 @@ import { Link as RouterLink } from 'react-router';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
-import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import { alpha, useTheme } from '@mui/material/styles';
 
 import { varFade, MotionViewport } from 'src/components/animate';
 
+import { TOKENS, HERO_GRADIENT } from './tokens';
+import { Overline, Terminal, buttonSx, SectionShell } from './primitives';
+
 // ----------------------------------------------------------------------
 
-export function HomeHeroSection() {
-  const theme = useTheme();
+const TERMINAL_LINES = [
+  { kind: 'cmd' as const, text: 'pip install xiaoshiai-hub' },
+  { kind: 'dim' as const, text: 'Successfully installed xiaoshiai-hub' },
+  { kind: 'cmd' as const, text: 'moha login' },
+  { kind: 'success' as const, text: '✔ Successfully logged in to Moha Hub' },
+  {
+    kind: 'cmd' as const,
+    text: 'moha upload -t models -e --encryption-password "your-password" -a SM4 deepseek-ai/DeepSeek-V4',
+  },
+];
 
+export function HomeHeroSection() {
   return (
     <Box
       component="section"
       sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        py: { xs: 10, md: 15 },
         position: 'relative',
         overflow: 'hidden',
-        bgcolor: '#000000',
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          // A modern grid background overlaid on black
-          backgroundImage: `linear-gradient(${alpha('#ffffff', 0.05)} 1px, transparent 1px), linear-gradient(90deg, ${alpha('#ffffff', 0.05)} 1px, transparent 1px)`,
-          backgroundSize: '40px 40px',
-          backgroundPosition: 'center center',
-          maskImage: 'linear-gradient(to bottom, #000000, transparent)',
-          WebkitMaskImage: 'linear-gradient(to bottom, #000000, transparent)',
-          pointerEvents: 'none',
-        },
-        '&::after': {
-          content: '""',
-          position: 'absolute',
-          top: '-20%',
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: '80%',
-          height: '50%',
-          background: `radial-gradient(circle, ${alpha(theme.palette.primary.main, 0.15)} 0%, transparent 70%)`,
-          pointerEvents: 'none',
-        }
+        bgcolor: TOKENS.bgPage,
+        color: TOKENS.text,
       }}
     >
-      <Container maxWidth="lg" component={MotionViewport} sx={{ position: 'relative', zIndex: 1 }}>
-        <Stack spacing={8} alignItems="center" textAlign="center">
-          {/* Text Content */}
-          <Stack spacing={3} alignItems="center">
-            <m.div variants={varFade('inDown')}>
-              <Box
-                sx={{
-                  px: 2,
-                  py: 0.75,
-                  borderRadius: 2,
-                  bgcolor: alpha(theme.palette.primary.main, 0.1),
-                  border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
-                  color: theme.palette.primary.light,
-                  typography: 'caption',
-                  fontWeight: 700,
-                  mb: 3,
-                }}
-              >
-                v2.0 Documentation Open Source
-              </Box>
-            </m.div>
+      {/* 背景：门户首页那层 72px 细格线 + 顶部中央的径向微光 */}
+      <Box
+        aria-hidden
+        sx={{
+          position: 'absolute',
+          inset: 0,
+          pointerEvents: 'none',
+          backgroundImage: `linear-gradient(#ffffff08 1px, transparent 1px), linear-gradient(90deg, #ffffff08 1px, transparent 1px)`,
+          backgroundSize: `${TOKENS.gridSize} ${TOKENS.gridSize}`,
+          maskImage: 'linear-gradient(to bottom, #000 0%, #00000055 60%, #0000 100%)',
+          WebkitMaskImage: 'linear-gradient(to bottom, #000 0%, #00000055 60%, #0000 100%)',
+        }}
+      />
+      <Box
+        aria-hidden
+        sx={{
+          position: 'absolute',
+          top: '-30%',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: 'min(1100px, 120%)',
+          height: '70%',
+          pointerEvents: 'none',
+          background: `radial-gradient(closest-side, ${TOKENS.accent}14, transparent), radial-gradient(closest-side, ${TOKENS.rune}12, transparent)`,
+          backgroundPosition: '30% 40%, 72% 30%',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: '60% 100%, 55% 100%',
+        }}
+      />
 
-            <m.div variants={varFade('inDown')}>
-              <Typography
-                variant="h1"
+      <SectionShell
+        component={MotionViewport}
+        sx={{ position: 'relative', zIndex: 1, pt: { xs: 8, md: 12 }, pb: { xs: 10, md: 14 } }}
+      >
+        <Stack alignItems="center" textAlign="center" spacing={{ xs: 3, md: 4 }} sx={{ px: { xs: 3, md: 5 } }}>
+          <m.div variants={varFade('inDown')}>
+            <Overline>v2.0 Documentation Open Source</Overline>
+          </m.div>
+
+          <m.div variants={varFade('inDown')}>
+            <Typography
+              component="h1"
+              sx={{
+                fontWeight: 650,
+                lineHeight: 1.06,
+                letterSpacing: 0,
+                fontSize: 'clamp(2.5rem, 5.6vw, 4.6rem)',
+                maxWidth: '20ch',
+              }}
+            >
+              连接开发、运营与社区的
+              <Box
+                component="span"
                 sx={{
-                  fontWeight: 900,
-                  maxWidth: 900,
-                  fontSize: { xs: '3rem', md: '4.5rem', lg: '5.5rem' },
-                  lineHeight: 1.1,
-                  background: 'linear-gradient(180deg, #FFFFFF 0%, rgba(255,255,255,0.5) 100%)',
+                  display: 'block',
+                  background: HERO_GRADIENT,
                   backgroundClip: 'text',
                   WebkitBackgroundClip: 'text',
                   color: 'transparent',
                 }}
               >
-                连接开发、运营与社区的 AI 平台
-              </Typography>
-            </m.div>
+                AI 平台
+              </Box>
+            </Typography>
+          </m.div>
 
-            <m.div variants={varFade('inDown')}>
-              <Typography 
-                variant="h6" 
-                sx={{ 
-                  color: alpha('#ffffff', 0.6), 
-                  maxWidth: 680, 
-                  fontWeight: 400,
-                  lineHeight: 1.6 
-                }}
-              >
-                Rune 智算平台提供模型开发、推理与工作负载管理能力；配合 Boss 平台实现精细化运营，魔哈仓库打造开放的社区底座，全方位提升 AI 应用构建效能。
-              </Typography>
-            </m.div>
-
-            <m.div variants={varFade('inUp')}>
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mt: 4 }}>
-                <Button
-                  variant="contained"
-                  size="large"
-                  component={RouterLink}
-                  to="/rune"
-                  sx={{
-                    bgcolor: 'common.white',
-                    color: 'common.black',
-                    px: 4,
-                    py: 1.5,
-                    fontSize: '1.125rem',
-                    fontWeight: 600,
-                    borderRadius: 1.5,
-                    '&:hover': {
-                      bgcolor: alpha('#ffffff', 0.8),
-                    },
-                  }}
-                >
-                  开始使用
-                </Button>
-                <Button
-                  variant="outlined"
-                  size="large"
-                  component={RouterLink}
-                  to="/moha"
-                  sx={{ 
-                    color: 'common.white',
-                    borderColor: alpha('#ffffff', 0.2),
-                    px: 4, 
-                    py: 1.5, 
-                    fontSize: '1.125rem',
-                    borderRadius: 1.5,
-                    backdropFilter: 'blur(10px)',
-                    '&:hover': {
-                      bgcolor: alpha('#ffffff', 0.05),
-                      borderColor: '#ffffff',
-                    }
-                  }}
-                >
-                  探索魔哈模型库
-                </Button>
-              </Stack>
-            </m.div>
-          </Stack>
-
-          {/* Terminal Mockup */}
-          <m.div variants={varFade('inUp')} style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
-            <Box
+          <m.div variants={varFade('inDown')}>
+            <Typography
               sx={{
-                width: '100%',
-                maxWidth: 800,
-                borderRadius: 2,
-                overflow: 'hidden',
-                bgcolor: '#0a0a0a',
-                border: `1px solid ${alpha('#ffffff', 0.1)}`,
-                boxShadow: `0 20px 40px -10px ${alpha('#000', 0.5)}, 0 0 40px 0 ${alpha(theme.palette.primary.main, 0.15)}`,
-                textAlign: 'left',
+                color: TOKENS.textSubtle,
+                fontSize: 'clamp(1rem, 1.35vw, 1.15rem)',
+                lineHeight: 1.7,
+                maxWidth: '46rem',
+                mx: 'auto',
               }}
             >
-              <Box sx={{ display: 'flex', alignItems: 'center', px: 2, py: 1.5, borderBottom: `1px solid ${alpha('#ffffff', 0.05)}`, bgcolor: '#111111' }}>
-                <Stack direction="row" spacing={1}>
-                  <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: '#FF5F56' }} />
-                  <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: '#FFBD2E' }} />
-                  <Box sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: '#27C93F' }} />
-                </Stack>
-                <Typography variant="caption" sx={{ color: alpha('#ffffff', 0.3), ml: 2, flexGrow: 1, textAlign: 'center', mr: 5 }}>
-                  ~ /rune-ai
-                </Typography>
-              </Box>
-              <Box sx={{ p: 3, fontFamily: 'monospace', color: alpha('#ffffff', 0.8), fontSize: '0.875rem', lineHeight: 1.6 }}>
-                <Box sx={{ display: 'flex', gap: 1 }}>
-                  <span style={{ color: theme.palette.primary.light }}>$</span>
-                  <span style={{ color: '#fff' }}>pip install xiaoshiai-hub</span>
-                </Box>
-                <Box sx={{ color: alpha('#ffffff', 0.4), mt: 1, mb: 2 }}>
-                  Successfully installed xiaoshiai-hub
-                </Box>
-                <Box sx={{ display: 'flex', gap: 1 }}>
-                  <span style={{ color: theme.palette.primary.light }}>$</span>
-                  <span style={{ color: '#fff' }}>moha login</span>
-                </Box>
-                <Box sx={{ color: '#27C93F', mt: 1 }}>
-                  ✔ Successfully logged in to Moha Hub
-                </Box>
-                <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
-                  <span style={{ color: theme.palette.primary.light }}>$</span>
-                  <Box component="span" sx={{ 
-                    color: '#fff', 
-                    borderRight: '2px solid transparent', 
-                    animation: 'blink 1s step-end infinite',
-                    '@keyframes blink': { '50%': { borderColor: '#fff' } }
-                  }}>
-                    moha upload -t models -e --encryption-password &quot;your-password&quot; -a SM4  deepseek-ai/DeepSeek-V3
+              Rune 智算平台提供模型开发、推理与工作负载管理能力；配合 Boss
+              平台实现精细化运营，魔哈仓库打造开放的社区底座，全方位提升 AI 应用构建效能。
+            </Typography>
+          </m.div>
+
+          <m.div variants={varFade('inUp')}>
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              spacing={1.5}
+              sx={{ pt: { xs: 1, md: 2 } }}
+            >
+              <Button component={RouterLink} to="/rune" sx={buttonSx('primary')}>
+                开始使用
+              </Button>
+              <Button component={RouterLink} to="/moha" sx={buttonSx('secondary')}>
+                探索魔哈模型库
+              </Button>
+            </Stack>
+          </m.div>
+
+          <m.div
+            variants={varFade('inUp')}
+            style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
+          >
+            <Terminal path="~/moha" sx={{ width: '100%', maxWidth: 760, mt: { xs: 2, md: 3 } }}>
+              {TERMINAL_LINES.map((line, index) => (
+                <Box
+                  key={index}
+                  sx={{ display: 'flex', gap: '.6rem', alignItems: 'flex-start', minWidth: 0 }}
+                >
+                  {line.kind === 'cmd' ? (
+                    <Box component="span" sx={{ color: TOKENS.termInfo, flexShrink: 0 }}>
+                      $
+                    </Box>
+                  ) : null}
+                  <Box
+                    component="span"
+                    sx={{
+                      minWidth: 0,
+                      wordBreak: 'break-word',
+                      color:
+                        line.kind === 'success'
+                          ? TOKENS.termSuccess
+                          : line.kind === 'dim'
+                            ? '#ffffff45'
+                            : '#ffffffc2',
+                    }}
+                  >
+                    {/*
+                      每个参数包成一个不可断的整体：命令在终端宽度里放不下时，
+                      在参数之间折行，而不是把 deepseek-ai/DeepSeek-V4 从中间切开
+                      （- 和 / 在浏览器眼里都是断行点）。空格留在 span 外面当断点。
+                    */}
+                    {line.text.split(' ').flatMap((word, wordIndex, words) => {
+                      const node = (
+                        <Box key={`w-${wordIndex}`} component="span" sx={{ whiteSpace: 'nowrap' }}>
+                          {word}
+                        </Box>
+                      );
+                      return wordIndex < words.length - 1 ? [node, ' '] : [node];
+                    })}
                   </Box>
                 </Box>
-              </Box>
-            </Box>
+              ))}
+            </Terminal>
           </m.div>
         </Stack>
-      </Container>
+      </SectionShell>
     </Box>
   );
 }
