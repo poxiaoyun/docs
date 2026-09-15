@@ -1,7 +1,7 @@
 ---
 title: Content Moderation
 updated: '2026-09-14'
-description: Set up the whole moderation chain: word list, actions and hit review.
+description: 'Set up the whole moderation chain: word list, actions and hit review.'
 tags:
   - boss
   - gateway

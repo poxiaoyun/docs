@@ -1,7 +1,7 @@
 ---
 title: Channel Management
 updated: '2026-09-14'
-description: Connect a provider: build a channel, fill in the address and keys, bind models and verify it works.
+description: 'Connect a provider: build a channel, fill in the address and keys, bind models and verify it works.'
 tags:
   - boss
   - gateway

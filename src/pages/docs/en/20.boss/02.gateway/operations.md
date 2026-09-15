@@ -1,7 +1,7 @@
 ---
 title: Dashboard
 updated: '2026-09-14'
-description: See gateway health at a glance: requests, success rate, tokens, cost and uptime.
+description: 'See gateway health at a glance: requests, success rate, tokens, cost and uptime.'
 tags:
   - boss
   - gateway

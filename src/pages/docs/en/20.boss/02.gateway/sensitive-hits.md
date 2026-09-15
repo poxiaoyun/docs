@@ -1,7 +1,7 @@
 ---
 title: Hit Records
 updated: '2026-09-14'
-description: See which calls tripped content moderation: matched words, risk level and how they were handled.
+description: 'See which calls tripped content moderation: matched words, risk level and how they were handled.'
 tags:
   - boss
   - gateway

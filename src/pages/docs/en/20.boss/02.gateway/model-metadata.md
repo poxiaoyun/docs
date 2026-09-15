@@ -1,7 +1,7 @@
 ---
 title: Model Configuration
 updated: '2026-09-14'
-description: Give a model its business card: name, type, context length and unit prices.
+description: 'Give a model its business card: name, type, context length and unit prices.'
 tags:
   - boss
   - gateway
