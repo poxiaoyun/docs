@@ -37,6 +37,8 @@ export const storageConfig = {
 export type LangOption = {
   value: LangCode;
   label: string;
+  /** 顶栏语言按钮上紧跟 label 的短码（ISO 639-1 大写），如「中文 ZH」 */
+  short: string;
   countryCode: string;
   adapterLocale?: string;
   numberFormat: { code: string; currency: string };
@@ -47,6 +49,7 @@ export const allLangs: LangOption[] = [
   {
     value: 'cn',
     label: '中文',
+    short: 'ZH',
     countryCode: 'CN',
     adapterLocale: 'zh-cn',
     numberFormat: { code: 'zh-CN', currency: 'CNY' },
@@ -57,6 +60,7 @@ export const allLangs: LangOption[] = [
   {
     value: 'en',
     label: 'English',
+    short: 'EN',
     countryCode: 'GB',
     adapterLocale: 'en',
     numberFormat: { code: 'en-US', currency: 'USD' },

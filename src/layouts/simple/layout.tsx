@@ -61,14 +61,13 @@ export function SimpleLayout({
       leftArea: null,
       centerArea: <GlobalTopNav />,
       rightArea: (
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0, sm: 0.75 } }}>
-          <LanguagePopover
-            data={[
-              { value: 'cn', label: '中文', countryCode: 'CN' },
-              { value: 'en', label: 'English', countryCode: 'GB' },
-            ]}
-          />
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.5, sm: 1 } }}>
+          {/** @slot Theme mode（图标 + 当前模式文字） */}
           <ThemeModeButton />
+
+          {/** @slot Language popover —— data 缺省即 allLangs，不必各处手写 */}
+          <LanguagePopover />
+
           {/** @slot Settings button */}
           <SettingsButton />
         </Box>

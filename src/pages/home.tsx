@@ -52,6 +52,9 @@ export default function Page() {
               '& .MuiTypography-root': { color: '#ffffff' },
               '& .MuiButton-root': { color: '#ffffff' },
               '& .MuiIconButton-root': { color: 'rgba(255, 255, 255, 0.8)' },
+              // 主题/语言按钮里的文字要跟同一按钮的图标同色。上面那条 Typography
+              // 规则是给顶栏标题用的，会把「明亮」「中文 ZH」提亮成纯白、跟图标脱节。
+              '& .MuiIconButton-root .MuiTypography-root': { color: 'inherit' },
             },
           },
         }}

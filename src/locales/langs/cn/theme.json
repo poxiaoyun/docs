@@ -1,6 +1,8 @@
 {
   "setting": "设置",
   "mode": "模式",
+  "mode_light": "明亮",
+  "mode_dark": "暗黑",
   "contrast": "对比度",
   "rtl": "双向性",
   "compact": "紧凑",

@@ -1,6 +1,8 @@
 {
   "setting": "Settings",
   "mode": "Mode",
+  "mode_light": "Light",
+  "mode_dark": "Dark",
   "contrast": "Contrast",
   "rtl": "Bidirectionality",
   "compact": "Compact",

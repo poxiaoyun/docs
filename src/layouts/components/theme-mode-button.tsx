@@ -2,10 +2,10 @@ import type { IconButtonProps } from '@mui/material/IconButton';
 
 import { m } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { varAlpha } from 'minimal-shared/utils';
 
 import SvgIcon from '@mui/material/SvgIcon';
 import Tooltip from '@mui/material/Tooltip';
+import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import { useColorScheme } from '@mui/material/styles';
 
@@ -33,7 +33,7 @@ function SunIcon() {
 
 export function ThemeModeButton({ sx, ...other }: IconButtonProps) {
   const settings = useSettingsContext();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation('theme');
   const { colorScheme, setMode } = useColorScheme();
 
   const locale = i18n.language.startsWith('en') ? 'en' : 'cn';
@@ -46,6 +46,10 @@ export function ThemeModeButton({ sx, ...other }: IconButtonProps) {
     : isDark
       ? '切换到浅色模式'
       : '切换到暗黑模式';
+
+  // 按钮上写的是**当前**模式（明亮/暗黑），不是「点一下会变成什么」——
+  // 和右边语言按钮的「中文 ZH」一样属于状态展示；动作交给 tooltip 说明。
+  const label = t(isDark ? 'mode_dark' : 'mode_light');
 
   return (
     <Tooltip title={tooltip}>
@@ -62,24 +66,35 @@ export function ThemeModeButton({ sx, ...other }: IconButtonProps) {
         sx={[
           (theme) => ({
             p: 0,
-            width: 40,
+            gap: 1,
+            px: { xs: 0.75, sm: 1.25 },
             height: 40,
-            color: isDark ? theme.vars.palette.warning.main : theme.vars.palette.text.secondary,
-            bgcolor: isDark
-              ? varAlpha(theme.vars.palette.warning.mainChannel, 0.16)
-              : varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
-            border: `1px solid ${theme.vars.palette.divider}`,
-            '&:hover': {
-              bgcolor: isDark
-                ? varAlpha(theme.vars.palette.warning.mainChannel, 0.24)
-                : varAlpha(theme.vars.palette.grey['500Channel'], 0.16),
-            },
+            // IconButton 默认是正圆（width:40 + 50% 圆角），带文字后要放开宽度、
+            // 收成圆角矩形，否则文字会被挤出按钮外。
+            width: 'auto',
+            borderRadius: 1.25,
+            // 文字走 inherit，这样首页那条深色顶栏（把 IconButton 色改成白）
+            // 不用额外适配，图标与文字始终同色。旧的 warning 橙是「图标暗示点击
+            // 结果」时代的产物，现在结果由文字写明，静置态统一用次级文字色。
+            color: theme.vars.palette.text.secondary,
+            // hover 用 currentColor 混色而不是主题的 action.hover —— 首页那条顶栏
+            // 是深色底而主题仍是 light，action.hover 算出来是一层黑，看不见。
+            '&:hover': { bgcolor: 'color-mix(in srgb, currentColor 10%, transparent)' },
           }),
           ...(Array.isArray(sx) ? sx : [sx]),
         ]}
         {...other}
       >
-        <SvgIcon>{isDark ? <SunIcon /> : settingIcons.moon}</SvgIcon>
+        {/* 图标和文字都表示**当前**模式：明亮配太阳、暗黑配月亮。
+            旧版是反过来显示「点一下会变成什么」，改名后就自相矛盾了。 */}
+        <SvgIcon sx={{ fontSize: 22 }}>{isDark ? settingIcons.moon : <SunIcon />}</SvgIcon>
+
+        <Typography
+          variant="body2"
+          sx={{ display: { xs: 'none', sm: 'inline' }, fontWeight: 500, whiteSpace: 'nowrap' }}
+        >
+          {label}
+        </Typography>
       </IconButton>
     </Tooltip>
   );
