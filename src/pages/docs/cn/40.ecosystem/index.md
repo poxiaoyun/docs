@@ -2,7 +2,7 @@
 title: 生态文档
 updated: '2026-09-17'
 author: Rune Docs Team
-description: 交付与运维视角的硬件生态导航：昇腾、海光、英伟达、阿里云 PPU、开源组件各要装什么、按什么顺序装、怎么确认装好了。
+description: 交付与运维视角的硬件生态导航：各家加速卡要装什么、按什么顺序装、平台已经适配到什么程度。
 tags:
   - ecosystem
   - overview
@@ -18,19 +18,44 @@ tags:
 判断标准只有一条：**机器上插着卡 → 宿主机装好驱动和运行时 → 集群里有组件把卡注册成可调度资源**。
 三层都对齐，平台页面里才选得到这张卡；缺哪一层都不行。
 
-阿里云 PPU 是个例外，它的中间一层由云厂商负责，见下文。
+各家的差别不在前两层，而在第三层的组件由谁提供。按这个分成四条通道，先看通道再看厂商，比逐个猜快得多。
 
-## 五类生态分别要装什么
+## 先认通道
 
-| 生态 | 覆盖的硬件 / 组件 | 你要装什么 | 安装顺序 |
+| 通道 | 厂商 | 集群组件从哪来 | 平台侧一键装 |
 | --- | --- | --- | --- |
-| [华为（昇腾 Ascend）](/ecosystem/huawei) | Atlas 训练/推理服务器上的 Ascend NPU | 驱动与固件、容器运行时、NPU Exporter、Ascend Device Plugin、NodeD（可选配昇腾定制 Volcano） | 严格按从左到右顺序，见下 |
-| [海光（DCU）](/ecosystem/hygon) | 海光 DCU 加速卡 | 驱动与运行时、DCU-Label-Node、DCU-Exporter、DCU-Device-Plugin | 严格按从左到右顺序 |
-| [英伟达（NVIDIA GPU）](/ecosystem/nvidia) | NVIDIA 数据中心 GPU | 宿主机驱动、GPU Operator（含容器工具链、设备插件、DCGM Exporter）、Volcano（可选 vGPU 切分） | 驱动 → GPU Operator → Volcano |
-| [阿里云（PPU）](/ecosystem/aliyun) | 阿里云灵骏节点上的真武 PPU | 灵骏节点池、ACK 侧的 ppu / rdma 设备插件（驱动与固件由云厂商负责） | 节点池 → 设备插件 → 调度策略 |
-| [其他开源社区](/ecosystem/open-source) | Kubernetes、容器、推理框架、可观测、制品安全 | 按需安装，多数是集群已有的底座 | 按需 |
+| 平台内置组件包 | [英伟达（NVIDIA GPU）](/ecosystem/nvidia)、[华为（昇腾 Ascend）](/ecosystem/huawei) | 平台的「系统应用」里 | 有 |
+| 手工装厂商组件 | [海光（DCU）](/ecosystem/hygon)、[AMD（Instinct / ROCm）](/ecosystem/amd)、[寒武纪（Cambricon MLU）](/ecosystem/cambricon)、[摩尔线程（Moore Threads）](/ecosystem/moore-threads)、[沐曦（MetaX 曦云）](/ecosystem/metax)、[壁仞科技（Biren）](/ecosystem/biren)、[天数智芯（Iluvatar CoreX）](/ecosystem/iluvatar)、[昆仑芯（Kunlunxin）](/ecosystem/kunlunxin) | 厂商官方仓库，或随交付包发放 | 没有 |
+| 云上节点池 | [阿里云（PPU）](/ecosystem/aliyun) | 云厂商控制台 | 没有（云侧组件） |
+| 开源底座 | [其他开源社区](/ecosystem/open-source) | 按需，多数集群已有 | 多数已内置 |
 
-前四类里，前三类是自己机器上装，第四类是云上节点池接进来，操作对象完全不同，别互相套用法。
+第一组的组件由平台维护，跟着平台版本走；第二组的组件由厂商提供，版本、装法、限制都以厂商文档为准，
+本分区的页面负责把它们和平台的实际情况对上。
+
+这四条分的是「卡的组件从哪来」。还有一层不在这四条里：把一张卡切给多个任务的能力。这一层由
+[HAMi（异构算力虚拟化）](/ecosystem/hami) 这类中间件提供，可以和上面任何一条叠加。
+平台上目前只有它的一个组件，就是 NVIDIA 调度组件里带的 Volcano vGPU 设备插件。
+
+## 平台已经适配到什么程度
+
+「适配」在平台上是分层的，四处代码各管一件事：镜像登记时的加速器类型、模型元数据里的型号、
+资源规格里的识别与展示、集群里的调度组件。这四层不一定是齐的，查到某一层没有就按没有处理。
+
+| 厂商 | 镜像加速器类型 | 模型元数据型号 | 规格里的加速卡标签 | 平台调度组件 |
+| --- | --- | --- | --- | --- |
+| [英伟达（NVIDIA）](/ecosystem/nvidia) | CUDA(Nvidia) | 12 个 | GPU，有专属图标 | 有，一键装 |
+| [华为（昇腾）](/ecosystem/huawei) | CANN(昇腾) | 5 个 | NPU，有专属图标 | 有，一键装 |
+| [海光（DCU）](/ecosystem/hygon) | DKT(海光) | 未登记 | DCU，有专属图标 | 没有 |
+| [阿里云（PPU）](/ecosystem/aliyun) | 未登记 | 未登记 | PPU，有专属图标 | 没有，在云侧 |
+| [AMD（Instinct）](/ecosystem/amd) | ROCm(AMD) | 8 个 | 走通用 GPU，有专属图标 | 没有 |
+| [寒武纪（Cambricon）](/ecosystem/cambricon) | Neuware(寒武纪) | 4 个 | MLU，无图标 | 没有 |
+| [摩尔线程](/ecosystem/moore-threads) | Musa(摩尔线程) | 未登记 | 走通用 GPU，无图标 | 没有 |
+| [沐曦（MetaX）](/ecosystem/metax) | MACA(沐曦) | 未登记 | 走通用 GPU，无图标 | 没有 |
+| [壁仞科技](/ecosystem/biren) | 未登记 | 未登记 | 走通用 GPU，无图标 | 没有 |
+| [天数智芯](/ecosystem/iluvatar) | CoreX(天数智芯) | 未登记 | 走通用 GPU，无图标 | 没有 |
+| [昆仑芯](/ecosystem/kunlunxin) | 未登记 | 未登记 | 资源名不含识别关键词，要手填类型 | 没有 |
+
+每家的逐层核对、缺哪几件、怎么补，都写在各自分区的「平台适配现状」页里。
 
 ## 平台里的调度组件
 
@@ -38,10 +63,15 @@ tags:
 **昇腾**（Ascend Device Plugin + NPU Exporter + 昇腾定制 Volcano），都能在
 **集群管理 → 运维管理 → 系统应用**里一键安装。
 
-海光侧的平台组件目前还没有，需要按[海光（DCU）](/ecosystem/hygon)里的步骤手工装。
-阿里云 PPU 的 ACK 组件在阿里云控制台安装，不在平台的系统应用里，平台侧只负责识别资源和调度。
+其余厂商的平台组件目前都没有。海光、AMD、寒武纪、摩尔线程、沐曦、壁仞、天数智芯、昆仑芯这八家的集群侧组件，
+按各自分区的步骤手工装；阿里云 PPU 的 ACK 组件在阿里云控制台安装，不在平台的系统应用里，
+平台侧只负责识别资源和调度。
 
 同一个集群只保留一套调度组件，不要混装。
+
+卡内切分是另一件事，不在这个组件包里：NVIDIA 那套调度组件里带了一个 HAMi 家族的设备插件
+（`volcano-vgpu-device-plugin`），能把一张卡按份额分给多个任务；其余八家的卡内切分平台都不提供，
+要走完整的 HAMi 得手工装。两者的取舍见 [HAMi（异构算力虚拟化）](/ecosystem/hami)。
 
 ## 通用安装顺序
 
@@ -60,10 +90,14 @@ tags:
 
 ## 从哪一页开始
 
-- 第一次接入昇腾机器：看[华为（昇腾 Ascend）](/ecosystem/huawei)，按里面的顺序走。
-- 第一次接入海光机器：看[海光（DCU）](/ecosystem/hygon)。
-- 第一次接入 NVIDIA 机器：看[英伟达（NVIDIA GPU）](/ecosystem/nvidia)，集群侧组件在平台上一键装。
-- 第一次在阿里云上用 PPU：看[阿里云（PPU）](/ecosystem/aliyun)，先建节点池再接集群。
+- 第一次接入昇腾机器：[华为（昇腾 Ascend）](/ecosystem/huawei)，按里面的顺序走。
+- 第一次接入海光机器：[海光（DCU）](/ecosystem/hygon)。
+- 第一次接入 NVIDIA 机器：[英伟达（NVIDIA GPU）](/ecosystem/nvidia)，集群侧组件在平台上一键装。
+- 第一次接入 AMD 机器：[AMD（Instinct / ROCm）](/ecosystem/amd)，容器工具链要走 CDI 路线。
+- 第一次接入寒武纪机器：[寒武纪（Cambricon MLU）](/ecosystem/cambricon)，设备插件要自己编镜像。
+- 其它国产加速卡：从下面相关里找对应分区。
+- 第一次在阿里云上用 PPU：[阿里云（PPU）](/ecosystem/aliyun)，先建节点池再接集群。
+- 要让一张卡分给多个任务：[HAMi（异构算力虚拟化）](/ecosystem/hami)，先看清平台内置那条与完整 HAMi 的差别。
 - 只想补某个组件，或者在排查问题：直接跳到对应组件页。
 
 ## 相关
@@ -72,4 +106,12 @@ tags:
 - [海光（DCU）](/ecosystem/hygon)
 - [英伟达（NVIDIA GPU）](/ecosystem/nvidia)
 - [阿里云（PPU）](/ecosystem/aliyun)
+- [AMD（Instinct / ROCm）](/ecosystem/amd)
+- [寒武纪（Cambricon MLU）](/ecosystem/cambricon)
+- [摩尔线程（Moore Threads）](/ecosystem/moore-threads)
+- [沐曦（MetaX 曦云）](/ecosystem/metax)
+- [壁仞科技（Biren）](/ecosystem/biren)
+- [天数智芯（Iluvatar CoreX）](/ecosystem/iluvatar)
+- [昆仑芯（Kunlunxin）](/ecosystem/kunlunxin)
+- [HAMi（异构算力虚拟化）](/ecosystem/hami)
 - [其他开源社区](/ecosystem/open-source)

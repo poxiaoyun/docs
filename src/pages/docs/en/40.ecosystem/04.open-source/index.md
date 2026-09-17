@@ -26,7 +26,7 @@ Grouped by the four kinds of work you do in the interface. "Where to install / s
 | --- | --- | --- | --- |
 | Kubernetes | Combines many servers into one cluster and schedules containers across them | Containers & Orchestration | Cluster Management → Cluster Status (the base the platform is deployed on) |
 | Volcano | Queues, co-schedules and fairly shares resources for batch and AI-training jobs | Containers & Orchestration | Operations Management → Scheduler Management |
-| Volcano vGPU | Splits one GPU into shares so several jobs can share it | Containers & Orchestration | Installed with the scheduling component; Cluster Status → Accelerator Status |
+| Volcano vGPU | Splits one GPU into shares so several jobs can share it | Containers & Orchestration | Installed with the scheduling component; Cluster Status → Accelerator Status (comes from the [HAMi](/ecosystem/hami) family and covers NVIDIA only) |
 | GPU Operator / Ascend scheduling components | Lets NVIDIA / Ascend clusters recognize the cards and hand them to Volcano | Containers & Orchestration | Operations Management → System Apps (hardware details in the [NVIDIA](/ecosystem/nvidia) and [Huawei](/ecosystem/huawei) chapters; the Hygon and Alibaba Cloud PPU components are not in System Apps, see [Hygon (DCU)](/ecosystem/hygon) and [Alibaba Cloud (PPU)](/ecosystem/aliyun)) |
 | Multus-CNI | Gives a container a second network card and a fixed IP | Containers & Orchestration | Operations Management → System Apps |
 | ingress-nginx | Routes outside HTTP traffic by domain to services inside the cluster | Containers & Orchestration | Operations Management → System Apps |

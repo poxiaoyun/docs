@@ -26,7 +26,7 @@ tags:
 | --- | --- | --- | --- |
 | Kubernetes | 把多台服务器组成一个集群，统一调度容器 | 容器与编排 | 集群管理 → 集群信息（随平台部署的底座） |
 | Volcano | 给批量任务和 AI 训练排队、成组调度、公平共享资源 | 容器与编排 | 运维管理 → 调度器管理 |
-| Volcano vGPU | 把一张 GPU 切成多份，让多个任务共享 | 容器与编排 | 跟随调度组件安装，集群信息 → 加速卡信息 |
+| Volcano vGPU | 把一张 GPU 切成多份，让多个任务共享 | 容器与编排 | 跟随调度组件安装，集群信息 → 加速卡信息（源自 [HAMi](/ecosystem/hami) 家族，只覆盖 NVIDIA） |
 | GPU Operator / 昇腾调度组件 | 让 NVIDIA / 昇腾集群认识卡并交给 Volcano 调度 | 容器与编排 | 运维管理 → 系统应用（硬件侧见[英伟达](/ecosystem/nvidia)、[华为](/ecosystem/huawei)两章；海光与阿里云 PPU 的组件不在系统应用里，见[海光（DCU）](/ecosystem/hygon)、[阿里云（PPU）](/ecosystem/aliyun)） |
 | Multus-CNI | 给容器加第二张网卡，并分配固定 IP | 容器与编排 | 运维管理 → 系统应用 |
 | ingress-nginx | 把外部 HTTP 流量按域名转发到集群里的服务 | 容器与编排 | 运维管理 → 系统应用 |

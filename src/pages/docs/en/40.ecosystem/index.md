@@ -2,7 +2,7 @@
 title: 'Ecological documents'
 updated: '2026-09-17'
 author: Rune Docs Team
-description: 'What to install for Ascend, DCU, NVIDIA, Alibaba Cloud PPU and open-source components, in what order, and how to confirm it works.'
+description: 'A delivery and operations view of the hardware ecosystem: what to install for each accelerator vendor, in what order, and how far the platform has adapted to each one.'
 tags:
   - ecosystem
   - overview
@@ -21,20 +21,50 @@ There is one test, and it has three parts: **the card is physically in the machi
 installed → a cluster component has registered the card as a schedulable resource**. All three must line up before the
 card appears in the console. Miss one and it will not.
 
-Alibaba Cloud PPU is the exception: its middle layer belongs to the cloud provider. Details below.
+The vendors differ in neither of the first two layers but in who supplies the third-layer component. That splits them
+into four channels, and picking the channel first is faster than guessing vendor by vendor.
 
-## What each ecosystem needs
+## Pick the channel first
 
-| Ecosystem | Hardware / components covered | What you install | Order |
+| Channel | Vendors | Where the cluster-side components come from | One-step install in System Apps |
 | --- | --- | --- | --- |
-| [Huawei (Ascend)](/ecosystem/huawei) | Ascend NPU on Atlas training/inference servers | Driver and firmware, container runtime, NPU Exporter, Ascend Device Plugin, NodeD (optionally the Ascend-customized Volcano) | Strictly left to right, see below |
-| [Hygon (DCU)](/ecosystem/hygon) | Hygon DCU accelerator cards | Driver and runtime, DCU-Label-Node, DCU-Exporter, DCU-Device-Plugin | Strictly left to right |
-| [NVIDIA (GPU)](/ecosystem/nvidia) | NVIDIA data-centre GPUs | Host driver, GPU Operator (container toolkit, device plugin, DCGM Exporter), Volcano (optionally vGPU splitting) | Driver → GPU Operator → Volcano |
-| [Alibaba Cloud (PPU)](/ecosystem/aliyun) | Zhenwu PPU on Alibaba Cloud Lingjun nodes | Lingjun node pool, the ppu and rdma device plugins on the ACK side (driver and firmware are the cloud provider's job) | Node pool → device plugins → scheduling policies |
-| [Open source communities](/ecosystem/open-source) | Kubernetes, containers, inference frameworks, observability, artifact security | Install as needed; most of it is already part of the cluster foundation | As needed |
+| Bundled in the platform | [NVIDIA (GPU)](/ecosystem/nvidia), [Huawei (Ascend)](/ecosystem/huawei) | From the platform's System Apps | Yes |
+| Install vendor components by hand | [Hygon (DCU)](/ecosystem/hygon), [AMD (Instinct / ROCm)](/ecosystem/amd), [Cambricon (MLU)](/ecosystem/cambricon), [Moore Threads](/ecosystem/moore-threads), [MetaX](/ecosystem/metax), [Biren Technology](/ecosystem/biren), [Iluvatar CoreX](/ecosystem/iluvatar), [Kunlunxin](/ecosystem/kunlunxin) | Vendor repositories, or shipped with the delivery package | No |
+| Cloud node pool | [Alibaba Cloud (PPU)](/ecosystem/aliyun) | The cloud provider's console | No (cloud-side components) |
+| Open-source foundation | [Open source communities](/ecosystem/open-source) | As needed; most clusters already have it | Mostly already bundled |
 
-The first three are installed on your own machines. The fourth connects a cloud node pool. The objects of work are
-different enough that procedures do not carry over — do not assume one applies to the other.
+The first group is maintained by the platform and follows the platform version. The second group is delivered by the
+vendors, so versions, installation methods, and limits follow vendor documentation; the pages in each partition exist to
+line those up with the platform's actual state.
+
+These four channels are about where the card components come from. One layer sits outside them: the ability to split
+one card among several workloads. That layer comes from middleware such as
+[HAMi](/ecosystem/hami) and stacks on top of any of the four. The platform ships exactly one component from it:
+the Volcano vGPU device plugin bundled with the NVIDIA scheduling package.
+
+## How far the platform has adapted
+
+Adaptation is layered in the platform: four pieces of code each handle one thing — the accelerator type recorded on an
+image, the accelerator models in model metadata, recognition and display in resource flavours, and the cluster-side
+scheduling components. The four layers are not necessarily complete, and a layer that is missing should be treated as
+missing.
+
+| Vendor | Image accelerator type | Model metadata models | Accelerator label in flavours | Platform scheduling components |
+| --- | --- | --- | --- | --- |
+| [NVIDIA](/ecosystem/nvidia) | CUDA(Nvidia) | 12 | GPU, dedicated icon | Yes, one-step install |
+| [Huawei (Ascend)](/ecosystem/huawei) | CANN(昇腾) | 5 | NPU, dedicated icon | Yes, one-step install |
+| [Hygon (DCU)](/ecosystem/hygon) | DKT(海光) | Not registered | DCU, dedicated icon | None |
+| [Alibaba Cloud (PPU)](/ecosystem/aliyun) | Not registered | Not registered | PPU, dedicated icon | None, cloud-side |
+| [AMD (Instinct)](/ecosystem/amd) | ROCm(AMD) | 8 | Generic GPU, dedicated icon | None |
+| [Cambricon (MLU)](/ecosystem/cambricon) | Neuware(寒武纪) | 4 | MLU, no icon | None |
+| [Moore Threads](/ecosystem/moore-threads) | Musa(摩尔线程) | Not registered | Generic GPU, no icon | None |
+| [MetaX](/ecosystem/metax) | MACA(沐曦) | Not registered | Generic GPU, no icon | None |
+| [Biren Technology](/ecosystem/biren) | Not registered | Not registered | Generic GPU, no icon | None |
+| [Iluvatar CoreX](/ecosystem/iluvatar) | CoreX(天数智芯) | Not registered | Generic GPU, no icon | None |
+| [Kunlunxin](/ecosystem/kunlunxin) | Not registered | Not registered | Resource name matches no keyword; set the type by hand | None |
+
+Each vendor's layer-by-layer breakdown, what is missing, and how to work around it lives on the "Platform Support"
+page of its own partition.
 
 ## Scheduling stacks inside the platform
 
@@ -42,11 +72,17 @@ The platform bundles two complete hardware scheduling packages — **NVIDIA** (G
 **Ascend** (Ascend Device Plugin + NPU Exporter + Ascend-customized Volcano) — both installable in one step from
 **Cluster Management → Operations → System Apps**.
 
-There is no platform-side package for Hygon yet; install those components by hand following
-[Hygon (DCU)](/ecosystem/hygon). The Alibaba Cloud PPU add-ons are installed from the Alibaba Cloud console rather than
-System Apps, and the platform only handles resource recognition and scheduling.
+No other vendor has a platform-side package today. For Hygon, AMD, Cambricon, Moore Threads, MetaX, Biren, Iluvatar
+CoreX, and Kunlunxin, install the cluster-side components by hand following the matching partition. The Alibaba Cloud
+PPU add-ons are installed from the Alibaba Cloud console rather than System Apps, and the platform only handles resource
+recognition and scheduling.
 
 One cluster keeps a single scheduling stack. Do not install both.
+
+In-card splitting is a separate matter and not part of these packages: the NVIDIA package bundles a device plugin from
+the HAMi family (`volcano-vgpu-device-plugin`) that can hand one card to several workloads. For the other eight
+vendors the platform offers no in-card splitting, and a full HAMi has to be installed by hand. The trade-off between
+the two is under [HAMi](/ecosystem/hami).
 
 ## Common installation order
 
@@ -73,7 +109,11 @@ first, the plugin second. Reverse it and the plugin usually needs a reinstall or
 - Connecting an Ascend machine for the first time: start with [Huawei (Ascend)](/ecosystem/huawei) and follow the order inside.
 - Connecting a Hygon machine for the first time: see [Hygon (DCU)](/ecosystem/hygon).
 - Connecting an NVIDIA machine for the first time: see [NVIDIA (GPU)](/ecosystem/nvidia); the cluster-side components install in one step from the platform.
+- Connecting an AMD machine for the first time: see [AMD (Instinct / ROCm)](/ecosystem/amd); the container toolkit goes through the CDI route.
+- Connecting a Cambricon machine for the first time: see [Cambricon (MLU)](/ecosystem/cambricon); you build the device plugin image yourself.
+- Other domestic accelerators: find the matching partition under Related below.
 - Running PPU on Alibaba Cloud for the first time: see [Alibaba Cloud (PPU)](/ecosystem/aliyun), node pool first.
+- Sharing one card among several workloads: see [HAMi](/ecosystem/hami), starting with how the built-in route differs from a full HAMi.
 - Filling in one component or troubleshooting: jump straight to the page you need.
 
 ## Related
@@ -82,4 +122,12 @@ first, the plugin second. Reverse it and the plugin usually needs a reinstall or
 - [Hygon (DCU)](/ecosystem/hygon)
 - [NVIDIA (GPU)](/ecosystem/nvidia)
 - [Alibaba Cloud (PPU)](/ecosystem/aliyun)
+- [AMD (Instinct / ROCm)](/ecosystem/amd)
+- [Cambricon (MLU)](/ecosystem/cambricon)
+- [Moore Threads](/ecosystem/moore-threads)
+- [MetaX](/ecosystem/metax)
+- [Biren Technology](/ecosystem/biren)
+- [Iluvatar CoreX](/ecosystem/iluvatar)
+- [Kunlunxin](/ecosystem/kunlunxin)
+- [HAMi](/ecosystem/hami)
 - [Open source communities](/ecosystem/open-source)
