@@ -61,6 +61,49 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         ],
       },
       {
+        title: '英伟达（NVIDIA GPU）',
+        path: '/ecosystem/nvidia',
+        icon: 'ic-analytics',
+        product: 'ecosystem',
+        children: [
+          { title: '驱动与容器运行时', path: '/ecosystem/nvidia/driver-runtime' },
+          {
+            title: 'GPU Operator（集群侧组件）',
+            path: '/ecosystem/nvidia/gpu-operator',
+            children: [
+              { title: '安装与验证', path: '/ecosystem/nvidia/gpu-operator/install' },
+              { title: '节点标签（NFD / GFD）', path: '/ecosystem/nvidia/gpu-operator/node-labels' },
+              { title: '设备插件', path: '/ecosystem/nvidia/gpu-operator/device-plugin' },
+              { title: 'DCGM Exporter', path: '/ecosystem/nvidia/gpu-operator/dcgm-exporter' },
+              { title: 'MIG 实例划分', path: '/ecosystem/nvidia/gpu-operator/mig-manager' },
+            ],
+          },
+          { title: 'Volcano 与 vGPU 切分', path: '/ecosystem/nvidia/volcano-vgpu' },
+          { title: 'FAQ', path: '/ecosystem/nvidia/faq' },
+        ],
+      },
+      {
+        title: '阿里云（PPU）',
+        path: '/ecosystem/aliyun',
+        icon: 'ic-banking',
+        product: 'ecosystem',
+        children: [
+          { title: 'PPU 基础', path: '/ecosystem/aliyun/ppu-basics' },
+          { title: '灵骏节点池', path: '/ecosystem/aliyun/lingjun-nodepool' },
+          {
+            title: '设备插件',
+            path: '/ecosystem/aliyun/device-plugin',
+            children: [
+              { title: '安装与验证', path: '/ecosystem/aliyun/device-plugin/install' },
+              { title: '调度策略', path: '/ecosystem/aliyun/device-plugin/scheduling' },
+              { title: 'MIG 切分', path: '/ecosystem/aliyun/device-plugin/mig' },
+            ],
+          },
+          { title: '在平台上使用', path: '/ecosystem/aliyun/platform-usage' },
+          { title: 'FAQ', path: '/ecosystem/aliyun/faq' },
+        ],
+      },
+      {
         title: '其他开源社区',
         path: '/ecosystem/open-source',
         icon: 'ic-course',

@@ -53,6 +53,49 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         ],
       },
       {
+        title: 'NVIDIA (GPU)',
+        path: '/ecosystem/nvidia',
+        icon: 'ic-analytics',
+        product: 'ecosystem',
+        children: [
+          { title: 'Drivers & Runtime', path: '/ecosystem/nvidia/driver-runtime' },
+          {
+            title: 'GPU Operator',
+            path: '/ecosystem/nvidia/gpu-operator',
+            children: [
+              { title: 'Install & Verify', path: '/ecosystem/nvidia/gpu-operator/install' },
+              { title: 'Node Labels (NFD / GFD)', path: '/ecosystem/nvidia/gpu-operator/node-labels' },
+              { title: 'Device Plugin', path: '/ecosystem/nvidia/gpu-operator/device-plugin' },
+              { title: 'DCGM Exporter', path: '/ecosystem/nvidia/gpu-operator/dcgm-exporter' },
+              { title: 'MIG Partitioning', path: '/ecosystem/nvidia/gpu-operator/mig-manager' },
+            ],
+          },
+          { title: 'Volcano & vGPU', path: '/ecosystem/nvidia/volcano-vgpu' },
+          { title: 'FAQ', path: '/ecosystem/nvidia/faq' },
+        ],
+      },
+      {
+        title: 'Alibaba Cloud (PPU)',
+        path: '/ecosystem/aliyun',
+        icon: 'ic-banking',
+        product: 'ecosystem',
+        children: [
+          { title: 'PPU Basics', path: '/ecosystem/aliyun/ppu-basics' },
+          { title: 'Lingjun Node Pool', path: '/ecosystem/aliyun/lingjun-nodepool' },
+          {
+            title: 'Device Plugin',
+            path: '/ecosystem/aliyun/device-plugin',
+            children: [
+              { title: 'Install & Verify', path: '/ecosystem/aliyun/device-plugin/install' },
+              { title: 'Scheduling', path: '/ecosystem/aliyun/device-plugin/scheduling' },
+              { title: 'MIG Partitioning', path: '/ecosystem/aliyun/device-plugin/mig' },
+            ],
+          },
+          { title: 'Using PPU on the Platform', path: '/ecosystem/aliyun/platform-usage' },
+          { title: 'FAQ', path: '/ecosystem/aliyun/faq' },
+        ],
+      },
+      {
         title: 'Open Source Communities',
         path: '/ecosystem/open-source',
         icon: 'ic-course',
