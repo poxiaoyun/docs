@@ -15,7 +15,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: '华为（昇腾 Ascend）',
         path: '/ecosystem/huawei',
-        icon: 'ic-file',
+        icon: 'brand-ascend',
         product: 'ecosystem',
         children: [
           { title: '驱动与运行时', path: '/ecosystem/huawei/driver-runtime' },
@@ -35,7 +35,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: '海光（DCU）',
         path: '/ecosystem/hygon',
-        icon: 'ic-product',
+        icon: 'brand-hygon',
         product: 'ecosystem',
         children: [
           { title: 'DCU 驱动安装', path: '/ecosystem/hygon/driver-runtime' },
@@ -63,7 +63,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: '英伟达（NVIDIA GPU）',
         path: '/ecosystem/nvidia',
-        icon: 'ic-analytics',
+        icon: 'brand-nvidia',
         product: 'ecosystem',
         children: [
           { title: '驱动与容器运行时', path: '/ecosystem/nvidia/driver-runtime' },
@@ -85,7 +85,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: '阿里云（PPU）',
         path: '/ecosystem/aliyun',
-        icon: 'ic-banking',
+        icon: 'brand-aliyun',
         product: 'ecosystem',
         children: [
           { title: 'PPU 基础', path: '/ecosystem/aliyun/ppu-basics' },
@@ -106,7 +106,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: 'AMD（Instinct / ROCm）',
         path: '/ecosystem/amd',
-        icon: 'ic-subpaths',
+        icon: 'brand-amd',
         product: 'ecosystem',
         children: [
           { title: '产品与软件栈', path: '/ecosystem/amd/products' },
@@ -119,7 +119,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: '寒武纪（Cambricon MLU）',
         path: '/ecosystem/cambricon',
-        icon: 'ic-params',
+        icon: 'brand-cambricon',
         product: 'ecosystem',
         children: [
           { title: '产品与软件栈', path: '/ecosystem/cambricon/products' },
@@ -132,7 +132,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: '摩尔线程（Moore Threads）',
         path: '/ecosystem/moore-threads',
-        icon: 'ic-label',
+        icon: 'brand-mthreads',
         product: 'ecosystem',
         children: [
           { title: '产品与软件栈', path: '/ecosystem/moore-threads/products' },
@@ -145,7 +145,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: '沐曦（MetaX 曦云）',
         path: '/ecosystem/metax',
-        icon: 'ic-order',
+        icon: 'brand-metax',
         product: 'ecosystem',
         children: [
           { title: '产品与软件栈', path: '/ecosystem/metax/products' },
@@ -158,7 +158,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: '壁仞科技（Biren）',
         path: '/ecosystem/biren',
-        icon: 'ic-folder',
+        icon: 'brand-biren',
         product: 'ecosystem',
         children: [
           { title: '产品与软件栈', path: '/ecosystem/biren/products' },
@@ -171,7 +171,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: '天数智芯（Iluvatar CoreX）',
         path: '/ecosystem/iluvatar',
-        icon: 'ic-invoice',
+        icon: 'brand-iluvatar',
         product: 'ecosystem',
         children: [
           { title: '产品与软件栈', path: '/ecosystem/iluvatar/products' },
@@ -184,7 +184,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: '昆仑芯（Kunlunxin）',
         path: '/ecosystem/kunlunxin',
-        icon: 'ic-tour',
+        icon: 'brand-kunlunxin',
         product: 'ecosystem',
         children: [
           { title: '产品与软件栈', path: '/ecosystem/kunlunxin/products' },
@@ -197,7 +197,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: 'HAMi（异构算力虚拟化）',
         path: '/ecosystem/hami',
-        icon: 'ic-kanban',
+        icon: 'brand-hami',
         product: 'ecosystem',
         children: [
           { title: '架构与调度链路', path: '/ecosystem/hami/architecture' },

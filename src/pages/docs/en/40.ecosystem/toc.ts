@@ -13,7 +13,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: 'Huawei (Ascend)',
         path: '/ecosystem/huawei',
-        icon: 'ic-file',
+        icon: 'brand-ascend',
         product: 'ecosystem',
         children: [
           { title: 'Drivers & Runtime', path: '/ecosystem/huawei/driver-runtime' },
@@ -33,7 +33,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: 'Hygon (DCU)',
         path: '/ecosystem/hygon',
-        icon: 'ic-product',
+        icon: 'brand-hygon',
         product: 'ecosystem',
         children: [
           { title: 'Driver Installation', path: '/ecosystem/hygon/driver-runtime' },
@@ -55,7 +55,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: 'NVIDIA (GPU)',
         path: '/ecosystem/nvidia',
-        icon: 'ic-analytics',
+        icon: 'brand-nvidia',
         product: 'ecosystem',
         children: [
           { title: 'Drivers & Runtime', path: '/ecosystem/nvidia/driver-runtime' },
@@ -77,7 +77,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: 'Alibaba Cloud (PPU)',
         path: '/ecosystem/aliyun',
-        icon: 'ic-banking',
+        icon: 'brand-aliyun',
         product: 'ecosystem',
         children: [
           { title: 'PPU Basics', path: '/ecosystem/aliyun/ppu-basics' },
@@ -98,7 +98,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: 'AMD (Instinct / ROCm)',
         path: '/ecosystem/amd',
-        icon: 'ic-subpaths',
+        icon: 'brand-amd',
         product: 'ecosystem',
         children: [
           { title: 'Products & Software Stack', path: '/ecosystem/amd/products' },
@@ -111,7 +111,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: 'Cambricon (MLU)',
         path: '/ecosystem/cambricon',
-        icon: 'ic-params',
+        icon: 'brand-cambricon',
         product: 'ecosystem',
         children: [
           { title: 'Products & Software Stack', path: '/ecosystem/cambricon/products' },
@@ -124,7 +124,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: 'Moore Threads (MTT)',
         path: '/ecosystem/moore-threads',
-        icon: 'ic-label',
+        icon: 'brand-mthreads',
         product: 'ecosystem',
         children: [
           { title: 'Products & Software Stack', path: '/ecosystem/moore-threads/products' },
@@ -137,7 +137,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: 'MetaX (Xiyun)',
         path: '/ecosystem/metax',
-        icon: 'ic-order',
+        icon: 'brand-metax',
         product: 'ecosystem',
         children: [
           { title: 'Products & Software Stack', path: '/ecosystem/metax/products' },
@@ -150,7 +150,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: 'Biren Technology',
         path: '/ecosystem/biren',
-        icon: 'ic-folder',
+        icon: 'brand-biren',
         product: 'ecosystem',
         children: [
           { title: 'Products & Software Stack', path: '/ecosystem/biren/products' },
@@ -163,7 +163,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: 'Iluvatar CoreX',
         path: '/ecosystem/iluvatar',
-        icon: 'ic-invoice',
+        icon: 'brand-iluvatar',
         product: 'ecosystem',
         children: [
           { title: 'Products & Software Stack', path: '/ecosystem/iluvatar/products' },
@@ -176,7 +176,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: 'Kunlunxin',
         path: '/ecosystem/kunlunxin',
-        icon: 'ic-tour',
+        icon: 'brand-kunlunxin',
         product: 'ecosystem',
         children: [
           { title: 'Products & Software Stack', path: '/ecosystem/kunlunxin/products' },
@@ -189,7 +189,7 @@ export const ECOSYSTEM_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       {
         title: 'HAMi',
         path: '/ecosystem/hami',
-        icon: 'ic-kanban',
+        icon: 'brand-hami',
         product: 'ecosystem',
         children: [
           { title: 'Architecture & Scheduling', path: '/ecosystem/hami/architecture' },
