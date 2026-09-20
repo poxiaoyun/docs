@@ -33,16 +33,31 @@ export function MermaidBlock({ chart }: MermaidBlockProps) {
             primaryColor: '#3b82f6',
             primaryTextColor: '#f1f5f9',
             primaryBorderColor: '#60a5fa',
-            secondaryColor: '#1e293b',
-            tertiaryColor: '#334155',
-            lineColor: '#94a3b8',
-            textColor: '#e2e8f0',
-            mainBkg: '#1e293b',
+            /**
+             * 暗色配色。
+             *
+             * mermaid 只认裸十六进制，拿不到 CSS 变量，所以这里是主题色值的手抄版，
+             * 改了 `theme/core/palette.ts` 的暗色底要回来对一遍：
+             *
+             * - `mainBkg` = `background.paper` `#0B0E12`（节点填色）
+             * - `clusterBkg` = 同上（子图底）
+             * - `secondaryColor` / `tertiaryColor` / `edgeLabelBackground` 介于
+             *   paper 与 `background.neutral` 之间，铺在 `#0B0E12` 面板上都看得见
+             *
+             * 原来这组是 slate 调（`#1e293b` / `#334155`），配 document 的
+             * grey[900] 页面还协调；页面换成纯黑后 slate 就是整页最亮的一块，
+             * 图会比正文还抢眼，所以整体压到黑灰family，靠蓝色描边和纯白文字提对比。
+             */
+            secondaryColor: '#12161B',
+            tertiaryColor: '#232A33',
+            lineColor: '#A8B3C0',
+            textColor: '#FFFFFF',
+            mainBkg: '#0B0E12',
             nodeBorder: '#60a5fa',
-            clusterBkg: '#1e293b',
-            clusterBorder: '#475569',
-            titleColor: '#f1f5f9',
-            edgeLabelBackground: '#1e293b',
+            clusterBkg: '#12161B',
+            clusterBorder: '#5A6672',
+            titleColor: '#FFFFFF',
+            edgeLabelBackground: '#1A2028',
           }
         : {
             primaryColor: '#3b82f6',
@@ -143,7 +158,11 @@ export function MermaidBlock({ chart }: MermaidBlockProps) {
         borderRadius: 2,
         overflow: 'hidden',
         border: (theme) => `1px solid ${theme.vars.palette.divider}`,
-        bgcolor: isDark ? 'grey.900' : 'background.paper',
+        // 暗色下的面板底：原来写死 grey[900]（#141A21），跟纯黑页面只差一档，
+        // 整块图会「浮」不起来。改用 background.neutral（#1A2028），与本组件
+        // 自己的加载占位、以及表格表头是同一个面，图里的节点则压到 paper 的
+        // 近黑色 —— 深面板 + 黑节点 + 蓝描边，是暗色下对比最干净的一档。
+        bgcolor: isDark ? 'background.neutral' : 'background.paper',
         transition: 'border-color 0.2s, background-color 0.2s',
         '&:hover': {
           borderColor: 'primary.main',

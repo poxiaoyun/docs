@@ -23,6 +23,9 @@
  *                 语言在运行时由 localStorage 决定，故只能索引默认语言）
  *   VITE_BASE_URL 与 vite.config.ts 保持一致，用于给站内链接补 base（默认 /docs）
  *   SSG_OUT       产物目录（默认 dist）
+ *
+ * 首屏配色引导脚本不在这里定义 —— 它在根目录 index.html 的 <!-- theme-bootstrap -->
+ * 块里（那是唯一真源），本脚本只负责搬进每个预渲染页。原因见 extractThemeBootstrap。
  */
 
 import fs from 'node:fs';
@@ -484,7 +487,39 @@ function readTemplate() {
 
   const html = fs.readFileSync(indexPath, 'utf8');
 
-  return { html, headTags: extractAssetTags(html) };
+  return { html, headTags: extractAssetTags(html), bootstrap: extractThemeBootstrap(html) };
+}
+
+/**
+ * 首屏配色引导脚本：**从模板 index.html 里取，不在这里写第二份**。
+ *
+ * 站点默认走暗色（`themeConfig.defaultMode = 'dark'`），但调色板的 CSS 变量是 MUI 在
+ * 运行时用 emotion 注入的，首屏绘制时 `var(--palette-background-default)` 还没定义，
+ * 浏览器按「未设值」渲染 —— 纯黑站点会先白闪一下再变黑，很扎眼。
+ *
+ * 那段脚本同步执行在 `<head>` 里，抢在首屏绘制前把 `data-color-scheme` 与底色定下来；
+ * 等 React 起来，MUI 接管同名属性与变量，视觉上不跳变。
+ *
+ * **真源在根目录 `index.html` 的 `<!-- theme-bootstrap -->` 块里**，理由两条：
+ * ① `vite dev` 与「只跑 vite build、不跑 ssg」这两条路径根本不会经过本文件，写在这儿
+ * 等于只有 SSG 产物受益，开发和预览时照样白闪；放模板里则三条路径共用一份。
+ * ② 避免两处副本各自漂移（历史上 canonical / favicon 就是这么一层层叠上去的）。
+ * SSG 只负责把这一块原样搬进每个预渲染页的 `<head>`。
+ */
+const THEME_BOOTSTRAP_RE = /<!--\s*theme-bootstrap\s*-->[\s\S]*?<!--\s*\/theme-bootstrap\s*-->/;
+
+function extractThemeBootstrap(html) {
+  const match = html.match(THEME_BOOTSTRAP_RE);
+
+  if (!match) {
+    throw new Error(
+      `在 ${path.join(OUT_DIR, 'index.html')} 里找不到 <!-- theme-bootstrap --> 块：` +
+        '首屏配色引导是模板 index.html 的一部分，SSG 只负责搬运。' +
+        '产物可能已被别的东西覆盖，请重新跑 vite build'
+    );
+  }
+
+  return match[0];
 }
 
 function breadcrumb(route, title) {
@@ -579,9 +614,10 @@ function renderPage(page, tmpl, childrenByRoute) {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#000000" />
+${tmpl.bootstrap}
     ${meta}
     ${tmpl.headTags.join('\n    ')}
-    <link rel="stylesheet" href="${BASE}/assets/ssg.css" />
+    ${inlineCriticalCss()}
   </head>
 
   <body>
@@ -616,6 +652,7 @@ function renderNotFound(tmpl) {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#000000" />
+${tmpl.bootstrap}
     <meta name="robots" content="noindex" />
     <title>页面不存在 | ${escapeHtml(SITE_NAME)}</title>
     ${tmpl.headTags.join('\n    ')}
@@ -726,6 +763,18 @@ ${entries}
 `;
 }
 
+/**
+ * 静态预渲染首屏样式。仅作用于 `.ssg`，React 接管后随静态内容一起失效。
+ *
+ * **内联进每个页面的 `<head>`，不再走外部 `<link href="/assets/ssg.css">`。**
+ * 那份外链只有 4.5KB，却是 render-blocking 的：它承载「预渲染壳长什么样」的全部样式，
+ * 浏览器必须等它回来才肯画第一帧。省掉这一次往返，静态壳就能和引导脚本一起在第一帧
+ * 就位 —— 首屏不再有「等样式」的空窗，也就没有壳先裸奔一瞬再被样式覆盖的跳变。
+ *
+ * 代价是每页多背 4.5KB（247 页合计约 1.1MB，gzip 后小得多）。相对首屏稳定，这个交换
+ * 划算。顺带一提，`assets/ssg.css` 仍然照写不误：老访问者手里可能还捏着引用它的旧 HTML
+ * 缓存，删文件会让那种页面变成无样式的裸壳；等一个发布周期再摘。
+ */
 const SSG_CSS = `/* 静态预渲染首屏样式：仅作用于 .ssg，React 接管后随静态内容一起失效 */
 .ssg{max-width:920px;margin:0 auto;padding:24px 20px 64px;font:16px/1.75 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;color:#1f2937;background:#f9fafb}
 .ssg *{box-sizing:border-box}
@@ -759,7 +808,47 @@ const SSG_CSS = `/* 静态预渲染首屏样式：仅作用于 .ssg，React 接�
 .ssg-children ul{list-style:none;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px}
 .ssg-children a{display:block;padding:9px 12px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;text-decoration:none}
 .ssg-children a:hover{border-color:#0b6bcb}
+/* ----------------------------------------------------------------------
+   暗色首屏。
+   上面那套是按浅色写的（浅灰页 + 白卡片），而站点默认是暗色：预渲染整屏先铺一屏
+   浅色，等 React 接管再翻成纯黑 —— 那就是一次满屏白闪，比没做预渲染还难受。
+   用 html 上的 data-color-scheme 分流；根目录 index.html 里那段引导脚本（由本脚本搬进
+   head）在首屏绘制前就把该属性定好了，所以这里跟得上，用户看不到中间态。
+   只覆盖配色，布局一律不动。色值对应 src/theme/core/palette.ts 的 background.dark
+   与各 dark* 常量，改那边要回来同步。
+   ---------------------------------------------------------------------- */
+html[data-color-scheme='dark'] .ssg{color:#fff;background:#000}
+html[data-color-scheme='dark'] .ssg-crumb,
+html[data-color-scheme='dark'] .ssg-crumb a{color:#9aa5b1}
+html[data-color-scheme='dark'] .ssg-card{background:#0b0e12;border-color:#262b33}
+html[data-color-scheme='dark'] .ssg a{color:#5be49b}
+html[data-color-scheme='dark'] .ssg th,
+html[data-color-scheme='dark'] .ssg td{border-color:#262b33}
+html[data-color-scheme='dark'] .ssg th{background:#1a2028}
+html[data-color-scheme='dark'] .ssg img{border-color:#262b33}
+html[data-color-scheme='dark'] .ssg pre{background:#0e1218;border-color:#262b33}
+html[data-color-scheme='dark'] .ssg blockquote{border-left-color:#3a3f44;color:#c4cdd5}
+html[data-color-scheme='dark'] .ssg hr{border-top-color:#262b33}
+html[data-color-scheme='dark'] .ssg-children{border-top-color:#262b33}
+html[data-color-scheme='dark'] .ssg-children a{background:#12161b;border-color:#262b33}
+html[data-color-scheme='dark'] .ssg-children a:hover{border-color:#5be49b}
+html[data-color-scheme='dark'] .ssg .alert{background:rgba(147,187,253,.14);border-left-color:#93bbfd}
+html[data-color-scheme='dark'] .ssg .alert-success{background:rgba(134,239,172,.14);border-color:#86efac}
+html[data-color-scheme='dark'] .ssg .alert-warning{background:rgba(252,211,77,.14);border-color:#fcd34d}
+html[data-color-scheme='dark'] .ssg .alert-error{background:rgba(252,165,165,.14);border-color:#fca5a5}
+html[data-color-scheme='dark'] .ssg .alert-tip{background:rgba(94,234,212,.14);border-color:#5eead4}
 `;
+
+/**
+ * 把首屏样式包成 `<style id="ssg-critical">` 塞进 head。
+ *
+ * id 不是装饰：自检靠它断言「每页有且只有一份」。SSG 重复运行时曾经把 canonical /
+ * favicon 一层层叠上去（构建照样绿、页面越滚越脏），所以内联了也必须有幂等锚点。
+ * 想换 id 的话记得同步改 selfCheck。
+ */
+function inlineCriticalCss() {
+  return `<style id="ssg-critical">${SSG_CSS}</style>`;
+}
 
 /**
  * 生成后自检。
@@ -803,7 +892,11 @@ function selfCheck(pages) {
       [/<title>/g, '<title>'],
       [/rel="canonical"/g, 'canonical'],
       [/name="description"/g, 'description'],
-      [/rel="stylesheet" href="[^"]*ssg\.css"/g, 'ssg.css'],
+      // 首屏样式改内联后，仍然按「有且只有一份」守：它在渲染阻塞路径上，叠两份会让
+      // 每页的产物白白翻倍，而页面上看不出来。
+      [/id="ssg-critical"/g, '内联首屏样式'],
+      // 引导脚本同理。注意这里匹配的是**开标记**，闭合标记带 `/` 不会误计。
+      [/<!--\s*theme-bootstrap\s*-->/g, 'theme-bootstrap'],
     ]) {
       const n = (html.match(re) || []).length;
       if (n !== 1) problems.push(`${page.route}: ${label} 出现 ${n} 次（应为 1）`);
@@ -923,13 +1016,15 @@ function main() {
   const sitemapEntries = [homePage, ...pages];
 
   writeFile(path.join(OUT_DIR, 'sitemap.xml'), buildSitemap(sitemapEntries));
-  // 只写产物目录：SSG 永远在 vite build 之后运行，dist/assets 已经存在，
-  // 不需要再往 public/ 放一份（那会变成两个真源）。robots.txt 相反 —— 它走 public/，
-  // 因为两条部署链都会经过 vite build 的 public 拷贝。
+  // 首屏样式已经内联进每个页面的 head，这个文件眼下没人引用，留着是为了**过渡期**：
+  // 老访问者手里可能还捏着引用它的旧 HTML 缓存，删掉会让那种页面渲染成无样式的裸壳。
+  // 只写产物目录：SSG 永远在 vite build 之后运行，dist/assets 已经存在，不需要再往
+  // public/ 放一份（那会变成两个真源）。robots.txt 相反 —— 它走 public/，因为两条
+  // 部署链都会经过 vite build 的 public 拷贝。
   writeFile(path.join(OUT_DIR, 'assets/ssg.css'), SSG_CSS);
 
   console.log(
-    `[ssg] 生成 ${written} 个页面 + sitemap.xml（${sitemapEntries.length} 条，含首页）+ assets/ssg.css`
+    `[ssg] 生成 ${written} 个页面 + sitemap.xml（${sitemapEntries.length} 条，含首页），首屏样式与配色引导已内联进 head`
   );
 
   const problems = selfCheck(sitemapEntries);

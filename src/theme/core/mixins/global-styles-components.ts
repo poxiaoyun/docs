@@ -100,6 +100,19 @@ export function paperStyles(theme: Theme, options?: PaperStyleOptions): CSSObjec
     backdropFilter: `blur(${blur}px)`,
     WebkitBackdropFilter: `blur(${blur}px)`,
     backgroundColor: color ?? varAlpha(theme.vars.palette.background.paperChannel, 0.9),
+    /**
+     * 暗色补一根 1px 描边。
+     *
+     * 浮层（抽屉、下拉、Popover、菜单）的底色是 `rgba(paper, .9)`，暗色下 paper 是
+     * `#0B0E12`、页面是纯黑 —— 两者只差 1.05:1，原来唯一的边界是那层阴影；阴影在
+     * 纯黑上本来就看不见（见 `custom-shadows.ts`），换成白色外发光之后仍偏柔。
+     * 手机上的临时抽屉贴着满屏黑内容，没有这根线就看不出面板从哪开始。
+     *
+     * `box-sizing: border-box` 由 CssBaseline 全局设好，加边框不会撑宽。
+     */
+    ...theme.applyStyles('dark', {
+      border: `1px solid ${varAlpha(theme.vars.palette.common.whiteChannel, 0.12)}`,
+    }),
     ...(dropdown && {
       padding: theme.spacing(0.5),
       boxShadow: theme.vars.customShadows.dropdown,

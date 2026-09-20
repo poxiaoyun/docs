@@ -250,11 +250,18 @@ export default function DocsViewer() {
               borderRadius: 2,
               p: { xs: 2, md: 2.5 },
               border: (theme) =>
-                `1px solid ${alpha(theme.palette.divider, theme.palette.mode === 'dark' ? 0.9 : 1)}`,
+                `1px solid ${
+                  theme.palette.mode === 'dark'
+                    ? // 暗色下一律走中性白描边，不用 divider：divider 是给表格网格、
+                      // hr 那种「成片出现」的线调的，当卡片的唯一轮廓偏柔。
+                      alpha('#FFFFFF', 0.14)
+                    : theme.palette.divider
+                }`,
+              // 暗色不给投影。原来那层 `0 16px 40px rgba(0,0,0,.28)` 叠在纯黑页面上
+              // 等于没画 —— 投影要压出层次，前提是页面比它亮。文档框与页面的分层
+              // 全部交给上面那根 1px 描边。
               boxShadow: (theme) =>
-                theme.palette.mode === 'dark'
-                  ? `0 16px 40px ${alpha('#000', 0.28)}`
-                  : '0 0 0 1px rgba(145, 158, 171, 0.08)',
+                theme.palette.mode === 'dark' ? 'none' : '0 0 0 1px rgba(145, 158, 171, 0.08)',
               transition: (theme) =>
                 theme.transitions.create(['background-color', 'border-color', 'box-shadow']),
             }}

@@ -42,7 +42,10 @@ export function dashboardNavColorVars(
           '--layout-nav-text-secondary-color': palette.text.secondary,
           '--layout-nav-text-disabled-color': palette.text.disabled,
           ...theme.applyStyles('dark', {
-            '--layout-nav-border-color': varAlpha(palette.grey['500Channel'], 0.08),
+            // 侧边栏底色 = background.default = 纯黑，与页面同色，分隔全靠这根线。
+            // 0.08 的 grey[500] 落在 `#000000` 上只有 `rgb(12 13 14)`，等于没有；
+            // 抬到 0.18 才是一条看得见的边。
+            '--layout-nav-border-color': varAlpha(palette.grey['500Channel'], 0.18),
             '--layout-nav-horizontal-bg': varAlpha(palette.background.defaultChannel, 0.96),
           }),
         },

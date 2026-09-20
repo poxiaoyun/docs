@@ -100,6 +100,11 @@ export const MarkdownRoot = styled('div')(({ theme }) => ({
     borderLeft: `3px solid ${varAlpha(theme.vars.palette.grey['500Channel'], 0.32)}`,
     '& p': { margin: 0, color: 'inherit', fontSize: 'inherit', fontFamily: 'inherit' },
     '& p + p': { marginTop: '0.75em' },
+    // 纯黑底上 0.08 的灰几乎看不见，引用块会退化成「一段普通正文 + 一根细线」。
+    ...theme.applyStyles('dark', {
+      backgroundColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.14),
+      borderLeft: `3px solid ${varAlpha(theme.vars.palette.grey['500Channel'], 0.5)}`,
+    }),
   },
   /**
    * @Code inline
@@ -110,6 +115,10 @@ export const MarkdownRoot = styled('div')(({ theme }) => ({
     fontSize: theme.typography.body2.fontSize,
     borderRadius: Number(theme.shape.borderRadius) / 2,
     backgroundColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.2),
+    // 同上：纯黑底要抬到 0.28 才看得出「这是个代码片」。
+    ...theme.applyStyles('dark', {
+      backgroundColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.28),
+    }),
   },
   /**
    * @Link
@@ -131,9 +140,20 @@ export const MarkdownRoot = styled('div')(({ theme }) => ({
       backgroundColor: theme.vars.palette.grey[900],
       border: `1px solid ${varAlpha(theme.vars.palette.common.blackChannel, 0.18)}`,
       '& code': { fontSize: theme.typography.body2.fontSize },
+      /**
+       * 暗色底色。
+       *
+       * 旧的 `#111827` 是 slate 调（偏蓝），配原来的 grey[900] 页面还协调；换成纯黑
+       * 底之后它就成了明度差最大的一块，整页最显眼的东西变成代码块而不是正文。
+       * 改成 `#0E1218` —— 贴合 `background.paper` `#0B0E12` 的冷调，只比文档框亮一档，
+       * 再靠 0.18 的白描边把它从底色里拎出来。
+       *
+       * 语法高亮色（`code-highlight-block.css`）是固定的一套 Tomorrow Night，不随主题走，
+       * 在 `#0E1218` 与在 `#111827` 上的可读性一致，不用跟着改。
+       */
       ...theme.applyStyles('dark', {
-        backgroundColor: '#111827',
-        border: `1px solid ${varAlpha(theme.vars.palette.common.whiteChannel, 0.12)}`,
+        backgroundColor: '#0E1218',
+        border: `1px solid ${varAlpha(theme.vars.palette.common.whiteChannel, 0.18)}`,
       }),
     },
   },
@@ -170,6 +190,9 @@ export const MarkdownRoot = styled('div')(({ theme }) => ({
     },
     'tbody tr:hover': {
       backgroundColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.08),
+      ...theme.applyStyles('dark', {
+        backgroundColor: varAlpha(theme.vars.palette.grey['500Channel'], 0.18),
+      }),
     },
   },
   /**

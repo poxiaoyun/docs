@@ -11,6 +11,8 @@ function colorVars(theme: Theme, variant?: 'vertical' | 'mini' | 'horizontal') {
     vars: { palette },
   } = theme;
 
+  const isDark = theme.palette.mode === 'dark';
+
   return {
     '--nav-item-color': palette.text.secondary,
     '--nav-item-hover-bg': palette.action.hover,
@@ -18,8 +20,18 @@ function colorVars(theme: Theme, variant?: 'vertical' | 'mini' | 'horizontal') {
     // root
     '--nav-item-root-active-color': palette.primary.main,
     '--nav-item-root-active-color-on-dark': palette.primary.light,
-    '--nav-item-root-active-bg': varAlpha(palette.primary.mainChannel, 0.08),
-    '--nav-item-root-active-hover-bg': varAlpha(palette.primary.mainChannel, 0.16),
+    /**
+     * 选中底色是叠在侧边栏底色上的一层 primary（不是 `action.*`，所以不吃
+     * `palette.ts` 里的暗色加倍）。
+     *
+     * 0.08 的 `#00A76F` 落在旧的 `#141A21` 上勉强看得出来，落在纯黑上只剩
+     * `rgb(0 13 9)` —— 选中项会变成「只有字绿了、底色没变」。暗色抬到 0.18 / 0.3。
+     */
+    '--nav-item-root-active-bg': varAlpha(palette.primary.mainChannel, isDark ? 0.18 : 0.08),
+    '--nav-item-root-active-hover-bg': varAlpha(
+      palette.primary.mainChannel,
+      isDark ? 0.3 : 0.16
+    ),
     '--nav-item-root-open-color': palette.text.primary,
     '--nav-item-root-open-bg': palette.action.hover,
     // sub

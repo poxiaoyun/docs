@@ -6,6 +6,53 @@
     <meta name="theme-color" content="#000000" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RUNE 文档 · 晓石AI智算平台</title>
+
+    <!--
+      首屏配色引导。**这一段是唯一真源**，SSG 会把它原样搬进每个预渲染页的 head
+      （见 scripts/ssg.mjs 的 extractThemeBootstrap）。改配色默认值只改这里。
+
+      为什么非它不可：站点默认暗色（themeConfig.defaultMode = 'dark'），但 MUI 的调色板
+      CSS 变量是 emotion 在运行时注入的 —— 首屏绘制时 var(--palette-background-default)
+      还不存在，浏览器按白底画一帧再翻黑。这段脚本同步执行在 head 里，抢在首次绘制前把
+      data-color-scheme 定下来；等 React 起来，MUI 接管同名属性，视觉上不跳变。
+
+      两条约束，改之前先想清楚：
+      1. 底色走 <style> 规则而不是 element.style。写内联样式的话，用户之后点顶栏切回
+         明亮模式，<html> 上那层黑不会自己消失（MUI 只管属性和 color-scheme，不管
+         background-color）。属性选择器则随属性自动翻转。
+      2. 存储键与取值优先级必须和 MUI 一致：themeConfig.modeStorageKey = 'theme-mode'，
+         存过就用存的，没存过才用默认，'system' 交给 matchMedia。否则老读者手动选的
+         明亮模式会被这里的默认值盖掉。
+    -->
+
+    <!-- 下面这对标记是给 scripts/ssg.mjs 抽块用的，删掉会导致构建失败 -->
+    <!-- theme-bootstrap -->
+    <style>
+      html {
+        background-color: #ffffff;
+      }
+      html[data-color-scheme='dark'] {
+        background-color: #000000;
+      }
+    </style>
+    <script>
+      (function () {
+        try {
+          var mode = localStorage.getItem('theme-mode') || 'dark';
+          var scheme = mode;
+          if (mode !== 'light' && mode !== 'dark') {
+            scheme =
+              window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+          }
+          var root = document.documentElement;
+          root.setAttribute('data-color-scheme', scheme);
+          root.style.colorScheme = scheme;
+        } catch (e) {}
+      })();
+    </script>
+    <!-- /theme-bootstrap -->
   </head>
 
   <body>

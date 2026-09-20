@@ -23,7 +23,15 @@ export const themeConfig: ThemeConfig = {
   /** **************************************
    * Base
    *************************************** */
-  defaultMode: 'light',
+  /**
+   * 站点默认走暗色（纯黑高对比），见 `core/palette.ts` 的 `background.dark`。
+   *
+   * 这里是**首次访问**的默认值：老读者在 localStorage（`modeStorageKey`）里存过
+   * 自己的偏好，仍然以那份为准 —— 改这个不会把已经手动切成明亮的用户拽回来。
+   * 想让他们也看到暗色，得让他们自己点顶栏的「明亮/暗黑」按钮，或者在设置抽屉里
+   * 「重置全部」。
+   */
+  defaultMode: 'dark',
   modeStorageKey: 'theme-mode',
   direction: 'ltr',
   classesPrefix: 'minimal',
