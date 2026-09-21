@@ -624,6 +624,50 @@ function breadcrumb(route, title) {
   return items;
 }
 
+/**
+ * 首屏骨架。挂在 `.ssg` 容器的第一个子节点，与后面那段被 `.ssg-pending` 隐藏的正文同位。
+ *
+ * 两种形态，因为首页和文档页接管后的样子差得太远：
+ *   · 首页 —— 门户式落地页：一段大标题 + 两行副标题 + 三张并排的卡片。
+ *   · 其余页 —— 文档页：一行面包屑 + 一张正文卡片（标题行 + 几行文本）。
+ *
+ * 讲究只有一条：**别画得太具体**。骨架越像某个具体东西，接管时越像「画错了被换掉」；
+ * 几个中性灰块反倒读成「正在加载」。所以这里不写任何文案、不放图标，纯色块。
+ *
+ * 侧边栏没有复刻：真实文档页是「左边栏 + 内容」两栏，而 `.ssg` 是居中的单栏容器，
+ * 壳里补一条假边栏就得把整个容器改成两栏布局，收益只在那两秒的位移量上，不划算。
+ * 已知残留：文档页接管时正文会从左往右让开一个侧边栏的宽度。
+ *
+ * `aria-hidden` 是必须的：骨架是装饰，读屏软件不该念一堆空 div。
+ */
+function renderSkeleton(route) {
+  if (route === '') {
+    return `      <div class="ssg-skel ssg-skel-home" aria-hidden="true">
+        <div class="ssg-skel-hero-title"></div>
+        <div class="ssg-skel-hero-sub"></div>
+        <div class="ssg-skel-hero-sub ssg-skel-hero-sub-2"></div>
+        <div class="ssg-skel-grid">
+          <div></div>
+          <div></div>
+          <div></div>
+        </div>
+      </div>`;
+  }
+
+  // 宽度参差是刻意的：等宽灰条会被读成表格或分隔线，参差的才像一段段文字。
+  const lines = [96, 100, 88, 92, 61]
+    .map((w) => `          <div class="ssg-skel-line" style="width:${w}%"></div>`)
+    .join('\n');
+
+  return `      <div class="ssg-skel" aria-hidden="true">
+        <div class="ssg-skel-crumb"></div>
+        <div class="ssg-skel-card">
+          <div class="ssg-skel-title"></div>
+${lines}
+        </div>
+      </div>`;
+}
+
 function renderPage(page, tmpl, childrenByRoute) {
   const { route, title, description, updated, content, segs, isIndex } = page;
   const url = `${SITE_URL}${route ? `/${route}` : ''}/`;
@@ -713,7 +757,8 @@ ${tmpl.bootstrap}
   <body>
     <div id="root">
 ${renderHeader(route, getTopNav())}
-      <div class="ssg">
+      <div class="ssg ssg-pending">
+${renderSkeleton(route)}
         <nav class="ssg-crumb">${crumbHtml}</nav>
         <main class="ssg-card">
           <article>
@@ -722,6 +767,15 @@ ${body}
 ${childrenHtml}
         </main>
       </div>
+      <script>
+        /* 骨架的兜底放行：入口 chunk 拉不下来时 React 永远不会接管，不能让人一直盯着
+           骨架。正常路径下这条定时器到点时 #root 早被 React 清空，属性挂上去也无处生效。
+           只能内联在壳旁边 —— 它要跟着壳一起被 React 删掉，放 head 里也一样，但放这里
+           两段逻辑挨着，改的人不会漏。 */
+        setTimeout(function () {
+          document.documentElement.setAttribute('data-ssg-fallback', '');
+        }, 8000);
+      </script>
     </div>
   </body>
 </html>
@@ -864,16 +918,19 @@ ${entries}
  * 浏览器必须等它回来才肯画第一帧。省掉这一次往返，静态壳就能和引导脚本一起在第一帧
  * 就位 —— 首屏不再有「等样式」的空窗，也就没有壳先裸奔一瞬再被样式覆盖的跳变。
  *
- * 代价是每页多背 4.5KB（247 页合计约 1.1MB，gzip 后小得多）。相对首屏稳定，这个交换
- * 划算。顺带一提，`assets/ssg.css` 仍然照写不误：老访问者手里可能还捏着引用它的旧 HTML
- * 缓存，删文件会让那种页面变成无样式的裸壳；等一个发布周期再摘。
+ * 代价是每页多背这一份 CSS（2026-09-21 实测 11.5KB raw / 4.6KB gzip）。一次访问只加载
+ * 一页，也就是这点流量；相对首屏稳定，这个交换划算。顺带一提，`assets/ssg.css` 仍然照写
+ * 不误：老访问者手里可能还捏着引用它的旧 HTML 缓存，删文件会让那种页面变成无样式的裸壳；
+ * 等一个发布周期再摘。**但新增的规则都得能容忍「旧 HTML 里没有对应元素」**，理由见下面
+ * 骨架那一段里的 ssg-pending 说明。
  */
-const SSG_CSS = `/* 静态预渲染首屏样式。三段职责不同：
+const SSG_CSS = `/* 静态预渲染首屏样式。四段职责不同：
    · html/body 兜底 —— 从首帧一直活到 React 接管。此前这块是空的，于是首屏那几秒
      里 body 还是浏览器默认的 margin:8px + 透明底，四周露出一圈底色，看着像没加载完。
    · 顶栏 —— 同理，让首屏一上来就有站点框架，而不是一张悬空的卡片。
      上面这两段在 React 接管后由 CssBaseline 与 HeaderSection 给出同样的值，
      **取值必须与最终态一致**，不一致就会在接管瞬间看到跳动。
+   · 骨架屏 —— 正文在样式就绪前**不显示**，那个位置留给骨架。理由见下面那一段注释。
    · .ssg 及其子选择器 —— 只负责预渲染正文，React 接管后随静态内容一起消失。
 
    色值一律手写，没有 var(--palette-*)：调色板变量由 emotion 在运行时注入，首帧根本
@@ -920,6 +977,38 @@ html[data-color-scheme='dark'] body{background:#000;color:#fff}
 .ssg-children a{display:block;padding:9px 12px;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;text-decoration:none}
 .ssg-children a:hover{border-color:#0b6bcb}
 /* ----------------------------------------------------------------------
+   骨架屏：正文在样式就绪之前不出现。
+
+   为什么要把正文藏起来：预渲染壳的正文与 React 接管后的页面**形态不同**，而且不是
+   细节不同 —— 首页壳是一张 markdown 文档卡片（"四条产品线"那几段），真实首页是门户式
+   暗色落地页（Hero + 模拟终端 + Bento Grid，见 src/sections/home/）；文档页壳没有左侧
+   边栏，真实页是 DashboardLayout 的「固定顶栏 + 左边栏 + 内容」。用户先看到一版完全不同
+   的正文、两秒后整片被换掉，比多等一会儿糟得多。所以壳只负责把自己画成骨架。
+
+   「ssg-pending」挂在 .ssg 自己身上、而不是写成无条件规则，是为了**过渡期**：
+   assets/ssg.css 仍被老访问者手里的旧 HTML 缓存引用，那些页面里既没有 .ssg-pending
+   也没有骨架 —— 无条件隐藏会把它们变成永久空白页。带上这个标记，新旧产物各自正确。
+
+   藏的是 visibility 而不是 display：内容仍然参与布局，页面滚动高度与接管后一致，
+   接管时不会因为滚动条出现/消失再跳一次。正文是加载后就被 React 整个替换掉的，
+   留不留占位都不影响最终观感。
+   ---------------------------------------------------------------------- */
+.ssg-pending .ssg-crumb,.ssg-pending .ssg-card,.ssg-pending .ssg-children{visibility:hidden}
+.ssg-skel-crumb,.ssg-skel-title,.ssg-skel-line,.ssg-skel-hero-title,.ssg-skel-hero-sub,.ssg-skel-grid>div{background:#e5e7eb;animation:ssg-skel-pulse 1.6s ease-in-out infinite}
+@keyframes ssg-skel-pulse{0%,100%{opacity:.55}50%{opacity:1}}
+.ssg-skel-crumb{width:140px;height:13px;border-radius:6px;margin:0 0 14px}
+.ssg-skel-card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:32px 36px}
+.ssg-skel-title{width:min(56%,420px);height:30px;border-radius:8px;margin:0 0 26px}
+.ssg-skel-line{height:14px;border-radius:7px;margin:0 0 14px}
+.ssg-skel-hero-title{width:78%;height:40px;border-radius:10px}
+.ssg-skel-hero-sub{width:100%;height:16px;border-radius:8px;margin:18px 0 0}
+.ssg-skel-hero-sub-2{width:72%}
+.ssg-skel-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:44px 0 0}
+.ssg-skel-grid>div{height:168px;border-radius:14px}
+@media (max-width:899.98px){.ssg-skel-grid{grid-template-columns:1fr}.ssg-skel-grid>div{height:120px}}
+/* 骨架的呼吸动画只是提示「在加载」，没有信息量 —— 跟着系统的减弱动效开关一起关掉。 */
+@media (prefers-reduced-motion:reduce){.ssg-skel-crumb,.ssg-skel-title,.ssg-skel-line,.ssg-skel-hero-title,.ssg-skel-hero-sub,.ssg-skel-grid>div{animation:none;opacity:.8}}
+/* ----------------------------------------------------------------------
    暗色首屏。
    上面那套是按浅色写的（浅灰页 + 白卡片），而站点默认是暗色：预渲染整屏先铺一屏
    浅色，等 React 接管再翻成纯黑 —— 那就是一次满屏白闪，比没做预渲染还难受。
@@ -948,6 +1037,10 @@ html[data-color-scheme='dark'] .ssg .alert-success{background:rgba(134,239,172,.
 html[data-color-scheme='dark'] .ssg .alert-warning{background:rgba(252,211,77,.14);border-color:#fcd34d}
 html[data-color-scheme='dark'] .ssg .alert-error{background:rgba(252,165,165,.14);border-color:#fca5a5}
 html[data-color-scheme='dark'] .ssg .alert-tip{background:rgba(94,234,212,.14);border-color:#5eead4}
+html[data-color-scheme='dark'] .ssg-skel-crumb,
+html[data-color-scheme='dark'] .ssg-skel-title,
+html[data-color-scheme='dark'] .ssg-skel-line{background:#1a2028}
+html[data-color-scheme='dark'] .ssg-skel-card{background:#0b0e12;border-color:#262b33}
 /* ----------------------------------------------------------------------
    首页专供：门户式深色落地页在**两种主题下都是深色**（见 src/sections/home/tokens.ts
    的 bgPage 与内容面），所以它不能跟着 data-color-scheme 走 —— 亮色主题下若铺浅色，
@@ -962,17 +1055,38 @@ html[data-ssg-home] .ssg-card{background:#0d0e10;border-color:#262b33}
 html[data-ssg-home] .ssg a{color:#5be49b}
 html[data-ssg-home] .ssg-crumb,
 html[data-ssg-home] .ssg-crumb a{color:#9aa5b1}
+html[data-ssg-home] .ssg-skel-hero-title,
+html[data-ssg-home] .ssg-skel-hero-sub,
+html[data-ssg-home] .ssg-skel-grid>div{background:#171b20}
+/* ----------------------------------------------------------------------
+   兜底放行。壳的正文靠「React 接管时整片清空 #root」自然消失，所以这里平时不需要任何
+   揭示动作；但入口 chunk 拉不下来时（部署换版中途、公司网络挡了 js、老浏览器报错），
+   React 永远不会来，那就不能让人一直盯着骨架。
+   由 renderPage 里那段内联脚本在 8s 后给 <html> 挂 data-ssg-fallback 触发。
+   只会发生在失败路径上：正常路径下 React 早已把带 .ssg-pending 的整个节点删掉了。
+   JS 被完全禁用的情况不走这里（setTimeout 也不会执行），由 head 里的 <noscript> 放行，
+   见 inlineCriticalCss。
+   ---------------------------------------------------------------------- */
+html[data-ssg-fallback] .ssg-pending .ssg-crumb,
+html[data-ssg-fallback] .ssg-pending .ssg-card,
+html[data-ssg-fallback] .ssg-pending .ssg-children{visibility:visible}
+html[data-ssg-fallback] .ssg-skel{display:none}
 `;
 
 /**
- * 把首屏样式包成 `<style id="ssg-critical">` 塞进 head。
+ * 把首屏样式包成 `<style id="ssg-critical">` 塞进 head，紧跟一份 `<noscript>` 放行样式。
  *
  * id 不是装饰：自检靠它断言「每页有且只有一份」。SSG 重复运行时曾经把 canonical /
  * favicon 一层层叠上去（构建照样绿、页面越滚越脏），所以内联了也必须有幂等锚点。
  * 想换 id 的话记得同步改 selfCheck。
  */
 function inlineCriticalCss() {
-  return `<style id="ssg-critical">${SSG_CSS}</style>`;
+  // <noscript> 兜底：JS 被完全禁用时没有「样式就绪」这回事，也就永远等不到 React。
+  // 那种情况下壳里那份正文就是用户能拿到的全部内容，直接放行、并把骨架藏掉。
+  // 放在这里而不是写进 SSG_CSS，是因为 <noscript> 不能嵌在 <style> 里面。
+  // 特异性与 SSG_CSS 里的隐藏规则相同，靠「在后」取胜。
+  return `<style id="ssg-critical">${SSG_CSS}</style>
+    <noscript><style>.ssg-pending .ssg-crumb,.ssg-pending .ssg-card,.ssg-pending .ssg-children{visibility:visible}.ssg-skel{display:none}</style></noscript>`;
 }
 
 /**
@@ -1024,9 +1138,20 @@ function selfCheck(pages) {
       [/<!--\s*theme-bootstrap\s*-->/g, 'theme-bootstrap'],
       // 预渲染顶栏同理：它在常规流里紧挨着正文，叠两份会把整页内容推下去一屏。
       [/<header class="ssg-header">/g, '预渲染顶栏'],
+      // 骨架也同理：正文被 .ssg-pending 藏着，叠两份骨架就是整页两屏灰条。
+      [/<div class="ssg-skel[ "]/g, '首屏骨架'],
     ]) {
       const n = (html.match(re) || []).length;
       if (n !== 1) problems.push(`${page.route}: ${label} 出现 ${n} 次（应为 1）`);
+    }
+
+    // 骨架的对照面：正文必须真的被藏起来。这条规则要是在 SSG_CSS 里被误删，页面上
+    // 不会报任何错、构建照样绿，只是用户又看到「另一个样子的正文」闪一下再被换掉 ——
+    // 正是本次要修的那个观感。所以把它当成契约守在这里。
+    // 用正则而不是整串 includes：那条规则是三段选择器的逗号列表，改行/加选择器都属正常
+    // 维护，不该把守卫弄红。这里只认「.ssg-pending 后面某个块里声明了 hidden」。
+    if (!/\.ssg-pending[^{}]*\{[^}]*visibility:hidden/.test(html)) {
+      problems.push(`${label}: 内联首屏样式里没有「正文先隐藏」的规则（.ssg-pending）`);
     }
   }
 
@@ -1043,6 +1168,8 @@ function selfCheck(pages) {
     if (title !== 1) problems.push(`404.html: <title> 出现 ${title} 次（应为 1）`);
     if (/rel="canonical"/.test(html)) problems.push('404.html: 不应出现 canonical');
     if (/application\/ld\+json/.test(html)) problems.push('404.html: 不应出现 JSON-LD');
+    // 404 是空壳，没有预渲染正文 —— 也就不该有骨架，否则页面会永远空转在一屏灰条上。
+    if (/ssg-skel/.test(html)) problems.push('404.html: 不应出现首屏骨架');
   }
 
   // image sitemap 自检。声明了却抓不到的图，搜索引擎会直接把它从图片索引里剔除 ——
