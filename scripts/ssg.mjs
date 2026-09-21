@@ -522,6 +522,93 @@ function extractThemeBootstrap(html) {
   return match[0];
 }
 
+// ----------------------------------------------------------------------
+// 顶栏
+
+/**
+ * 一级栏目与站名：**从源码读，不在本脚本里写第二份**。
+ *
+ * 为什么壳里要有顶栏：React 接管前的那几秒，页面上只有预渲染壳。壳原先没有顶栏，
+ * 于是**新访客看到的第一屏是一个悬空的文字卡片** —— 没有导航、没有站名，亮色模式下
+ * 卡片与页面底色又几乎同色，整体看起来就像「样式没加载出来」。
+ * 把真实顶栏的骨架静态化，首屏一上来就是个完整的站点框架，接管时只在原位换内容。
+ *
+ * 为什么解析源码而不是抄一份常量：抄一份就是第二个真源，栏目一改两边就漂。
+ * 解析失败会直接抛错（不是静默少渲染几项），构建期拦住。
+ */
+const TOP_NAV_SRC = path.join(ROOT, 'src/layouts/components/global-top-nav.tsx');
+
+let topNavCache = null;
+
+function getTopNav() {
+  if (!topNavCache) topNavCache = readTopNav();
+  return topNavCache;
+}
+
+function readTopNav() {
+  const src = fs.readFileSync(TOP_NAV_SRC, 'utf8');
+
+  const block = src.match(/export const TOP_NAV_LINKS[^=]*=\s*\[([\s\S]*?)\n\];/);
+  if (!block) {
+    throw new Error(
+      `在 ${TOP_NAV_SRC} 里找不到 TOP_NAV_LINKS：预渲染壳的顶栏栏目取自那里。` +
+        '如果改成了 map 之类的生成式写法，要回来同步本脚本的解析。'
+    );
+  }
+
+  const items = [
+    ...block[1].matchAll(
+      /\{\s*key:\s*'([^']+)',\s*path:\s*'([^']+)',\s*label:\s*\{\s*cn:\s*'([^']+)',\s*en:\s*'([^']+)'\s*\},?/g
+    ),
+  ].map((m) => ({ key: m[1], path: m[2], cn: m[3], en: m[4] }));
+
+  // 解析出的条数必须等于源码里 `key:` 出现的次数。若有人把某个栏目换成多行写法，
+  // 正则只会漏掉那一项 —— 顶栏少一个栏目，而构建照样绿。这里把它变成硬失败。
+  const declared = (block[1].match(/\bkey:/g) || []).length;
+  if (!items.length || items.length !== declared) {
+    throw new Error(
+      `TOP_NAV_LINKS 解析不完整：正则拿到 ${items.length} 项，源码里声明了 ${declared} 项。` +
+        '本脚本的正则要求「一个栏目写成一行」，换行写会导致静默漏项。'
+    );
+  }
+
+  const title = src.match(/const siteTitle = locale === 'en' \? '([^']*)' : '([^']*)';/);
+  if (!title) {
+    throw new Error(`在 ${TOP_NAV_SRC} 里找不到 siteTitle 的赋值，预渲染壳的站名取自那里。`);
+  }
+
+  return { title: { cn: title[2], en: title[1] }, items };
+}
+
+/**
+ * 静态顶栏的 HTML。
+ *
+ * 尺寸与结构对着 `layouts/core/header-section.tsx`（高度走 `layouts/core/css-vars.ts`
+ * 的那两个变量，桌面 72 / 移动 64，切换断点是 lg）与 `layouts/components/global-top-nav.tsx`
+ * 来，保证 React 接管时顶栏在原位换内容、不跳。
+ *
+ * 栏目刻意渲染成 `<span>` 而不是 `<a>`：首屏它只是占位骨架，做成可点的会让用户在
+ * 接管前后点到两套不同的东西；顺带也省掉了 BASE 前缀与尾斜杠的换算。
+ */
+function renderHeader(route, nav) {
+  const pathname = route ? `/${route}` : '/';
+
+  const items = nav.items
+    .map((item) => {
+      // 选中判据与 GlobalTopNav 保持一致：首页严格相等，其余按前缀匹配。
+      const active = item.path === '/' ? pathname === '/' : pathname.startsWith(item.path);
+      return `<span${active ? ' data-active' : ''}>${escapeHtml(item.cn)}</span>`;
+    })
+    .join('\n        ');
+
+  return `    <header class="ssg-header">
+      <span class="ssg-header-brand">${escapeHtml(nav.title.cn)}</span>
+      <nav class="ssg-header-nav">
+        ${items}
+      </nav>
+    </header>`;
+}
+
 function breadcrumb(route, title) {
   const segments = route ? route.split('/') : [];
   const items = [{ name: '文档首页', url: `${SITE_URL}/` }];
@@ -608,8 +695,11 @@ function renderPage(page, tmpl, childrenByRoute) {
     .filter(Boolean)
     .join('\n    ');
 
+  // 首页是门户式深色落地页（见 src/sections/home/tokens.ts 的 bgPage），两种主题下都是深色。
+  // 给它挂一个标记，让首屏壳也能钉成深色 —— 否则亮色主题下会先铺一屏浅色、React 接管时
+  // 整屏翻黑，那是全屏级的跳变。其余页面跟随主题，不需要这个标记。
   return `<!doctype html>
-<html lang="${SITE_URL_LANG}">
+<html lang="${SITE_URL_LANG}"${route === '' ? ' data-ssg-home' : ''}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -621,15 +711,18 @@ ${tmpl.bootstrap}
   </head>
 
   <body>
-    <div id="root"><div class="ssg">
-      <nav class="ssg-crumb">${crumbHtml}</nav>
-      <main class="ssg-card">
-        <article>
+    <div id="root">
+${renderHeader(route, getTopNav())}
+      <div class="ssg">
+        <nav class="ssg-crumb">${crumbHtml}</nav>
+        <main class="ssg-card">
+          <article>
 ${body}
-        </article>
+          </article>
 ${childrenHtml}
-      </main>
-    </div></div>
+        </main>
+      </div>
+    </div>
   </body>
 </html>
 `;
@@ -775,7 +868,25 @@ ${entries}
  * 划算。顺带一提，`assets/ssg.css` 仍然照写不误：老访问者手里可能还捏着引用它的旧 HTML
  * 缓存，删文件会让那种页面变成无样式的裸壳；等一个发布周期再摘。
  */
-const SSG_CSS = `/* 静态预渲染首屏样式：仅作用于 .ssg，React 接管后随静态内容一起失效 */
+const SSG_CSS = `/* 静态预渲染首屏样式。三段职责不同：
+   · html/body 兜底 —— 从首帧一直活到 React 接管。此前这块是空的，于是首屏那几秒
+     里 body 还是浏览器默认的 margin:8px + 透明底，四周露出一圈底色，看着像没加载完。
+   · 顶栏 —— 同理，让首屏一上来就有站点框架，而不是一张悬空的卡片。
+     上面这两段在 React 接管后由 CssBaseline 与 HeaderSection 给出同样的值，
+     **取值必须与最终态一致**，不一致就会在接管瞬间看到跳动。
+   · .ssg 及其子选择器 —— 只负责预渲染正文，React 接管后随静态内容一起消失。
+
+   色值一律手写，没有 var(--palette-*)：调色板变量由 emotion 在运行时注入，首帧根本
+   还不存在。改 src/theme/core/palette.ts 的 background 两套时要回来同步这里。 */
+html,body{margin:0;padding:0}
+body{min-height:100vh;background:#f9fafb;color:#1f2937;font:16px/1.75 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased}
+html[data-color-scheme='dark'] body{background:#000;color:#fff}
+.ssg-header{display:flex;align-items:center;height:72px;padding:0 24px}
+.ssg-header-brand{font-weight:600;letter-spacing:.1em;font-size:1.25rem;line-height:1.2;white-space:nowrap}
+.ssg-header-nav{display:flex;align-items:center;gap:8px;margin-left:16px;overflow:hidden}
+.ssg-header-nav span{font-size:1rem;font-weight:600;opacity:.78;padding:6px 20px;border-radius:999px;white-space:nowrap}
+.ssg-header-nav span[data-active]{font-weight:700;opacity:1;background:color-mix(in srgb,currentColor 12%,transparent)}
+@media (max-width:1199.98px){.ssg-header{height:64px;padding:0 16px}.ssg-header-brand{font-size:1rem}.ssg-header-nav{display:none}}
 .ssg{max-width:920px;margin:0 auto;padding:24px 20px 64px;font:16px/1.75 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;color:#1f2937;background:#f9fafb}
 .ssg *{box-sizing:border-box}
 .ssg-crumb{font-size:13px;color:#6b7280;margin:0 0 14px}
@@ -837,6 +948,20 @@ html[data-color-scheme='dark'] .ssg .alert-success{background:rgba(134,239,172,.
 html[data-color-scheme='dark'] .ssg .alert-warning{background:rgba(252,211,77,.14);border-color:#fcd34d}
 html[data-color-scheme='dark'] .ssg .alert-error{background:rgba(252,165,165,.14);border-color:#fca5a5}
 html[data-color-scheme='dark'] .ssg .alert-tip{background:rgba(94,234,212,.14);border-color:#5eead4}
+/* ----------------------------------------------------------------------
+   首页专供：门户式深色落地页在**两种主题下都是深色**（见 src/sections/home/tokens.ts
+   的 bgPage 与内容面），所以它不能跟着 data-color-scheme 走 —— 亮色主题下若铺浅色，
+   React 接管时是整屏翻黑，比顶栏翻色刺眼得多。顶栏也一并变白字：首页顶栏本就是深色底。
+   只覆盖首页正文里真实出现的元素（标题/段落/链接/面包屑）。首页正文由 buildHomeMarkdown
+   生成，没有表格与代码块，所以那几类不必在这里重复一遍。
+   注意这两组选择器特异性相同，靠**书写顺序**取胜：必须排在上面那套暗色规则之后。
+   ---------------------------------------------------------------------- */
+html[data-ssg-home] body{background:#050506;color:#fff}
+html[data-ssg-home] .ssg{color:#fff;background:#050506}
+html[data-ssg-home] .ssg-card{background:#0d0e10;border-color:#262b33}
+html[data-ssg-home] .ssg a{color:#5be49b}
+html[data-ssg-home] .ssg-crumb,
+html[data-ssg-home] .ssg-crumb a{color:#9aa5b1}
 `;
 
 /**
@@ -897,6 +1022,8 @@ function selfCheck(pages) {
       [/id="ssg-critical"/g, '内联首屏样式'],
       // 引导脚本同理。注意这里匹配的是**开标记**，闭合标记带 `/` 不会误计。
       [/<!--\s*theme-bootstrap\s*-->/g, 'theme-bootstrap'],
+      // 预渲染顶栏同理：它在常规流里紧挨着正文，叠两份会把整页内容推下去一屏。
+      [/<header class="ssg-header">/g, '预渲染顶栏'],
     ]) {
       const n = (html.match(re) || []).length;
       if (n !== 1) problems.push(`${page.route}: ${label} 出现 ${n} 次（应为 1）`);
