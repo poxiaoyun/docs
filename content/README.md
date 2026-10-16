@@ -61,6 +61,7 @@ flowchart LR
 | Apps | [apps](apps/README.md) | 管理应用目录、版本与交付生命周期 | 正在落地，尚无正式提交基线 |
 | Rune | [rune](rune/README.md) | 治理集群、算力和工作负载运行环境 | 已实现，旧 Instance 路径处于迁移期 |
 | AIRouter | [airouter](airouter/README.md) | 统一、治理和计量模型调用 | 已实现 |
+| 数字孪生 | [digital-twin](digital-twin/README.md) | 按机房呈现集群、机柜与整机运行状态 | 平台对接为提案，独立前端已实现 |
 
 ### 平台公共能力
 
@@ -92,6 +93,7 @@ IAM、Moha、Apps、AIRouter 和 KMS 使用统一结构：`README.md` 是产品�
 | Rune | [产品入口](rune/README.md) | [控制面架构](rune/architecture.md) |
 | AIRouter | [需求](airouter/requirements.md) | [设计](airouter/design.md) |
 | KMS | [需求](kms/requirements.md) | [设计](kms/design.md) |
+| 数字孪生（提案） | [需求](digital-twin/requirements.md) | [设计](digital-twin/design.md)、[实施计划](digital-twin/implementation-plan.md) |
 
 ## Rune 领域设计
 
