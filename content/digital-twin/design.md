@@ -1,6 +1,6 @@
 # 数字孪生平台对接设计
 
-> 状态：**提案，已确认、未实施**（2026-10-16）。本文是 `rune-digital-twin` 接入 Rune 平台的唯一权威设计；
+> 状态：**已实现于各仓 `twin` 分支，未合入 `main`**（2026-10-16；真实集群端到端、PromQL 真实语义、网关 cookie 与 `/twin/` 路径行为未验证，见[实施计划进度表](implementation-plan.md#进度)）。本文是 `rune-digital-twin` 接入 Rune 平台的唯一权威设计；
 > 实施步骤见[实施计划](implementation-plan.md)，新采集端见
 > [节点硬件与机房环境监控研究](../../../specification/research/node-hardware-monitoring.md)。
 > 当前 `rune-digital-twin` 仍是独立前端，下文"现状"一节描述实施前的代码事实。
@@ -251,7 +251,7 @@ phase 为 `Pending` 或 `Error` 时视为暂时无法确认。
 ### 节点
 
 - 已启用机房每 5 分钟拉取 `.../resources/apis/core/v1/nodes` 与 `.../noderesources`，后台可手动触发。
-- 节点池 = 服务端内存中的节点列表，不写入台账。平台字段只读：名称、InternalIP、CPU、内存、GPU 型号与数量、Ready 状态。
+- 节点池 = 服务端内存中的节点列表，不写入台账。平台字段只读：名称、InternalIP、CPU 核数、内存、CPU 厂商与型号（Node label，缺失为 `null`）、GPU 型号与数量、Ready 状态。
 - 节点被分配到机柜但不在最新列表中 → 派生状态 `offline`，保留上架位置。
 - 新节点不自动上架。
 
@@ -261,7 +261,7 @@ phase 为 `Pending` 或 `Error` 时视为暂时无法确认。
 | -- | ---- |
 | `racks` | 新增 `room_id`（非空，迁移时填 `unbound`）；`ord` 在机房内唯一 |
 | `assignments` | 主键改为 `(room_id, node_name)`；新增 `room_id`；`node_id` 改为 `node_name` |
-| `nodes` | 语义改为"资产覆盖"：主键 `(room_id, node_name)`，只保留整机型号、厂商、序列号、BMC IP、部件模板等资产字段；删除 `poll_interval_s` 与全部平台字段 |
+| `nodes` | 语义改为"资产覆盖"：主键 `(room_id, node_name)`，只保留序列号、BMC IP、部件模板等资产字段；整机型号与厂商的库列保留，但展示取平台 `rune_node_server_info`，不再读取库里的值；删除 `poll_interval_s` 与全部平台字段 |
 | `settings` | 删除 `node.apiBase`、`node.apiPath`、`telemetry.defaultIntervalSec`（实时间隔改由服务端 `rooms.json` 保存） |
 
 服务端继续只按字节保存台账，不理解表结构。迁移写在 `src/admin/schema.ts` 的 `MIGRATIONS`。
@@ -280,9 +280,31 @@ phase 为 `Pending` 或 `Error` 时视为暂时无法确认。
 - `Room` = 一个机房；`Rack` 来自台账；`Server.id` = Node 名（机房内唯一）。
 - GPU 部件来自 `accelerator_info{device_mode="physical"}`：`Part.id` = `device_id`，型号、厂商、序列号取标签，
   槽位按 `pci_bus_id` 排序，缺失时按 `device_id` 排序。
-- CPU 与内存来自 Node 容量。网卡、硬盘、风扇、PSU 的数量和型号来自台账"部件模板"，默认沿用现有 4U 8 卡模板；
-  这些部件没有平台指标时显示"无数据"。
-- 整机型号、厂商、序列号、BMC IP 来自台账资产覆盖；未填写时显示"未登记"。
+- **服务器硬件信息一律由平台自动获取，不人工登记，不用模板默认值冒充**（跨仓约束见根 `AGENTS.md`「服务器硬件信息」）。
+  拓扑树与详情里主机下的 CPU、内存、加速卡、硬盘、网卡、电源、风扇全部来自 `Server.hardware`，来源如下，其余一律「无数据」：
+
+  | 类别 | 当前有来源的部分 | 当前无来源（显示「无数据」，展开给「待采集」说明） |
+  | ---- | ---------------- | ------------------------------------------------ |
+  | CPU | 逐颗：厂家、型号（`rune_node_cpu_info`，已立约）；节点总核数（Node `capacity`）；节点级厂家 / 型号（Node label `feature.node.cloud.xiaoshiai.cn/cpu-vendor.name`、`cpu-model.name`，缺失为无数据） | 频率（不可采）；arm64 与虚拟机没有封装信息时没有逐颗样本 |
+  | 内存 | 内存总量（Node `capacity`）；**节点级**状态（`rune_node_memory_health_state`，EDAC 与 HardwareCorrupted，不描述单条内存） | 逐条内存的条数、厂家、容量、频率；没有 EDAC 的节点状态为无数据 |
+  | 加速卡 | 逐块：厂家、型号、显存（`accelerator_info` + `accelerator_memory_total_bytes`），类别按 `device_type` 标识 GPU / NPU / PPU … | — |
+  | 硬盘 | 整盘清单：名称、接口、介质（`rune_node_disk_device_info`，已立约；接口取自 udev 路径，`scsi` 可能是 RAID 逻辑盘，块数不等于物理盘数） | 容量（不可采） |
+  | 网卡 | 物理网卡：名称、链路状态、速率（`rune_node_network_device_info` / `_link_state` / `_speed_bytes_per_second`，已立约；速率单位 bytes/s，字段 `speedBytesPerSecond`，展示换算成 bit/s） | 链路断开时没有速率 |
+  | 电源 | — | 个数、额定功率、工作状态 |
+  | 风扇 | — | 个数、转速、工作状态 |
+
+  逐项清单在快照里是节点字段 `cpus`、`disks`、`nics`（来自已立约指标）和 `memoryModules`、`psus`、`fans`（恒为 `null`）；
+  整机与内存状态是节点字段 `serverVendor`、`serverModel`、`memoryHealth`。`null` = 没有数据；
+  **没有样本时是 `null`，不是 `[]`**（无法区分「没采集」与「确实为零个」），快照里不会出现 `[]`；元素内字段为 `null` 同样显示「无数据」。
+  平台给出的 `unknown`（固件占位值、没有 EDAC）在前端适配层转成 `null`。节点硬件指标由 monitoring Chart 1.0.8 的 `node-hardware`
+  规则组产出；集群里的 monitoring 没升级时这些清单是 `null`。
+  未写入 `specification/Monitoring.md` 的指标名不是平台契约，twin 不得提前消费（不查 node_exporter 原始指标，
+  不用 `specification/research/node-hardware-monitoring.md` 里仍是提案的指标）；已在 Monitoring.md「节点硬件指标」立约的七个指标可以消费，
+  清单只从 `_info` 读取，数量由 twin 计数。
+- **整机型号与厂商只取平台 `rune_node_server_info`**（来自 DMI，已在抓取侧归一为小写短横线，如 `dell` / `poweredge-r730`；固件占位值显示「无数据」），
+  台账资产里登记的整机型号与厂商不再参与展示（库列保留）。序列号、BMC IP、占用 U 数、额定功率仍来自台账资产覆盖；未填写时显示"未登记"。
+- 台账资产里的部件字段（CPU / 内存 / 网卡 / 硬盘 / 电源 / 风扇的型号与数量）不再决定拓扑树与详情：
+  网卡、硬盘、电源、风扇的**数量**仍决定 3D 面板的槽位个数（示意），其余字段保留库列但不再被读取，是否彻底删除待定。
 
 ## 监控查询集合
 
@@ -308,12 +330,15 @@ phase 为 `Pending` 或 `Error` 时视为暂时无法确认。
 | 磁盘 IOPS | `rune_node_disk_reads_per_second`、`rune_node_disk_writes_per_second` | node |
 | 磁盘吞吐 | `rune_node_disk_read_bytes_per_second`、`rune_node_disk_write_bytes_per_second` | node |
 | 磁盘使用率 | `max by (node) (rune_node_disk_used_percentage)` | node |
+| 物理网卡链路状态 | `rune_node_network_device_link_state` | node, device |
+| 物理网卡速率 | `rune_node_network_device_speed_bytes_per_second` | node, device |
 
 ### 计数档：每 60 秒
 
 | 用途 | PromQL | 结果维度 |
 | ---- | ------ | -------- |
 | GPU 硬件错误（替代 ECC 计数） | `sum by (node, device_id) (increase(accelerator_errors_total{device_mode="physical"}[1h]))` | node, device_id |
+| 节点级内存状态 | `rune_node_memory_health_state == 1` | node, state |
 
 `accelerator_errors_total` 的类别枚举只在同一厂商内可比；这里只在单卡内求和，不跨卡或跨厂商比较。
 
@@ -325,6 +350,10 @@ phase 为 `Pending` 或 `Error` 时视为暂时无法确认。
 | GPU 显存总量 | `accelerator_memory_total_bytes{device_mode="physical"}` | node, device_id |
 | CPU 核数 | `rune_node_cpu_total_cores` | node |
 | 内存总量 | `rune_node_memory_total_bytes` | node |
+| 整机厂商与型号 | `rune_node_server_info` | node, vendor, model |
+| CPU 逐颗 | `rune_node_cpu_info` | node, socket, vendor, model |
+| 整盘清单 | `rune_node_disk_device_info` | node, disk, interface, media |
+| 物理网卡清单 | `rune_node_network_device_info` | node, device |
 
 GPU 清单只从 `accelerator_info` 读取（Monitoring 规范的消费约束）。
 
@@ -360,15 +389,42 @@ GPU 清单只从 `accelerator_info` 读取（Monitoring 规范的消费约束）
 | ---- | -- | -------- | -------- | ------------ |
 | GPU | 健康且利用率 > 3 | 温度 ≥ 72℃，或 1 小时错误增量 > 4，或 `degraded` | 温度 ≥ 78℃，或错误增量 > 12，或 `fault` | 无 `accelerator_info` 或实时值缺失 |
 | 整机状态灯 | 节点就绪 | 有黄色部件 | 节点未就绪或有红色部件 | 节点不在快照中 |
-| 网卡、硬盘 | — | — | — | 平台只有节点汇总，没有逐设备数据，单设备灯一律无数据；汇总值在详情面板展示 |
+| 网卡、硬盘 | — | — | — | 清单已有，但没有逐设备的健康或负载来源，单设备灯一律无数据；汇总值在详情面板展示 |
 | 风扇、PSU | — | — | — | 平台无采集来源 |
 
-逐设备网卡与硬盘数据由新采集端 P0（只加录制规则）补齐后再点亮，见研究提案。
+拓扑树的组件行与逐项行右侧不放任何数据或状态点，只有主机行带整机状态灯。
+网卡、硬盘的清单与链路状态已由 `node-hardware` 规则组提供，但状态灯需要逐设备的健康或负载来源，没有就保持灰灯，见研究提案。
 
 ### 指标清单表
 
 服务端以一张静态清单表维护上面的全部查询，每行包含：键名、PromQL、档位、结果维度、对应的 twin 字段、状态
 （`available` / `pending-collector`）。新采集端上线后只需把对应行改为 `available`，前端不改。
+
+已在 `specification/Monitoring.md`「节点硬件指标」立约的行是 `available`，由 monitoring Chart 1.0.8 的 `node-hardware` 规则组产出：
+
+| 键名 | 档位 | PromQL | 写入的快照字段 |
+| ---- | ---- | ------ | -------------- |
+| `serverInfo` | 清单 | `rune_node_server_info` | `serverVendor`、`serverModel` |
+| `cpuPerSocket` | 清单 | `rune_node_cpu_info` | `cpus`（`socket`、`vendor`、`model`；`frequencyMegahertz` 恒为 `null`） |
+| `diskPerDevice` | 清单 | `rune_node_disk_device_info` | `disks`（`name`、`interface`、`media`；`capacityBytes` 恒为 `null`） |
+| `nicPerDevice` | 清单 | `rune_node_network_device_info` | `nics`（`name`） |
+| `nicLinkState` | 实时 | `rune_node_network_device_link_state` | `nics[].state`（`up` / `down`），只补充清单里已有的网卡 |
+| `nicSpeed` | 实时 | `rune_node_network_device_speed_bytes_per_second` | `nics[].speedBytesPerSecond`，只补充清单里已有的网卡 |
+| `memoryHealth` | 计数（60 秒） | `rune_node_memory_health_state == 1` | `memoryHealth`（取 `state` 标签） |
+
+清单只从 `_info` 指标读取；某类没有任何样本时字段是 `null`，不是 `[]`。
+
+`pending-collector` 行没有 PromQL、不会被执行，快照里对应字段恒为 `null`；note 写明缺什么，并指向
+`specification/research/node-hardware-monitoring.md` 的对应期次（指标在 `Monitoring.md` 立约前不得消费）：
+
+| 键名 | 快照字段 | 缺的数据 | 对应研究期次 |
+| ---- | -------- | -------- | ------------ |
+| `memoryModules` | `memoryModules` | 内存条：条数、厂家、容量、频率 | P1b（DMI 内存条清单，需新增 root 只读采集端）；每条是否正常带内拿不到，依赖 BMC |
+| `psuStatus` | `psus` | 电源：个数、额定功率、工作状态 | P2 覆盖个数与状态；额定功率 P2 拿不到，备选路径待验证、尚无期次 |
+| `fanSpeed` | `fans` | 风扇：个数、转速、工作状态 | P2 |
+| `inletTemperature` | `inletTemperatureCelsius` | 进风温度 | P2 |
+
+CPU 频率与硬盘容量没有指标行：它们不可采（见 Monitoring.md），对应字段在清单项里恒为 `null`。
 
 ## twin REST API
 
@@ -396,7 +452,7 @@ GPU 清单只从 `accelerator_info` 读取（Monitoring 规范的消费约束）
 ## 前端变化
 
 - 新增 `platform` 数据源，替换 `api.ts`；`DataSource.id` 改为 `'platform' | 'mock' | 'none'`。
-- 顶部增加机房切换；URL 保存当前机房（`?room=<clusterId>`）。
+- 机房切换放在左侧拓扑树：每个可查看的集群是一个根节点，点击即切换；URL 保存当前机房（`?room=<clusterId>`）。
 - 遥测类型的平台指标字段允许 `null`，`telemetry.ts` 增加 `nodata` 判定，3D 侧渲染灰色 LED。
 - 未登录跳转平台登录页；403 / 503 展示 License 或权限拒绝页；viewer 不显示管理后台入口（服务端仍校验）。
 - 删除：接口地址配置、手建节点、导入模拟数据、清除模拟数据、单台采集间隔、生产构建中的导入演示数据。
