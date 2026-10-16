@@ -1,6 +1,6 @@
 # 数字孪生平台对接实施计划
 
-> 状态：**提案，已确认、未实施**（2026-10-16）。本文只拆分任务；设计、决策、接口契约和查询集合以
+> 状态：**已实现于各仓 `twin` 分支，未合入 `main`**（2026-10-16；真实集群端到端未验证）。本文只拆分任务；设计、决策、接口契约和查询集合以
 > [设计](design.md)为唯一依据，任务卡与设计冲突时以设计为准，并先修正设计再实施。
 
 ## 执行约定
@@ -33,15 +33,15 @@ T9 工作区索引与文档入口（最后）
 
 | 任务 | 状态 | 完成日期 | 验证结果 | 未验证 |
 | ---- | ---- | -------- | -------- | ------ |
-| T1 iam bootstrap | 未开始 | | | |
-| T2 license 签发模板 | 未开始 | | | |
-| T3 apiserver 路由、授权查询、拦截规则 | 未开始 | | | |
-| T4 twin 服务端：平台客户端与鉴权 | 未开始 | | | |
-| T5 twin 服务端：机房、节点与遥测 | 未开始 | | | |
-| T6 twin 台账迁移 | 未开始 | | | |
-| T7 twin 前端 | 未开始 | | | |
-| T8 twin 部署、验证夹具与文档 | 未开始 | | | |
-| T9 工作区索引与文档入口 | 未开始 | | | |
+| T1 iam bootstrap | 已实现（`twin` 分支，未提交） | 2026-10-16 | `go test ./pkg/bootstrap/...` 通过，含新角色与应用断言 | `make check` 在 `helm dependency build` 失败（本机 helm 缓存缺 hami-charts 索引，环境限制）；未在真实 IAM 上跑 bootstrap |
+| T2 license 签发模板 | 已实现（`twin` 分支，未提交） | 2026-10-16 | `make test` 通过（go test、client、web lint/build、helm lint） | 管理台"签发"对话框未人工点验 |
+| T3 apiserver 路由、授权查询、拦截规则 | 已实现（`twin` 分支，未提交） | 2026-10-16 | `make check` 通过（gofmt、vet、`go test`）；`go test -race ./pkg/license/... ./pkg/apiserver/...` 通过；响应形状 `{product, entitled, phase, code, message}` 与 twin 客户端一致 | 未部署网关实测 `/twin/` 路径重写与 cookie 透传 |
+| T4 twin 服务端：平台客户端与鉴权 | 已实现（`twin` 分支，未提交） | 2026-10-16 | `check-platform`、`check-api` 通过（认证→授权→License 顺序、失败关闭、日志不含凭据） | token 受众与真实 IAM 的一致性；IAM 对 `service=digital-twin` 的真实审查 |
+| T5 twin 服务端：机房、节点与遥测 | 已实现（`twin` 分支，未提交） | 2026-10-16 | `check-rooms` 通过（多集群隔离、故障注入、失联、设置乐观锁） | **PromQL 真实语义**（假 cloud 按指标名返回夹具）；真实集群 |
+| T6 twin 台账迁移 | 已实现（`twin` 分支，未提交） | 2026-10-16 | `check-ledger` 通过（v2→v3 迁移、幂等、回滚、绑定 `unbound`） | 真实生产旧库样本；服务端 restore 是否先做备份 |
+| T7 twin 前端 | 已实现（`twin` 分支，未提交） | 2026-10-16 | `tsc -b`、`vite build` 通过；构建产物无 mock chunk | **未在浏览器验证**：机房切换、灰灯、拒绝页、后台各页签、绑定向导；Console 对 `/twin/...` 站内链接的处理 |
+| T8 twin 部署、验证夹具与文档 | 已实现（`twin` 分支，未提交） | 2026-10-16 | `make verify-all` 通过（含 `check-deploy`：compose / Helm 渲染、`platform.*` 缺失时失败关闭、凭据不在 ConfigMap） | 真实镜像构建与容器启动（本机未跑 `docker build`）；Chart 在集群中的安装 |
+| T9 工作区索引与文档入口 | 已实现 | 2026-10-16 | `INDEX.md` 路由、端口、状态已更新 | 无 |
 
 ## T1 iam：预注册应用与角色
 
@@ -162,7 +162,7 @@ T9 工作区索引与文档入口（最后）
 - **步骤**：
   1. 数据源：`platform` 实现 `DataSource` / `LiveFeed`，读 `/api/digital-twin/v1/...`；`id` 枚举改为 `'platform' | 'mock' | 'none'`；
      生产构建不得静态或动态引入 `mock/`。
-  2. 机房切换：顶部选择器，URL `?room=` 为唯一来源。
+  2. 机房切换：左侧拓扑树的机房根节点（取代顶部选择器），URL `?room=` 为唯一来源。
   3. 遥测：平台指标字段允许 `null`；`telemetry.ts` 增加 `nodata` 判定；`ServerUnit` 渲染灰色 LED；详情面板展示节点汇总值与
      "缺少某类采集"说明。
   4. 采集间隔：`poll.ts` 改为单一全局间隔（读 `/v1/settings`），删除单台覆盖。
