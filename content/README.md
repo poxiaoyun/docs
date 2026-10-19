@@ -93,7 +93,7 @@ IAM、Moha、Apps、AIRouter 和 KMS 使用统一结构：`README.md` 是产品�
 | Rune | [产品入口](rune/README.md) | [控制面架构](rune/architecture.md) |
 | AIRouter | [需求](airouter/requirements.md) | [设计](airouter/design.md) |
 | KMS | [需求](kms/requirements.md) | [设计](kms/design.md) |
-| 数字孪生（已实现于 `twin` 分支，未合入） | [需求](digital-twin/requirements.md) | [设计](digital-twin/design.md)、[实施计划](digital-twin/implementation-plan.md) |
+| 数字孪生（已实现于 `twin` 分支，未合入） | [需求](digital-twin/requirements.md) | [设计](digital-twin/design.md)、[部署](digital-twin/deploy.md)、[实施计划](digital-twin/implementation-plan.md) |
 
 ## Rune 领域设计
 

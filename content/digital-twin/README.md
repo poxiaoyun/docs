@@ -9,6 +9,7 @@
 
 - [需求](requirements.md)
 - [设计](design.md)：唯一权威设计，包含已确认决策、接口契约和监控查询集合
+- [部署](deploy.md)：把当前系统 Chart 装进已经运行的 Rune 平台
 - [实施计划](implementation-plan.md)：按仓库拆分的开发任务卡
 - [节点硬件与机房环境监控研究](../../../specification/research/node-hardware-monitoring.md)：新采集端提案
 

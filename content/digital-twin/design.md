@@ -460,20 +460,9 @@ CPU 频率与硬盘容量没有指标行：它们不可采（见 Monitoring.md�
 
 ## 部署配置
 
-Helm values 新增（默认值只写在 `values.yaml`）：
+已有平台的安装步骤、命名空间和 Release 名约束见[部署](deploy.md)。当前系统 Chart 的必填项是 `platform.apiserverURL`、`platform.iamURL` 和 `platform.credentialsSecret.name`。
 
-```yaml
-platform:
-  apiserverURL: http://apiserver
-  iamURL: http://iam
-  clientID: rune-digital-twin
-  clientSecret: ""
-  clientSecretRef:
-    name: ""
-    key: clientSecret
-```
-
-删除 `ledgerToken.*`；`replicas: 1`、`Recreate`、PVC 约束保持不变（台账与 `rooms.json` 仍是单写者文件）。
+副本数固定为 1。台账落在 PVC 上，删卷会清掉机柜编排。
 
 ## 未核实的前提
 
