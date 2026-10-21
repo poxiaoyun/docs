@@ -42,7 +42,7 @@ Each row is one volume, with columns for name, status, **storage class**, usage,
    | Storage Class | Pick one from the dropdown | Determines where files are actually stored; cannot be changed after creation |
    | Capacity | For example enter `20` and select `Gi` | Value must be at least 1; units are `Mi`, `Gi`, `Ti`, default `Gi` |
    | Read & Write Permission | Default **Read & Write** | If you choose **Read-only**, instances that mount it can read but cannot write |
-   | Scenario | Default **Not Set** | Just a classification label; you can pick **Models** or **Datasets** to tell them apart. It does not affect behavior |
+   | Scenario | Default **Not Set** | A classification label: **Models**, **Datasets**, **Metrics**, or **Evaluation results**. It does not change how the volume behaves, but apps filter volumes by scenario when you pick one, so a wrong label hides the volume from those apps |
    | Description | Optional | One sentence about what this drive holds |
 
 3. Click **Confirm**.
@@ -63,7 +63,7 @@ What each list column means:
 
 | Column | Description |
 | --- | --- |
-| Name | The storage volume name, with a small icon showing the scenario (Models / Datasets); the description is below |
+| Name | The storage volume name, with a small icon showing the scenario (Models / Datasets / Metrics / Evaluation results); the description is below |
 | Status | Unmounted / Mounted; before it is ready, the creation status is shown |
 | Storage Class | The storage class chosen at creation; it decides which kind of storage the files actually live on |
 | Usage/Capacity | Used / capacity with a percentage; when usage is high, the **Expand** entry appears here |
