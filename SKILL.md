@@ -386,3 +386,19 @@ XiaoShi-Rune-Console    →  产品前端 (实际功能实现)
 | 参考文档      | `/reference/`   | API 概览、权限设计、FAQ                    | `faq`       |
 
 英文侧路径一一对应，统一加 `/en` 前缀（如 `/en/rune/console/quota/`）。
+
+---
+
+## 10. 与产品代码同步
+
+文档跟着 `XiaoShi-Rune-Console` 的 `main` 走，用的是**锚点 + 增量 diff**，不是「每隔一阵通读一遍代码」。
+
+| 东西                            | 位置                                                                                         |
+| ------------------------------- | -------------------------------------------------------------------------------------------- |
+| 同步流程、判定规则、反模式      | `.workbuddy/skills/rune-docs-update/SKILL.md`                                                |
+| 锚点（已同步到的 console 提交） | `.workbuddy/skills/rune-docs-update/anchor.json`                                             |
+| 生成变更清单                    | `node .workbuddy/skills/rune-docs-update/scripts/diff-console.mjs`                           |
+| 推进锚点                        | `node .workbuddy/skills/rune-docs-update/scripts/bump-anchor.mjs --to origin/main --pr "#N"` |
+| 代码路径 → 文档页面             | `.workbuddy/skills/rune-docs-update/references/mapping.md`                                   |
+
+要点：`anchor.json` 随仓库版本化，**只由 `bump-anchor.mjs` 写入**；锚点只在「一轮评估以 PR 合入」后前进，即使这一轮没有任何文档改动，也要提一个只改锚点的 PR，否则下次 diff 还是同一批提交。

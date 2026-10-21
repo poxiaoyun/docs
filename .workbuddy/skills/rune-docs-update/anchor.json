@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "skill": "rune-docs-update",
+  "source": {
+    "repo": "poxiaoyun/XiaoShi-Rune-Console",
+    "remote": "git@github.com:poxiaoyun/XiaoShi-Rune-Console.git",
+    "branch": "main",
+    "local_path_hint": "/Volumes/datas/project/xiaoshi/rune/XiaoShi-Rune-Console"
+  },
+  "docs": {
+    "repo": "poxiaoyun/docs",
+    "branch": "main",
+    "site": "https://docs.poxiaoshi.cn",
+    "base_url": "/"
+  },
+  "anchor": {
+    "commit": "8fcfa520253dd8bb8783185db8d574b3852c4c44",
+    "committed_at": "2026-10-20T22:58:21+08:00",
+    "subject": "Merge pull request #214 from poxiaoyun/twin"
+  },
+  "recorded_at": "2026-10-21T14:10:00+08:00",
+  "docs_head_at_record": "d4c508e3bfaebd7013619480d9edf75ee86f3af0",
+  "skip": [],
+  "history": [
+    {
+      "anchor": "8fcfa520253dd8bb8783185db8d574b3852c4c44",
+      "short": "8fcfa520",
+      "range": null,
+      "commits": null,
+      "docs_pr": "#3~#10（首轮全量对齐 + 收尾）",
+      "note": "首轮全量对齐：272 页 cn/en 成对、74 张截图、/en 英文站 + hreflang + sitemap 546 条；此前无锚点，故 range 为空",
+      "recorded_at": "2026-10-21T14:10:00+08:00"
+    }
+  ]
+}
