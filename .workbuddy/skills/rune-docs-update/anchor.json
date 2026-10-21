@@ -27,7 +27,7 @@
       "short": "8fcfa520",
       "range": null,
       "commits": null,
-      "docs_pr": "#11",
+      "docs_pr": "#3~#10（首轮全量对齐 + 收尾）",
       "note": "首轮全量对齐：272 页 cn/en 成对、74 张截图、/en 英文站 + hreflang + sitemap 546 条；此前无锚点，故 range 为空",
       "recorded_at": "2026-10-21T14:10:00+08:00"
     }
