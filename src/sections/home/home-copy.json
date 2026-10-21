@@ -1,0 +1,290 @@
+{
+  "cn": {
+    "meta": {
+      "title": "RUNE 文档 · 晓石AI智算平台",
+      "description": "晓石 AI 平台官方文档中心：Rune 智算平台、魔哈仓库、聚合网关与 BOSS 运营平台的完整使用说明，含快速开始、控制台逐页指引与常见问题。"
+    },
+    "hero": {
+      "overline": "v2.0 文档开源",
+      "titleLine1": "连接开发、运营与社区的",
+      "titleLine2": "AI 平台",
+      "lead": "Rune 智算平台提供模型开发、推理与工作负载管理能力；配合 Boss 平台实现精细化运营，魔哈仓库打造开放的社区底座，全方位提升 AI 应用构建效能。",
+      "primary": "开始使用",
+      "secondary": "探索魔哈模型库"
+    },
+    "capabilities": {
+      "label": "CORE PLATFORM",
+      "title": "一切皆为现代化 AI 服务",
+      "copy": "强大的基座服务协同生态管理与高效运营，提供面向未来生产的算力、模型和集群管理体验。",
+      "platforms": [
+        {
+          "name": "Rune 智算平台",
+          "tagline": "大规模 AI 推理与工作负载调度。无缝管理实例、镜像与存储计算一体化配额资源。",
+          "to": "/rune",
+          "cta": "进入 Rune 文档",
+          "entries": [
+            { "title": "开始使用", "to": "/rune/guide" },
+            { "title": "Rune 控制台", "to": "/rune/console" },
+            { "title": "资源与配额", "to": "/rune/resources" }
+          ]
+        },
+        {
+          "name": "魔哈仓库",
+          "tagline": "模型与数据集的社区仓库体系。实现优雅的版本流转与开源协作。",
+          "to": "/moha",
+          "cta": "进入魔哈文档",
+          "entries": [
+            { "title": "模型仓库", "to": "/moha/models" },
+            { "title": "数据集", "to": "/moha/datasets" },
+            { "title": "SDK 教程", "to": "/moha/sdk-tutorial" }
+          ]
+        },
+        {
+          "name": "聚合网关",
+          "tagline": "平台内置的网页版对话与模型调用入口。不用写代码就能和模型对话，也能为外部程序签发密钥，统一查看调用量与费用。",
+          "to": "/airouter",
+          "cta": "进入聚合网关文档",
+          "entries": [
+            { "title": "模型体验", "to": "/airouter/experience" },
+            { "title": "API 密钥", "to": "/airouter/token" },
+            { "title": "调用分析", "to": "/airouter/usage-statistics" }
+          ]
+        },
+        {
+          "name": "Boss 运营平台",
+          "tagline": "专为平台管理员设计，实现跨集群治理、租户网关审核和强效策略分发。",
+          "to": "/boss",
+          "cta": "进入 BOSS 文档",
+          "entries": [
+            { "title": "首页", "to": "/boss/dashboard" },
+            { "title": "大模型网关", "to": "/boss/gateway" },
+            { "title": "账户管理", "to": "/boss/iam" }
+          ]
+        }
+      ]
+    },
+    "ecosystem": {
+      "label": "Powering the next generation of AI",
+      "line1": "Seamlessly integrates with",
+      "line2": "your favorite open-source tools"
+    },
+    "developer": {
+      "overline": "DEVELOPER FIRST",
+      "title": "几行代码，连接强大算力",
+      "copy": "我们为开发者提供轻量与快捷的命令行工具 (CLI)，只需几条简单的命令，即可轻松实现模型与数据集的下载、上传和版本管理，无缝集成到您的工作流中。",
+      "cta": "查看 SDK 教程"
+    },
+    "resources": {
+      "label": "ECOSYSTEM & RESOURCES",
+      "title": "深入核心体系",
+      "copy": "SDK、模板库与实时交流通道，形成开发者飞轮，助力 AI 业务从实验到生产环境的极速跨越。",
+      "items": [
+        {
+          "title": "开放 API / SDK",
+          "description": "标准化的开放接口与 SDK 示例，便于接入控制台、CI/CD、自动化测试。",
+          "action": "查看 API",
+          "to": "/reference/api-overview"
+        },
+        {
+          "title": "实例预设",
+          "description": "把调好的实例配置存成预设，下次一键复用，团队之间也能共享。",
+          "action": "查看预设",
+          "to": "/rune/resources/presets"
+        },
+        {
+          "title": "监控 & 反馈通道",
+          "description": "通过 Issue、飞书群与在线工单反馈问题，并获取实时更新。",
+          "action": "查看常见问题",
+          "to": "/reference/faq"
+        }
+      ]
+    },
+    "faq": {
+      "title": "常见问题",
+      "copy": "按主题整理「现象 → 原因 → 怎么办」，每一条都给你能直接照做的下一步。",
+      "cta": "查看完整 FAQ",
+      "note": "还有别的问题？到「参考文档」里按主题查",
+      "items": [
+        {
+          "q": "忘记密码怎么办？",
+          "a": "在登录页点「忘记密码？」，填写账号绑定的邮箱后点「发送」；平台会把重置密码链接发到邮箱，从邮件里点链接即可设置新密码。"
+        },
+        {
+          "q": "登录后被要求选租户，租户列表却是空的？",
+          "a": "说明你还没加入任何租户。可以在租户选择页注册新租户，或请管理员把你加进某个租户。"
+        },
+        {
+          "q": "创建推理服务时，「规格」卡片没有可选项？",
+          "a": "当前工作空间的配额不足，或没有可用算力。联系租户管理员调整配额，或先停掉其他不用的实例。"
+        },
+        {
+          "q": "实例状态一直是「已安装」？",
+          "a": "正在拉取镜像或加载模型。进入实例详情的「事件」页，确认镜像拉取是否成功。"
+        },
+        {
+          "q": "调用接口返回 401 或 429？",
+          "a": "401 是密钥错误或过期：检查请求头是否为 Bearer 你的密钥，必要时重新创建；429 是触发限速：在「API 密钥」里调大 RPM / TPM，或降低调用频率。"
+        },
+        {
+          "q": "页面提示 403？",
+          "a": "当前角色确实没有该操作权限。对照权限说明找出需要的角色，联系租户管理员调整后重试。"
+        }
+      ]
+    },
+    "cta": {
+      "title": "准备好开始了吗？",
+      "copy": "立即探索 Rune、Boss 及 魔哈，开启您的 AI 平台之旅",
+      "primary": "查看文档",
+      "secondary": "加入社区",
+      "stats": [
+        { "value": "4", "label": "产品线" },
+        { "value": "50+", "label": "功能模块" },
+        { "value": "24/7", "label": "社区支持" }
+      ]
+    }
+  },
+  "en": {
+    "meta": {
+      "title": "RUNE Docs · XiaoShi AI Cloud Platform",
+      "description": "Official documentation for the XiaoShi AI platform: complete guides for the Rune compute platform, Moha Hub, the AIrouter gateway and the Boss operations platform, including quick start, page-by-page console walkthroughs and troubleshooting."
+    },
+    "hero": {
+      "overline": "v2.0 docs, open source",
+      "titleLine1": "The AI platform connecting developers,",
+      "titleLine2": "operations and community",
+      "lead": "Rune handles model development, inference and workload management. Boss adds fine-grained operations, and Moha Hub provides an open community foundation — so you can ship AI applications faster, end to end.",
+      "primary": "Get started",
+      "secondary": "Explore Moha models"
+    },
+    "capabilities": {
+      "label": "CORE PLATFORM",
+      "title": "Everything a modern AI service needs",
+      "copy": "A resilient foundation that pairs ecosystem management with efficient operations — compute, models and cluster management built for production.",
+      "platforms": [
+        {
+          "name": "Rune AI Platform",
+          "tagline": "Large-scale AI inference and workload scheduling. Manage instances, images and combined storage/compute quotas without friction.",
+          "to": "/rune",
+          "cta": "Open Rune docs",
+          "entries": [
+            { "title": "Getting started", "to": "/rune/guide" },
+            { "title": "Rune console", "to": "/rune/console" },
+            { "title": "Resources & quotas", "to": "/rune/resources" }
+          ]
+        },
+        {
+          "name": "Moha Hub",
+          "tagline": "A community repository for models and datasets, with clean version flow and open collaboration.",
+          "to": "/moha",
+          "cta": "Open Moha docs",
+          "entries": [
+            { "title": "Model repository", "to": "/moha/models" },
+            { "title": "Datasets", "to": "/moha/datasets" },
+            { "title": "SDK tutorial", "to": "/moha/sdk-tutorial" }
+          ]
+        },
+        {
+          "name": "AIrouter Gateway",
+          "tagline": "The built-in web chat and model API entry point. Talk to models without writing code, issue keys for your own services, and track usage and cost in one place.",
+          "to": "/airouter",
+          "cta": "Open gateway docs",
+          "entries": [
+            { "title": "Model playground", "to": "/airouter/experience" },
+            { "title": "API keys", "to": "/airouter/token" },
+            { "title": "Usage analytics", "to": "/airouter/usage-statistics" }
+          ]
+        },
+        {
+          "name": "Boss Operations Platform",
+          "tagline": "Built for platform administrators: cross-cluster governance, tenant gateway review and policy rollout.",
+          "to": "/boss",
+          "cta": "Open Boss docs",
+          "entries": [
+            { "title": "Dashboard", "to": "/boss/dashboard" },
+            { "title": "LLM gateway", "to": "/boss/gateway" },
+            { "title": "Account management", "to": "/boss/iam" }
+          ]
+        }
+      ]
+    },
+    "ecosystem": {
+      "label": "Powering the next generation of AI",
+      "line1": "Seamlessly integrates with",
+      "line2": "your favorite open-source tools"
+    },
+    "developer": {
+      "overline": "DEVELOPER FIRST",
+      "title": "A few lines of code, serious compute",
+      "copy": "A lightweight, fast CLI for developers: download, upload and version models and datasets in a handful of commands, then plug it straight into your own workflow.",
+      "cta": "Read the SDK tutorial"
+    },
+    "resources": {
+      "label": "ECOSYSTEM & RESOURCES",
+      "title": "Go deeper into the core",
+      "copy": "SDKs, template libraries and live support channels form a developer flywheel that takes AI work from experiment to production.",
+      "items": [
+        {
+          "title": "Open API / SDK",
+          "description": "Standardized APIs and SDK samples for the console, CI/CD and automated testing.",
+          "action": "Browse the API",
+          "to": "/reference/api-overview"
+        },
+        {
+          "title": "Instance presets",
+          "description": "Save a tuned instance configuration as a preset, reuse it in one click and share it across your team.",
+          "action": "View presets",
+          "to": "/rune/resources/presets"
+        },
+        {
+          "title": "Monitoring & feedback",
+          "description": "Report issues through GitHub, Lark groups or support tickets, and follow updates as they land.",
+          "action": "Read the FAQ",
+          "to": "/reference/faq"
+        }
+      ]
+    },
+    "faq": {
+      "title": "Frequently asked",
+      "copy": "Organized as symptom, cause and fix — every answer ends with a next step you can actually take.",
+      "cta": "Read the full FAQ",
+      "note": "Still stuck? Browse the reference docs by topic.",
+      "items": [
+        {
+          "q": "I forgot my password — what now?",
+          "a": "On the sign-in page choose “Forgot password?”, enter the email bound to your account and submit. We send a reset link to that address; open it to set a new password."
+        },
+        {
+          "q": "I signed in but the tenant list is empty.",
+          "a": "That means you have not joined any tenant yet. Register a new tenant on the selection page, or ask an administrator to add you to one."
+        },
+        {
+          "q": "The spec cards are empty when I create an inference service.",
+          "a": "The current workspace is out of quota, or no compute is available. Ask your tenant administrator to raise the quota, or stop instances you are not using."
+        },
+        {
+          "q": "The instance stays in “Installed”.",
+          "a": "It is still pulling the image or loading the model. Open the instance's Events tab and confirm the image pull succeeded."
+        },
+        {
+          "q": "API calls return 401 or 429.",
+          "a": "401 means a wrong or expired key: check that the header is Bearer <your key>, and recreate the key if needed. 429 means rate limiting: raise RPM / TPM on the API keys page, or slow down."
+        },
+        {
+          "q": "The page returns 403.",
+          "a": "Your current role genuinely lacks that permission. Find the required role in the permission reference and ask your tenant administrator to grant it."
+        }
+      ]
+    },
+    "cta": {
+      "title": "Ready to get started?",
+      "copy": "Explore Rune, Boss and Moha today and start your AI platform journey.",
+      "primary": "Read the docs",
+      "secondary": "Join the community",
+      "stats": [
+        { "value": "4", "label": "Product lines" },
+        { "value": "50+", "label": "Feature modules" },
+        { "value": "24/7", "label": "Community support" }
+      ]
+    }
+  }
+}

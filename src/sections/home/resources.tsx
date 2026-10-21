@@ -4,54 +4,34 @@ import { Link as RouterLink } from 'react-router';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
+import { useLangHref } from 'src/utils/doc-lang';
+
 import { CONFIG } from 'src/global-config';
 
 import { SvgColor } from 'src/components/svg-color';
 import { varFade, MotionViewport } from 'src/components/animate';
 
 import { TOKENS } from './tokens';
+import { resourcesOf, useHomeCopy } from './home-copy';
 import { Panel, buttonSx, SectionHead, SectionShell } from './primitives';
 
 // ----------------------------------------------------------------------
 // 版式取自门户首页的卡片网格：深色面板、左上角标、底部通栏入口。
-// 三张卡的文案沿用文档站原有那一版，只是补上了各自该指向的文档地址。
-
-const RESOURCES = [
-  {
-    title: '开放 API / SDK',
-    description: '标准化的开放接口与 SDK 示例，便于接入控制台、CI/CD、自动化测试。',
-    action: '查看 API',
-    to: '/reference/api-overview',
-    icon: 'ic-product',
-    color: '#a2d1ff',
-  },
-  {
-    title: '实例预设',
-    description: '把调好的实例配置存成预设，下次一键复用，团队之间也能共享。',
-    action: '查看预设',
-    to: '/rune/resources/presets',
-    icon: 'ic-subpaths',
-    color: '#8affc1',
-  },
-  {
-    title: '监控 & 反馈通道',
-    description: '通过 Issue、飞书群与在线工单反馈问题，并获取实时更新。',
-    action: '查看常见问题',
-    to: '/reference/faq',
-    icon: 'ic-chat',
-    color: '#c599ff',
-  },
-];
+// 三张卡的文案来自 home-copy.json，图标与色值按入口路径在 home-copy.ts 里补齐。
 
 export function HomeResourcesSection() {
+  const copy = useHomeCopy();
+  const langHref = useLangHref();
+  const resources = resourcesOf(copy);
+
   return (
     <Box component="section" sx={{ bgcolor: TOKENS.bgPage, color: TOKENS.text, py: { xs: 8, md: 12 } }}>
       <SectionShell component={MotionViewport} sx={{ px: { xs: 3, md: 5 } }}>
         <SectionHead
           align="center"
-          label="Ecosystem & Resources"
-          title="深入核心体系"
-          copy="SDK、模板库与实时交流通道，形成开发者飞轮，助力 AI 业务从实验到生产环境的极速跨越。"
+          label={copy.resources.label}
+          title={copy.resources.title}
+          copy={copy.resources.copy}
           sx={{ mb: { xs: 5, md: 7 } }}
         />
 
@@ -62,7 +42,7 @@ export function HomeResourcesSection() {
             gridTemplateColumns: { xs: '1fr', md: 'repeat(3, minmax(0, 1fr))' },
           }}
         >
-          {RESOURCES.map((resource) => (
+          {resources.map((resource) => (
             <m.div key={resource.title} variants={varFade('inUp')} style={{ display: 'flex' }}>
               <Panel
                 sx={{
@@ -110,7 +90,7 @@ export function HomeResourcesSection() {
 
                 <Box
                   component={RouterLink}
-                  to={resource.to}
+                  to={langHref(resource.to)}
                   sx={{
                     ...buttonSx('secondary'),
                     display: 'flex',
