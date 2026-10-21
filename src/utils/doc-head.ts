@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { BASE_PATH } from 'src/global-config';
 
-import { withLangPath, type DocLang } from './doc-lang';
+import { withLangPath, type DocLang, withoutLangPath } from './doc-lang';
 
 // ----------------------------------------------------------------------
 
@@ -28,7 +28,7 @@ type HeadEntry = { rel: 'canonical' | 'alternate' | 'meta'; hreflang?: string; h
  * 客户端导航之后 head 与静态版本对不上。这里直接操作 DOM，行为可预期：
  * 每次按当前语言重写一遍，先删自己上次写的节点，绝不重复堆叠。
  *
- * 语言前缀来自 withLangPath，与路由完全同一套规则。
+ * 语言前缀来自 withLangPath / withoutLangPath，与路由完全同一套规则。
  */
 export function useDocHead(lang: DocLang, canonicalPath: string) {
   useEffect(() => {
@@ -36,9 +36,13 @@ export function useDocHead(lang: DocLang, canonicalPath: string) {
     const origin = `${window.location.origin}${BASE_PATH}`;
     const abs = (path: string) => `${origin}${path === '/' ? '/' : `${path}/`}`;
 
-    const canonical = abs(canonicalPath);
-    const zh = abs(withLangPath(canonicalPath, 'cn'));
-    const en = abs(withLangPath(canonicalPath, 'en'));
+    // 先剥掉语言前缀再按两种语言各拼一次。
+    // 调用方传进来的 canonicalPath 是「当前语言下的地址」（英文页带 /en），
+    // 直接拿它去拼中文会原样返回 —— 英文页的 hreflang="zh-CN" 就成了英文自己。
+    const barePath = withoutLangPath(canonicalPath);
+    const canonical = abs(withLangPath(barePath, lang));
+    const zh = abs(withLangPath(barePath, 'cn'));
+    const en = abs(withLangPath(barePath, 'en'));
 
     const entries: HeadEntry[] = [
       { rel: 'canonical', href: canonical },
