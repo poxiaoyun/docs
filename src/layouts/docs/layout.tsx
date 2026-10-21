@@ -3,7 +3,8 @@ import type { DashboardLayoutProps } from 'src/layouts/dashboard/layout';
 
 import { useMemo } from 'react';
 import { useLocation } from 'react-router';
-import { useTranslation } from 'react-i18next';
+
+import { withLangPath, type DocLang, splitLangPath } from 'src/utils/doc-lang';
 
 import { DashboardLayout } from 'src/layouts/dashboard/layout';
 import { type DocsSidebarItem, getDocsSidebarSections } from 'src/pages/docs/toc';
@@ -15,11 +16,11 @@ import { icon } from './icon';
 
 export function DocsLayout({ children, slotProps, ...other }: DashboardLayoutProps) {
   const { pathname } = useLocation();
-  const { i18n } = useTranslation();
-  const activeProduct = useMemo(() => getProductFromPath(pathname), [pathname]);
+  const { lang, path: langlessPath } = splitLangPath(pathname);
+  const activeProduct = useMemo(() => getProductFromPath(langlessPath), [langlessPath]);
   const navData = useMemo(
-    () => mapDocsNavData(getDocsSidebarSections(i18n.language), activeProduct),
-    [activeProduct, i18n.language]
+    () => mapDocsNavData(getDocsSidebarSections(lang), lang, activeProduct),
+    [activeProduct, lang]
   );
 
   return (
@@ -69,11 +70,14 @@ export function DocsLayout({ children, slotProps, ...other }: DashboardLayoutPro
 
 function mapDocsNavData(
   sections: ReturnType<typeof getDocsSidebarSections>,
+  lang: DocLang,
   product?: DocsSidebarItem['product']
 ): NavSectionProps['data'] {
   const mapItem = (item: DocsSidebarItem): NavSectionProps['data'][number]['items'][number] => ({
     title: item.title,
-    path: item.path,
+    // 侧边栏的 path 是语言无关的真源（/rune/console/quota），渲染前统一补上前缀：
+    // 英文页点目录不该掉回中文，也更不该出现 /en 再套 /en 的双前缀。
+    path: withLangPath(item.path, lang),
     icon: item.icon ? icon(item.icon) : undefined,
     deepMatch: item.deepMatch ?? true,
     children: item.children?.map((child) => mapItem(child)),

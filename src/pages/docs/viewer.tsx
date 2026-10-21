@@ -11,6 +11,9 @@ import { alpha } from '@mui/material/styles';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 
+import { useDocHead } from 'src/utils/doc-head';
+import { withLangPath, splitLangPath } from 'src/utils/doc-lang';
+
 import { useGlobalSettingsContext } from 'src/settings/global';
 
 import { Markdown } from 'src/components/markdown';
@@ -46,7 +49,10 @@ const PRODUCT_HOME_TITLES = {
 
 export default function DocsViewer() {
   const { '*' : splat } = useParams();
-  const { hash } = useLocation();
+  const { hash, pathname: locationPathname } = useLocation();
+  // 语言只认 URL 前缀（/en = 英文，其余中文），不看 i18n 当前语言 ——
+  // 后者在客户端切换的瞬间与地址可能不同步，用它取正文会拿到另一种语言的文件。
+  const { lang } = splitLangPath(locationPathname);
   const pathname = splat || '';
   const { i18n } = useTranslation();
   const [content, setContent] = useState<string>('');
@@ -60,7 +66,13 @@ export default function DocsViewer() {
   const toc = useMarkdownToc(content);
 
   const productHome = getProductHomeType(pathname);
-  const locale = i18n.language.startsWith('en') ? 'en' : 'cn';
+  const locale = lang;
+
+  // 语言相关的 head 标签（canonical / hreflang / og:locale / html lang）。
+  // 必须在这里算：下面有 loading / error 两个提前 return，Hook 不能放到它们后面。
+  const canonicalPath = withLangPath(`/${pathname.replace(/^\/+|\/+$/g, '')}`, lang);
+
+  useDocHead(lang, canonicalPath);
 
   // Calculate display title based on current language
   const displayTitle =
@@ -93,7 +105,9 @@ export default function DocsViewer() {
         const cleanPathParts = targetCleanPath.split('/');
         // Determine the language folder (cn or en)
         // Default to 'cn' if not 'en' (assuming only two supported languages for now, or map appropriately)
-        const langFolder = i18n.language.startsWith('en') ? 'en' : 'cn';
+        // 目录语言取自 URL，不取 i18n.language：切语言时 i18n 是异步生效的，
+        // 用它会有一瞬间按旧语言取文件，闪出另一种语言的正文。
+        const langFolder = lang;
 
         // Find key that matches this pattern
         // e.g. key: /src/pages/docs/cn/01.theme/01.colors.md
@@ -178,7 +192,15 @@ export default function DocsViewer() {
     };
 
     loadContent();
-  }, [pathname, i18n.language, productHome]);
+  }, [pathname, lang, productHome]);
+
+  // 地址变了（切语言、或从外部带着 /en 直接进来）就把 i18n 跟上，
+  // 顶栏、侧边栏、按钮文案才不会与正文语言错位。
+  useEffect(() => {
+    if (i18n.resolvedLanguage !== lang) {
+      i18n.changeLanguage(lang);
+    }
+  }, [i18n, lang]);
 
   // Scroll to hash after content is loaded
   useEffect(() => {
@@ -216,7 +238,14 @@ export default function DocsViewer() {
   const legacyRedirect = legacyPathRedirect(pathname);
 
   if (legacyRedirect) {
-    return <Navigate to={legacyRedirect} replace />;
+    return <Navigate to={withLangPath(legacyRedirect, lang)} replace />;
+  }
+
+  // `/en` 没有独立落地页：英文站入口就是英文版概述，直接落到具体地址。
+  // 同一规则也写在 scripts/ssg.mjs 里（那里生成的是跳转壳），两边必须一致，
+  // 否则直接打开 /en 与点进来看到的会是两个不同的页面。
+  if (lang === 'en' && !pathname) {
+    return <Navigate to="/en/introduction" replace />;
   }
 
   if (loading) {

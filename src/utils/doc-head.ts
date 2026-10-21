@@ -1,0 +1,70 @@
+import { useEffect } from 'react';
+
+import { BASE_PATH } from 'src/global-config';
+
+import { withLangPath, type DocLang } from './doc-lang';
+
+// ----------------------------------------------------------------------
+
+/** 本模块写入的节点标记：只清理自己加的那些，不碰 head 里的其它东西。 */
+const MARK = 'data-doc-head';
+
+type HeadEntry = { rel: 'canonical' | 'alternate' | 'meta'; hreflang?: string; href?: string; content?: string };
+
+/**
+ * 把 canonical / hreflang / og:locale / html lang 同步到 `<head>`。
+ *
+ * 为什么不走 Helmet：本项目是 React 19，`<link>` 与 `<meta>` 在 Helmet 里会被
+ * 拦下来（title 能生效，这两个不行），结果是 SSG 有 canonical、运行时没有 ——
+ * 客户端导航之后 head 与静态版本对不上。这里直接操作 DOM，行为可预期：
+ * 每次按当前语言重写一遍，先删自己上次写的节点，绝不重复堆叠。
+ *
+ * 语言前缀来自 withLangPath，与路由完全同一套规则。
+ */
+export function useDocHead(lang: DocLang, canonicalPath: string) {
+  useEffect(() => {
+    const head = document.head;
+    const origin = `${window.location.origin}${BASE_PATH}`;
+    const abs = (path: string) => `${origin}${path === '/' ? '/' : `${path}/`}`;
+
+    const canonical = abs(canonicalPath);
+    const zh = abs(withLangPath(canonicalPath, 'cn'));
+    const en = abs(withLangPath(canonicalPath, 'en'));
+
+    const entries: HeadEntry[] = [
+      { rel: 'canonical', href: canonical },
+      { rel: 'alternate', hreflang: 'zh-CN', href: zh },
+      { rel: 'alternate', hreflang: 'en', href: en },
+      { rel: 'alternate', hreflang: 'x-default', href: zh },
+      { rel: 'meta', content: lang === 'en' ? 'en_US' : 'zh_CN' },
+    ];
+
+    head.querySelectorAll(`[${MARK}]`).forEach((el) => el.remove());
+
+    for (const entry of entries) {
+      if (entry.rel === 'meta') {
+        const meta = document.createElement('meta');
+        meta.setAttribute(MARK, '');
+        meta.setAttribute('property', 'og:locale');
+        meta.setAttribute('content', entry.content ?? '');
+        head.appendChild(meta);
+        continue;
+      }
+
+      const link = document.createElement('link');
+      link.setAttribute(MARK, '');
+      link.rel = entry.rel;
+
+      if (entry.hreflang) {
+        link.hreflang = entry.hreflang;
+      }
+      if (entry.href) {
+        link.href = entry.href;
+      }
+
+      head.appendChild(link);
+    }
+
+    document.documentElement.lang = lang === 'en' ? 'en' : 'zh-CN';
+  }, [lang, canonicalPath]);
+}

@@ -4,12 +4,15 @@ import type { LangOption } from 'src/locales';
 import { m } from 'framer-motion';
 import { useCallback } from 'react';
 import { usePopover } from 'minimal-shared/hooks';
+import { useLocation, useNavigate } from 'react-router';
 
 import SvgIcon from '@mui/material/SvgIcon';
 import MenuList from '@mui/material/MenuList';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
+
+import { withLangPath, type DocLang, splitLangPath } from 'src/utils/doc-lang';
 
 import { allLangs, useTranslate } from 'src/locales';
 
@@ -45,15 +48,21 @@ export function LanguagePopover({ data = allLangs, sx, ...other }: LanguagePopov
   const { open, anchorEl, onClose, onOpen } = usePopover();
 
   const { onChangeLang, currentLang: translatedLang } = useTranslate();
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
 
   const currentLang = data.find((lang) => lang.value === translatedLang.value);
 
   const handleChangeLang = useCallback(
     (lang: string) => {
       onChangeLang(lang as any);
+      // 语言就是地址：切语言必须同时换 URL。只改 i18n 的话地址仍是原来那种语言的，
+      // 用户一刷新就跳回去，搜索引擎也永远只见得到一份语言的内容。
+      // 切换后由 DocsViewer 的 effect 把 i18n 对齐到新地址，这里只负责导航。
+      navigate(withLangPath(splitLangPath(pathname).path, lang as DocLang));
       onClose();
     },
-    [onClose, onChangeLang]
+    [onClose, onChangeLang, navigate, pathname]
   );
 
   const renderMenuList = () => (

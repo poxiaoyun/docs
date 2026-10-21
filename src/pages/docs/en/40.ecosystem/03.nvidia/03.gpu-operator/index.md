@@ -2,7 +2,7 @@
 title: GPU Operator (cluster components)
 updated: '2026-09-17'
 author: Rune Docs Team
-description: Overview of the NVIDIA cluster components: what each one does, when it is required, how to verify it, and which switches the platform sets by default.
+description: "Overview of the NVIDIA cluster components: what each one does, when it is required, how to verify it, and which switches the platform sets by default."
 tags:
   - ecosystem
   - nvidia
