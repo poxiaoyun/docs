@@ -1,6 +1,6 @@
 ---
 title: 'Quick Start'
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: 'Your first lesson: sign in, pick an organization, copy a token and download your first model, in about 15 minutes.'
 tags:
   - moha
@@ -46,7 +46,7 @@ flowchart LR
 
 ## Before you start
 
-- An email address that can receive mail — registration needs a verification code.
+- An email address or mobile number that can receive a verification code, depending on which registration methods the platform enables.
 - A computer with Python 3.10 or later, which step 3 needs for the command-line download.
 - No need to install Git or any container tool in advance.
 

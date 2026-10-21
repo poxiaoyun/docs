@@ -1,7 +1,7 @@
 ---
 title: 'Resources & Quotas'
-updated: '2026-09-14'
-description: 'Understand how much resource and which configurations you can use: what templates, quota, flavors, and workspaces are and where to find them.'
+updated: '2026-10-21'
+description: 'Understand how much resource and which configurations you can use: what presets, quota, flavors, and workspaces are and where to find them.'
 tags:
   - rune
   - resources
@@ -10,40 +10,49 @@ tags:
 # Resources & Quotas
 
 This group of pages is not about how a single instance runs, but about the **shared configuration and resource boundaries you use before and after creating instances**:
-which templates you can reuse, how much resource this tenant can use in total, which flavors you can pick, and which workspace an instance lives in.
+which configurations you can reuse, how much resource this tenant can use in total, which flavors you can pick, and which workspace an instance lives in.
 After reading it you will be able to tell these four concepts apart and know where to look each one up.
 
 :::tip The one-line difference
-A template decides **how to deploy**, quota decides **how much you can deploy**, flavor decides **how good a machine you get**, and the workspace decides **where it is deployed**.
+A preset decides **how to deploy**, quota decides **how much you can deploy**, flavor decides **how good a machine you get**, and the workspace decides **where it is deployed**.
 :::
-
-![Tenant quota list: the cluster switchable in the page header, and each resource listed as quota type / model / resource pool / quota with used and total](/assets/screenshots/rune/quota-01.png)
-
-Quotas are counted **per cluster**, hence the **Cluster** dropdown at the top; CPU reads as used / total. This table is the answer to "can I deploy one more?", and it is worth a look before creating anything.
 
 ## The four pages at a glance
 
 | Page | What question it answers | Where to find it |
 | --- | --- | --- |
-| [Templates](/rune/resources/templates) | Is there a ready-made, tuned configuration I can use directly | **Workbench → Templates** in the left sidebar |
-| [Quota](/rune/console/quota) | How much CPU, memory, accelerator, and storage this tenant can use at most | Click the avatar in the top-right to open the account panel, click **Tenant**, then choose the **Quota** tab at the top |
-| [Flavor](/rune/console/flavor) | Which machine configurations are selectable when creating an instance | The same place, with the **Flavor** tab selected |
-| [Workspace](/rune/console/workspace) | Which office the instance sits in and who can see it | The same place, with the **Workspace** tab selected |
+| [Presets](/rune/resources/presets) | Is there a ready-made, tuned configuration I can use directly | **Workbench → Presets** in the left sidebar |
+| [Quota](/rune/console/quota) | How much CPU, memory, accelerator, and storage this tenant can use at most | Avatar → **Tenant <your tenant>** → **Tenant Clusters** → cluster name → **Quota** tab |
+| [Flavor](/rune/console/flavor) | Which machine configurations are selectable when creating an instance | Same as above, with the **Flavor** tab |
+| [Workspace](/rune/console/workspace) | Which office the instance sits in and who can see it | Same as above, with the **Workspace** tab |
 
-:::info It is normal not to see the Quota / Flavor / Workspace tabs
-These three tabs belong to tenant settings and are visible only to a tenant **Administrator** or **Developer**.
-If only some tabs appear, that is a permission setting; contact your tenant administrator when necessary.
+The four steps in the "Where to find it" column are worth memorising, because many people look for these entries in the console sidebar and never find them:
+
+1. Click the avatar in the top-right to open the account drawer.
+2. Click **Tenant <your tenant name>** in the menu.
+3. Click **Tenant Clusters** in the left navigation to open the cluster list.
+4. Click the **cluster name**; only then do the **Overview / Quota / Flavor / Workspace** tabs appear.
+
+:::info Not seeing the Quota / Flavor / Workspace tabs is normal
+The four cluster tabs are visible only to a tenant **Administrator** or **Developer**.
+The tenant overview and members pages are a different screen that belongs to account management; see [Tenant Management](/account/iam/tenant).
+:::
+
+:::info Do not confuse this with the console
+Quota, flavor, and workspace are **not** in the console's three sidebar groups (Home / Workbench / Observability).
+The console sidebar holds instances and storage; these three are tenant-level settings.
 :::
 
 ## Recommended reading order
 
-1. Read [Templates](/rune/resources/templates) first: understand how a configuration is saved and reused with one click next time.
+1. Read [Presets](/rune/resources/presets) first: understand how a configuration is saved and reused with one click next time.
 2. Then read [Quota](/rune/console/quota): confirm this tenant's resource ceiling so you do not get stuck halfway through creating something.
-3. Then read [Flavor](/rune/console/flavor): confirm which machine configurations are actually selectable in the current region.
+3. Then read [Flavor](/rune/console/flavor): confirm which machine configurations are actually selectable in the current cluster.
 4. Finally read [Workspace](/rune/console/workspace): understand how instances are isolated from one another.
 
 ## Related
 
+- [Tenant Clusters](/rune/console/tenant-clusters)
 - [Create Workloads](/rune/guide/workloads)
 - [Rune Console](/rune/console)
 - [Rune platform overview](/rune)

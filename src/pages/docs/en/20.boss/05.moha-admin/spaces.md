@@ -1,6 +1,6 @@
 ---
 title: 'Spaces'
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: Browse every online AI app (Space) on the platform and unlist, recommend, edit or delete the ones you need to.
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: 工作负载
-updated: '2026-09-14'
+updated: '2026-10-21'
 author: Rune Docs Team
 description: 按对象类型查看集群里运行的各类资源，用来确认某个对象是否创建成功。
 tags:
@@ -53,6 +53,7 @@ tags:
 | 查看列表 | 按该类型的定义显示名称、命名空间、状态等列 |
 | 查看详情 | 点对象名称进入详情，能看到基本信息、状态、事件和 YAML |
 | 节点操作 | 在 **节点** 标签下，可对某台机器执行 **禁止调度 / 允许调度**，带确认框 |
+| 存储类与 Ingress 类操作 | 这两类标签各有自己的行操作（例如存储类的默认标记、Ingress 类的相关操作），与节点操作不同 |
 
 :::tip 什么时候用这一页
 
@@ -71,6 +72,7 @@ tags:
 
 ## 相关
 
-- [节点与加速卡状态](/boss/rune-admin/nodes-gpu)
-- [日志与调度器](/boss/rune-admin/observability)
-- [存储集群与运行时](/boss/rune-admin/storage-runtime)
+- [节点状态](/boss/rune-admin/node-status)
+- [加速卡信息](/boss/rune-admin/accelerator-status)
+- [日志管理](/boss/rune-admin/logs)
+- [存储集群](/boss/rune-admin/storage-cluster)

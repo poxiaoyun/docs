@@ -1,173 +1,140 @@
 ---
 title: Resource Pool
-updated: '2026-09-14'
-description: Divide a cluster's machines into resource pools for different teams, and create, re-partition or delete a pool step by step.
+updated: '2026-10-21'
+description: Divide a cluster's machines into resource pools shared by different teams — create a pool, read its capacity, move node membership and delete it.
+tags:
+  - boss
+  - rune-admin
 ---
 
 # Resource Pool
 
-A resource pool is how you divide the machines in a cluster — think of the cluster as a data-centre building — into a few functional zones: one pool for inference, one for training, one kept for the platform itself. A machine can belong to **only one resource pool at a time**; any machine you have not moved out belongs to the system-reserved **Default** pool.
+A resource pool divides the machines in a cluster — think of the cluster as a data-centre building — into a few functional zones: one pool for inference, one for training, one kept for the platform itself. A machine belongs to **only one resource pool at a time**; any machine not explicitly moved elsewhere sits in the system-reserved **Default** pool.
 
-By the end of this page you can: create a resource pool, move machines into it, rename it, and return its machines before deleting it.
+After this page you will be able to create a resource pool, read a pool's capacity and node membership, move a machine to another pool, and delete a pool you no longer need.
 
 :::tip Three terms compared
 
-- **Cluster** is a data-centre building.
-- **Node** is one server inside that building.
-- **Resource pool** groups the machines in the building into functional zones that different departments share.
+- **Cluster** ≈ a data-centre building.
+- **Node** ≈ one server inside that building.
+- **Resource pool** ≈ dividing the building's machines into functional zones that different departments share.
 
 :::
 
 ## Before you start
 
-- You need a **System Administrator** account.
-- Prerequisite: the cluster is connected to the platform and resource-pool initialization has finished (before it finishes, the **Create resource pool** button is disabled with a hint).
-- A cluster supports at most **10** resource pools; once you reach the limit the button is disabled too.
+- You need a **system administrator** account.
+- Prerequisite: the cluster is connected to the platform and resource-pool initialisation has finished.
+- Quotas pick a resource pool, so create pools before issuing quotas.
 
-## Getting there
+## How to open it
 
-1. Click **AI Platform** in the top navigation bar, then click **Cluster** under the **AI Platform** group in the left sidebar, then open the target cluster.
-2. In the left sidebar under **Resource Management**, click **Resource Pool**.
+1. Click **AI Platform** in the top navigation bar, then click **Cluster Management** under the **AI Platform** group in the left sidebar.
+2. Click into the target cluster.
+3. Under the **Resource Management** group in the left-hand menu, click **Resource Pool**.
 
 ## What the page looks like
 
-The page uses a two-column "list on the left, details on the right" layout:
+The page is a two-column "pool list on the left, details on the right" layout:
 
 | Area | Content |
 | --- | --- |
-| Left | Card list of resource pools, showing "used / limit 10" at the top; search by display name or unique ID |
-| Right | The selected pool's capacity snapshot, accelerator view, last-hour trends and action buttons |
+| Left column | Card list of pools with "N resource pools · Default pool pinned on top"; searchable, paged (20 per page), with a refresh interval you can set (**off by default**, so no automatic refresh) |
+| Right column | The selected pool's health labels, capacity snapshot, node and accelerator tree, and the **Edit information / Delete** menu |
 
-The top of the right column has three status labels that help you judge whether the pool is healthy:
+Status labels at the top of the right column help you judge whether the pool is healthy:
 
 | Label | Meaning |
 | --- | --- |
-| Sync | Whether machine ownership has synchronized successfully |
+| Sync | Whether node membership has synchronised successfully |
 | Node health | Whether the machines in the pool are Ready and under no pressure |
-| Monitoring | Whether monitoring data is collected completely |
 
-The **Resource capacity view** on the right can be switched:
+The **capacity snapshot** gives the node count, allocatable CPU, allocatable memory and physical device supply; the **node and accelerator tree** below expands as Node → device so you can check membership machine by machine.
 
-- **Accelerator view**: see each group's capacity by physical / virtual accelerator.
-- **Host view**: see each accelerator's details per machine (utilization, memory, power, temperature, and so on).
+![Resource pool management: the Default pool pinned on top, pools listed on the left, capacity snapshot and node / accelerator tree on the right](/assets/screenshots/boss/cluster-pools-01.png)
 
-:::info The page refreshes automatically
-
-Normally it refreshes every 30 seconds. If the cluster is still initializing resource pools it refreshes every 2 seconds instead; if initialization fails, refreshing stops and a hint is shown.
-
-:::
-
-![Resource pool management: the Default pool pinned on top, Create pool and Refresh at the top right, capacity snapshots below](/assets/screenshots/boss/cluster-pools-01.png)
-
-The header reads "partition cluster nodes and inspect each pool's capacity, health and monitoring; scheduling is not included yet" — that last clause matters, the pools you draw here do not affect scheduling immediately. The **Default** pool aggregates unassigned nodes and is always pinned first.
+The header reads "partition cluster nodes and inspect capacity, health and current monitoring per Node → device; **scheduling is not included yet**" — that last clause matters: the pools you draw here do not by themselves decide scheduling; scheduling depends on flavors and quotas together.
 
 ## Create a resource pool
 
-1. On the resource pool page, click **Create resource pool** in the top right.
-2. Fill in **Resource pool information**:
+1. On the resource pool page, click **Create resource pool** at the top right.
+2. Fill in three items:
 
-| Form item | What to enter | Notes |
-| --- | --- | --- |
-| Name | e.g. `pool-inference` | 1–128 characters, cannot be empty after trimming; this is the display name |
-| Unique ID | Generated automatically | Generated as soon as you type the name, and cannot be changed after creation |
-| Description | e.g. "Dedicated to inference" | Optional, ≤ 500 characters |
+   | Field | How to fill it | Meaning |
+   | --- | --- | --- |
+   | Display name | For example `Inference pool` | The name shown in the UI |
+   | Unique ID | For example `pool-inference` | Unique identifier in the system, cannot be changed after creation |
+   | Description | For example "Dedicated to inference" | Optional, one sentence about the purpose |
 
-3. Under **Initial nodes (optional)**, tick the machines to include from the start:
+3. Click **OK** to save.
 
-   - You can only select machines that **currently belong to the Default pool**; machines already in another pool are greyed out and must be returned to Default first.
-   - You can search by name and use **Select current page**; page size is 20 / 50 / 100.
-
-4. Click **Review and create**; the system runs a change check first.
-5. In the **Confirm resource pool creation** dialog:
-
-   - Review the check conclusion: passed / needs confirmation / blocked / no actual change.
-   - Check the **Initial node list** (No., node name, accelerators).
-   - Tick each risk item that needs your acknowledgement.
-   - Click **Create resource pool** to submit, or **Back to edit** to change things.
-
-After submitting you see "The resource pool creation request was submitted and will run in the background", and the page returns to the list.
-
-:::warning At creation, machines must come from the Default pool
-
-If a machine already belongs to another resource pool you cannot select it on the create page. Go to that pool and move the machine back to Default first.
-
+:::info No machine selection at creation
+The create form has **no** node selection step. A new pool starts empty, and machine membership is adjusted one by one under **Node Membership**.
 :::
 
-## Edit a resource pool (name and description)
+## Adjust node membership
 
-1. In the right column click **Edit information**.
-2. Change the **Name** (1–128 characters) or the **Description** (≤ 500 characters).
-3. Click **Save information**; "Resource pool information updated." means success.
+1. Open **Node Membership** from the resource pool page (the workbench whose address carries `?intent=node-membership`).
+2. The node list is on top, with search, status filtering and page size controls.
+3. Find the machine you want to move and click **Edit resource pool** on its row.
+4. Choose the target resource pool and click **Confirm adjustment**.
+5. That row's membership updates immediately; repeat per machine for bulk changes.
 
-:::tip Machines are not added or removed here
-
-The edit page only changes the name and description. To move machines in or out of this pool, use **Adjust node partition** below.
-
+:::tip Why it is one machine at a time
+Node membership is maintained **per node**; there is no "select a batch and move them all" entry. That keeps each change's blast radius clear and easy to roll back.
 :::
 
-## Adjust the machine partition
+## Edit resource pool information
 
-1. In the right column click **Adjust node partition** to open the **Node partition workspace**.
-2. **1. Select nodes**: tick the machines to move; you can search and use **Select current page**, page size 20 / 50 / 100.
-3. **2. Select one target**: under **Target resource pool** pick one target pool (only one at a time; every selected machine goes to it).
-4. Click **Check change**; the right side shows the "Desired membership updates" and "Unchanged and skipped" counts and any blocking reasons.
-5. Tick the risk items that need confirming, then click **Submit node partition**.
+1. Select the target pool in the left column.
+2. In the right column menu click **Edit information**.
+3. Change the display name or description (the unique ID cannot be changed).
+4. Save.
 
-After submitting you see "The node partition change was submitted and will run in the background."
+## Delete a resource pool
 
-:::warning Re-check after changing the selection
+1. Select the target pool in the left column (**the Default pool has no delete entry**).
+2. In the right column menu click **Delete**.
+3. The confirmation reads "Delete {name}? This cannot be undone." Confirm to delete.
 
-As soon as you re-tick machines, switch the target pool, page, or change the search, the previous check result is void and you must click **Check change** again before submitting.
+After deletion the pool's machines return to **Default**. If you delete the Default pool the system says "Scheduling will automatically rebuild the default resource pool" — the Default pool is a system fallback structure and gets rebuilt.
 
-:::
-
-## Return the machines and delete the pool
-
-1. In the right column click **Return nodes and delete** (the **Default** pool has no such button).
-2. The dialog automatically checks whether the pool can be deleted:
-   - If the pool is still referenced by a **Flavor** or a **Quota**, deletion is blocked; the dialog lists every reference and offers a **Manage** link.
-   - With no blockers, type this pool's **unique ID** as a second confirmation.
-3. Tick the risk acknowledgements and click **Return nodes and delete**.
-
-:::warning Deletion is irreversible
-
-After deleting a resource pool its machines go back to the **Default** pool, and the work runs in the background. Make sure no workload still depends on this pool first.
-
+:::warning Make sure nothing still uses it before deleting
+When a flavor or quota still references the pool, the related workloads lose their usable machine range. Confirm those pools are no longer in use first.
 :::
 
 ## How resources relate to tenants
 
-A resource pool is not handed to a tenant directly; it connects to tenants and workspaces in two steps:
+A resource pool is not handed to a tenant directly; it becomes related in two steps:
 
-1. A **Flavor** can be bound to a resource pool, which decides which machines that flavor can be scheduled onto — see [Flavors](/boss/rune-admin/flavors).
-2. **Quotas** grant capacity to a tenant at the "cluster + resource pool + resource item" level, and workspace quotas subdivide a tenant quota further — see [Tenant Quotas](/boss/rune-admin/tenants).
-
-So: **before deleting a pool, make sure no flavor or quota still references it**, otherwise the deletion is blocked for safety.
+1. A **flavor** can be bound to a resource pool, which decides which machines that flavor can land on — see [Flavor](/boss/rune-admin/flavors).
+2. **Quotas** grant capacity to a tenant at the "resource pool + resource item" level — see [Tenant Resources](/boss/rune-admin/tenants).
 
 ## The Default resource pool
 
-- The system keeps one Default pool whose ID is fixed to `default`; it **cannot be deleted**.
-- The Default pool is shown first, and does not display sync or monitoring status.
-- When creating a resource pool you can only pick machines that currently belong to Default.
-- After deleting another pool, its machines return to Default.
+- The system keeps one Default pool, **pinned on top**, and does not show sync or monitoring status for it.
+- Machines not assigned to another pool all belong to Default.
+- After another pool is deleted, its machines return to Default.
+- If the Default pool is deleted, the system rebuilds it automatically.
 
 ## Confirming the result
 
-- The count at the top-left of the list goes from "n / 10" to "n+1 / 10", and a new card appears on the left.
-- Open the new pool: the **Expected members**, **Allocatable CPU** and **Allocatable memory** in the **Capacity snapshot** now have values.
-- After machines are moved in, their **Sync** status eventually becomes "Synchronized".
+- The left column count changes from "N resource pools" to N+1 and a new card appears.
+- Select the new pool: the **capacity snapshot** shows a node count and allocatable CPU / memory (assuming machines have been assigned).
+- After adjusting membership, a machine's **Sync** status eventually becomes synchronised.
 
 ## Common questions
 
-| Symptom | Likely cause | What to do |
+| What you see | Likely cause | What to do |
 | --- | --- | --- |
-| **Create resource pool** will not respond | You reached the limit of 10, or resource pools have not finished initializing | Delete an unused pool, or wait for initialization |
-| A machine cannot be selected | It already belongs to another pool | Move that machine back to Default first |
-| The submit button is greyed out | The check did not pass / there is no actual change / risks are not all ticked | Run **Check change** again and tick the risk items |
-| Deletion is blocked | The pool is still referenced by a flavor or quota | Handle the reference the hint points to, then delete |
+| The new pool has no machines | No machines are selected at creation | Set them one by one under **Node Membership** |
+| The page does not refresh by itself | The refresh interval is off by default | Click refresh manually, or set an interval |
+| A machine's membership cannot be changed | Insufficient permission, or the machine is unhealthy | Check the account's permission and the node's health |
+| The Default pool cannot be deleted | It is the system fallback | Expected; it would be rebuilt anyway |
+| Workloads report no available nodes after a pool is deleted | A flavor or quota still points at that pool | Create a pool again and point the flavors and quotas at it |
 
 ## Related
 
-- [Flavors](/boss/rune-admin/flavors)
-- [Tenant Quotas](/boss/rune-admin/tenants)
-- [Nodes & Accelerators](/boss/rune-admin/nodes-gpu)
+- [Flavor](/boss/rune-admin/flavors)
+- [Tenant Resources](/boss/rune-admin/tenants)
+- [Node Status](/boss/rune-admin/node-status)

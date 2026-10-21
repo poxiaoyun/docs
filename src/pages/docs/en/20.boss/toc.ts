@@ -31,8 +31,8 @@ import type { DocsSidebarSection } from '../../toc';
 
 export const BOSS_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
   {
-    // Real groups: Overview (Home), Account Center (Account / Tenant)
-    subheader: 'Boss Operations Platform',
+    // Real group: Overview (Overview / Home)
+    subheader: 'BOSS Console',
     items: [
       {
         title: 'Overview',
@@ -46,16 +46,43 @@ export const BOSS_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         path: '/boss/dashboard',
         icon: 'ic-dashboard',
       },
+    ],
+  },
+  {
+    // Real group: Account Center (Users / Tenants)
+    subheader: 'Account Center',
+    items: [
       {
         title: 'Account Center',
         path: '/boss/iam',
         icon: 'ic-lock',
+        deepMatch: false,
         product: 'boss',
         children: [
-          { title: 'Account', path: '/boss/iam/users' },
-          { title: 'Tenant', path: '/boss/iam/tenants' },
+          { title: 'User Management', path: '/boss/iam/users' },
+          { title: 'Tenant Management', path: '/boss/iam/tenants' },
         ],
       },
+    ],
+  },
+  {
+    // Real group: System Management (Authentication Policy / Third-party Authentication /
+    // Email Providers / SMS Providers); the product shows it only under /boss/iam paths
+    subheader: 'System Management',
+    items: [
+      {
+        title: 'Authentication Policy',
+        path: '/boss/iam/authentication-policy',
+        icon: 'ic-lock',
+        product: 'boss',
+      },
+      {
+        title: 'Third-party Authentication',
+        path: '/boss/iam/identity-providers',
+        icon: 'ic-external',
+      },
+      { title: 'Email Providers', path: '/boss/iam/email-providers', icon: 'ic-mail' },
+      { title: 'SMS Providers', path: '/boss/iam/sms-providers', icon: 'ic-chat' },
     ],
   },
   {
@@ -77,22 +104,28 @@ export const BOSS_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       { title: 'Dashboard', path: '/boss/gateway/operations', icon: 'ic-analytics' },
       { title: 'Channel Management', path: '/boss/gateway/channels', icon: 'ic-external' },
       { title: 'Model Configuration', path: '/boss/gateway/model-metadata', icon: 'ic-product' },
-      { title: 'Token Management', path: '/boss/gateway/api-keys', icon: 'ic-lock' },
+      { title: 'Rate Plans', path: '/boss/gateway/rate-plans', icon: 'ic-invoice' },
+      { title: 'Billing Accounts', path: '/boss/gateway/billing-accounts', icon: 'ic-banking' },
+      { title: 'Plan Catalog', path: '/boss/gateway/billing-plans', icon: 'ic-ecommerce' },
+      { title: 'Subscriptions', path: '/boss/gateway/billing-subscriptions', icon: 'ic-calendar' },
+      { title: 'Pricing Exceptions', path: '/boss/gateway/usage-events', icon: 'ic-kanban' },
+      { title: 'Quota Plans', path: '/boss/gateway/quota-plans', icon: 'ic-params' },
+      { title: 'API Keys', path: '/boss/gateway/api-keys', icon: 'ic-lock' },
       { title: 'Call Logs', path: '/boss/gateway/audit', icon: 'ic-file' },
-      { title: 'Content Moderation', path: '/boss/gateway/moderation', icon: 'ic-label' },
+      { title: 'Sensitive Words', path: '/boss/gateway/moderation-lexicon', icon: 'ic-label' },
+      { title: 'Moderation Policies', path: '/boss/gateway/moderation-policies', icon: 'ic-job' },
       { title: 'Hit Records', path: '/boss/gateway/sensitive-hits', icon: 'ic-order' },
-      { title: 'Gateway Configuration', path: '/boss/gateway/config', icon: 'ic-params' },
+      { title: 'Gateway Configuration', path: '/boss/gateway/config', icon: 'ic-menu-item' },
       {
         title: 'Currency Configuration',
         path: '/boss/gateway/currency-settings',
-        icon: 'ic-banking',
+        icon: 'ic-dashboard',
       },
     ],
   },
   {
-    // Real groups: Asset Management (Models / Datasets / Images / Spaces),
-    // Data Sync (Mirror), Security Audit (Audit Logs), System Settings (Announcements / Banners)
-    subheader: 'Moha Repository Management',
+    // Real group: Asset Management (Models / Datasets / Images / Spaces)
+    subheader: 'Asset Management',
     items: [
       {
         title: 'Repository Overview',
@@ -105,54 +138,87 @@ export const BOSS_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
       { title: 'Datasets', path: '/boss/moha-admin/datasets', icon: 'ic-folder' },
       { title: 'Images', path: '/boss/moha-admin/images', icon: 'ic-menu-item' },
       { title: 'Spaces', path: '/boss/moha-admin/spaces', icon: 'ic-subpaths' },
-      { title: 'Mirror', path: '/boss/moha-admin/mirrors', icon: 'ic-external' },
-      { title: 'Audit Logs', path: '/boss/moha-admin/audit', icon: 'ic-file' },
-      { title: 'Announcements', path: '/boss/moha-admin/announcements', icon: 'ic-mail' },
+    ],
+  },
+  {
+    // Real group: Data Sync (Mirror Site)
+    subheader: 'Data Sync',
+    items: [
+      {
+        title: 'Mirror Site',
+        path: '/boss/moha-admin/mirrors',
+        icon: 'ic-external',
+        product: 'boss',
+      },
+    ],
+  },
+  {
+    // Real group: Security Audit (Audit Logs)
+    subheader: 'Security Audit',
+    items: [
+      { title: 'Audit Logs', path: '/boss/moha-admin/audit', icon: 'ic-file', product: 'boss' },
+    ],
+  },
+  {
+    // Real group: System Settings (Announcements / Banners)
+    subheader: 'System Settings',
+    items: [
+      {
+        title: 'Announcements',
+        path: '/boss/moha-admin/announcements',
+        icon: 'ic-mail',
+        product: 'boss',
+      },
       { title: 'Banners', path: '/boss/moha-admin/banners', icon: 'ic-blog' },
     ],
   },
   {
-    // Real group: AI Platform (Cluster / Tenant Resource / App Template); the tenant resource
-    // shares a page with Tenant Quotas and is listed under Resource Management below.
-    subheader: 'Rune Admin',
+    // Real group: AI Platform (Cluster Management / Tenant Clusters / Application)
+    subheader: 'AI Platform',
     items: [
       {
-        title: 'Admin Overview',
+        title: 'AI Platform Administration',
         path: '/boss/rune-admin',
         icon: 'ic-tour',
         deepMatch: false,
         product: 'boss',
       },
-      { title: 'Cluster', path: '/boss/rune-admin/clusters', icon: 'ic-subpaths' },
-      { title: 'App Template', path: '/boss/rune-admin/templates', icon: 'ic-label' },
+      { title: 'Cluster Management', path: '/boss/rune-admin/clusters', icon: 'ic-subpaths' },
       {
-        title: 'System Template Market',
-        path: '/boss/rune-admin/system-market',
-        icon: 'ic-ecommerce',
+        title: 'Tenant Clusters',
+        path: '/boss/rune-admin/tenant-clusters',
+        icon: 'ic-dashboard',
       },
+      { title: 'Application', path: '/boss/rune-admin/applications', icon: 'ic-label' },
     ],
   },
   {
     // Cluster detail sub-menu 1: Cluster Status (Cluster / Node / Accelerator dashboards)
-    subheader: 'Rune Admin · Cluster Status',
+    subheader: 'AI Platform · Cluster Status',
     items: [
       {
-        title: 'Cluster Overview',
+        title: 'Cluster Status',
         path: '/boss/rune-admin/cluster-overview',
         icon: 'ic-tour',
         product: 'boss',
       },
+      { title: 'Node Status', path: '/boss/rune-admin/node-status', icon: 'ic-dashboard' },
       {
-        title: 'Dynamic dashboard',
+        title: 'Accelerator Status',
+        path: '/boss/rune-admin/accelerator-status',
+        icon: 'ic-product',
+      },
+      // No product menu entry; kept as a docs-only page for the cluster metrics YAML editor
+      {
+        title: 'Dynamic Dashboard',
         path: '/boss/rune-admin/dynamic-dashboard',
         icon: 'ic-analytics',
       },
-      { title: 'Nodes & Accelerators', path: '/boss/rune-admin/nodes-gpu', icon: 'ic-product' },
     ],
   },
   {
-    // Cluster detail sub-menu 2: Resource Management (Resource Pool / Flavor / Tenant Quotas)
-    subheader: 'Rune Admin · Resource Management',
+    // Cluster detail sub-menu 2: Resource Management (Resource Pool / Flavor / Tenant Resources)
+    subheader: 'AI Platform · Resource Management',
     items: [
       {
         title: 'Resource Pool',
@@ -161,28 +227,28 @@ export const BOSS_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         product: 'boss',
       },
       { title: 'Flavor', path: '/boss/rune-admin/flavors', icon: 'ic-params' },
-      { title: 'Tenant Quotas', path: '/boss/rune-admin/tenants', icon: 'ic-invoice' },
+      { title: 'Tenant Resources', path: '/boss/rune-admin/tenants', icon: 'ic-invoice' },
     ],
   },
   {
     // Cluster detail sub-menu 3: Operations Management (Workloads / Storage Cluster /
-    // System Apps / Scheduler / Logs)
-    subheader: 'Rune Admin · Operations Management',
+    // System Apps / Scheduling / Scheduler Management / Log Management / Alerts)
+    subheader: 'AI Platform · Operations Management',
     items: [
       { title: 'Workloads', path: '/boss/rune-admin/resources', icon: 'ic-job', product: 'boss' },
-      {
-        title: 'Storage Cluster & Runtime',
-        path: '/boss/rune-admin/storage-runtime',
-        icon: 'ic-folder',
-      },
+      { title: 'Storage Cluster', path: '/boss/rune-admin/storage-cluster', icon: 'ic-folder' },
       { title: 'System Apps', path: '/boss/rune-admin/systems', icon: 'ic-product' },
-      { title: 'Logs & Scheduler', path: '/boss/rune-admin/observability', icon: 'ic-menu-item' },
+      { title: 'Scheduling', path: '/boss/rune-admin/scheduling', icon: 'ic-kanban' },
+      { title: 'Scheduler Management', path: '/boss/rune-admin/schedulers', icon: 'ic-menu-item' },
+      { title: 'Log Management', path: '/boss/rune-admin/logs', icon: 'ic-file' },
+      { title: 'Alerts', path: '/boss/rune-admin/alerts', icon: 'ic-invoice' },
     ],
   },
   {
-    // Real group: System Settings (System Member / Platform Settings / AI Platform Settings /
-    // Moha Hub Settings / Gateway Settings / AI Assistant Settings / License)
-    subheader: 'Platform Management',
+    // Real group: Platform (System Members / Platform Settings / AI Platform Settings /
+    // Moha Hub Settings / Gateway Settings / License) plus the two entries that only exist in
+    // the top bar (Alert Channels / Digital Twin)
+    subheader: 'Platform',
     items: [
       {
         title: 'Platform Overview',
@@ -191,13 +257,15 @@ export const BOSS_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         deepMatch: false,
         product: 'boss',
       },
-      { title: 'System Member', path: '/boss/settings/members', icon: 'ic-user' },
+      { title: 'System Members', path: '/boss/settings/members', icon: 'ic-user' },
       { title: 'Platform Settings', path: '/boss/settings/platform', icon: 'ic-menu-item' },
       { title: 'AI Platform Settings', path: '/boss/settings/rune', icon: 'ic-tour' },
       { title: 'Moha Hub Settings', path: '/boss/settings/moha', icon: 'ic-course' },
       { title: 'Gateway Settings', path: '/boss/settings/chatapp', icon: 'ic-blog' },
-      { title: 'AI Assistant Settings', path: '/boss/settings/ai-assistant', icon: 'ic-chat' },
       { title: 'License', path: '/boss/settings/license', icon: 'ic-lock' },
+      { title: 'Platform Audit', path: '/boss/settings/platform-audit', icon: 'ic-file' },
+      { title: 'Alert Channels', path: '/boss/settings/alert-channels', icon: 'ic-mail' },
+      { title: 'Digital Twin', path: '/boss/digital-twin', icon: 'ic-subpaths' },
     ],
   },
 ];

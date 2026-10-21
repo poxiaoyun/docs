@@ -1,6 +1,6 @@
 ---
 title: Dashboard
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: 'See gateway health at a glance: requests, success rate, tokens, cost and uptime.'
 tags:
   - boss
@@ -29,9 +29,9 @@ When you drive you do not stare at the engine — you watch the speedometer and 
 
 The page refreshes automatically every **30 seconds**, and you can also refresh it manually at any time.
 
-![Dashboard: time range plus tenant / channel / model filters and time granularity, with seven metric cards below](/assets/screenshots/boss/gateway-operations-01.png)
+![Dashboard: time range plus tenant / channel / model filters and time granularity, with six metric cards below](/assets/screenshots/boss/gateway-operations-01.png)
 
-Compared with the user-facing [usage analysis](../../15.airouter/usage-statistics.md) page, this one adds **Tenant**, **Channel** and **Model** filters, so you can look at the whole platform or drill into one tenant. Below the filter bar sit seven metric cards, each carrying a period-over-period delta.
+Compared with the user-facing [usage analysis](../../15.airouter/usage-statistics.md) page, this one adds **Tenant**, **Channel** and **Model** filters, so you can look at the whole platform or drill into one tenant. Below the filter bar sit six metric cards, each carrying a period-over-period delta.
 
 ## How to filter
 
@@ -57,7 +57,7 @@ The time bucket is derived automatically; you never set it by hand:
 | 7 days / 30 days | Daily |
 | Custom | Hourly when the span is 240 hours or less, otherwise daily |
 
-## The seven metric cards
+## The six metric cards
 
 The row of cards across the top of the page, from left to right:
 
@@ -69,7 +69,6 @@ The row of cards across the top of the page, from left to right:
 | Sensitive hits | Number of requests that tripped content moderation |
 | TTFT | Time to first token, showing the max over the **last 1 minute**; lower is better |
 | Active API Keys | How many keys made calls during the period |
-| Runtime | How long the gateway has been running, shown as days / hours / minutes |
 
 :::info What "No previous data" means
 If there is no comparable data before the selected range, the success-rate card shows **No previous data**. It means there is no period-over-period figure to compute for that item — it is not an error.

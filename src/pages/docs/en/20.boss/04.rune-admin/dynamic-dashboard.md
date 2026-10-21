@@ -1,6 +1,6 @@
 ---
 title: 'Dynamic dashboard'
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: Build your own monitoring dashboard in a YAML box — edit the config on the left and watch the charts render on the right.
 tags:
   - boss
@@ -45,9 +45,9 @@ So: **your changes are lost when you refresh the page.** If you want to keep usi
 
 :::
 
-![Dynamic dashboard: a YAML editor on the left, the cluster summary and node resource charts rendered from it on the right](/assets/screenshots/boss/cluster-dashboard-01.png)
+![Dynamic dashboard: the YAML editor on the left with Reset, the dashboard rendered live from it on the right](/assets/screenshots/boss/cluster-dynamic-dashboard-01.png)
 
-This dashboard is configuration-driven: the YAML editor on the left defines data sources, charts and groups, and the right side renders them live. **Reset** discards your edits, `YAML Configuration` titles the editor, and the preview opens with the **Cluster summary** block — the blocks below it come from the groups you configure.
+This dashboard is configuration-driven: the YAML editor on the left defines data sources, charts and groups, and the right side renders them live. **Reset** discards your edits and `YAML Configuration` titles the editor.
 
 ## Create a dashboard
 
@@ -144,4 +144,5 @@ fieldConfig:
 ## Related
 
 - [Cluster Status](/boss/rune-admin/cluster-overview)
-- [Nodes & Accelerators](/boss/rune-admin/nodes-gpu)
+- [Node Status](/boss/rune-admin/node-status)
+- [Accelerator Status](/boss/rune-admin/accelerator-status)

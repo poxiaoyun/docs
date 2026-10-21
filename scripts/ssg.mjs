@@ -144,7 +144,7 @@ const HOME_ECOSYSTEM = [
 
 const HOME_RESOURCES = [
   { title: '开放 API / SDK', to: '/reference/api-overview' },
-  { title: '系统模板与脚本', to: '/rune/resources/templates' },
+  { title: '实例预设', to: '/rune/resources/presets' },
   { title: '监控 & 反馈通道', to: '/reference/faq' },
 ];
 

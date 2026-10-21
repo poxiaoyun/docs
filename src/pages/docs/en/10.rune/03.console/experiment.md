@@ -1,6 +1,6 @@
 ---
 title: 'Metrics'
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: 'Deploy an experiment tracking service in the console, get its access address, and record training metrics into it.'
 tags:
   - rune
@@ -28,7 +28,7 @@ Think of it as the "record book server" of a lab: the training job does the writ
 
 ![Metrics service list: the create button sits in the top-right, and an empty list reads "No data"](/assets/screenshots/rune/experiment-01.png)
 
-A metrics service is an instance like any other, so the columns match: name, metrics service, resource flavor, status, access, creator and creation time.
+A metrics service is an instance like any other, so the columns match: **name / metrics / resource flavor / status / created at / access**. The **metrics** column shows the application this instance uses (the template you picked at deploy time); the creator appears in small text below the time.
 
 ## Deploy a metrics service
 1. Click **Create Metrics** at the top right of the list.
@@ -45,12 +45,11 @@ A metrics service is an instance like any other, so the columns match: name, met
 | Column | Description |
 | --- | --- |
 | Name | Instance name; click to open the detail page |
-| Service | Which template this instance uses |
+| Metrics | Which application this instance uses |
 | Resource Spec | CPU, memory, and accelerators it occupies |
 | Status | Running state, see the table below |
+| Created At | When the instance was created; the small text below is the creator |
 | Access | Quick access buttons such as Web and SSH |
-| Creator | Who created it |
-| Created At | When the instance was created |
 
 Common statuses:
 
@@ -66,16 +65,18 @@ Common statuses:
 Hovering over or selecting a row also gives you **Start**, **Stop**, **Edit**, and **Delete** in the row action menu.
 
 ## What the detail page can do
-Click an instance name to open the detail page. It has four tabs at the top:
+Click an instance name to open the detail page. It has six tabs at the top:
 
 | Tab | Content |
 | --- | --- |
 | Overview | Basic information card and container list |
+| Resources | A resource relationship graph for this instance |
 | Monitoring | Instance resource monitoring panel |
 | Logging | Instance runtime logs |
 | Events | System event stream for troubleshooting scheduling, mounting, and similar problems |
+| Alerts | Alert rules and alert history for this instance |
 
-The **Actions** menu at the top right contains **Edit**, **Start**, **Stop**, **Scale**, and **Delete**. Deletion cannot be undone and asks for a second confirmation first.
+The **Actions** menu at the top right contains **Edit**, **Start**, **Stop**, **Scale**, **Save as Instance Preset**, and **Delete**. Deletion cannot be undone and asks for a second confirmation first.
 
 ## Connect metrics to a training job
 Once a metrics service is deployed, some **fine-tuning** templates offer an option in their deployment form for an "experiment tracking address", where you can pick one of your deployed metrics services. Metrics from training are then recorded into that metrics service.

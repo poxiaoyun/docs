@@ -62,39 +62,44 @@ export const RUNE_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
   },
   {
     // 控制台第二组：工作台（navbar.pai）
-    // 「我的模板」（navbar.instance_template）在产品里同样挂在这一组下。
+    // 「我的预设」（navbar.instance_preset）在产品里同样挂在这一组下。
     subheader: 'Rune 控制台 · 工作台',
     items: [
       { title: '推理服务', path: '/rune/console/inference', icon: 'ic-chat', product: 'rune' },
+      { title: '批量推理', path: '/rune/console/batch-inference', icon: 'ic-order' },
       { title: '训练与微调', path: '/rune/console/finetune', icon: 'ic-job' },
       { title: '开发服务', path: '/rune/console/devenv', icon: 'ic-subpaths' },
       { title: '应用实例', path: '/rune/console/app', icon: 'ic-product' },
-      { title: '我的模板', path: '/rune/resources/templates', icon: 'ic-label' },
+      { title: '我的预设', path: '/rune/resources/presets', icon: 'ic-label' },
       { title: '文件存储', path: '/rune/console/storage', icon: 'ic-folder' },
     ],
   },
   {
     // 控制台第三组：可观测性（navbar.observability）
-    // AI 诊断助手在控制台里是右侧悬浮助手、不在侧边栏导航中，文档归到本组
-    // （都是「出问题回头看数据」的入口）。
+    // 告警入口在顶栏铃铛里，不在侧边栏；归到本组（都是「出问题回头看数据」的入口）。
     subheader: 'Rune 控制台 · 可观测性',
     items: [
       { title: '指标', path: '/rune/console/experiment', icon: 'ic-analytics', product: 'rune' },
       { title: '日志', path: '/rune/console/logging', icon: 'ic-menu-item' },
       { title: '模型评测', path: '/rune/console/evaluation', icon: 'ic-order' },
-      { title: 'AI 诊断助手', path: '/rune/console/diagnostics', icon: 'ic-user' },
+      { title: '告警', path: '/rune/console/alerting', icon: 'ic-invoice' },
     ],
   },
   {
-    // 租户侧的资源入口：模板、配额、规格（资源规格）、工作空间（对应租户设置页签）
-    subheader: 'Rune 控制台 · 资源与配额',
+    // 租户管理：租户集群（再下钻到集群详情）+ 配额、规格、工作空间
+    subheader: 'Rune 控制台 · 租户管理',
     items: [
+      {
+        title: '租户集群',
+        path: '/rune/console/tenant-clusters',
+        icon: 'ic-dashboard',
+        product: 'rune',
+      },
       {
         title: '资源与配额概览',
         path: '/rune/resources',
         icon: 'ic-file',
         deepMatch: false,
-        product: 'rune',
       },
       { title: '配额', path: '/rune/console/quota', icon: 'ic-invoice' },
       { title: '规格', path: '/rune/console/flavor', icon: 'ic-params' },

@@ -1,6 +1,6 @@
 ---
-title: Cluster
-updated: '2026-09-14'
+title: 'Cluster Management'
+updated: '2026-10-21'
 description: 'Connect a Kubernetes cluster to the platform: fill in kubeconfig, test the connection, publish it, and confirm its nodes are up.'
 ---
 
@@ -158,20 +158,21 @@ After opening a cluster, the left-hand sub-menu is split into three groups:
 | Group | Sub-pages |
 | --- | --- |
 | Cluster Status | Cluster Status, Node Status, Accelerator Status |
-| Resource Management | Resource Pool, Flavor, Tenant Quotas |
-| Operations Management | Workloads, Storage Cluster, System Apps, Scheduler Management, Log Management |
+| Resource Management | Resource Pool, Flavor, Tenant Resources |
+| Operations Management | Workloads, Storage Cluster, System Apps, Scheduling, Scheduler Management, Log Management, Alerts |
 
 Among them:
 
-- **Cluster Status** shows only baseline dashboards; **Node Status** looks at machines and **Accelerator Status** looks at cards — see [Nodes & Accelerators](/boss/rune-admin/nodes-gpu).
-- **Resource Pool / Flavor / Tenant Quotas** are where resources are allocated — see [Resource Pools](/boss/rune-admin/resource-pools), [Flavors](/boss/rune-admin/flavors) and [Tenant Quotas](/boss/rune-admin/tenants).
+- **Cluster Status** shows the cluster-wide baseline dashboards; **Node Status** looks at machines and **Accelerator Status** looks at cards — see [Node Status](/boss/rune-admin/node-status) and [Accelerator Status](/boss/rune-admin/accelerator-status).
+- **Resource Pool / Flavor / Tenant Resources** are where resources are allocated — see [Resource Pools](/boss/rune-admin/resource-pools), [Flavors](/boss/rune-admin/flavors) and [Tenant Resources](/boss/rune-admin/tenants).
 - **Workloads** browses the cluster's resources by object type — see [Workloads](/boss/rune-admin/resources).
-- **Storage Cluster** and **System Apps** are both one-click entries for deploying middleware and storage — see [Storage & Runtime](/boss/rune-admin/storage-runtime) and [System Apps](/boss/rune-admin/systems).
-- **Scheduler Management** and **Log Management** are covered in [Logs & Scheduler](/boss/rune-admin/observability).
+- **Storage Cluster** and **System Apps** are both one-click entries for deploying storage and middleware — see [Storage Cluster](/boss/rune-admin/storage-cluster) and [System Apps](/boss/rune-admin/systems).
+- **Scheduling** shows where workloads are stuck and **Scheduler Management** changes the policy — see [Scheduling](/boss/rune-admin/scheduling) and [Scheduler Management](/boss/rune-admin/schedulers).
+- **Log Management** queries logs and **Alerts** configures alert rules — see [Log Management](/boss/rune-admin/logs) and [Alerts](/boss/rune-admin/alerts).
 
-![The Tenant Quotas sub-page inside a cluster: quota type, model, resource pool and used / total, per tenant](/assets/screenshots/boss/cluster-quotas-01.png)
+![The Tenant Resources sub-page inside a cluster: quota type, model, resource pool and used / total, per tenant](/assets/screenshots/boss/cluster-quotas-01.png)
 
-This cluster-side view slices quotas **by tenant**: the same data is organised by tenant under **Tenant Resources** and by cluster here. `tenant-4k70tg` shows a CPU quota of `0 / 4`, meaning nothing consumed yet.
+This cluster-side view slices quotas **by tenant**: the same data is organised by cluster under **Tenant Resources** and by tenant under **Tenant Clusters**. `tenant-4k70tg` shows a CPU quota of `0 / 4`, meaning nothing consumed yet.
 
 ## Confirming the result
 
@@ -190,5 +191,6 @@ This cluster-side view slices quotas **by tenant**: the same data is organised b
 ## Related
 
 - [Cluster Status](/boss/rune-admin/cluster-overview)
-- [Nodes & Accelerators](/boss/rune-admin/nodes-gpu)
+- [Node Status](/boss/rune-admin/node-status)
+- [Accelerator Status](/boss/rune-admin/accelerator-status)
 - [Resource Pools](/boss/rune-admin/resource-pools)

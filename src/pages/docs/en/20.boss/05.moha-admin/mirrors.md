@@ -1,6 +1,6 @@
 ---
 title: Mirror
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: Sync ready-made models and datasets from HuggingFace and ModelScope into the platform by managing mirror tasks.
 ---
 

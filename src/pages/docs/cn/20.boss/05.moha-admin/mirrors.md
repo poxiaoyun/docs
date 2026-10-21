@@ -1,6 +1,6 @@
 ---
 title: 镜像站
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: 把 HuggingFace、ModelScope 上的模型与数据集同步进平台的镜像任务管理。
 ---
 

@@ -1,11 +1,12 @@
 ---
 title: Cluster Status
-updated: '2026-09-14'
-description: 'Judge whether one cluster is healthy overall — CPU, memory, nodes and core services — then drill down.'
+updated: '2026-10-21'
+author: Rune Docs Team
+description: Check whether one cluster's CPU, memory, nodes and services are healthy, and learn how the three dashboards divide the work and where the dynamic dashboard lives.
 tags:
-- boss
-- rune-admin
-- cluster
+  - boss
+  - rune-admin
+  - cluster
 ---
 
 # Cluster Status
@@ -15,23 +16,21 @@ Cluster Status is the main dashboard you get after stepping into a "data-centre 
 ## Before you start
 
 - You need a **system administrator** account.
-- Prerequisite: a cluster is already connected to the platform, see [Cluster](/boss/rune-admin/clusters).
+- Prerequisite: a cluster is already connected to the platform, see [Cluster Management](/boss/rune-admin/clusters).
 
 ## Open the cluster overview
 
-1. Click **AI Platform** in the top navigation bar, then click **Cluster** under the **AI Platform** group in the left sidebar.
+1. Click **AI Platform** in the top navigation bar, then click **Cluster Management** under the **AI Platform** group in the left sidebar.
 2. In the cluster list, click the name of the cluster you want to inspect.
 3. In the left-hand sub-menu, click **Cluster Status**.
 
-:::info This page is the baseline dashboard
-
-The Cluster Status page renders only baseline monitoring dashboards and **does not include accelerator dashboards**. To see utilisation, VRAM and temperature per card, open the **Accelerator Status** sub-page.
-
+:::info All three dashboards share one renderer
+**Cluster Status**, **Node Status** and **Accelerator Status** are the same dashboard page. Only the last segment of the address decides which set of monitoring charts is loaded: `basic` loads the baseline dashboard, `nodes` loads the node dashboard, `accelerator` loads the accelerator dashboard. So the three pages work exactly the same way — only the content differs.
 :::
 
 ![Cluster information page: a cluster summary row (nodes, ready nodes, pods, CPU capacity) above hourly monitoring charts](/assets/screenshots/boss/cluster-overview-01.png)
 
-This is the cluster health report: the four **Cluster summary** cards give the current snapshot, the trend charts below default to a one-hour window, and the top right lets you shorten the interval from `1 hour` or flip `refresh` from `off` to automatic.
+This is the cluster health report: the **Cluster summary** cards give the current snapshot, the trend charts below default to a one-hour window, and the top right lets you shorten the interval or turn on automatic refresh.
 
 ## What is on the page
 
@@ -39,7 +38,12 @@ This is the cluster health report: the four **Cluster summary** cards give the c
 | --- | --- |
 | Baseline monitoring charts | Cluster metrics such as CPU, memory, node count and core services |
 | Variable filters | Drop-down filters at the top mean this monitoring template offers switchable views |
-| Drill-down entries | The left-hand sub-menu leads on to nodes, accelerators, storage, logs and more |
+| Time window and refresh | Top right: switch the time range and the automatic refresh interval |
+| Drill-down entries | The left-hand sub-menu leads on to nodes, accelerators, resources and operations pages |
+
+## Dynamic dashboard
+
+Besides the three fixed dashboards, a cluster also has a **Dynamic Dashboard** page: edit the dashboard definition in YAML on the left, preview it live on the right, and click reset to restore it. It is **not in the left-hand menu**, must be opened by address directly, and has no save button — an advanced page for assembling dashboards ad hoc. See [Dynamic Dashboard](/boss/rune-admin/dynamic-dashboard).
 
 ## Confirming the result
 
@@ -52,9 +56,11 @@ This is the cluster health report: the four **Cluster summary** cards give the c
 | --- | --- | --- |
 | The charts keep spinning or stay blank | The cluster has no monitoring collection component | Deploy the monitoring components from **System Apps** |
 | Only baseline metrics are shown, no cards | Accelerator dashboards live on another sub-page | Click **Accelerator Status** in the left-hand menu |
+| No "Dynamic Dashboard" in the left sidebar | It is not in the menu | Open it by address directly, or follow the link on this page |
 
 ## Related
 
-- [Nodes & Accelerators](/boss/rune-admin/nodes-gpu)
-- [Logs & Scheduler](/boss/rune-admin/observability)
+- [Node Status](/boss/rune-admin/node-status)
+- [Accelerator Status](/boss/rune-admin/accelerator-status)
+- [Dynamic Dashboard](/boss/rune-admin/dynamic-dashboard)
 - [Workloads](/boss/rune-admin/resources)

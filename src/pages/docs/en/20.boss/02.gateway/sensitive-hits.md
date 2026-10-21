@@ -1,6 +1,6 @@
 ---
 title: Hit Records
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: 'See which calls tripped content moderation: matched words, risk level and how they were handled.'
 tags:
   - boss
@@ -20,7 +20,7 @@ An airport scanner sweeps thousands of bags a day; to review "what set that alar
 ## Before you start
 
 - Permission: you need a platform administrator account (one that can enter the BOSS console).
-- The lexicon and policies must already be configured and real hits must have happened, otherwise this page has no data. See [Content Moderation](/boss/gateway/moderation) for how to set that up.
+- The lexicon and policies must already be configured and real hits must have happened, otherwise this page has no data. See [Sensitive Word Management](/boss/gateway/moderation-lexicon) and [Policy Management](/boss/gateway/moderation-policies) for how to set that up.
 
 ## Open Hit Records
 
@@ -44,9 +44,9 @@ The default time range is **the last month**: from midnight one month ago up to 
 | Start time | Accurate to the minute |
 | End time | Accurate to the minute |
 | User | Search by username |
-| Channel provider | A dropdown that includes **All** |
+| Channel | A dropdown that includes **All** |
 
-The toolbar has **Reset** and **Refresh**. Reset puts the time range back to the default last month and clears the user and channel provider filters.
+The toolbar has **Reset** and **Refresh**. Reset puts the time range back to the default last month and clears the user and channel filters.
 
 ## What the list contains
 
@@ -55,10 +55,10 @@ The toolbar has **Reset** and **Refresh**. Reset puts the time range back to the
 | Time | When the request happened; the small text below is the result of that call |
 | User | The user who made the call, with avatar and tenant name |
 | Model | The model requested, with the model icon |
-| Type | The category the sensitive content belongs to |
+| Type | The category the sensitive content belongs to; several types appear as parallel tags |
 | Sensitive Words | The matched words, joined together when there are several |
 | Risk Level | High / Medium / Low, distinguished by colour |
-| Token | The name of the key used (the masked key when it has no name) |
+| API Key | The name of the key used (the masked key when it has no name) |
 | Handling Method | The action the policy finally took |
 
 ### How the risk level is decided
@@ -75,7 +75,7 @@ If no score is available in the report for a call, a blocked call is recorded as
 
 ### The possible handling methods
 
-The handling method matches the action configured in [Policy Management](/boss/gateway/moderation):
+The handling method matches the action configured in [Policy Management](/boss/gateway/moderation-policies):
 
 | Handling method | Meaning |
 | --- | --- |
@@ -115,6 +115,7 @@ After changing the time range and user, if the list follows your changes and ope
 
 ## Related
 
-- [Content Moderation](/boss/gateway/moderation): maintain the lexicon and policies
+- [Sensitive Word Management](/boss/gateway/moderation-lexicon): maintain the word list
+- [Policy Management](/boss/gateway/moderation-policies): configure what happens on a match
 - [Call Logs](/boss/gateway/audit): query every call in detail
 - [Gateway Configuration](/boss/gateway/config): the master switch for content moderation

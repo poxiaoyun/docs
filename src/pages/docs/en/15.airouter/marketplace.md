@@ -1,126 +1,130 @@
 ---
 title: 'Models'
-updated: '2026-09-14'
-description: 'Too many models to choose from? Read the cards, filter by type and price, check the price, then start chatting in one click.'
+updated: '2026-10-21'
+description: 'Too many models to choose from? Read the cards, filter by capability and visibility, grab a call sample, then jump straight into a chat.'
 ---
 
 # Models
 
-**Models** is where you pick a model in AIrouter. Visit this page before you start chatting: you can see which models you may use, how much content each one can remember, what each costs per 1M tokens, and then jump straight into a conversation.
+**Models** is where you pick a model in AIrouter, and it is the page you land on after signing in. See which models you can use, how much content each can remember and what it can do — then jump into a chat with one click.
+
+This page **shows no prices**. To see what you actually pay per model, click **Prices** in the top nav (see [Prices](./prices.md)).
 
 :::tip An analogy
-Models is like the list page of an app store: the card tells you what the "app" does, how big it is and what it costs; open the details to decide whether to install it (start chatting).
+Models is like the list page of an app store: each card tells you what the "app" does, how much it remembers and what tags it carries. Open the details before you decide to use it.
 :::
 
 ## Before you start
 
-- Any signed-in account works; no extra role is needed.
-- You only see the models **you are allowed to use**. If you see none, the administrator has not opened a model channel for you yet.
+- Any signed-in account works — no extra role, and no API key needed.
+- You only see models **you are allowed to use**. If you see none, the administrator has not opened a model channel for you.
 
 ## What the page looks like
 
-| Area | Position | Description |
+| Area | Position | Notes |
 | --- | --- | --- |
-| Filter area | Left (above the cards on a narrow window) | Grouped filters by **Type**, **Category**, **Vendor**, **Context** and **Parameters** |
-| Visibility tabs | Top left | **All** / **Public** / **Tenant** / **Private**; the number after each label is the model count in that scope |
-| Search and sort | Top right | The search box finds models by name or keyword; the dropdown sorts by **Sort by name** or **Newest** |
-| Model cards | Center | Arranged into 1 to 4 columns by window width; each card is one model |
-| Model count | Below the cards | Shows "N models" |
+| Filters | Left (moves above the cards on narrow windows) | Five groups: **Type**, **Category**, **Vendor**, **Context**, **Parameters** |
+| Visibility tabs | Top left | **All** / **Public** / **Internal** / **Private**; the number after each label is the model count in that scope |
+| Search and sort | Top right | Search by name or keyword; the dropdown offers **Sort by name** (default) or **Newest** |
+| Model cards | Middle | 1 to 4 columns depending on window width, one card per model |
+| Model count | Below the cards | Shows "{{count}} models" |
 
-![The Model Marketplace: grouped filters on the left, scope tabs, search and sort on top, model cards in the middle](/assets/screenshots/airouter/marketplace-01.png)
+![The Models page: grouped filters on the left, visibility tabs plus search and sort on top, model cards in the middle](/assets/screenshots/airouter/marketplace-01.png)
 
-The layout is as above: the left column holds the five filter groups (**Type / Category / Vendor / Context / Size**), the top left holds the scope tabs (the screenshot shows 35 under **All**), the top right holds search and sort, and the middle area is filled with model cards.
+Read the layout from the screenshot: the leftmost column holds the five filter groups **Type / Category / Vendor / Context / Parameters**; the top-left tabs switch visibility scope (the number on each tab is that scope's model count); the top right has the search box and sort dropdown; cards fill the middle.
 
 ## Pick a model
 
-1. Click **Models** in the top navigation.
-2. Set the scope first: click one of **All**, **Public**, **Tenant** or **Private** at the top.
-3. Narrow further with the left-hand filters. A tag is **selected on the first click and cleared on the second**, and different groups can be combined:
-   - **Type**: for example Chat.
-   - **Category**: for example Vision, Reasoning, Coder.
-   - **Vendor**: for example DeepSeek, Qwen, Zhipu, Kimi, OpenAI.
+1. Click **Models** in the top nav.
+2. Set the scope first: click one of **All**, **Public**, **Internal**, **Private**.
+3. Narrow down with the left-hand filters. Each tag is **click to select, click again to clear**, and different groups stack:
+   - **Type**: **Chat**, **Image**, **Video**, **Audio**, **Embedding**, **Rerank**.
+   - **Category**: **Vision**, **MoE**, **Reasoning**, **Tools**, **FIM**, **Math**, **Coder**.
+   - **Vendor**: DeepSeek, Qwen, Zhipu, Kimi, OpenAI, Anthropic, Google, MiniMax, Doubao.
    - **Context**: `< 32K`, `32K - 128K`, `128K - 1M`, `≥ 1M`.
    - **Parameters**: `< 10B`, `10B - 30B`, `30B - 100B`, `100B - 300B`, `≥ 300B`.
-4. Still cannot find it? Type directly: the search box matches model names or keywords, including model IDs, vendors, channels, tenants and workspaces.
-5. To change the order, pick **Sort by name** or **Newest** in the dropdown to the right of the search box.
-6. Results appear in the card area and the count "N models" shows below. When nothing matches, "No matching models" appears — loosen the conditions as the message suggests.
+4. Or just type in the search box, labelled "Search models or keywords". It matches **model ID, vendor, description, type, category, custom tags, channel, tenant and workspace**.
+5. To change the order, use the dropdown next to the search box: **Sort by name** or **Newest**.
+6. Results appear as cards, and the count below them reads "{{count}} models". When one model is served by several channels, **those channels count as one model**. With no results you see "No matching models" and "Adjust the search or filters and try again."
 
-## Reading the card
+## Read the cards
 
-| Card element | What it means |
+| Card element | Meaning |
 | --- | --- |
-| Model icon + model name | This ID is what you use when calling the API. The card itself has no copy button |
-| Provider | Who provides this model |
-| **New** (top right) | A recently added model |
-| Colored tag (top right) | Visibility: **Public** (available platform-wide), **Tenant** (this tenant only), **Private** (only you or this workspace) |
-| Description | A one-line introduction to the model, shown on at most two lines |
-| Bottom tags | Type, categories (up to 2), **Context**, parameter scale and custom tags (up to 2); the full set is in the details |
+| Icon + model name | This is the ID you use when calling the API |
+| Provider | Who provides the model |
+| **New** badge | Recently added model |
+| Coloured badge at top right | Visibility: **Public** (whole platform), **Internal** (this tenant), **Private** (only you or your workspace) |
+| Description | One-line introduction, at most two lines |
+| Bottom tags | Type, up to two categories, **Context**, parameter scale, up to two custom tags. Full tags are in the details |
 
-:::info Need to copy a model ID
-Neither the cards nor the detail panel on this page have a copy button. Go to the model list on the left of [Playground](./experience.md) or [Comparison](./compare.md) and click the copy icon next to the model name (hover shows **Copy model ID**).
+:::info No copy button on this page
+Neither the cards nor the detail panel offer a copy button. Read the model ID straight off the card, or use **Examples**, where the ID is already filled in.
 :::
 
 ### What context length means
 
-It is the upper bound on how much content a model can remember in one conversation. The `128K` or `1M` on the card is that bound; the bigger the number, the better it handles long documents and long code. Beyond the bound the model forgets the earliest content, or even returns a "Context length exceeded" error.
+The most content the model can remember in one conversation. The `128K` or `1M` on a card is that ceiling: the larger it is, the better it handles long documents and long code. Past the ceiling the model forgets the earliest content, or the request fails with "Context length exceeded".
 
 ### What parameter scale means
 
-The unit is `B` (billion). `7B` means 7 billion parameters. More parameters usually means stronger capability, but speed, price and memory use differ too — the card price is the reliable guide.
+The unit is `B` (billion). `7B` means 7 billion parameters. More parameters usually means more capability, but also different speed, price and memory use.
 
-### How do I know whether a model supports images
+### How do I know a model accepts images
 
-There is no separate "supports images" switch. Check the **Category** tag: **Vision** means the model can process images. On the [Playground](./experience.md) page, the image button in the input toolbar sends an image together with your message.
+There is no separate "accepts images" switch — check the **Category** tags: **Vision** means the model can process images. On [Chat](./experience.md), the image button in the input toolbar sends images along with your message.
 
 ## Open the model details
 
-1. Click any card and the detail panel slides out on the right.
-2. The top of the panel shows the model name, visibility, provider, description and all tags, plus the **Try model** and **API docs** buttons.
-3. In the middle is **Available channels (N)**: every source this model is served from, with its **Tenant** and **Priority**.
-4. Below that is **Pricing**.
-5. To see call samples, click **API docs**. The panel expands into **Examples**, which switch between the curl, Python and Go tabs, and it also shows the **Gateway Address**.
+1. Click any card; the detail panel slides in from the right.
+2. The top shows the model ID, visibility, provider, description and all tags (type, category, context, parameter scale, custom tags, plus the model's **task** tag).
+3. Below that are two buttons: **Try model** and **Examples**.
+4. Further down is **Available channels (N)**: every source of this model with its **tenant** and **priority**.
+5. To see how to call it from code, click **Examples** and the call instructions expand inside the panel.
 
-:::tip Why does one model have several channels
-A model may be connected through more than one source. They are merged into a single card, and the details list them by **Priority** from high to low; clicking **Try model** uses the highest-priority channel by default.
+:::tip Why one model has several channels
+A model may be reachable through several sources. They are merged into a single card, and listed in the details by **priority** from high to low. **Try model** uses the highest-priority channel by default.
 :::
 
-![Model detail panel: name and tags on top, available channels in the middle, four price tiles below](/assets/screenshots/airouter/marketplace-02.png)
+## What the call sample contains
 
-The **Price** block in the screenshot has four tiles: **Input**, **Output**, **Cache read** and **Cache write**, each showing a unit of `CNY / 1M`. The table below explains what each one covers.
+Clicking **Examples** expands a block explaining how to call this model from code:
 
-## How to read the prices
-
-| Price item | Meaning |
+| Item | Notes |
 | --- | --- |
-| **Input price** | What you send to the model (question and context) is billed at this rate |
-| **Output price** | What the model generates is billed at this rate |
-| **Cache read price** | The rate when a cache hit lets the model reuse existing context directly |
-| **Cache write price** | The rate for writing context into the cache |
+| **Gateway Address** | Shaped like `https://your-site/airouter-data`; this is the root for every endpoint |
+| Chat API address | The gateway address plus `/v1/chat/completions` |
+| Channel ID / task tag | Which channel this call goes through, and what task the model belongs to |
+| Sample code | Tabs for **curl**, **Python** and **Go**; the model ID and headers are already filled in |
+| Auth | Samples use `Authorization: Bearer YOUR_TOKEN`; replace `YOUR_TOKEN` with your own API key |
 
-The unit is "price per 1M tokens", shown on the page as something like `0.5 CNY / 1M`. When a price item has no configured value it shows `-`.
+For the full endpoint list (including the Anthropic protocol), see [API docs](./api-docs.md).
 
-## Start a conversation
+## Start a chat
 
 1. Click **Try model** at the top of the detail panel.
-2. The page jumps to **Playground** with this model already selected.
-3. Type your question in the input box at the bottom and press **Enter** to send.
+2. The page jumps to **Chat** with that model already selected.
+3. Type your question in the input box at the bottom and press **Enter**.
 
 :::warning This clears the current conversation
-Entering through **Try model** from Models starts a fresh conversation, and earlier messages are not kept. Copy or screenshot anything you want to keep first.
+Entering via **Try model** starts a new conversation; anything you were chatting about is not kept. Copy or screenshot the results first if you need them.
 :::
 
 ## Common issues
 
 | Symptom | Possible cause | What to do |
 | --- | --- | --- |
-| "No matching models" is shown | The search term or filters are too narrow | Adjust the search term or filter scope as suggested and retry |
-| A model you want has no card | It is not under the current visibility tab | Switch to **All** or the matching visibility |
-| A model has several channels and you are unsure which to use | One model may be connected through several sources | Open the details and check the **Available channels** priority; the highest one is used by default |
-| The price shows `-` | That price item is not configured | Use the other price items, or check the actual cost in [Usage analysis](./usage-statistics.md) |
+| "No matching models" | The search term or filters are too narrow | Adjust the search or filters as prompted |
+| A model I know about is missing | It is not in the visibility scope you selected | Switch to **All** or the right visibility scope |
+| One model, several channels — which one | A model may be reachable through several sources | Open the details and check **Available channels** priority; the highest is used by default |
+| I cannot find prices | This page does not show prices at all | Click **Prices** in the top nav — that is your account's unit price |
+| No copy button for the model ID | This page does not offer one | Read it off the card, or use the pre-filled ID in **Examples** |
 
 ## Related
 
-- [Playground](./experience.md)
+- [Chat](./experience.md)
 - [Comparison](./compare.md)
 - [API Keys](./token.md)
+- [Prices](./prices.md)
+- [API docs](./api-docs.md)
 - [Usage analysis](./usage-statistics.md)

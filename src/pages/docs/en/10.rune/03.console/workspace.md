@@ -1,121 +1,122 @@
 ---
-title: 'Workspace Management'
-updated: '2026-09-14'
-description: 'Understand the region-to-workspace relationship, learn how to switch and create workspaces, and how to add colleagues with roles.'
+title: 'Workspace'
+updated: '2026-10-21'
+description: 'Understand the region-to-workspace relationship, how to switch and create workspaces, and how to allocate quota to one.'
 tags:
   - rune
   - console
 ---
 
-# Workspace Management
+# Workspace
 
-A workspace is the "room" that holds instances in Rune: every inference service, fine-tuning job, development environment, application, and storage volume you create belongs to a workspace. A workspace is shared with colleagues, and resources in different workspaces are isolated from each other. This page explains the relationship between **Region** and **Workspace**, how to switch, how to create one, and how to add colleagues.
+A workspace is the "room" that holds instances in Rune: the inference services, fine-tuning jobs, development environments, applications, and storage volumes you create all belong to a workspace. A workspace is shared by colleagues in the same workspace, and resources in different workspaces are isolated. This page explains how **Region** and **Workspace** relate, how to switch, how to create one, and how to allocate quota to it.
 
-## Core concept: how Region and Workspace relate
+## Core concepts: how region and workspace relate
 
 | Term | Plain explanation |
 | --- | --- |
-| Tenant | One company's own account space; members and quota live at this level |
+| Tenant | One company's isolated account space; members and quota live at this level |
 | Region (cluster) | A data center building with many machines inside |
 | Workspace | One office inside that building, shared by colleagues |
-| Namespace | The office's door number inside the system, generated automatically when the workspace is created |
+| Namespace | The office's street number inside the system, generated when the workspace is created |
 
-The relationship is one sentence: **one building has many offices, and your instances all live in an office**. So you first pick the building (**Region**), then the room (**Workspace**), before you can start working.
+The relationship is one sentence: **one building holds many offices, and your instances live in the offices**. So pick the building (region) first, then the room (workspace), before you start working.
 
-:::tip Why the workspace layer exists
-If everyone worked on the same pool of resources, something A deletes could affect B. A workspace puts people into different offices: inside one workspace you can see and collaborate with each other, across workspaces you stay out of each other's way, and quota can also be allocated per workspace.
+:::tip Why this extra "workspace" layer
+If everyone worked on the same pool of resources, something A deletes could affect B. Workspaces split people into separate offices: inside one workspace everything is visible and collaborative, across workspaces nothing interferes, and quota can be allocated per workspace.
 :::
 
 ## Before you start
 
-- Switching and viewing workspaces: any member can do this.
-- Creating a workspace: only an **Administrator** (tenant administrator) can see the create button. The tenant must already have resource quota configured in this region, otherwise the page says "No resource quota is configured for this tenant in this cluster, so the workspace cannot be created."
-- Adding members to a workspace: you need access to the workspace's **Member** tab.
+- Switching and viewing workspaces: every member can.
+- Creating a workspace: only an **Administrator** (tenant administrator) sees the create button. The tenant must already have a quota configured in this cluster, otherwise the page reports "this tenant has no resource quota in this cluster, so a workspace cannot be created".
+- Allocating quota to a workspace: tenant administrator.
 
 ## How to switch region and workspace
 
-Both selectors are in the top-left of the page, and the data of every menu follows them.
+Both selectors sit in the top-left of the page, and every menu's data follows them.
 
 1. Click **Region** in the top-left and pick a "building" from the list.
-2. Click **Workspace** next to it and pick an "office" from the list.
+2. Click **Workspace** next to it and pick an "office".
 
 | Action | What happens |
 | --- | --- |
-| Switching region | Rune automatically selects the first workspace under that region, and the previous workspace selection is cleared |
-| Switching workspace | Every instance list in the left sidebar and the Home data refresh to the new workspace's resources |
-| Opening an instance detail or storage volume detail | Both selectors become unclickable to prevent accidental switching; go back to a list page to switch |
+| Switch region | Rune automatically selects the first workspace under that region; the previous workspace selection is cleared |
+| Switch workspace | Every instance list and the home page refresh to the new workspace's resources |
+| Open an instance or storage volume detail | Both selectors become unclickable to prevent accidental switching; go back to a list page to switch |
 
-:::warning Make sure you are not editing before switching
-If you switch workspace while filling in a deploy form or editing an instance, the page navigates away and unsubmitted content is lost. Submit or cancel first, then switch.
+:::warning Confirm you are not editing before switching
+Switching workspace while filling in a deploy form or editing an instance navigates away and the unsubmitted content is lost. Submit or cancel first.
 :::
 
-If a region has no workspaces at all, the page shows an empty state where an administrator can click **Create Workspace** to go and create one.
+If a region has no workspaces at all, the workspace selector at the top is empty and the page reports **no workspace available**. A tenant administrator has to create one, as described below.
 
 ## Create a workspace
 
-Workspaces are created by a tenant administrator in the admin console.
+Workspaces are created by a tenant administrator inside **Tenant Clusters**.
 
-1. Click **Account Center** in the top navigation.
-2. In the left **Account Center** group, click **Tenant** and open your tenant.
-3. In the left **Tenant Management** group, click **Workspace**.
-4. Click **Create Workspace** in the top-right corner.
-
-   ![Create Workspace form: fill in the name, the ID is generated to match, then pick the cluster and add a description](/assets/screenshots/rune/workspace-02.png)
-
+1. Click the avatar in the top-right and click **Tenant <your tenant name>**.
+2. Click **Tenant Clusters** and click the **cluster name** you want to work in.
+3. Click the **Workspace** tab at the top.
+4. Click **Create Workspace** in the top right.
 5. Fill in the form:
 
-   | Field | What to fill | Notes |
+   | Field | What to enter | Notes |
    | --- | --- | --- |
-   | Name | For example `algorithm team space` | Required and for display; Chinese or English both work |
-   | ID | Generated automatically from the name by default | A system identifier that cannot be changed after creation; click the pencil icon below the name to edit it manually |
-   | Cluster | Pick the cluster this workspace belongs to | Required; determines which cluster's compute it can use |
-   | Description | For example "for the algorithm team's daily experiments" | Optional |
+   | Name | For example `algo-team` | Required, for display; Chinese or English both work |
+   | ID | Generated from the name by default | System identifier; cannot be changed after creation. Click the pencil icon below the name to edit it |
+   | Description | For example "daily experiments for the algo team" | Optional |
 
 6. Click **Confirm**.
 
-![Workspace list: each row shows name, namespace, status and creation time](/assets/screenshots/rune/workspace-01.png)
+![Create workspace form: name, ID and description only, no cluster selector](/assets/screenshots/rune/workspace-02.png)
 
-Each row is one workspace: the **Name** carries the description underneath, **Namespace** is its technical identifier inside the cluster, and a **Status** of **Ready** means it is available. This workspace's namespace is `dev`, and the platform uses it to associate resources from that point on.
-
-:::warning Follow the ID rules
-The ID must start with a lowercase letter, may contain only lowercase letters, numbers, and the hyphen `-`, and is at most 32 characters. A mistake shows a format error; it takes part in the system's internal naming and **cannot be changed after creation** — the only fix is to recreate the workspace.
+:::info There is no cluster field in the form
+A workspace is created in **the cluster you are currently in**, so you do not pick a cluster again. To create one in another cluster, switch to that cluster first and then click **Create Workspace**.
 :::
 
-## Confirming the result
+:::warning Respect the ID rules
+The ID must start with a lowercase letter, may only contain lowercase letters, digits and hyphens `-`, and is at most 63 characters. An invalid value is rejected immediately; the ID is part of internal naming and **cannot be changed** after creation.
+:::
 
-Back on the **Workspace** list, you can see the workspace you just created, with the **Status** column moving from creating to ready. Afterwards you can switch to it with the **Workspace** selector in the top-left.
+## Reading the workspace list
 
-## Add members to a workspace
+Back on the **Workspace** tab, each row is one workspace:
 
-1. Use the top-left selector to switch to the target **Workspace**.
-2. **Account Center** → **Tenant**, open your tenant, then click **Workspace** on the left to reach that workspace's detail page.
-3. On the **Member** tab, click **Create Member**.
-4. Fill in the form:
+| Column | Description |
+| --- | --- |
+| Name | The workspace name; the description is in small text below |
+| Namespace | Its technical identifier in the cluster, generated at creation |
+| Status | **Ready** means it is usable; other states mean it is still being created or is abnormal |
+| Created At | When it was created |
 
-   | Field | What to fill | Notes |
-   | --- | --- | --- |
-   | User | Pick a person from the tenant members | Required; only members already in the current tenant are listed |
-   | Role | Pick a role | Required, and **only one** can be chosen; the dropdown shows the roles available in the current workspace, displayed as role names |
+The row action holds **Quota**, which opens that workspace's quota page. **Create / Edit / Delete** are available to tenant administrators only; other roles do not see them.
 
-5. Click **Confirm**.
+## Confirm it worked
 
-The member list shows **Username, Email, Role, Joined At**; to change a role or remove a member, use the action menu at the end of the row.
+Back on the **Workspace** tab you can see the new workspace, its **Status** changing from creating to **Ready**. It then appears in the console's **Workspace** selector at the top left.
 
-## Quota
+## Allocate quota to a workspace
 
-The **Quota** tab on the workspace detail page lets you allocate tenant quota further to a specific workspace and control how much compute it can use. See [Quota](/rune/console/quota) for how to allocate it.
+A workspace detail page has only **Overview** and **Quota** tabs — there is **no Members tab**; membership is managed per tenant, not per workspace. For the allocation steps see [Quota](/rune/console/quota).
+
+:::info Where to give a colleague access
+Who can see a workspace follows from tenant membership. To add people or change roles, go to **Tenant Management → Members**; see [Tenant Management](/account/iam/tenant).
+:::
 
 ## FAQ
 
 | Symptom | Likely cause | What to do |
 | --- | --- | --- |
-| The page says "No available workspace" | There is no workspace in the current region yet, or none was assigned to you | An administrator clicks **Create Workspace**; regular members ask an administrator to assign one |
-| The create button is gone | You are not a tenant administrator | Ask an administrator to create or assign a workspace |
-| It says no resource quota is configured, so it cannot be created | This tenant has no quota in this region yet | Configure quota under [Quota](/rune/console/quota) first |
-| The top-left selector does not respond | You are on an instance detail or storage volume detail page | Go back to a list page before switching |
+| The page reports "no workspace available" | The current region has no workspace, or none was assigned to you | Ask the tenant administrator to create one under **Tenant Clusters → Workspace** |
+| The create button is missing | You are not a tenant administrator | Ask an administrator to create or assign a workspace |
+| It reports no resource quota, so a workspace cannot be created | The tenant has no quota in this region yet | Configure quota first under [Quota](/rune/console/quota) |
+| The top-left selectors are not clickable | You are on an instance or storage volume detail page | Go back to a list page and switch |
+| There is no Members tab in the workspace | A workspace detail has only Overview and Quota | Manage members under **Tenant Management → Members** |
 
 ## Related
 
+- [Tenant Clusters](/rune/console/tenant-clusters)
 - [Home](/rune/console/dashboard)
 - [Quota](/rune/console/quota)
 - [Flavor](/rune/console/flavor)

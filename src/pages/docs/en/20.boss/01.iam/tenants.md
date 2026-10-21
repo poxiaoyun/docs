@@ -1,190 +1,209 @@
 ---
 title: 'Tenant Management'
-updated: '2026-09-14'
-description: Create a tenant, fill the form correctly, then add its members and quota.
+updated: '2026-10-21'
+description: Create a tenant, fill the form correctly, add members, and maintain its profile, image push settings and enabled state.
 ---
 
 # Tenant Management
 
 A **tenant** is a company's isolated account space on the platform. One company gets one tenant; that company's members, compute quota and workspaces all live inside the tenant and do not interfere with any other company. From here you create tenants, maintain their details, enable or disable them, and add their members.
 
+After reading this page you can create a tenant, use the success page to finish the follow-up steps, add members, edit the profile and image push settings, and enable or disable a tenant.
+
 :::tip An analogy
-Think of a tenant as **a separate office building**: the members are the people inside, the quota is the monthly utility allowance for that building, and the workspaces are the individual offices. Buildings do not interfere with one another, and you as platform administrator are the one who erects the building, approves the utility allowance and hands out the door passes.
+Think of a tenant as **a separate office building**: members are the people inside, quota is the monthly utility allowance, and workspaces are the individual offices. The buildings do not disturb each other; as the platform administrator you put the building up, approve the allowance and hand out access cards.
 :::
 
 ## Before you start
 
-- You need an administrator account that can sign in to BOSS.
-- It is best to confirm the platform already has **at least one cluster**. Without a cluster you cannot allocate compute quota right after creating the tenant.
+- You need a **system administrator** account that can sign in to BOSS.
+- Confirm that the platform has **at least one cluster**; without one, the "Configure Clusters" step has nothing to offer.
+- Quota and workspaces are **not on this page** — they live under a cluster's **Tenant Resources**, see [Tenant Resources and Quota](/boss/rune-admin/tenants).
 
-## The words you need first
+## Key terms
 
 | Term | Plain explanation |
 | --- | --- |
-| Tenant | A company's isolated account space, and the unit that owns members and resources |
-| Member | A user who has joined a tenant, together with a role |
-| Role | What that person may do inside the tenant (Administrator / Member / Developer and so on) |
-| Quota | How much compute this tenant may use on a given cluster |
-| Workspace | A further subdivision inside the tenant for colleagues to share |
+| Tenant | A company's isolated account space; the unit that owns members and resources |
+| Member | A user who joined the tenant, carrying a role |
+| Role | What that person may do in the tenant (Administrator / Developer / Member) |
+| Cluster enablement | The prerequisite relationship that lets a tenant use a given cluster |
+| Quota | The maximum compute the tenant may use in a cluster |
+| Workspace | A smaller collaboration unit inside the tenant, shared by colleagues |
 
 ## What the tenant list shows
 
-Go to **Account Center → Tenant**. The list has these columns:
+Go to **Account Center → Tenant Management**. The list has these columns:
 
 | Column | Explanation |
 | --- | --- |
-| Name | Tenant avatar and name (clickable). The small grey text under the name is the tenant ID |
-| Email | The tenant's administrative contact email |
-| Members | How many members the tenant currently has |
-| Enabled | **Enable** (green) or **Disable** (red) |
+| Name | Tenant avatar, name (clickable to open) and the tenant ID in grey below |
+| Email | The tenant's administrative contact address |
+| Member Count | How many members the tenant currently has |
+| Status | **Enabled** (green) or **Disabled** (red) |
 | Created At | When the tenant was created |
 
-On the right of each row you can **edit** the tenant, or **disable / enable** it.
+Each row offers **Edit**, plus **Disable** / **Enable**.
 
 ![Tenant management list: name, email, member count, status and creation time](/assets/screenshots/boss/tenant-list-01.png)
 
-The list is a single table with five columns. The email column is blurred here — the real page shows the full address, but screenshots ship with the docs, so any column carrying personal data is masked before capture.
+The list is a single table with five fields. Email addresses are blurred here because screenshots ship with the docs; the live page shows the full address.
 
 ## Create a tenant
 
-1. Go to **Account Center → Tenant**.
+1. Go to **Account Center → Tenant Management**.
 2. Click **Add Tenant** in the top-right corner.
-3. Fill in the form described below.
-4. Click **Confirm**.
+3. Fill in the form.
+4. Click **OK**.
 
 | Form field | How to fill it | Notes |
 | --- | --- | --- |
-| Name | For example `Acme Corp` | Required. The name shown in the interface; any language is fine |
-| ID | Leave it alone | Required. Generated from **Name**. Only lowercase letters, numbers and hyphens are allowed, and it must start with a lowercase letter. The result appears under the Name box; to set your own, click the pencil icon on that row |
-| Email | For example `admin@example.com` | Required, and must be a valid email address |
-| Mobile Number | For example `13800000000` | Required, 6 to 16 digits |
-| Description | May be left empty | Optional free-text note |
+| Name | For example `Example Tech` | Required. The display name; Chinese is allowed |
+| ID | Leave it to the system | Required. Generated from the name (Chinese is romanised); lowercase letters, digits and hyphens only, must start with a letter. Click the pencil icon to override |
+| Email | For example `admin@example.com` | **May be left empty**; if filled it must be a valid address |
+| Mobile Number | For example `13800000000` | **May be left empty**; if filled it must be 6–16 digits |
+| Description | Optional | A short note |
 
-:::warning The tenant ID cannot be changed after creation
-The ID is the tenant's unique identifier in the system. You may set it yourself while creating the tenant, but it is **locked once creation finishes** — you cannot change it later when editing the tenant. If you intend to choose it yourself, decide before you create the tenant.
+:::warning The tenant ID cannot change
+The ID is the tenant's unique identifier. You may set it during creation, but it is **locked afterwards** and cannot be edited. Decide before you create.
 :::
 
-![The Add tenant form: name, ID, email, phone number and description](/assets/screenshots/boss/tenant-create-01.png)
+![Add Tenant form: name, ID, email, mobile number and description](/assets/screenshots/boss/tenant-create-01.png)
 
-The form is short: **Name**, **ID** (auto-generated from the name if you leave it blank), **Email**, **Phone number** and **Description**. Fill them in and press **Confirm**. The ID field is empty in the screenshot, which is how you know it is generated for you.
+The form has five fields: **Name**, **ID** (auto-generated when empty), **Email**, **Mobile Number** and **Description**. Email and mobile number may both be empty.
 
 ### What happens after creation
 
-Clicking **Confirm** does not stay on the form; it takes you to a success page titled "Tenant xxx Created Successfully" with three buttons:
+Clicking **OK** does not return to the form. It opens a success page titled "**Tenant xxx Created Successfully**" with the description "The tenant identity has been created. Next, choose clusters to enable it and configure quotas, flavor access, and workspaces." It offers three buttons:
 
-| Button | When it appears | Where it goes |
-| --- | --- | --- |
-| Set Quota Now | Only when the platform already has at least one cluster | Straight to the quota page for this tenant (using the first cluster) |
-| Add Member | Always | The page for adding members to this tenant |
-| Back to List | Always | Back to the tenant list |
+| Button | Where it leads |
+| --- | --- |
+| Configure Clusters | The flow to enable clusters for the tenant and configure quotas and flavor access |
+| Add Member | The page for adding members to this tenant |
+| Back to List | The tenant list |
 
-:::info No avatar upload while creating
-**Avatar** and **Image Push Configuration** appear only when **editing** a tenant. You do not need them at creation time; open the edit page afterwards if you want to set them.
+All three buttons **always appear**, regardless of whether any cluster exists.
+
+:::info No avatar during creation
+**Avatar** and **Image Push Configuration** only appear when editing a tenant. Create first, then edit if you need them.
 :::
 
-## What to do after creating a tenant
+## Follow-up steps after creation
 
-A new tenant is just an empty shell. To make it usable you need two more steps:
+A fresh tenant is an empty shell. Three steps make it usable:
 
-1. **Give it an administrator and members**: in the tenant list click the tenant name, switch to the **Member** tab and click **Add Member**, then pick a user and a role. See "Add members to a tenant" below.
-2. **Give it compute quota**: go to **AI Platform → Tenant Resource** and create a quota for the tenant. Without quota, members of the tenant cannot create instances.
+1. **Give it administrators and members**: open the tenant, switch to **Members**, click **Add Member**, pick a user and a role.
+2. **Enable clusters**: go to **AI Platform → Tenant Clusters**, click **Open in Cluster** on this tenant's row. See [Tenant Clusters](/boss/rune-admin/tenant-clusters).
+3. **Grant quota**: open the cluster → **Tenant Resources** → this tenant → **Quota**. See [Tenant Resources and Quota](/boss/rune-admin/tenants).
 
 ## Edit a tenant
 
-1. Go to **Account Center → Tenant**.
-2. On the target tenant's row click **Edit** (or click the tenant name and edit from there).
+1. Go to **Account Center → Tenant Management**.
+2. Click **Edit** on the target row, or open the tenant and change rows on the **Basic Info** tab.
 
 The edit page has two blocks.
 
-### Basic information
+### Basic info
 
 | Form field | Editable | Notes |
 | --- | --- | --- |
-| Avatar | Yes | Only on the edit page. JPEG, JPG, PNG and WEBP are supported, up to 3 MB each; you can scale, rotate and crop before uploading |
-| Name | Yes | Any language |
-| ID | **No** | Locked while editing; the pencil icon is gone |
-| Email | Yes | Must be a valid email address |
-| Mobile Number | Yes | 6 to 16 digits |
+| Avatar | Yes | Only on the edit page. Up to 3 MB; you can zoom, rotate and crop before upload |
+| Name | Yes | Chinese is fine |
+| ID | **No** | Locked; the pencil icon disappears |
+| Email | Yes | May be cleared; if filled it must be a valid address |
+| Mobile Number | Yes | May be cleared; if filled it must be 6–16 digits |
 | Description | Yes | Multi-line text |
 
-### Image Push Configuration
+### Image push configuration
 
-Also only on the edit page. It decides what happens when this tenant's members push images to the image registry:
+Also only on the edit page. It decides what happens when a member of this tenant pushes an image:
 
 | Form field | How to fill it | Notes |
 | --- | --- | --- |
-| Allow pushing images that were not created in the UI | On by default | When on, members can `docker push` directly and the system creates the image record for them. When off, the image must be created in the UI first |
-| Default visibility for automatically created images | **Personal** by default | Only takes effect when the switch above is on. Options are **Personal** (only the pushing user, tenant administrators and authorized members), **Tenant** (members of the current tenant) and **Public** (anyone who can access Moha can view and pull it) |
+| Allow pushing images that were not created in the UI | On by default | When on, members can `docker push` directly and the platform creates the image record; when off, the image must exist in the UI first |
+| Default visibility for automatically created images | **Private** by default | Only effective while the switch above is on. **Private** (pusher, tenant administrators and authorised members), **Tenant** (all members of the tenant), **Public** (anyone who can reach Moha Hub) |
 
-Click **Confirm** to save your changes.
+Click **OK** to save.
 
-## Enable or disable a tenant
+## Enable / disable a tenant
 
-1. Go to **Account Center → Tenant**.
-2. On the target tenant's row open the actions menu and click **Disable** (for an enabled tenant) or **Enable** (for a disabled tenant).
-3. Confirm in the dialog that appears.
+1. Go to **Account Center → Tenant Management**.
+2. Open the row menu and click **Disable** (for an enabled tenant) or **Enable** (for a disabled one).
+3. Confirm in the dialog.
 
-The Status column switches between **Enable** and **Disable** immediately.
+The status column flips between **Enabled** and **Disabled** immediately.
 
 :::warning Think before disabling
-Disabling affects every member of that tenant, and it **does not recover on its own** — to make the tenant usable again you must click **Enable** manually. Before doing it, make sure the tenant really does not need to be in use, and tell the people affected.
+Disabling affects every member of the tenant and does **not** restore itself — you must click **Enable** again. Make sure the tenant really can be offline, and tell the people affected.
 :::
 
-:::info There is no "delete tenant" in the UI
-The tenant list has no delete entry. To stop a tenant from being used, **disable** it; if you truly need to empty it out, remove its members first and leave it disabled.
+:::info There is no "delete tenant"
+The tenant list has no delete entry. Disabling is how you take a tenant offline. To fully retire one, remove its members first, then keep it disabled.
 :::
 
-## Add members to a tenant
+## Tenant details: Basic Info and Members
 
-1. Go to **Account Center → Tenant** and click the target tenant's name.
-2. Switch to the **Member** tab on the left.
+Opening a tenant shows exactly two tabs: **Basic Info** and **Members**.
+
+### Basic Info
+
+A single profile card showing **Avatar**, **ID**, **Tenant Name**, **Email**, **Mobile Number** and **Created At**. **ID** is the read-only tenant identifier (the same value that appears in the URL); tenant name, email and mobile number each have an **Edit** action on the right for in-place editing.
+
+![Tenant details, Basic Info tab: avatar, ID, tenant name, email, mobile number and created at, with an Edit action on the name/email/mobile rows](/assets/screenshots/boss/iam-tenant-detail-01.png)
+
+:::info No quota or workspaces here
+Quota, flavor access and workspaces are all cluster-scoped. Go to **AI Platform → Cluster Management**, open the cluster, then enter **Tenant Resources** and open this tenant.
+:::
+
+### Members
+
+The member list has four columns: **Username**, **Email**, **Role** and **Joined At**. Each row can be **edited** (role only) or **deleted**; selecting several rows enables bulk deletion, and every deletion asks for confirmation.
+
+![Tenant member list: username, email, role and joined at](/assets/screenshots/boss/tenant-members-01.png)
+
+All three roles appear in the screenshot: **Administrator**, **Developer** and **Member**.
+
+### Add a member
+
+1. Go to **Account Center → Tenant Management** and open the tenant.
+2. Switch to the **Members** tab.
 3. Click **Add Member** in the top-right corner.
-4. Fill in the member information:
+4. Fill in:
 
    | Form field | How to fill it | Notes |
    | --- | --- | --- |
-   | User | Type a username in the box, search and select | Required. You can only pick users that already exist. When editing an existing member this field cannot be changed |
-   | Role | Choose one from the dropdown | Required. The options are provided by the platform backend; the common ones are **Administrator**, **Member** and **Developer** |
+   | User | Type a username and pick from the results | Required. Only existing users can be picked; not editable when editing a member |
+   | Role | Pick from the dropdown | Required. Options come from the backend; typically **Administrator**, **Developer**, **Member** |
 
-5. Click **Confirm** and the page returns to the member list.
-
-The member list has four columns: **Username**, **Email**, **Role** and **Joined At**. Each row can be **edited** (to change the role) or **deleted**, and selecting several rows lets you delete them in bulk. Every deletion asks for confirmation first.
+5. Click **OK** to return to the member list.
 
 :::tip Keep at least two administrators
-People take leave and people leave. Give every tenant at least 2 administrators so that there is always someone who can take over when one is unavailable.
+People take leave and leave the company. Two administrators per tenant means the tenant is never locked out.
 :::
 
-![Tenant overview: avatar and basic information on the left, member statistics and list on the right](/assets/screenshots/boss/tenant-overview-01.png)
+## Verify the result
 
-The overview is split in two: on the left the tenant avatar plus **name / email / phone / creation time**, each with a pencil button to edit in place; on the right three role counters (administrator / member / developer) above the **Members** list, with **See more** jumping to the members tab. Email and phone are blurred in the screenshot.
-
-## Tenant overview page
-
-After clicking a tenant name you land on the **Overview** tab by default:
-
-- The left column is **Tenant Information**: avatar, tenant name, email, mobile number and creation time. Avatar, name, email and mobile number can each be edited in place with the small pencil icon on the right; click **Confirm** when done.
-- The right column shows **member counts by role** (how many Administrators, Members and Developers) on top, and the tenant's **member list** (username, email, role) below. Clicking **View More** jumps to the full member management page.
-
-## Confirm it worked
-
-| What you want to check | Where to look |
+| What you want to confirm | Where to look |
 | --- | --- |
-| The tenant exists | **Account Center → Tenant** lists it with status **Enable** |
-| Members were added correctly | Enter the tenant → **Member** tab, and you can see the person and their role |
-| Quota was granted | **AI Platform → Tenant Resource** shows the tenant's quota |
+| The tenant exists | **Account Center → Tenant Management** shows it with status **Enabled** |
+| Members are right | Tenant → **Members** tab |
+| Clusters are enabled | **AI Platform → Tenant Clusters**, the tenant's "Enabled clusters" cell |
+| Quota is granted | Cluster → **Tenant Resources** → the tenant → **Quota** |
 
 ## FAQ
 
 | Symptom | Likely cause | What to do |
 | --- | --- | --- |
-| No "Set Quota Now" on the success page | The platform has no clusters yet | Connect a cluster under **AI Platform → Cluster**, then create quota for the tenant manually |
-| The ID row reports a format error | The name contains no usable Latin letters or digits | Click the pencil icon and specify an ID that starts with a letter |
+| The ID row reports an invalid format | The name has no usable Latin letters or digits | Click the pencil and set an ID that starts with a letter |
 | Want to change the tenant ID | Not supported | The ID is immutable after creation |
-| Cannot find a person when adding a member | That user has not been created yet | Go to **Account Center → Account** and create the user first |
+| The user cannot be found when adding a member | The user does not exist yet | Create the user in **User Management** first |
+| Cannot find quota or workspaces | They are cluster-scoped | Cluster Management → cluster → **Tenant Resources** |
+| "Configure Clusters" has nothing to pick | No cluster is online yet | Connect and bring a cluster online first |
 
 ## Related
 
 - [Account Center](/boss/iam)
 - [User Management](/boss/iam/users)
-- [Tenant Quotas](/boss/rune-admin/tenants)
-- [Cluster](/boss/rune-admin/clusters)
+- [Tenant Clusters](/boss/rune-admin/tenant-clusters)
+- [Tenant Resources and Quota](/boss/rune-admin/tenants)
+- [Cluster Management](/boss/rune-admin/clusters)

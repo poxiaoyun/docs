@@ -1,12 +1,14 @@
 ---
 title: 'API Keys'
-updated: '2026-09-14'
-description: 'Wiring a program up to the models, or unsure how keys are created, managed or billed? Start here.'
+updated: '2026-10-21'
+description: 'Wiring a program up to the models, or unsure how keys are created, disabled or where call logs live? Start here.'
 ---
 
 # API Keys
 
-**API Keys** manages the credential used to **call the AIrouter model API**. You need it to chat by hand on the [Playground](./experience.md) page, and even more so to connect models to your own programs — a program uses this key to prove "this call came from me".
+**API Keys** manages the credential used to **call the AIrouter model API**. You need it to chat by hand on the [Chat](./experience.md) page, and even more so to connect models to your own programs — a program uses this key to prove "this call came from me".
+
+The page also provides **Request Logs**, so you can check every single call you or your program made.
 
 :::warning This is not the same as the API key in the Account Center
 The API key in the Account Center is used for the platform's own management APIs; the keys here are used only for the **conversation model API**. The two cannot be interchanged.
@@ -16,128 +18,158 @@ The API key in the Account Center is used for the platform's own management APIs
 
 - Any signed-in account works; no extra role is needed.
 - You can only see and manage the keys under your own account.
+- **Rate limits (RPM / TPM) and allowed IPs are configured by administrators and cannot be changed by users; there is no edit entry either.** Contact an administrator if they need adjusting.
 
 ## The page has two tabs
 
 | Tab | What you see |
 | --- | --- |
-| **API Keys** | The key list, plus create, edit and delete |
-| **Request Logs** | A detailed record of each call |
+| **API Keys** | The key list, plus create, enable, disable and delete |
+| **Request Logs** | A record of every call |
 
-## Reading the key list
+They are two views of one page: **API Keys** answers "what keys exist", **Request Logs** answers "what happened with them".
 
-| Column | Description |
+## Read the key list
+
+| Column | Notes |
 | --- | --- |
-| **Name** | Click the name to open the details |
-| **API Key** | Shows only the first 6 characters plus `************`; the copy button on the right copies the full value |
-| **RPM** | Maximum requests per minute; `∞` means unlimited |
-| **TPM (K)** | Maximum tokens per minute, in K; `∞` means unlimited |
-| **Allowed IPs** | `*` means every IP can use it |
-| **Expiration time** | **Never expires** means it stays valid long term; an expired key is flagged in red as "Expired", after which it can no longer call |
+| **Name** | Click it to open the details |
+| **API Key** | Only the first 6 characters plus `************`; the copy button copies the full value |
+| **Status** | **Active** / **Disabled** / **Expired**. Keys disabled by an administrator also show a shield icon, with the tooltip "This API key was disabled by an administrator and cannot be enabled by you. Please contact an administrator." |
+| **Expiration time** | **Never expires** means it stays valid; once past, the value turns red with an "Expired" label and the key stops working |
 | **Created at** | When the key was created |
 
-![API Keys list: two tabs on top, then a table of name, key, RPM, TPM, IP allowlist and expiry](/assets/screenshots/airouter/token-01.png)
+:::info No rate limits on this page
+The list has **no RPM, TPM or allowlist columns**. Those three are configured by administrators and only appear as read-only values on the key detail page.
+:::
 
-The list page looks like this: two tabs under the title with **API Keys** selected by default, and the **Add API Key** button at the top right. The key column only exposes the leading characters, and they are blurred further in the screenshot.
+What the row menu offers:
+
+| Action | When it is available | Notes |
+| --- | --- | --- |
+| **Enable** | The key was disabled by **you** | Restores access with this key |
+| **Disable** | The key is currently active | **New** requests using this key are rejected; requests already in progress are not interrupted |
+| **Delete** | Any status | A confirmation dialog asks you to type the key name to continue |
+
+A key blocked by an **administrator** is read-only: enabling it yourself will fail, so contact an administrator.
 
 ## Create a key
 
-1. Click **API Keys** in the top navigation.
-2. Click **Add API Key** in the top-right corner of the page.
-3. Fill in the **API Key Configuration** form:
+1. Click **API Keys** in the top nav.
+2. Click **Create API key** at the top right.
+3. In the **Create API key** form, fill in:
 
-   | Form item | How to fill | Notes |
+   | Field | How to fill it | Notes |
    | --- | --- | --- |
-   | Name | For example `my-app-prod` | Required; **cannot be changed** after creation |
-   | RPM | For example `60` | Maximum requests per minute, range 0 ~ 10000; empty or `0` means unlimited |
-   | TPM (K) | For example `100` | Maximum tokens per minute, in K (1K = 1000 tokens/min), range 0 ~ 100000; empty or `0` means unlimited |
-   | Allowed IPs | Defaults to `*` | Only addresses on the list may call; see the next section for the format |
-   | Never expires | On by default | After turning the switch off, **Expiration time** appears and you must pick a time |
+   | **Name** | e.g. `my-app-prod` | Required, trimmed; **cannot be changed after creation** |
+   | **Never expires** | On by default | Turning it off reveals **Expiration time** |
+   | **Expiration time** | Pick a date and time | Only shown when **Never expires** is off, and required |
 
-4. Click **Confirm**. To give up, click **Cancel**.
+4. Click **Confirm**. Click **Cancel** to back out.
 
-Once created, the new key appears back in the list.
+The new key appears in the list right away. It starts with **no rate limit and no IP restriction**; ask an administrator to add them if needed.
 
-### How to write the Allowed IPs
+:::warning Think about the name first
+Names cannot be edited or renamed. Use "app + environment" (for example `crm-prod`, `crm-test`) so dozens of keys stay distinguishable.
+:::
 
-| Format | Example |
-| --- | --- |
-| A single IP | `192.168.1.100` |
-| A subnet | `10.0.0.0/24`, where the mask after the slash must be 0 ~ 32 |
-| All IPs | `*` |
+## Get the full key value
 
-Separate multiple values with a **comma** or a **newline**. Note that each number must be 0 ~ 255 and **must not have leading zeros** (`01` will fail validation).
-
-![The API Key configuration form opened by Add API Key](/assets/screenshots/airouter/token-02.png)
-
-That is the creation form: **Name** (required), **RPM**, **TPM(K)**, **IP allowlist**, and the **Never expires** toggle which is on by default. **Cancel** at the bottom left, **Confirm** at the bottom right.
-
-## Get the full value of a key
-
-In both the list and the detail page, the key itself is always masked. To get the full value, click the **copy button** beside the key.
+In both the list and the details, the key itself is always masked (first 6 characters plus asterisks). To get the full value, click the **copy button** next to it.
 
 :::warning What you copy is the full key
-Once you have the full key, store it somewhere safe immediately (for example a password manager or an environment variable in your program). Do not paste it into chat tools, documents or code repositories. A leaked key means someone else can spend your allowance calling models.
+Store it somewhere safe immediately (a password manager, or an environment variable in your program). Never paste it into chat tools, documents or repositories. A leaked key lets someone else spend your quota.
 :::
 
-## What this key can do
+## What the key can do
 
-1. Start conversations on the [Playground](./experience.md) and [Comparison](./compare.md) pages — the page automatically picks the first key in the account, and you can switch keys on the page.
-2. Let your own programs call the model API. In [Models](./marketplace.md), open any model's details and click **API docs**, which gives the **Gateway Address** and curl, Python and Go samples you can copy.
-3. In the samples, replace `YOUR_TOKEN` with the key you copied and `YOUR_MODEL` with the model ID on the card, and your first call will go through.
+1. Start conversations on [Chat](./experience.md) and [Comparison](./compare.md) — the page picks the first usable key automatically, and you can switch it there.
+2. Call the model API from your own program. The endpoint list and auth headers are in [API docs](./api-docs.md); for a ready-made sample per model, open the model in [Models](./marketplace.md) and click **Examples**.
+3. In the sample, replace `YOUR_TOKEN` with the key you copied and `YOUR_MODEL` with the model ID from the card, and the first call runs.
 
-## How cost is counted
+## Read the key details
 
-This page **sets no allowance** and does not limit how much you spend. Cost works like this:
+Click a key **name** in the list to open its detail page, titled "API Key / your-key-name". It shows:
 
-The cost of each call is calculated from the **model price** — the input price and output price you see in the [Models](./marketplace.md) details (per 1M tokens) — and the running total is the **Total spend** on the **Usage analysis** page. To control spending, work from two sides: set a sensible RPM / TPM on the key, or switch to a cheaper model.
-
-If the account's overall allowance runs out, calls return "Insufficient quota" directly, and you need to ask the administrator to handle the allowance.
-
-## Edit and delete
-
-- **Edit**: choose **Edit** from the action menu at the end of a row to open the edit form. The name field is locked and cannot be changed; RPM, TPM, the allowlist and the expiry setting can all be changed — click **Confirm** when done. You can also use **Actions** → **Edit** at the top right of the detail page.
-- **Delete**: choose **Delete** from the row's action menu, or **Actions** → **Delete** on the detail page. Deleting opens a confirmation dialog and requires you to type the key's name to continue.
-
-:::warning Deletion cannot be undone
-After deletion, every request still using this key **fails immediately**, and the action cannot be undone. Before deleting, confirm that no program is still using it.
-:::
-
-## View the key details
-
-Click a key's **name** in the list to open its detail page, which shows the key value (masked, with a copy button), ownership, created at, expiration time, RPM, TPM (K) and Allowed IPs.
-
-To change the configuration or delete it, use the **Actions** menu at the top right.
-
-## View the request logs
-
-Switch to the **Request Logs** tab to see a record of every call under your account:
-
-1. At the top, choose a **Time Range**: **Today** (default), **Yesterday**, **Last 3 days**, **Last week** or **Custom**. Choosing Custom reveals a **Start date** and an **End date**.
-2. You can filter further by **Token**, **Channel**, **Model** and **Result**; Result offers **All**, **Success**, **Error**, **Blocked** and **Quota Exceeded**.
-3. Click **Refresh** to fetch again, or **Reset** to clear every filter.
-4. Each row in the table is one call, listing the time, channel, token, model, request ID, duration (including first-token time), tokens, cost and standard.
-5. To see a row's details, click the eye icon next to the time column.
-
-When troubleshooting a failed call, the **Request ID** and **Result** columns are the most useful: give the request ID to the administrator and they can locate that exact call.
-
-![The Request logs tab: time range and four filter dropdowns on top, one row per call below](/assets/screenshots/airouter/token-03.png)
-
-The **Request logs** tab looks like this. It shares a page with **API Keys**, so switching tabs does not reload anything. This account had no calls that day, so the table is empty; with traffic it lists every request newest first.
-
-## Security advice
-
-| Advice | Description |
+| Field | Notes |
 | --- | --- |
-| One key per application | Create separate keys for different programs and environments, so you can disable and meter them individually |
-| Set up the allowlist | Allow only the IPs of the machines that run your programs; do not keep using `*` |
-| Set an expiry | Avoid long-lived, never-expiring keys where not necessary |
-| Set sensible RPM / TPM | Prevent a misbehaving program from burning the whole allowance in an instant |
-| Rotate and clean up | Rotate keys regularly and delete old ones you no longer use |
+| Key | Masked, with a copy button |
+| Belong to | What the key belongs to |
+| Created at | When it was created |
+| Expiration time | **Never expires** when none was set |
+| **RPM** | Max requests per minute. `∞` means unlimited |
+| **TPM (K)** | Max tokens per minute, shown converted from K to a concrete number. `∞` means unlimited |
+| **Allowed IPs** | `*` means every IP may use it |
+
+The last three are **read-only** — they show what an administrator configured, and cannot be changed here.
+
+To disable or delete, click the **Actions** menu at the top right. It only offers **Disable** / **Enable** / **Delete** — **there is no edit**. To change rate limits or allowed IPs, contact an administrator.
+
+## Read the request logs
+
+Switch to the **Request Logs** tab to see every call made under your account:
+
+1. Pick a time range at the top: **Today** (default), **Yesterday**, **3 days**, **7 days**, **Custom**. Choosing **Custom** reveals **Start date** and **End date**.
+2. Four filters are available:
+   - **API key**: type a key name; filtering applies as you type.
+   - **Channel**: filter by channel name.
+   - **Model**: filter by model name.
+   - **Result**: **All**, **Success**, **Failure**, **Blocked**, **Quota exceeded**.
+3. Click **Refresh** to fetch again, **Reset** to clear every filter and return to **Today**.
+4. Each row is one call; see the column table below.
+5. For details, click the eye icon next to the time column (hover shows **View detail**) to open the detail dialog.
+
+| Column | Notes |
+| --- | --- |
+| **Timestamp** | When the request started; below it a coloured dot and the result text |
+| **Channel** | Which channel served it, with provider, tenant, cluster and workspace |
+| **API Key** | Which key this call used |
+| **Model** | The model ID called |
+| **Request ID** | The identifier of this request |
+| **Duration** | First-token latency and total duration |
+| **Tokens** | Input, output and total |
+| **Cost** | The amount charged for this call |
+| **Standard** | The pricing standard used (for example which rate plan) |
+
+:::tip The small icons in the time column
+- **Coloured dot + text**: whether the call succeeded. Failed rows also carry a red bar on the left edge, so problems stand out.
+- **Warning icon**: sensitive content was detected in this call; hover for the exact message.
+- **Eye icon**: open the details for this row.
+:::
+
+When troubleshooting failures, **Request ID** and **Result** are the two most useful columns: give the request ID to an administrator and they can locate the call directly.
+
+![The Request Logs tab: time range and four filter inputs on top, calls listed by time in the table](/assets/screenshots/airouter/token-03.png)
+
+Above is the **Request Logs** page. It is a tab of the same page as **API Keys**, so switching does not reload anything. The account had no calls that day, so the table is empty; normally every request is listed newest first.
+
+## How quota works
+
+This page **sets no quota** and does not cap your spend. What decides whether you can call, and what it costs, is elsewhere:
+
+| Where | What it controls |
+| --- | --- |
+| [Prices](./prices.md) | Each model's unit price; call cost is computed from it |
+| [Account](./billing.md) | Balance, current plan, plan credit usage, weekly quota |
+| [Subscribe](./subscribe.md) | Buying plans; the **overage charges** switch is set when you order |
+
+So when you see these messages, the key is not the problem: **balance too low** → check the account balance; **plan credits used up** → turn overage charging on or buy a new plan; **weekly quota used up** → wait for the reset or move to a higher plan; **account frozen or disabled** → only an administrator can fix it. See the common issues in [Chat](./experience.md) for the full list.
+
+## Security recommendations
+
+| Recommendation | Why |
+| --- | --- |
+| One key per application | Separate programs and environments, so each can be disabled and measured independently |
+| Delete or disable what you do not use | Delete unused keys; disable keys you only pause temporarily |
+| Set an expiration | Avoid "never expires" unless the key really is long-lived |
+| Rotate and clean up | Replace keys periodically and remove old ones; verify the new key works first |
+| Ask an administrator for limits | RPM / TPM / allowed IPs are configured by administrators, not on the user side |
 
 ## Related
 
 - [Models](./marketplace.md)
-- [Playground](./experience.md)
+- [Chat](./experience.md)
 - [Usage analysis](./usage-statistics.md)
+- [API docs](./api-docs.md)
+- [Account](./billing.md)
 - [Parameter Settings](./debug.md)

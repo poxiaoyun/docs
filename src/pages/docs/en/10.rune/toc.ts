@@ -66,7 +66,7 @@ export const RUNE_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
   },
   {
     // Second console group: Workbench (navbar.pai)
-    // Templates (navbar.instance_template) also sits under this group in the product.
+    // Presets (navbar.instance_preset) also sits under this group in the product.
     subheader: 'Rune Console · Workbench',
     items: [
       {
@@ -75,35 +75,41 @@ export const RUNE_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         icon: 'ic-chat',
         product: 'rune',
       },
+      { title: 'Batch inference', path: '/rune/console/batch-inference', icon: 'ic-order' },
       { title: 'Training & Fine-tuning', path: '/rune/console/finetune', icon: 'ic-job' },
       { title: 'Development', path: '/rune/console/devenv', icon: 'ic-subpaths' },
       { title: 'Apps', path: '/rune/console/app', icon: 'ic-product' },
-      { title: 'Templates', path: '/rune/resources/templates', icon: 'ic-label' },
+      { title: 'Presets', path: '/rune/resources/presets', icon: 'ic-label' },
       { title: 'Storage', path: '/rune/console/storage', icon: 'ic-folder' },
     ],
   },
   {
     // Third console group: Observability (navbar.observability)
-    // The AI Diagnostics Assistant is a floating helper in the console (not a sidebar entry);
-    // it is grouped here because it is another "go back and inspect the data" entry point.
+    // Alerts live behind the bell in the top bar, not in the sidebar; grouped here because
+    // they are another "go back and inspect the data" entry point.
     subheader: 'Rune Console · Observability',
     items: [
       { title: 'Metrics', path: '/rune/console/experiment', icon: 'ic-analytics', product: 'rune' },
       { title: 'Logs', path: '/rune/console/logging', icon: 'ic-menu-item' },
       { title: 'Evaluations', path: '/rune/console/evaluation', icon: 'ic-order' },
-      { title: 'AI Diagnostics Assistant', path: '/rune/console/diagnostics', icon: 'ic-user' },
+      { title: 'Alerts', path: '/rune/console/alerting', icon: 'ic-invoice' },
     ],
   },
   {
-    // Tenant-side resource entries: Quota / Flavor (resource spec) / Workspace
-    subheader: 'Rune Console · Resources & Quotas',
+    // Tenant management: tenant clusters plus quota / flavor / workspace
+    subheader: 'Rune Console · Tenant Management',
     items: [
+      {
+        title: 'Tenant Clusters',
+        path: '/rune/console/tenant-clusters',
+        icon: 'ic-dashboard',
+        product: 'rune',
+      },
       {
         title: 'Resources & Quotas Overview',
         path: '/rune/resources',
         icon: 'ic-file',
         deepMatch: false,
-        product: 'rune',
       },
       { title: 'Quota', path: '/rune/console/quota', icon: 'ic-invoice' },
       { title: 'Flavor', path: '/rune/console/flavor', icon: 'ic-params' },

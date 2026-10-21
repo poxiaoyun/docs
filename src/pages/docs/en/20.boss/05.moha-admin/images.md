@@ -1,6 +1,6 @@
 ---
 title: Images
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: Browse every container image registry on the platform and unlist, edit or delete the ones that should not be public.
 ---
 
