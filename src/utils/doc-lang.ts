@@ -64,6 +64,23 @@ export function withLangPath(path: string, lang: DocLang): string {
   return clean === '/' ? EN_PREFIX : `${EN_PREFIX}${clean}`;
 }
 
+/**
+ * 去掉英文前缀，得到「语言无关」的站内路径：`/en/rune/x` → `/rune/x`。
+ *
+ * 必须存在，否则「同时算出两种语言地址」这件事就是错的：
+ * `withLangPath('/en/rune/x', 'cn')` 会把 `/en/rune/x` 原样返回（它只负责加前缀，
+ * 不负责剥），于是英文页的 `hreflang="zh-CN"` 会指向英文自己。
+ * 要成对生成中英地址，先剥再拼。
+ */
+export function withoutLangPath(path: string): string {
+  const clean = path.startsWith('/') ? path : `/${path}`;
+
+  if (clean === EN_PREFIX) return '/';
+  if (clean.startsWith(`${EN_PREFIX}/`)) return clean.slice(EN_PREFIX.length);
+
+  return clean;
+}
+
 /** 当前页面所在的语言（来自 URL，而不是 i18n 的当前语言）。 */
 export function useDocLang(): DocLang {
   const { pathname } = useLocation();
