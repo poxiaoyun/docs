@@ -6,8 +6,11 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
+import { useLangHref } from 'src/utils/doc-lang';
+
 import { varFade, MotionViewport } from 'src/components/animate';
 
+import { useHomeCopy } from './home-copy';
 import { TOKENS, HERO_GRADIENT } from './tokens';
 import { Overline, Terminal, buttonSx, SectionShell } from './primitives';
 
@@ -25,6 +28,9 @@ const TERMINAL_LINES = [
 ];
 
 export function HomeHeroSection() {
+  const copy = useHomeCopy();
+  const langHref = useLangHref();
+
   return (
     <Box
       component="section"
@@ -71,7 +77,7 @@ export function HomeHeroSection() {
       >
         <Stack alignItems="center" textAlign="center" spacing={{ xs: 3, md: 4 }} sx={{ px: { xs: 3, md: 5 } }}>
           <m.div variants={varFade('inDown')}>
-            <Overline>v2.0 Documentation Open Source</Overline>
+            <Overline>{copy.hero.overline}</Overline>
           </m.div>
 
           <m.div variants={varFade('inDown')}>
@@ -85,7 +91,7 @@ export function HomeHeroSection() {
                 maxWidth: '20ch',
               }}
             >
-              连接开发、运营与社区的
+              {copy.hero.titleLine1}
               <Box
                 component="span"
                 sx={{
@@ -96,7 +102,7 @@ export function HomeHeroSection() {
                   color: 'transparent',
                 }}
               >
-                AI 平台
+                {copy.hero.titleLine2}
               </Box>
             </Typography>
           </m.div>
@@ -111,8 +117,7 @@ export function HomeHeroSection() {
                 mx: 'auto',
               }}
             >
-              Rune 智算平台提供模型开发、推理与工作负载管理能力；配合 Boss
-              平台实现精细化运营，魔哈仓库打造开放的社区底座，全方位提升 AI 应用构建效能。
+              {copy.hero.lead}
             </Typography>
           </m.div>
 
@@ -122,11 +127,11 @@ export function HomeHeroSection() {
               spacing={1.5}
               sx={{ pt: { xs: 1, md: 2 } }}
             >
-              <Button component={RouterLink} to="/rune" sx={buttonSx('primary')}>
-                开始使用
+              <Button component={RouterLink} to={langHref('/rune')} sx={buttonSx('primary')}>
+                {copy.hero.primary}
               </Button>
-              <Button component={RouterLink} to="/moha" sx={buttonSx('secondary')}>
-                探索魔哈模型库
+              <Button component={RouterLink} to={langHref('/moha')} sx={buttonSx('secondary')}>
+                {copy.hero.secondary}
               </Button>
             </Stack>
           </m.div>

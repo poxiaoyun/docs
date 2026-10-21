@@ -65,12 +65,6 @@ const LANGS = [
 
 const langMeta = (code) => LANGS.find((l) => l.code === code) ?? LANGS[0];
 
-/**
- * 英文入口页（/en）没有独立落地页，正文就是英文版概述。这个地址不进 sitemap，
- * 只作为跳转壳存在：canonical 与 meta refresh 都指向真正的页面，避免与
- * /en/introduction/ 形成两份相同内容。
- */
-const EN_ENTRY_TARGET = 'introduction';
 
 const SITE_URL = (process.env.SSG_SITE_URL || 'https://docs.poxiaoshi.cn').replace(/\/+$/, '');
 // 与 vite.config.ts 的 DOCS_BASE_URL 同源：容器部署是 /docs，Pages 是 ""。
@@ -97,64 +91,18 @@ function readSiteConfig() {
 // 首页正文
 //
 // 首页是 React 组件（src/sections/home/*），本脚本只处理 markdown，渲染不了它。
-// 所以这里写一份与首页可见内容严格对应的静态正文：同一句主标题、同一段简介、
-// 同样四条产品线、同一批入口链接。搜索引擎拿到的是这份正文，用户打开后
-// React 挂载会把它替换掉。
+// 所以这里写一份与首页可见内容严格对应的静态正文。
 //
-// 之所以不再复用 /introduction 的正文：那等于让首页和产品概述指向同一份内容，
-// canonical 只能指到 /introduction/，首页自己反倒进不了索引。
+// **文案不再抄一份常量，而是直接读 src/sections/home/home-copy.json** ——
+// 那份 JSON 同时是 React 首页的文案真源。以前这里手抄一套，改文案要记得改两处，
+// 漏一处就是「静态 HTML 与用户看到的内容不一样」，且构建期看不出来。
 //
-// 改首页文案时要同步改这里；自检会校验其中每个站内链接都真实存在。
+// 中英各一份静态正文：中文写 dist/index.html，英文写 dist/en/index.html。
+// 改首页文案只需要改那个 JSON；自检会校验正文里每个站内链接都真实存在。
 
-const HOME_TITLE = '连接开发、运营与社区的 AI 平台';
-const HOME_LEAD =
-  'Rune 智算平台提供模型开发、推理与工作负载管理能力；配合 Boss 平台实现精细化运营，魔哈仓库打造开放的社区底座，全方位提升 AI 应用构建效能。';
-const HOME_DESCRIPTION =
-  '晓石 AI 平台官方文档中心：Rune 智算平台、魔哈仓库、聚合网关与 BOSS 运营平台的完整使用说明，含快速开始、控制台逐页指引与常见问题。';
-
-const HOME_PRODUCTS = [
-  {
-    name: 'Rune 智算平台',
-    to: '/rune',
-    tagline: '大规模 AI 推理与工作负载调度。无缝管理实例、镜像与存储计算一体化配额资源。',
-    entries: [
-      { title: '开始使用', to: '/rune/guide' },
-      { title: 'Rune 控制台', to: '/rune/console' },
-      { title: '资源与配额', to: '/rune/resources' },
-    ],
-  },
-  {
-    name: '魔哈仓库',
-    to: '/moha',
-    tagline: '模型与数据集的社区仓库体系。实现优雅的版本流转与开源协作。',
-    entries: [
-      { title: '模型仓库', to: '/moha/models' },
-      { title: '数据集', to: '/moha/datasets' },
-      { title: 'SDK 教程', to: '/moha/sdk-tutorial' },
-    ],
-  },
-  {
-    name: '聚合网关',
-    to: '/airouter',
-    tagline:
-      '平台内置的网页版对话与模型调用入口。不用写代码就能和模型对话，也能为外部程序签发密钥，统一查看调用量与费用。',
-    entries: [
-      { title: '模型体验', to: '/airouter/experience' },
-      { title: 'API 密钥', to: '/airouter/token' },
-      { title: '调用分析', to: '/airouter/usage-statistics' },
-    ],
-  },
-  {
-    name: 'Boss 运营平台',
-    to: '/boss',
-    tagline: '专为平台管理员设计，实现跨集群治理、租户网关审核和强效策略分发。',
-    entries: [
-      { title: '首页', to: '/boss/dashboard' },
-      { title: '大模型网关', to: '/boss/gateway' },
-      { title: '账户管理', to: '/boss/iam' },
-    ],
-  },
-];
+const HOME_COPY = JSON.parse(
+  fs.readFileSync(path.join(ROOT, 'src/sections/home/home-copy.json'), 'utf8')
+);
 
 const HOME_ECOSYSTEM = [
   'PyTorch',
@@ -170,17 +118,50 @@ const HOME_ECOSYSTEM = [
   'ONNX',
 ];
 
-const HOME_RESOURCES = [
-  { title: '开放 API / SDK', to: '/reference/api-overview' },
-  { title: '实例预设', to: '/rune/resources/presets' },
-  { title: '监控 & 反馈通道', to: '/reference/faq' },
-];
+/** 静态正文里不属于「组件可见文案」的那几句（标题、收尾指引），按语言各一份。 */
+const HOME_EXTRA = {
+  cn: {
+    productsHeading: '四条产品线',
+    ecosystemHeading: '生态与集成',
+    ecosystemBody: (list) =>
+      `平台与 ${list} 等开源组件协同工作，安装与适配步骤见[生态文档](/ecosystem)。`,
+    developerHeading: '开发者',
+    resourcesHeading: '更多资源',
+    outro:
+      '第一次来，建议从[入门指南](/guide)开始：[快速开始](/guide/quick-start)按五个阶段带你把第一个推理服务跑起来，' +
+      '[平台架构](/guide/architecture)讲清各子系统怎么协作，[名词表](/guide/glossary)解释常见术语。',
+    faqLine: '遇到问题先查[常见问题 FAQ](/reference/faq)。',
+  },
+  en: {
+    productsHeading: 'Four product lines',
+    ecosystemHeading: 'Ecosystem & integrations',
+    ecosystemBody: (list) =>
+      `The platform works with open-source components such as ${list}; installation and adaptation steps live in the [ecosystem docs](/ecosystem).`,
+    developerHeading: 'Developers',
+    resourcesHeading: 'More resources',
+    outro:
+      'New here? Start with the [guide](/guide): [Quick start](/guide/quick-start) takes you through your first inference service in five stages, ' +
+      '[Architecture](/guide/architecture) explains how the subsystems work together, and the [glossary](/guide/glossary) defines the common terms.',
+    faqLine: 'When something breaks, check the [FAQ](/reference/faq) first.',
+  },
+};
 
-/** 拼出首页的静态正文（markdown，随后交给 renderMarkdown 走与文档页同一条管线）。 */
-function buildHomeMarkdown() {
-  const lines = [`# ${HOME_TITLE}`, '', HOME_LEAD, '', '## 四条产品线', ''];
+/** 拼出首页静态正文（markdown，随后交给 renderMarkdown 走与文档页同一条管线）。 */
+function buildHomeMarkdown(lang) {
+  const copy = HOME_COPY[lang];
+  const extra = HOME_EXTRA[lang];
+  const list = lang === 'en' ? HOME_ECOSYSTEM.join(', ') : HOME_ECOSYSTEM.join('、');
 
-  for (const product of HOME_PRODUCTS) {
+  const lines = [
+    `# ${copy.hero.titleLine1} ${copy.hero.titleLine2}`,
+    '',
+    copy.hero.lead,
+    '',
+    `## ${extra.productsHeading}`,
+    '',
+  ];
+
+  for (const product of copy.capabilities.platforms) {
     lines.push(
       `### [${product.name}](${product.to})`,
       '',
@@ -192,21 +173,21 @@ function buildHomeMarkdown() {
   }
 
   lines.push(
-    '## 生态与集成',
+    `## ${extra.ecosystemHeading}`,
     '',
-    `平台与 ${HOME_ECOSYSTEM.join('、')} 等开源组件协同工作，安装与适配步骤见[生态文档](/ecosystem)。`,
+    extra.ecosystemBody(list),
     '',
-    '## 开发者',
+    `## ${extra.developerHeading}`,
     '',
-    '我们为开发者提供轻量与快捷的命令行工具 (CLI)，只需几条简单的命令，即可轻松实现模型与数据集的下载、上传和版本管理。见 [SDK 教程](/moha/sdk-tutorial)。',
+    copy.developer.copy,
     '',
-    '## 更多资源',
+    `## ${extra.resourcesHeading}`,
     '',
-    HOME_RESOURCES.map((r) => `[${r.title}](${r.to})`).join(' · '),
+    copy.resources.items.map((r) => `[${r.title}](${r.to})`).join(' · '),
     '',
-    '第一次来，建议从[入门指南](/guide)开始：[快速开始](/guide/quick-start)按五个阶段带你把第一个推理服务跑起来，[平台架构](/guide/architecture)讲清各子系统怎么协作，[名词表](/guide/glossary)解释常见术语。',
+    extra.outro,
     '',
-    '遇到问题先查[常见问题 FAQ](/reference/faq)。'
+    extra.faqLine
   );
 
   return lines.join('\n');
@@ -767,8 +748,9 @@ function renderPage(page, tmpl, childrenByRoute, routeLangs) {  const { route, t
 
   // 首页用「站点名 + 定位」而不是「产品概述 | RUNE」：首页是品牌词与站点级检索的落点，
   // 其余页面沿用「页面标题 | 站点名」，与运行时 <Helmet> 的设置保持一致。
+  // 首页标题直接取自 home-copy.json（中英各一份），保证静态 HTML 与 React 渲染同一句。
   const siteLevelTitle = SITE.subtitle ? `${SITE_NAME} 文档 · ${SITE.subtitle}` : `${SITE_NAME} 文档`;
-  const pageTitle = route !== '' && title ? `${title} | ${SITE_NAME}` : siteLevelTitle;
+  const pageTitle = route !== '' && title ? `${title} | ${SITE_NAME}` : title || siteLevelTitle;
   const body = renderMarkdown(content, segs, isIndex, prefix);
 
   const children = childrenByRoute.get(route) || [];
@@ -816,16 +798,19 @@ function renderPage(page, tmpl, childrenByRoute, routeLangs) {  const { route, t
   const meta = [
     `<title>${escapeHtml(pageTitle)}</title>`,
     description ? `<meta name="description" content="${escapeAttr(description)}" />` : '',
-    `<link rel="canonical" href="${canonical}" />`,
+    // data-ssg-head：静态 head 的这份标签在 React 挂载后会被 src/utils/doc-head.ts
+    // 删掉重写（运行时要知道当前语言与 origin）。打个标记，它才认得哪些是自己该接管的，
+    // 否则同一个 head 里会叠出两份 canonical 与两套 hreflang。
+    `<link rel="canonical" href="${canonical}" data-ssg-head />`,
     // hreflang 是「这两个地址是同一页的两种语言」的声明。缺了它，Google 会把
     // 中英文当成两份各自独立的页面，英文版拿不到中文版已有的权重，也进不了
     // 英文语种的检索结果。
     ...alternates.map(
-      (a) => `<link rel="alternate" hreflang="${a.hreflang}" href="${a.href}" />`
+      (a) => `<link rel="alternate" hreflang="${a.hreflang}" href="${a.href}" data-ssg-head />`
     ),
     `<meta property="og:type" content="article" />`,
     `<meta property="og:site_name" content="${escapeAttr(SITE_NAME)}" />`,
-    `<meta property="og:locale" content="${langInfo.ogLocale}" />`,
+    `<meta property="og:locale" content="${langInfo.ogLocale}" data-ssg-head />`,
     otherLangExists(alternates, langInfo)
       ? `<meta property="og:locale:alternate" content="${lang === 'en' ? 'zh_CN' : 'en_US'}" />`
       : '',
@@ -906,39 +891,6 @@ function renderNotFound(tmpl) {
 ${tmpl.bootstrap}
     <meta name="robots" content="noindex" />
     <title>页面不存在 | ${escapeHtml(SITE_NAME)}</title>
-    ${tmpl.headTags.join('\n    ')}
-  </head>
-
-  <body>
-    <div id="root"></div>
-  </body>
-</html>
-`;
-}
-
-// ----------------------------------------------------------------------
-
-/**
- * 英文入口页（/en）。
- *
- * 英文站没有独立的门户落地页，入口就是英文版概述。这里不复制一份概述正文
- * （那会与 /en/introduction/ 形成两份相同内容，两边互相稀释），而是写一个跳转壳：
- * canonical 与 meta refresh 都指向真正的页面，SPA 起来后 viewer 也会做同样的跳转。
- * 该地址不进 sitemap —— 它没有自己的内容，只是入口。
- */
-function renderEnEntryStub(tmpl) {
-  const target = `${SITE_URL}/en/${EN_ENTRY_TARGET}/`;
-  const localTarget = `${BASE}/en/${EN_ENTRY_TARGET}/`;
-
-  return `<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-${tmpl.bootstrap}
-    <title>English documentation | ${escapeHtml(SITE_NAME)}</title>
-    <link rel="canonical" href="${target}" />
-    <meta http-equiv="refresh" content="0; url=${localTarget}" />
     ${tmpl.headTags.join('\n    ')}
   </head>
 
@@ -1354,19 +1306,6 @@ function selfCheck(pages) {
     if (/ssg-skel/.test(html)) problems.push('404.html: 不应出现首屏骨架');
   }
 
-  // 英文入口跳转壳单独校验：它不在 pages 里，也不进 sitemap。
-  const enEntryPath = path.join(OUT_DIR, 'en', 'index.html');
-
-  if (fs.existsSync(enEntryPath)) {
-    const html = fs.readFileSync(enEntryPath, 'utf8');
-    const target = `${SITE_URL}/en/${EN_ENTRY_TARGET}/`;
-
-    if (!html.includes(`rel="canonical" href="${target}"`)) {
-      problems.push(`/en 入口页: canonical 未指向 ${target}`);
-    }
-    if (/ssg-skel/.test(html)) problems.push('/en 入口页: 不该有首屏骨架（它是跳转壳）');
-  }
-
   // image sitemap 自检。声明了却抓不到的图，搜索引擎会直接把它从图片索引里剔除 ——
   // 而这类问题在构建日志里同样完全看不出来，必须在这里拦住。
   const sitemapPath = path.join(OUT_DIR, 'sitemap.xml');
@@ -1381,11 +1320,7 @@ function selfCheck(pages) {
     const xmlUrls = new Set([...xml.matchAll(/<url><loc>([^<]+)<\/loc>/g)].map((m) => m[1]));
     const distUrls = new Set([
       `${SITE_URL}/`,
-      ...walkIndexHtml(OUT_DIR)
-        // `en` 只是入口跳转壳，不是内容页：它 canonical 指向 /en/introduction/，
-        // 也不该出现在 sitemap 里，两边都不算。
-        .filter((rel) => rel !== 'en')
-        .map((rel) => `${SITE_URL}/${rel}/`),
+      ...walkIndexHtml(OUT_DIR).map((rel) => `${SITE_URL}/${rel}/`),
     ]);
 
     for (const url of distUrls) {
@@ -1466,7 +1401,7 @@ function main() {
 
   // 只有单语版本的路由不会有 hreflang 互指（也没法有）。目前两边 272 对完全对齐，
   // 这里只告警不失败 —— 但一旦出现，说明某个语言漏了翻译，值得在构建日志里看见。
-  // 首页排除在外：它按设计只有中文（英文入口是 /en/introduction/）。
+  // 首页不在其中：它没有 markdown 源文件，路由表里根本不会出现，互指由 homePages 显式给出。
   const singleLang = [...routeLangs.entries()]
     .filter(([route, set]) => route !== '' && set.size < LANGS.length)
     .map(([route]) => route);
@@ -1508,39 +1443,55 @@ function main() {
     allPages.push(...pages);
   }
 
-  const cnPages = pagesByLang.get('cn');
-
-  // 首页（根路径）：正文由 buildHomeMarkdown 生成，与 React 首页的可见内容对应。
+  // 首页：正文由 buildHomeMarkdown 生成，与 React 首页的可见内容对应。
   // lastmod 取全站最新一页的 updated —— 首页聚合的是全站入口，有内容更新它就该算变过；
   // 退一步用构建日期，也比完全没有 lastmod 强。
-  const latestUpdated = cnPages.reduce(
+  const latestUpdated = allPages.reduce(
     (acc, p) => (p.updated && p.updated > acc ? p.updated : acc),
     ''
   );
 
-  const homePage = {
-    lang: 'cn',
-    prefix: '',
-    route: '',
-    segs: [],
-    isIndex: false,
-    title: SITE_NAME,
-    description: HOME_DESCRIPTION,
-    content: buildHomeMarkdown(),
-    updated: latestUpdated || BUILD_DATE,
-    // 首页是中文门户落地页，英文站没有对应的落地页（英文入口直接是 /en/introduction/）。
-    // 这里只声明自身，不编造一个内容并不对等的 hreflang 去误导搜索引擎。
-    alternates: [{ hreflang: 'zh-CN', href: `${SITE_URL}/` }],
-  };
+  /**
+   * 首页在两种语言下各是一个真实页面：中文 `/`、英文 `/en`。
+   * 两者内容对等（同一套版式、同一批入口、各自完整翻译），因此互相声明 hreflang，
+   * x-default 给中文 —— 这才是「同一页的两种语言」，不是硬凑的配对。
+   */
+  const homePages = LANGS.map((langInfo) => {
+    const copy = HOME_COPY[langInfo.code];
 
-  const homeHtml = renderPage(homePage, tmpl, buildChildrenIndex(cnPages), routeLangs);
+    return {
+      lang: langInfo.code,
+      prefix: langInfo.prefix,
+      route: '',
+      segs: [],
+      isIndex: false,
+      title: copy.meta.title,
+      description: copy.meta.description,
+      content: buildHomeMarkdown(langInfo.code),
+      updated: latestUpdated || BUILD_DATE,
+      alternates: [
+        { hreflang: 'zh-CN', href: `${SITE_URL}/` },
+        { hreflang: 'en', href: `${SITE_URL}/en/` },
+        { hreflang: 'x-default', href: `${SITE_URL}/` },
+      ],
+    };
+  });
 
-  writeFile(path.join(OUT_DIR, 'index.html'), homeHtml);
-  homePage.images = extractPageImages(homeHtml);
-  written += 1;
+  for (const homePage of homePages) {
+    const homeHtml = renderPage(
+      homePage,
+      tmpl,
+      buildChildrenIndex(pagesByLang.get(homePage.lang)),
+      routeLangs
+    );
 
-  // 英文入口（/en）跳转壳：不进 sitemap，只负责把人和爬虫送到 /en/introduction/。
-  writeFile(path.join(OUT_DIR, 'en', 'index.html'), renderEnEntryStub(tmpl));
+    writeFile(
+      path.join(OUT_DIR, homePage.prefix.replace(/^\//, ''), 'index.html'),
+      homeHtml
+    );
+    homePage.images = extractPageImages(homeHtml);
+    written += 1;
+  }
 
   // 未知路径走 404.html（GitHub Pages 只把「没有对应文件」的请求交给它，由 vite.config.ts
   // 的插件从 index.html 拷出）。这里整份重新生成，保证重复构建结果一致。
@@ -1552,7 +1503,7 @@ function main() {
 
   // 首页也要进 sitemap —— 它是最重要的入口，而 pages 只来自 markdown 文件，
   // 根路径一直缺席。sitemapEntries 同时作为自检的输入，首页因此也会被检查链接。
-  const sitemapEntries = [homePage, ...allPages];
+  const sitemapEntries = [...homePages, ...allPages];
 
   writeFile(path.join(OUT_DIR, 'sitemap.xml'), buildSitemap(sitemapEntries));
   // 首屏样式已经内联进每个页面的 head，这个文件眼下没人引用，留着是为了**过渡期**：

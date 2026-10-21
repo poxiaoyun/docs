@@ -9,6 +9,15 @@ import { withLangPath, type DocLang } from './doc-lang';
 /** 本模块写入的节点标记：只清理自己加的那些，不碰 head 里的其它东西。 */
 const MARK = 'data-doc-head';
 
+/**
+ * 静态预渲染写进 head 的同一批标签（由 scripts/ssg.mjs 打上 `data-ssg-head`）。
+ *
+ * 它们对爬虫是必需的真源，但值里的 origin 是构建期的站点地址；React 挂载后
+ * 由本模块按当前 origin 重写一遍。不先删掉旧的，head 里就会叠出两份 canonical
+ * 与两套 hreflang —— 页面看不出来，搜索引擎会看到互相矛盾的声明。
+ */
+const SSG_MARK = 'data-ssg-head';
+
 type HeadEntry = { rel: 'canonical' | 'alternate' | 'meta'; hreflang?: string; href?: string; content?: string };
 
 /**
@@ -39,7 +48,7 @@ export function useDocHead(lang: DocLang, canonicalPath: string) {
       { rel: 'meta', content: lang === 'en' ? 'en_US' : 'zh_CN' },
     ];
 
-    head.querySelectorAll(`[${MARK}]`).forEach((el) => el.remove());
+    head.querySelectorAll(`[${MARK}], [${SSG_MARK}]`).forEach((el) => el.remove());
 
     for (const entry of entries) {
       if (entry.rel === 'meta') {

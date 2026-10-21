@@ -1,17 +1,35 @@
 import { useEffect } from 'react';
 
+import { useDocHead } from 'src/utils/doc-head';
+import { useDocLang, withLangPath } from 'src/utils/doc-lang';
+
 import { SimpleLayout } from 'src/layouts/simple';
 
 import { HomeView } from 'src/sections/home';
 import { TOKENS } from 'src/sections/home/tokens';
+import { useHomeCopy } from 'src/sections/home/home-copy';
 
 // ----------------------------------------------------------------------
 
-// 必须与 index.html 的 <title> 以及 scripts/ssg.mjs 里为根路径生成的 siteLevelTitle 一致：
-// 首页是品牌词与站点级检索的落点，运行时再覆盖一次就会和爬虫看到的不一样。
-const metadata = { title: 'RUNE 文档 · 晓石AI智算平台' };
-
+/**
+ * 首页落地页，中英各一个地址：
+ *   · `/`    中文（站点主入口，品牌词与站点级检索的落点）
+ *   · `/en`  英文
+ *
+ * 语言只认 URL（与文档正文同一套 `doc-lang` 规则），文案来自
+ * `src/sections/home/home-copy.json` —— 那里同时是 `scripts/ssg.mjs`
+ * 生成首页静态正文的真源，改文案只要改那一个文件。
+ *
+ * 标题必须与 SSG 写进静态 HTML 的一致：爬虫看的是静态那份，运行时再改一次
+ * 就等于给出两套标题。
+ */
 export default function Page() {
+  const lang = useDocLang();
+  const copy = useHomeCopy();
+  const canonicalPath = withLangPath('/', lang);
+
+  useDocHead(lang, canonicalPath);
+
   // 首页整屏是深色，而 html/body 用的是主题的白色底：触控板过界回弹、
   // 移动端下拉时会把那条白边露出来。挂载时补上深色，离开首页再还原。
   useEffect(() => {
@@ -30,7 +48,7 @@ export default function Page() {
 
   return (
     <>
-      <title>{metadata.title}</title>
+      <title>{copy.meta.title}</title>
       <SimpleLayout
         slotProps={{
           header: {

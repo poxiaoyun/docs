@@ -7,6 +7,7 @@ import Typography from '@mui/material/Typography';
 import { varFade, MotionViewport } from 'src/components/animate';
 
 import { TOKENS } from './tokens';
+import { useHomeCopy } from './home-copy';
 import { Marquee, MicroLabel, DashDivider, SectionShell } from './primitives';
 
 // ----------------------------------------------------------------------
@@ -28,6 +29,8 @@ const FRAMEWORKS = [
 ];
 
 export function HomeEcosystemSection() {
+  const copy = useHomeCopy();
+
   return (
     <Box component="section" sx={{ bgcolor: TOKENS.bgPage, color: TOKENS.text, py: { xs: 7, md: 10 } }}>
       <Box
@@ -52,7 +55,7 @@ export function HomeEcosystemSection() {
           textAlign="center"
           sx={{ px: { xs: 3, md: 5 }, py: { xs: 5, md: 7 } }}
         >
-          <MicroLabel>Powering the next generation of AI</MicroLabel>
+          <MicroLabel>{copy.ecosystem.label}</MicroLabel>
           <Typography
             component="h3"
             sx={{
@@ -63,8 +66,8 @@ export function HomeEcosystemSection() {
               color: TOKENS.textStrong,
             }}
           >
-            Seamlessly integrates with <br />
-            your favorite open-source tools
+            {copy.ecosystem.line1} <br />
+            {copy.ecosystem.line2}
           </Typography>
         </Stack>
 

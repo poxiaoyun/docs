@@ -6,21 +6,21 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
+import { useLangHref } from 'src/utils/doc-lang';
+
 import { varFade, MotionViewport } from 'src/components/animate';
 
+import { useHomeCopy } from './home-copy';
 import { TOKENS, HERO_GRADIENT } from './tokens';
 import { Panel, buttonSx, SectionShell } from './primitives';
 
 // ----------------------------------------------------------------------
 // 版式取自门户首页底部的行动号召：整块圆角面板 + 居中排版 + 底部数据条。
 
-const STATS = [
-  { value: '3', label: '产品线' },
-  { value: '50+', label: '功能模块' },
-  { value: '24/7', label: '社区支持' },
-];
-
 export function HomeCtaSection() {
+  const copy = useHomeCopy();
+  const langHref = useLangHref();
+
   return (
     <Box component="section" sx={{ bgcolor: TOKENS.bgPage, color: TOKENS.text, py: { xs: 8, md: 12 } }}>
       <SectionShell component={MotionViewport} sx={{ px: { xs: 3, md: 5 } }}>
@@ -53,7 +53,7 @@ export function HomeCtaSection() {
                   color: 'transparent',
                 }}
               >
-                准备好开始了吗？
+                {copy.cta.title}
               </Typography>
             </m.div>
 
@@ -61,17 +61,17 @@ export function HomeCtaSection() {
               <Typography
                 sx={{ color: TOKENS.textSubtle, fontSize: 'clamp(1rem, 1.3vw, 1.1rem)', lineHeight: 1.7, maxWidth: '34rem' }}
               >
-                立即探索 Rune、Boss 及 魔哈，开启您的 AI 平台之旅
+                {copy.cta.copy}
               </Typography>
             </m.div>
 
             <m.div variants={varFade('inUp')}>
               <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
-                <Button component={RouterLink} to="/rune" sx={{ ...buttonSx('primary'), px: '2rem', py: '.9rem' }}>
-                  查看文档
+                <Button component={RouterLink} to={langHref('/rune')} sx={{ ...buttonSx('primary'), px: '2rem', py: '.9rem' }}>
+                  {copy.cta.primary}
                 </Button>
-                <Button component={RouterLink} to="/moha" sx={{ ...buttonSx('secondary'), px: '2rem', py: '.9rem' }}>
-                  加入社区
+                <Button component={RouterLink} to={langHref('/moha')} sx={{ ...buttonSx('secondary'), px: '2rem', py: '.9rem' }}>
+                  {copy.cta.secondary}
                 </Button>
               </Stack>
             </m.div>
@@ -83,7 +83,7 @@ export function HomeCtaSection() {
                 justifyContent="center"
                 sx={{ pt: { xs: 4, md: 5 }, mt: { xs: 2, md: 3 }, borderTop: `1px solid ${TOKENS.borderFaint}` }}
               >
-                {STATS.map((stat) => (
+                {copy.cta.stats.map((stat) => (
                   <Stack key={stat.label} spacing={.5} alignItems="center">
                     <Typography sx={{ fontSize: '1.9rem', fontWeight: 700, color: TOKENS.text, lineHeight: 1.1 }}>
                       {stat.value}

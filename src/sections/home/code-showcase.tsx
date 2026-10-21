@@ -5,9 +5,12 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
+import { useLangHref } from 'src/utils/doc-lang';
+
 import { varFade, MotionViewport } from 'src/components/animate';
 
 import { TOKENS } from './tokens';
+import { useHomeCopy } from './home-copy';
 import { Panel, Overline, monoLinkSx, SectionShell, SectionTitle } from './primitives';
 
 // ----------------------------------------------------------------------
@@ -72,6 +75,9 @@ const CODE_LINES = CODE_SNIPPET.split('\n').map(tokenizeLine);
 // ----------------------------------------------------------------------
 
 export function HomeCodeShowcaseSection() {
+  const copy = useHomeCopy();
+  const langHref = useLangHref();
+
   return (
     <Box component="section" sx={{ bgcolor: TOKENS.bgPage, color: TOKENS.text, py: { xs: 8, md: 12 } }}>
       <SectionShell component={MotionViewport} sx={{ px: { xs: 3, md: 5 } }}>
@@ -85,30 +91,30 @@ export function HomeCodeShowcaseSection() {
         >
           <Stack spacing={3} sx={{ alignItems: { xs: 'center', md: 'flex-start' }, textAlign: { xs: 'center', md: 'left' } }}>
             <m.div variants={varFade('inRight')}>
-              <Overline>Developer First</Overline>
+              <Overline>{copy.developer.overline}</Overline>
             </m.div>
 
             <m.div variants={varFade('inRight')}>
               <SectionTitle
                 sx={{ fontSize: 'clamp(1.9rem, 3vw, 2.8rem)', maxWidth: '16ch' }}
               >
-                几行代码，连接强大算力
+                {copy.developer.title}
               </SectionTitle>
             </m.div>
 
             <m.div variants={varFade('inRight')}>
               <Typography sx={{ color: TOKENS.textSubtle, fontSize: '.92rem', lineHeight: 1.8 }}>
-                我们为开发者提供轻量与快捷的命令行工具 (CLI)，只需几条简单的命令，即可轻松实现模型与数据集的下载、上传和版本管理，无缝集成到您的工作流中。
+                {copy.developer.copy}
               </Typography>
             </m.div>
 
             <m.div variants={varFade('inUp')}>
               <Box
                 component={RouterLink}
-                to="/moha/sdk-tutorial"
+                to={langHref('/moha/sdk-tutorial')}
                 sx={{ ...monoLinkSx, px: '1.15rem', py: '.8rem', fontSize: '.82rem', mt: 1 }}
               >
-                查看 SDK 教程
+                {copy.developer.cta}
                 <span aria-hidden>→</span>
               </Box>
             </m.div>
