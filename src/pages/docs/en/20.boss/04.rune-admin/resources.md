@@ -1,6 +1,6 @@
 ---
 title: Workloads
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: 'Browse the objects running in a cluster by type, to confirm that something was created and is in the state you expect.'
 tags:
 - boss
@@ -52,6 +52,7 @@ Pod, Node, Deployment, StatefulSet, DaemonSet, Job, CronJob, Service, Ingress, I
 | View the list | Show columns such as name, namespace and status as defined for that type |
 | View details | Click an object name to open its details, with basic information, status, events and YAML |
 | Node actions | On the **Node** tab you can **Cordon** or **Uncordon** a machine, with a confirmation dialog |
+| StorageClass and IngressClass actions | These two tabs have their own row actions (for example marking a default StorageClass), which differ from the node actions |
 
 :::tip When to use this page
 
@@ -70,6 +71,7 @@ If what you care about is capacity, load or performance, **Cluster Status**, **N
 
 ## Related
 
-- [Nodes & Accelerators](/boss/rune-admin/nodes-gpu)
-- [Logs & Scheduler](/boss/rune-admin/observability)
-- [Storage & Runtime](/boss/rune-admin/storage-runtime)
+- [Node Status](/boss/rune-admin/node-status)
+- [Accelerator Status](/boss/rune-admin/accelerator-status)
+- [Log Management](/boss/rune-admin/logs)
+- [Storage Cluster](/boss/rune-admin/storage-cluster)

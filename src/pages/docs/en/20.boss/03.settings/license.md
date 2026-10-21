@@ -1,6 +1,6 @@
 ---
 title: 'License'
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: 'Check the license status and expiry date, and paste a new license to renew it.'
 tags:
   - boss
@@ -97,5 +97,5 @@ Clicking a feature name opens the **Licensed Resource Details** page, which list
 
 ## Related
 
-- [AI Assistant Settings](/boss/settings/ai-assistant)
 - [System Member](/boss/settings/members)
+- [Platform Audit](/boss/settings/platform-audit)

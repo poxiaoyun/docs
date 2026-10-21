@@ -1,10 +1,10 @@
 ---
 title: '动态仪表盘'
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: 用一个 YAML 文本框自己拼监控看板，左边改配置、右边实时出图，即改即看。
 tags:
   - boss
-  - settings
+  - rune-admin
 ---
 
 # 动态仪表盘
@@ -45,9 +45,9 @@ tags:
 
 :::
 
-![动态仪表盘：左侧是 YAML 配置编辑器，右侧是按配置渲染出来的集群摘要与节点资源图表](/assets/screenshots/boss/cluster-dashboard-01.png)
+![动态仪表盘页：左侧 YAML 配置编辑器（顶部 Reset），右侧是按配置实时渲染的看板](/assets/screenshots/boss/cluster-dynamic-dashboard-01.png)
 
-这一页是个「配置驱动」的仪表盘：左边 YAML 编辑器写数据源、图表和分组，右边实时渲染。顶部的 **Reset** 用来丢弃改动，`YAML Configuration` 是编辑器标题。预览区第一块就是 **集群摘要**，下面的 **节点资源** 等区块由 YAML 里配的分组决定。
+这一页是个「配置驱动」的仪表盘：左边 YAML 编辑器写数据源、图表和分组，右边实时渲染。顶部的 **Reset** 用来丢弃改动，`YAML Configuration` 是编辑器标题。
 
 ## 新建一个看板
 
@@ -144,4 +144,5 @@ fieldConfig:
 ## 相关
 
 - [集群信息](/boss/rune-admin/cluster-overview)
-- [节点与加速卡状态](/boss/rune-admin/nodes-gpu)
+- [节点状态](/boss/rune-admin/node-status)
+- [加速卡信息](/boss/rune-admin/accelerator-status)

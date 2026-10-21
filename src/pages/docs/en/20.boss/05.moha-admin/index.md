@@ -1,6 +1,6 @@
 ---
 title: 'Moha Repository Management'
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: The platform administrator's console for governing the Moha Hub — models, datasets, images, Spaces and operations content.
 tags:
   - boss

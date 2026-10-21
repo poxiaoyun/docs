@@ -1,7 +1,7 @@
 ---
 title: Currency Configuration
-updated: '2026-09-14'
-description: Decide whether prices and costs are shown in CNY or USD, and where to change that rate.
+updated: '2026-10-21'
+description: 'Choose whether amounts display in CNY or USD and which rate converts them. The bookkeeping currency stays CNY.'
 tags:
   - boss
   - gateway
@@ -9,20 +9,20 @@ tags:
 
 # Currency Configuration
 
-Currency Configuration decides **which currency prices and costs are shown in** on the pages. Model prices are always entered in Chinese yuan; this page only controls the currency and exchange rate used when displaying them. It affects **display only** and never rewrites recorded data.
+Currency Configuration decides **which currency prices and costs display in**. Every amount is actually booked in CNY; switching to USD only adds a display conversion on top.
 
-By the end you will be able to switch between CNY and USD display, adjust the exchange rate, and understand which pages follow the change.
+After reading this you can switch between CNY and USD, change the rate, and understand which pages follow the change and which do not.
 
-:::tip Like the currency converter on your phone
-Your bank account really holds one currency, but you can switch the app to show it "converted into US dollars". When the rate changes the converted figure changes, while the money in the account does not. Currency Configuration is that conversion switch for the gateway.
+:::tip Like the currency converter in a banking app
+Your balance in a banking app is really in one currency, but you can switch to "view in USD". Change the rate and the converted number moves while the real money does not. Currency Configuration is that conversion layer for the gateway.
 :::
 
 ## Before you start
 
-- Permission: you need a platform administrator account (one that can enter the BOSS console).
-- Switch only if you need to quote or reconcile in US dollars. Teams that settle in Chinese yuan can leave it at the default.
+- Permission: a platform administrator account (able to open the BOSS admin console).
+- Switch only when you need to quote or reconcile in USD; teams that settle in CNY internally can leave the default.
 
-## Open Currency Configuration
+## Opening Currency Configuration
 
 1. Click **Model Gateway** in the top navigation bar.
 2. Expand **Platform Settings** and click **Currency Configuration**.
@@ -31,61 +31,67 @@ Your bank account really holds one currency, but you can switch the app to show 
 
 | Setting | Default | Notes |
 | --- | --- | --- |
-| Currency display mode | `CNY` | Choose `CNY` or `USD` |
-| USD exchange rate | `0.14` | The CNY-to-USD ratio, kept to 2 decimal places |
+| Currency display mode | Chinese Yuan CNY | Chinese Yuan CNY or US Dollar USD. Display only; the bookkeeping currency stays CNY |
+| CNY to USD rate | `0.14` | USD is a display reference converted from CNY with this rate, never used for charges |
 
-- **Currency display mode** affects display only: choose `CNY` to show Chinese yuan, or `USD` to convert and show US dollars at the rate.
-- **USD exchange rate** is the CNY-to-USD ratio. The system converts with fixed-point integers to avoid rounding drift.
+- **Currency display mode** affects display only: CNY shows ¥, USD converts with the rate and shows $.
+- **CNY to USD rate** is the ratio used for display conversion. The helper text asks for 2 decimal places; the backend converts with fixed-point integers to avoid floating-point drift.
 
-![Currency configuration: the display mode (CNY) and the USD exchange rate](/assets/screenshots/boss/gateway-currency-01.png)
+![Currency configuration: display mode and the CNY to USD rate](/assets/screenshots/boss/gateway-currency-01.png)
 
-The page has exactly two settings: **Display mode** and **USD exchange rate**. The mode is `CNY` in the screenshot, so every amount on the platform is shown in renminbi; switching to USD changes every place that converts through the rate. Press **Save** when done.
+The page holds exactly two fields: **Currency display mode** and **CNY to USD rate**. In the screenshot the mode is CNY, so all amounts show in yuan; switching to USD changes every place that converts. Click **Save** when done.
 
-## Change and save
+## Changing and saving
 
-1. Choose `CNY` or `USD` in the **Currency display mode** dropdown.
-2. Change the **USD exchange rate** if you need to.
+1. Pick CNY or USD in the **Currency display mode** dropdown.
+2. Change the **CNY to USD rate** if needed.
 3. Click **Save**.
 
-After a successful save the page reports "Currency settings saved" and pulls the configuration again.
+On success the page reports "Currency settings saved" and reloads the configuration once.
+
+:::warning The input has no format validation
+There is no front-end format limit on this box, only helper text asking for 2 decimals. The real conversion uses the backend's fixed-point arithmetic — do not type many decimals and expect the page to round them for you.
+:::
 
 ## Which pages are affected
 
-Currency settings mainly affect the three places that show amounts:
+Three kinds of place display amounts:
 
-| Place | What changes |
+| Location | What changes |
 | --- | --- |
-| The price columns in [Model Configuration](/boss/gateway/model-metadata) | Prices are shown in the selected currency |
-| The cost columns in [Call Logs](/boss/gateway/audit) | Each record's cost is shown in the selected currency |
-| The model ranking cost column on the [Dashboard](/boss/gateway/operations) | The cost column is shown in the selected currency |
+| Price items in [Rate Plans](/boss/gateway/rate-plans) | Unit prices display in the chosen currency |
+| Cost and Standard columns in [Call Logs](/boss/gateway/audit) | Per-call cost and unit price display in the chosen currency; USD amounts may be labelled as a reference price |
+| Model ranking on the [Dashboard](/boss/gateway/operations) | The cost column displays in the chosen currency |
 
-Prices themselves are always stored in Chinese yuan, so enter them in yuan as usual — no need to convert to dollars.
+Prices themselves are always stored in CNY, so enter them in CNY and never convert by hand.
 
-## Does this affect historical billing
+## Does this rewrite past bills
 
-It does not rewrite any recorded data, but **the numbers shown for historical costs will change**.
+No recorded data is rewritten, but **the numbers displayed for historical costs do change**.
 
-- Each call's cost is calculated and stored at the time it happens, using the price in force then; switching currency or changing the rate never rewrites those stored amounts.
-- Display converts using the **current** rate, so after you change the rate, older records will show US-dollar figures consistent with the new rate.
-- In other words: the yuan amount in the record is unchanged; only the converted display value moves.
+- Each call's cost was calculated and stored with the prices in force at the time (a pricing snapshot), and switching currency or changing the rate never rewrites those amounts.
+- The display converts with the **current** rate, so after changing the rate an old record shows a USD figure consistent with the new rate.
+- In other words: the CNY amount inside the record is unchanged; only the converted display value moves.
 
-:::info If you want historical figures to stay put
-If you do not want old records' displayed figures to drift with the rate, avoid changing the rate often, or keep the display in Chinese yuan.
+:::info If you want old amounts to stay put
+Keep the rate stable, or stay on CNY display, when historical figures must not drift.
 :::
 
-## Confirm it worked
+## Confirming the result
 
-After saving, go back to [Call Logs](/boss/gateway/audit) or [Model Configuration](/boss/gateway/model-metadata) and check that amounts are shown in the currency you selected — that means the setting is live.
+After saving, open a price item in [Rate Plans](/boss/gateway/rate-plans) or a record in [Call Logs](/boss/gateway/audit) and confirm the amount is shown in the currency you chose.
 
-## FAQ
+## Troubleshooting
 
 | Symptom | Likely cause | What to do |
 | --- | --- | --- |
-| Changed the currency but some amounts did not move | That amount has no convertible source data | Check that the model has a price entered in Model Configuration |
-| Historical cost figures changed | Display converts at the current rate | This is expected; the original record was not rewritten |
-| The rate I typed was very long | Only 2 decimal places are kept | Enter it with two decimals |
+| Some amounts did not change | That amount has no source data to convert | Check in Rate Plans that the model has a price item |
+| Historical cost figures changed | Display converts with the current rate | Expected; the underlying record is untouched |
+| An amount is prefixed with "reference price" | It is the USD conversion | Expected; USD is display only and never charged |
+| The rate accepted many decimals | The input has no format validation | Enter 2 decimals; the backend does the fixed-point conversion |
 
 ## Related
 
-- [Model Configuration](/boss/gateway/model-metadata): prices are entered there
-- [Call Logs](/boss/gateway/audit): costs are displayed according to Currency Configuration
+- [Rate Plans](/boss/gateway/rate-plans): prices are entered there and displayed per this setting
+- [Call Logs](/boss/gateway/audit): costs display per this setting
+- [Dashboard](/boss/gateway/operations): the cost ranking follows this setting

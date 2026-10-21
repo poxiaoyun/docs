@@ -1,6 +1,6 @@
 ---
 title: 'Evaluation Management'
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: 'Create a model evaluation task in the console, read its status, and find where the results are.'
 tags:
   - rune
@@ -28,7 +28,7 @@ Think of it as "arranging an exam for the model": the evaluation dataset is the 
 
 ![Evaluation task list: the create button sits in the top-right, and an empty list reads "No data"](/assets/screenshots/rune/evaluation-01.png)
 
-Evaluation tasks are instances too, so the columns are the usual ones — name, evaluation engine, resource flavor, status, access, creator and creation time — except that the engine column carries the template name.
+Evaluation tasks are instances too, so the columns are the usual ones — **name / evaluation engine / resource flavor / status / created at / access** — with the engine column carrying the application name. The creator appears in small text below the time.
 
 ## Create an evaluation task
 1. Click **Create Evaluations** at the top right of the list.
@@ -45,12 +45,11 @@ Evaluation tasks are instances too, so the columns are the usual ones — name, 
 | Column | Description |
 | --- | --- |
 | Name | Task name; click to open the detail page |
-| Framework | Which evaluation template this task uses |
+| Evaluation engine | Which evaluation application this task uses |
 | Resource Spec | CPU, memory, and accelerators it occupies |
 | Status | Running state, see the table below |
+| Created At | When the task was created; the small text below is the creator |
 | Access | Quick access buttons such as Web and SSH |
-| Creator | Who created it |
-| Created At | When the task was created |
 
 Common statuses:
 
@@ -80,16 +79,18 @@ The platform itself does not ship a fixed list of evaluation benchmarks. Which d
 :::
 
 ## What the detail page can do
-Click a task name to open the detail page. It has four tabs at the top:
+Click a task name to open the detail page. It has six tabs at the top:
 
 | Tab | Content |
 | --- | --- |
 | Overview | Basic information card and container list |
+| Resources | A resource relationship graph for this instance |
 | Monitoring | Instance resource monitoring panel |
 | Logging | Instance runtime logs |
 | Events | System event stream for troubleshooting scheduling, mounting, and similar problems |
+| Alerts | Alert rules and alert history for this instance |
 
-The **Actions** menu at the top right contains **Edit**, **Start**, **Stop**, **Scale**, and **Delete**. Deletion cannot be undone and asks for a second confirmation first.
+The **Actions** menu at the top right contains **Edit**, **Start**, **Stop**, **Scale**, **Save as Instance Preset**, and **Delete**. Deletion cannot be undone and asks for a second confirmation first.
 
 ## Confirm it worked
 In the **Evaluation Management** list you can see the new task, and once its **Status** becomes Running or Succeeded the evaluation is running or has finished. If the status is Processing failed, open the **Logging** tab to locate the cause.
@@ -105,4 +106,5 @@ In the **Evaluation Management** list you can see the new task, and once its **S
 ## Related
 - [Metrics](/rune/console/experiment)
 - [Logs](/rune/console/logging)
+- [Alerts](/rune/console/alerting)
 - [Create Workloads](/rune/guide/workloads)

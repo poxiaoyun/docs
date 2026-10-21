@@ -1,6 +1,6 @@
 ---
 title: 'Home'
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: 'What to look at first after signing in: use Home to judge whether the current workspace has compute, storage, or instance problems.'
 tags:
   - rune
@@ -35,8 +35,8 @@ The data in this screenshot comes from a demo workspace: the attention banner re
 | Header | The title "Workspace Overview" and the **Refresh** button on the right |
 | Attention banner | Appears only when there is something to handle; click it to deal with the item directly |
 | Overview cards | Total workloads, Running / healthy, Processing, Abnormal, Quota warnings, Storage usage |
-| Resource Quota | Resource quota usage plus the average resource utilization over the last 24 hours |
-| Data Storage | Total capacity, used, available, number of volumes, and overall storage usage |
+| Resource Quota | A three-way comparison — **current workspace / other workspaces / tenant remaining** — plus the average resource utilization over the last 24 hours |
+| Data Storage | Total capacity, used, available, number of volumes, overall storage usage, **file count**, **net growth over 7 days**, and the **storage usage trend** chart |
 | Workload Status | Instance status distribution by type |
 | Needs Attention | A list of issues; click **View** to jump straight to the instance or quota page |
 
@@ -61,22 +61,30 @@ The top row is the "one-line conclusion"; when something looks off, look here fi
 
 ### Resource Quota
 
-Shows the compute quota (CPU, memory, accelerators) and the average resource utilization over the last 24 hours. If one item is close to its ceiling, creating a new instance may fail for lack of quota, so adjust it under [Quota](/rune/console/quota) first.
+Shows the compute quota (CPU, memory, accelerators) and the average resource utilization over the last 24 hours.
+The quota is a three-way comparison: **current workspace** (what this office was given), **other workspaces** (what sibling workspaces use), and **tenant remaining** (what the whole tenant can still use).
+The **More** button in the corner opens the **All resource quota** dialog for a per-pool breakdown.
+
+If one item is close to its ceiling, creating a new instance may fail for lack of quota, so adjust it under [Quota](/rune/console/quota) first.
 
 ### Data Storage
 
-Shows total storage capacity, used, available, and the number of volumes, with a "Storage Volume Usage" table below listing each volume's name, storage cluster, usage, mount status (Mounted / Unmounted), and status (Normal / High usage).
+Shows total storage capacity, used, available, the number of volumes, and the overall usage rate, plus two figures worth watching: **file count** and **net growth over 7 days**.
+
+The **storage usage trend** chart plots recent usage; below it, the "Storage Volume Usage" table has only four columns: **volume name / storage cluster / usage / mount status**.
+Usage is drawn as a progress bar that turns yellow or red past the threshold — the colour itself is the warning, so there is no separate status column.
 
 ### Workload Status
 
-Counts instance status by type: inference services, fine-tuning jobs, development environments, applications, evaluation jobs, and experiments. Each item's status falls into one of five buckets:
+Counts instance status by type: inference services, fine-tuning jobs, development environments, applications, evaluation jobs, and experiments. Each item's status falls into one of six buckets:
 
 | Status | Meaning |
 | --- | --- |
 | Running | The instance is working normally |
-| Scheduling | Waiting for resources or still being created |
+| Processing | Being created, started, or adjusted; give it a moment |
 | Completed | A job-type instance (such as fine-tuning) has finished |
 | Paused | Stopped manually |
+| Scaled to 0 | Replicas were scaled down to zero; the instance exists but is not running |
 | Abnormal | Failed or in an abnormal state; needs handling |
 
 ### Needs Attention
@@ -100,6 +108,7 @@ This block is a table with the columns **Name, Object type, Problem, Updated, Ac
 ## Related
 
 - [Workspace](/rune/console/workspace)
+- [Alerts](/rune/console/alerting)
 - [Quota](/rune/console/quota)
 - [Logs](/rune/console/logging)
 - [Inference](/rune/console/inference)

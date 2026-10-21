@@ -1,54 +1,85 @@
 ---
-title: 'Rune intelligent computing management'
-updated: '2026-09-14'
-description: 'Connect clusters, divide resource pools, define flavors and hand quotas to tenants — the admin home for the compute base.'
+title: 'AI Platform Administration'
+updated: '2026-10-21'
+description: 'Connect clusters, enable tenants, divide resource pools, define flavors and hand out quotas — the admin home for the compute base.'
 tags:
   - boss
   - rune-admin
 ---
 
-# Rune intelligent computing management
+# AI Platform Administration
 
-This is where platform administrators maintain the **compute base**. Every machine, every accelerator card and every resource flavor that users can pick inside the AI Platform is first connected and allocated here; only then can instances be created.
+This is where a platform administrator maintains the **compute base**. Every node, accelerator and flavor that users can pick inside the AI Platform is connected and allocated here first.
 
-If you have just taken over this platform, read the chapters in this order: **connect a cluster → divide resource pools → define flavors → assign tenant quotas → publish app templates**.
+After reading this page you know what each page in this group does, the order to do things in, and why some menus only appear after you open a cluster.
 
-:::tip Remember these words first
+:::tip Key terms
 
-- **Cluster** ≈ an entire data-centre building, with many machines inside.
-- **Node** ≈ one server in that building.
-- **Accelerator (GPU / NPU)** ≈ the "engine" inside a server that does the AI maths.
-- **Resource pool** ≈ dividing the machines in the building into functional zones for different departments.
-- **Flavor** ≈ a size chart for a package, stating "how many CPU cores / how much memory / how many cards".
-- **Template** ≈ a pre-filled installation list that users can deploy in one click.
-- **System app** ≈ the middleware that ships with the platform (monitoring, logging, gateway and so on).
+- **Cluster** — a data centre building full of machines.
+- **Node** — one server inside that building.
+- **Accelerator (GPU / NPU)** — the engine inside a server that does the AI maths.
+- **Resource pool** — a way to split the nodes into functional zones for different teams.
+- **Flavor** — a specification sheet: so many CPU cores, so much memory, so many cards.
+- **Quota** — the maximum a tenant may use in one cluster.
+- **Application** — a pre-built deployment recipe that users or the platform can install in one click.
 
 :::
 
 ## Before you start
 
-- You need a **system administrator** account; ordinary members cannot see the **AI Platform** group in the left-hand menu.
-- Run the whole flow once on a test cluster before touching a production cluster.
+- You need a **system administrator** account. Ordinary members cannot see the **AI Platform** group.
+- Run through the whole flow on a test cluster before touching production.
 
-## What each page helps you with
+## Recommended order
 
-| Page | What it helps you with |
+1. **Connect clusters**: bring a data centre into the platform, test the connection, then publish it.
+2. **Enable tenants**: enable a tenant on a cluster before it can use anything there.
+3. **Divide resource pools**: group the nodes by purpose.
+4. **Define flavors**: describe the packages and decide which ones need per-tenant authorization.
+5. **Hand out quotas**: grant capacity per resource pool and resource item, then subdivide it into workspaces.
+6. **Deploy shared components**: add monitoring, logging and storage through System Apps and Storage Cluster.
+7. **Set up operations**: alert rules, scheduling policy, log queries.
+
+## What each page solves
+
+| Page | What it solves |
 | --- | --- |
-| [Cluster](/boss/rune-admin/clusters) | Connect a new data-centre building to the platform |
-| [Cluster Status](/boss/rune-admin/cluster-overview) | See whether one cluster's CPU, memory, nodes and services are healthy |
-| [Nodes & Accelerators](/boss/rune-admin/nodes-gpu) | See the state of every machine and every card |
-| [Resource Pools](/boss/rune-admin/resource-pools) | Divide the machines into functional zones |
-| [Flavors](/boss/rune-admin/flavors) | Define packages such as "how many cores and cards" |
-| [Tenant Quotas](/boss/rune-admin/tenants) | Hand resources to tenants and workspaces |
-| [App Templates](/boss/rune-admin/templates) | Maintain the installation lists users can deploy in one click |
-| [System Template Market](/boss/rune-admin/system-market) | Deploy platform middleware from a template in one click |
-| [System Apps](/boss/rune-admin/systems) | Manage the middleware instances already deployed |
-| [Storage & Runtime](/boss/rune-admin/storage-runtime) | Manage storage and runtime instances |
-| [Workloads](/boss/rune-admin/resources) | Look directly at the objects running in the cluster |
-| [Dynamic Dashboard](/boss/rune-admin/dynamic-dashboard) | Assemble your own monitoring dashboard |
-| [Logs & Scheduler](/boss/rune-admin/observability) | Query logs and adjust scheduling policy |
+| [Cluster Management](/boss/rune-admin/clusters) | Bring a new data centre in and publish it to tenants |
+| [Tenant Clusters](/boss/rune-admin/tenant-clusters) | See which clusters a tenant is enabled on, and enable more |
+| [Application](/boss/rune-admin/applications) | Maintain the deployable recipes and their versions |
+| [Cluster Status](/boss/rune-admin/cluster-overview) | Check CPU, memory and node health for one cluster |
+| [Node Status](/boss/rune-admin/node-status) | Per-machine load and pressure |
+| [Accelerator Status](/boss/rune-admin/accelerator-status) | Per-card utilization, memory and temperature |
+| [Dynamic Dashboard](/boss/rune-admin/dynamic-dashboard) | Build an ad-hoc dashboard in YAML (not in the menu) |
+| [Resource Pool](/boss/rune-admin/resource-pools) | Split nodes into functional zones |
+| [Flavor](/boss/rune-admin/flavors) | Define packages and their availability |
+| [Tenant Resources](/boss/rune-admin/tenants) | Review enablement requests, grant quotas, flavors and workspaces |
+| [Workloads](/boss/rune-admin/resources) | Browse the objects running in the cluster |
+| [Storage Cluster](/boss/rune-admin/storage-cluster) | Deploy and manage storage components |
+| [System Apps](/boss/rune-admin/systems) | Deploy and manage monitoring, logging and gateway components |
+| [Scheduling](/boss/rune-admin/scheduling) | See queue capacity and where workloads are stuck |
+| [Scheduler Management](/boss/rune-admin/schedulers) | Change the scheduling flow and plugins |
+| [Log Management](/boss/rune-admin/logs) | Query and tail cluster logs |
+| [Alerts](/boss/rune-admin/alerts) | Configure alert rules and review alert history |
 
-## How to tell you are in the right place
+## Confirm you are in the right place
 
-- After clicking **AI Platform** in the top navigation bar, the left sidebar shows the **AI Platform** group, with **Cluster**, **Tenant Resource** and **App Template** under it.
-- After opening a cluster from **Cluster**, the left-hand menu gains three sub-groups: **Cluster Status**, **Resource Management** and **Operations Management**.
+- After clicking **AI Platform** in the top bar, the sidebar shows the **AI Platform** group with **Cluster Management**, **Tenant Clusters** and **Application**.
+- Opening a cluster from **Cluster Management** replaces the sidebar with **Cluster Status / Resource Management / Operations Management** — these three groups only exist inside a cluster.
+- **Dynamic Dashboard** is in no menu at all and can only be opened by URL.
+
+## FAQ
+
+| Symptom | Likely cause | What to do |
+| --- | --- | --- |
+| The sidebar only shows Cluster Management | The top bar is on another area | Click **AI Platform** in the top bar |
+| Cannot find "Tenant Resources" | It only exists inside a cluster | Open a cluster, then look under **Resource Management** |
+| Cannot find "Alert channels" | It is a platform-level top-bar entry | Click **Alert channels** in the top bar |
+| Cannot find "Dynamic Dashboard" | It has no menu entry | Open it by URL, or follow the link from [Cluster Status](/boss/rune-admin/cluster-overview) |
+
+## Related
+
+- [Cluster Management](/boss/rune-admin/clusters)
+- [Tenant Clusters](/boss/rune-admin/tenant-clusters)
+- [Tenant Resources](/boss/rune-admin/tenants)
+- [Platform Settings](/boss/settings/platform)

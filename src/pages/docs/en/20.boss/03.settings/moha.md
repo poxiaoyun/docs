@@ -1,7 +1,7 @@
 ---
 title: Moha Hub Settings
-updated: '2026-09-14'
-description: 'Rebrand Moha Hub and set the base domain and HTTPS certificate used by Spaces.'
+updated: '2026-10-21'
+description: 'Rebrand Moha Hub and configure how spaces are reached: direct access or proxy, plus the domain or IP and TLS certificate.'
 tags:
   - boss
   - settings
@@ -9,84 +9,102 @@ tags:
 
 # Moha Hub Settings
 
-Moha Hub Settings decide **how Moha Hub appears to users** (name, logo, description) and also manage which domain **Spaces** are served from and whether HTTPS is enabled.
+Moha Hub Settings decides **how Moha Hub presents itself** (name, logo, description) and **how spaces are reached**: directly or through the apiserver proxy, with which domain or IP, and whether HTTPS is on.
 
-The page has two cards: display information on top and space configuration below. They **save independently**, so changing one never affects the other.
+Two cards: branding on top, space configuration below. Each **saves independently**, so editing one never touches the other.
 
-This page lives in the **Platform Settings** area: click **Platform Settings** in the top navigation bar, then click **Moha Hub Settings** under the **System Settings** group in the left sidebar.
+The page lives in the **Platform Settings** area: click **Platform Settings** in the top bar, then **Moha Hub Settings** under the **Platform** group.
 
-:::tip What the two cards control
-The upper card only changes what Moha Hub is called and how it looks; users see this directly.
-The lower card controls how the Spaces feature is reached — a wrong domain or certificate makes Spaces unreachable, so treat it as the more sensitive of the two.
+After reading this page you can replace the title, description and logo, pick the right access mode, and fill in the domain or IP and TLS material correctly.
+
+:::tip Branding versus access
+The top card only changes what Moha Hub looks like.
+The bottom card decides how the Spaces feature is reached — get the access mode or certificate wrong and spaces stop opening, so treat it as the riskier half.
 :::
 
 ## Before you start
 
-- Your account must be a **system administrator**.
-- Prepare the logo image: **PNG or SVG**, no larger than **128 KB**.
-- If you are going to change the space configuration, first prepare a **domain that is registered and pointed at this platform**; to enable HTTPS you also need the certificate and private key contents.
+- You need a **system administrator** account.
+- Prepare a logo: **PNG or SVG**, no larger than **1 MB**.
+- For space configuration, have a **domain pointed at this platform or a usable IP**; for HTTPS, also have the certificate and private key at hand.
 
-## Page structure
+## Page layout
 
-| Card | What it controls | How it is saved |
+| Card | What it controls | How to save |
 | --- | --- | --- |
-| Title and Logo | The Moha Hub name, logo and description | Click **Confirm** inside the card |
-| Space Configuration | The Space base domain, whether HTTPS is enabled, and the certificate | Click **Confirm** inside the card |
+| Title and Logo | Moha Hub name, logo and description | **OK** inside the card |
+| Space configuration | Access mode, domain / IP, TLS switch and credentials | **OK** inside the card |
 
 ## Set the name and logo
 
-1. Fill in the **Title and Logo** card:
+1. In the **Title and Logo** card fill in:
 
-   | Setting | What to fill in | What happens when you change it |
+   | Setting | How to fill it | What changes |
    | --- | --- | --- |
-   | Logo | Upload a PNG or SVG, no larger than **128 KB** | Replaces the icon in the **Products** entry and on Moha Hub pages |
-   | Product Title | At most **10 characters**; defaults to the built-in product name | Replaces the name shown in the entry and the navigation bar |
-   | Product Description | At most **100 characters**, and it can wrap onto 4 lines | Replaces the product description text |
+   | Logo | PNG or SVG, up to **1 MB** | The icon in the Product & Services entry and on Moha Hub pages |
+   | Product title | **Required**, cannot be blank, default `Moha Hub` | The name in entries and navigation |
+   | Product description | **Required**, up to **100 characters**, four rows | The introduction text |
 
-2. Choosing a logo file **triggers an immediate save**.
+2. Choosing a logo file **uploads and saves the logo immediately**.
 
-3. If you only changed the text, click **Confirm** at the bottom of the card.
+3. For text-only changes, click **OK** at the bottom of the card.
 
-![Moha Hub settings: title and logo, plus space configuration (base domain, TLS certificate and key)](/assets/screenshots/boss/settings-moha-01.png)
+![Moha Hub Settings: the Title and Logo card and the space configuration card with access mode, domain / IP and TLS credentials](/assets/screenshots/boss/settings-moha-01.png)
 
-This page adds a **Space configuration** block over the platform page: the **Base domain** decides where user Spaces are served, and turning on **Enable TLS** reveals the certificate and private key fields. Each block has its own **Confirm** button — save the block you edited.
+This page adds a **Space configuration** section compared with Platform Settings: pick the access mode first, then decide the domain and certificate. Each card has its own **OK** button.
 
-## Set the space configuration
+## Configure spaces
 
-1. Fill in the **Space Configuration** card:
+1. In the **Space configuration** card, start with **Space access mode**:
 
-   | Setting | What to fill in | What happens when you change it |
+   | Option | Meaning |
+   | --- | --- |
+   | Domain / IP direct | Each space is exposed directly on its own subdomain or NodePort; the domain / IP and TLS fields below apply |
+   | Through apiserver proxy | Access goes through the apiserver proxy; no per-space domain or certificate is needed |
+
+   The help text reads: "Takes effect the next time a space starts or restarts. Proxy mode requires a space template that supports proxied access." In other words, the change is not immediate — existing spaces need a restart.
+
+2. With **Domain / IP direct**, continue with:
+
+   | Setting | How to fill it | Notes |
    | --- | --- | --- |
-   | Base Domain | Required, for example `develop.example.com` | Spaces are served publicly on this domain; it cannot be left empty |
-   | Enable TLS | Switch, **off** by default | When on, Spaces are accessed over HTTPS |
-   | TLS Certificate | Required when TLS is enabled, PEM format | The certificate used for Space HTTPS |
-   | TLS Private Key | Required when TLS is enabled, PEM format | The private key used for Space HTTPS |
+   | Domain / IP | Required, for example `spaces.example.com` or `192.168.1.10` | **No scheme and no port.** A domain uses space subdomains; an IP uses NodePort |
+   | Enable TLS | Switch, off by default | When on, the platform reaches spaces over HTTPS |
+   | TLS certificate | Required when TLS is on, PEM | Certificate used for space HTTPS |
+   | TLS private key | Required when TLS is on, PEM | Matching private key |
 
-2. Click **Confirm** at the bottom of the card to save.
+3. Click **OK** at the bottom of the card.
 
 Validation rules:
 
-- **Base Domain** must not be empty once leading and trailing spaces are removed, otherwise the form cannot be saved.
-- With **Enable TLS** on, both the certificate and the private key **must be filled in**; providing only one raises an error.
-- The certificate and private key must be **provided together or both left empty**; filling in only one shows an error.
+- **Domain / IP** cannot be empty after trimming whitespace.
+- With **Enable TLS** on, both certificate and key are required; one without the other is rejected.
+- Certificate and key are **either both filled or both empty**; the error text is "TLS certificate and private key must be provided together; both are required when TLS is enabled".
 
-:::warning Check the certificate before enabling HTTPS
-With TLS on, the platform reaches Spaces over HTTPS. Make sure the certificate and private key belong together and match the base domain, otherwise users will not be able to open their Spaces.
+:::warning TLS only works with a domain
+The help text states that TLS applies to domains only. With a bare IP, browser certificate validation fails, so leave HTTPS off for IP-based access.
 :::
 
-## Confirming the result
+:::warning Verify the certificate before enabling HTTPS
+With TLS on, the platform reaches spaces over HTTPS. A mismatched or wrong-domain certificate makes spaces unreachable for users.
+:::
 
-- Both cards show "**Update successfully, please refresh the page**" after a successful save.
-- Refresh the browser, then check the **Products** entry to see whether the Moha Hub name and logo have updated.
-- Once the space configuration takes effect, open a Space using the base domain and confirm it loads; with TLS enabled the address should start with `https://`.
+## Verify the result
 
-## Common questions
+- Both cards show "**Update succeeded, please refresh the page**" after saving.
+- Refresh the browser and check the Product & Services entry for the new name and logo.
+- Open a space using the **domain / IP**; with TLS on the URL should start with `https://`.
+- After switching to proxy mode, restart one space and confirm the new path works.
 
-| What you see | Likely cause | What to do |
+## FAQ
+
+| Symptom | Likely cause | What to do |
 | --- | --- | --- |
-| The space configuration will not save | The base domain was left empty | Enter the correct domain |
-| A TLS-related error appears | Only the certificate or only the private key was filled in | Fill in both, or clear both |
-| Spaces do not open after enabling HTTPS | The certificate and private key do not match, or the domain is wrong | Check the certificate against the domain and paste them again |
+| Space configuration will not save | Domain / IP is empty | Fill in a domain or IP without scheme or port |
+| TLS errors on save | Only one of certificate and key is filled | Fill both, or clear both |
+| Spaces do not open after enabling HTTPS | Certificate and key do not match, or do not cover the domain | Re-check and paste again |
+| Access mode seems unchanged after switching | It applies on the next space start or restart | Restart the affected spaces |
+| Certificate errors when using an IP with TLS | TLS only works with a domain | Turn TLS off for IP access |
 
 ## Related
 

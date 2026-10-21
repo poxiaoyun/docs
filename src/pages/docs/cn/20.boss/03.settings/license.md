@@ -1,6 +1,6 @@
 ---
 title: 许可证
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: '帮你查许可证状态和到期时间，并粘贴新许可证完成更新。'
 tags:
   - boss
@@ -97,5 +97,5 @@ tags:
 
 ## 相关
 
-- [AI助手设置](/boss/settings/ai-assistant)
 - [系统成员](/boss/settings/members)
+- [平台审计](/boss/settings/platform-audit)

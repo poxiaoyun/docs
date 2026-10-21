@@ -1,12 +1,14 @@
 ---
 title: 'Comparison'
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: "Can't decide between two models? Send the same question to both at once and compare the answers side by side."
 ---
 
 # Comparison
 
-**Comparison** sends **the same question to two models at the same time** and shows their answers side by side. When you are choosing a model, comparing versions, or testing how parameters behave, this page is far more efficient than switching back and forth.
+**Comparison** sends **the same question to two models at the same time** and shows their answers side by side. When you are choosing a model, comparing channels, or testing how parameters behave, this page is far more efficient than switching back and forth.
+
+Get there from the top nav: click **Playground** → **Comparison**.
 
 The layout is fixed at two columns, so you can compare at most two models at a time — there is no "add another" entry.
 
@@ -18,94 +20,104 @@ Like interviewing two candidates: ask them the same question at once, then compa
 
 - Any signed-in account works; no extra role is needed.
 - Your account needs **at least one API key** (see [API Keys](./token.md)).
-- Your account needs **at least one available model**: the two sides may use different models, or the same one.
-- Use a **wide window**. On a narrow window the left-hand model list is hidden, and then you cannot choose models.
+- Your account needs **at least one available model**: the two columns may use different models, or the same one.
+- Both columns only list **chat models that are already priced**. Unpriced models do not appear.
+- Work on a **wide window**. On narrow windows the model lists on the far left are hidden and you cannot pick a model.
 
-## The page has three parts
+## The page has three areas
 
-| Area | Position | Description |
+| Area | Position | Notes |
 | --- | --- | --- |
-| Model list | Far left | Two stacked blocks, the **Left Model** and the **Right Model** |
-| Conversation columns | Center | Two columns, each showing the answers of one model |
-| Shared input | Bottom | One input box; a single message goes to both sides |
+| Model lists | Far left | Stacked blocks: **Left Model** and **Right Model** |
+| Conversation columns | Middle | The left and right column each show one model's answers |
+| Shared input box | Very bottom | One input box; a message goes to both sides at once |
 
-![Model Comparison in its initial state: two stacked model lists on the far left, both panes asking you to pick a model](/assets/screenshots/airouter/compare-01.png)
+![Comparison before selection: two stacked model lists on the far left, both columns showing "Please select a model"](/assets/screenshots/airouter/compare-01.png)
 
-This is the page before any model is chosen: the far-left column holds two stacked lists labelled **Left model** and **Right model**; the middle shows two panes reading "Select the left model / Select the right model"; the shared input box sits at the very bottom and only becomes active when both sides have a model.
+This is the page before you pick anything: two blocks stacked on the far left, the upper one labelled **Left Model** and the lower one **Right Model**; the middle has two conversation columns reading "Select the left model / Select the right model"; the input box sits at the very bottom and only activates once both models are chosen.
 
 ## Choose both models
 
-1. Click **Comparison** in the top navigation.
-2. In the upper half of the far-left panel, the **Left Model** list, click a model.
-3. In the lower half, the **Right Model** list, click a model.
-4. The two sides may use **different models** (to compare capability) or **the same model** (to compare parameters).
+1. Click **Playground** → **Comparison** in the top nav.
+2. In the upper **Left Model** list, click a model.
+3. In the lower **Right Model** list, click a model.
+4. The two sides may use **different models** (compare capability) or **the same model** (compare channels or parameters).
 
-The model lists work the same as in [Playground](./experience.md): grouped by visibility → channel → model, searchable, and with model IDs you can copy.
+The lists behave like the ones on [Chat](./experience.md): three levels of **visibility** (**Public** / **Internal** / **Private**) → **model** → **channel**, with channel rows shown as "provider: channel-name". When there are more than 5 models, a **Search models** box appears at the top.
 
-## Confirm the keys on both sides
+:::warning Changing a model clears that column
+Clicking another model in one column clears that column's conversation. The other column is unaffected.
+:::
 
-- Each column has its own key selector at the top, and both default to the first key in the account.
-- To change one side's key, use that column's own selector at the top; it **does not affect the other side**.
+## Check the key on each side
 
-## Send a message
+- Each column has its own key selector at the top, both defaulting to the account's first **usable** key.
+- To change one side, use that column's selector; it **does not affect** the other side.
+- **Expired** (marked `Expired`) and **disabled** keys cannot be selected.
 
-1. Only once both sides have a model does the bottom input box light up, with the placeholder "Type to chat with the model...".
-2. Type your question and press **Enter**, or click the send button.
-3. The same message goes to **both** sides at once, and the two columns stream independently without waiting for each other.
+## Send one message
 
-## How to read the results
+1. Once both models are chosen, the shared input box at the bottom activates; its placeholder is "Type to chat with the model...".
+2. Type your question and press **Enter** or click send.
+3. The same message goes to **both** sides at once, and each column streams independently.
 
-| What to compare | How to look |
+## Read the results
+
+| What to compare | How to read it |
 | --- | --- |
-| Answer quality | Put the two columns side by side and see which is more accurate, complete and on topic |
-| Response speed | Watch how fast each column streams its text |
+| Answer quality | Compare the two columns directly: which is more accurate, more complete, more on point |
+| Response speed | Watch which column fills in faster |
 | Reasoning | With **Deep Thinking** on, expand **Show thoughts** on each side and compare their reasoning |
-| Token cost | Look at the usage numbers under each answer |
-| Instruction following | Type the same System into both sides' **Parameter Settings** and compare which obeys better |
+| Token usage | Check the usage numbers under each answer |
+| Instruction following | Put the same System text into both **Parameter Settings** and see which obeys better |
 
-![The same question sent to deepseek-v4-flash and deepseek-v4-pro, each pane showing its own reasoning and answer](/assets/screenshots/airouter/compare-02.png)
+![The same question sent to deepseek-v4-flash and deepseek-v4-pro, each column showing its own reasoning and answer](/assets/screenshots/airouter/compare-02.png)
 
-Above is the result of picking one model per side and sending a single question: each pane names its model, and each answer carries its own collapsed reasoning block and token row. In the screenshot `deepseek-v4-flash` used 158 tokens (34 in / 124 out) while `deepseek-v4-pro` used 169 (87 in / 82 out) — same question, different input and output lengths, which is exactly what this page is for.
+Above, each column has its own model and received the same question: both headers show their model name, and both answers carry their own collapsed reasoning and token usage. The input and output lengths differ between the two models — exactly what the Comparison page is meant to reveal.
 
-## What is shared and what is independent
+## What is shared and what is separate
 
-| Configuration | Left column | Right column |
+| Setting | Left column | Right column |
 | --- | --- | --- |
 | Model | Chosen separately | Chosen separately |
-| API key | Chosen separately, defaults to the first key | Chosen separately, defaults to the first key |
-| Chat parameters | Set separately | Set separately |
+| API key | Chosen separately, first usable key by default | Chosen separately, first usable key by default |
+| Conversation parameters | Set separately | Set separately |
 | Message history | Independent | Independent |
-| Errors and stopping | Independent; an error on one side does not affect the other | Independent |
-| **Deep Thinking** | One shared toggle | One shared toggle |
+| Errors and stopping | Independent; a failure on one side does not affect the other | Independent |
+| **Deep Thinking** | One shared switch | One shared switch |
 
-Chat parameters are opened through the **Parameter Settings** icon at the top of each column, and the two sides do not affect each other. For what each item does, see [Parameter Settings](./debug.md).
+Conversation parameters open from the **Parameter Settings** icon at the top of each column, and the two sides never affect each other. For each field, see [Parameter Settings](./debug.md).
 
 ## Stop and clear
 
 | What you want | How to do it |
 | --- | --- |
-| Stop one side only | Click the stop icon in that column's message area |
-| Stop both sides | Click **Stop** in the bottom input box |
-| Clear one side only | Click the clear icon at the top of that column; its tooltip is **Clear chat** |
-| Switch models | Click another model in the left-hand list; that column's conversation is cleared |
+| Stop one side | Click the stop icon in that column's message area |
+| Stop both | Click **Stop** in the bottom input box |
+| Clear one side | Click the clear icon at the top of that column; the tooltip reads **Clear chat** |
+| Switch models | Click another model in that side's list; that column's conversation is cleared |
 
-## Tips for comparing
+## Comparison tips
 
-1. **Change only one variable at a time.** To compare models, pick different models on the two sides and keep the parameters identical; to compare parameters, pick the same model and change only one side's Temperature or Top P.
-2. To compare different channels of the same model, select a different channel under the same model name on each side.
-3. Test over several rounds with the same set of business questions — more reliable than asking a single question.
+1. **Change one variable at a time.** Comparing models: pick two different models and keep parameters identical. Comparing parameters: pick the same model and change Temperature or Top P on one side only.
+2. To compare channels of the same model, pick two different channels of that model.
+3. Run a batch of real business questions over several rounds; one question is rarely enough.
+4. Afterwards, check what it cost in [Usage analysis](./usage-statistics.md).
 
-:::warning A refresh wipes it
-Comparison records live only in the current page; refreshing or closing the page clears everything. Screenshot or copy important results first.
+:::warning Refresh and it is gone
+Comparison history lives only in the current page. Refreshing or closing the page clears everything. Screenshot or copy important results first.
 :::
 
 ## Confirm it worked
 
-Both sides start streaming their answers, which means the comparison was sent successfully. If only one side reacts, that side's model or key is usually not set correctly — check the selector at the top.
+Both columns start streaming answers, so the comparison was sent successfully. If only one side responds, that side's model or key is usually the problem — check the selector at the top.
+
+If only one side reports a billing error such as "The balance is too low", "Plan credits are used up" or "Weekly quota is used up", that side's call was blocked and **the other side is unaffected** and still answers. Handling matches the "Balance and plans" section of [Chat](./experience.md).
 
 ## Related
 
-- [Playground](./experience.md)
+- [Chat](./experience.md)
 - [Models](./marketplace.md)
 - [Parameter Settings](./debug.md)
 - [API Keys](./token.md)
+- [Usage analysis](./usage-statistics.md)

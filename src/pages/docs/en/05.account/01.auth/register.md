@@ -1,62 +1,101 @@
 ---
 title: 'Registration'
-updated: '2026-09-14'
-description: How to register a platform account with an email verification code, and what each field expects.
+updated: '2026-10-21'
+description: Which fields the registration page shows, how to fill them, what the password rules are, and what happens afterwards.
 ---
 
 # Registration
 
-Registration creates a platform account that belongs to you. You fill in a username, a password, an email address, and a mobile number, and confirm the email address with a verification code sent to your inbox. Once registration finishes, sign in with the new account.
+Registration creates a platform account that belongs to you. What the page asks for depends on which sign-up channels
+the platform has opened: it may want an email address, a mobile number, or both, and it may also require a password.
+This page follows the order of the page itself, so you can finish a registration on your own and know what to do next.
 
 :::tip Registration and sign-in are separate
-Registration only creates the account; it does not sign you in automatically. After a successful registration the page returns to the sign-in page, and you sign in once with your new account.
+Registration only creates the account. When it succeeds the page shows **Registration successful** in place,
+and you click **Go to login** next to it to sign in once.
 :::
 
 ## Before you start
 
-- An email address that can receive mail normally.
-- A mobile number that can receive text messages (the mobile number is required).
-- Note that the registration entry is not open on every platform. If the sign-in page has no "Don't have an account? Register now" link, this platform does not allow self-service registration, so ask an administrator to create an account for you.
+- Check that self-service registration is open: the sign-in page must show **Don't have an account? Sign up** at the bottom.
+- Have the email address or mobile number ready, and be able to receive a code on it.
+- If a password is required, think of one that meets the rules listed under the field.
 
-The registration page puts everything you need to fill in on a single card:
+:::warning No "Sign up" link means registration is closed
+In that case ask your platform administrator to create the account for you; no entry on the page will open one.
+:::
 
-![Registration page: one card with username, password, email, mobile number and verification code fields, then the terms checkbox and the Create Account button](/assets/screenshots/account/register-01.png)
+## Which fields the page shows
 
-The eye icon on the right of the password field toggles between plain text and dots so you can check for typos.
+The page is a single card. **Not every field appears** — it depends on the channels the platform opened.
+
+| Field | When it appears | How to fill it |
+| --- | --- | --- |
+| **Username** | Always | The account name you will sign in with; required |
+| **Password** | When password registration is enabled | Follow the rules shown under the field; see below |
+| **Confirm Password** | Together with **Password** | Type the password again; it must match exactly |
+| **Email** or **Mobile Number** | Depending on the channels opened | Pick one with the switch at the top; the code goes to whichever you fill in |
+| **Verification Code** | When that channel requires verification | Click **Send code** on the right and type the code you receive |
+| **Agreement checkbox** | Always | Must be ticked, otherwise **Create Account** stays disabled |
+
+:::info A single contact channel means no switch
+If the platform opened only email or only mobile, the switch at the top of the card does not appear and you see just that one field.
+:::
+
+![Sign-up page: the registration-method switch (email / mobile number) on top, then username, the selected contact field, verification code and the agreement checkbox, with Create account at the bottom](/assets/screenshots/account/sign-up-01.png)
 
 ## How to register
 
-1. On the sign-in page, click **Register now** at the bottom (the full text is "Don't have an account? Register now").
-2. Fill in **Username**; this is the account name you will sign in with.
-3. Fill in **Password**; the rules are below.
-4. Fill in **Email**, which is where the verification code is sent.
-5. Fill in **Mobile Number**, including the country code (for mainland China, for example, `+86`).
-6. Click the send button next to the verification code field, open the email, and type the code into the **Verification Code** field.
+1. On the sign-in page, click **Sign up** at the bottom.
+2. If there is a sign-up method switch, choose **Email** or **Mobile Number**.
+3. Fill in **Username**.
+4. If password fields appear, fill in **Password** and **Confirm Password**.
+5. Fill in **Email** or **Mobile Number**. A mobile number needs the country code, for example `+86` for mainland China.
+6. Click **Send code** on the right of the **Verification Code** field, then copy the code from your inbox or messages.
 7. Tick **I have read and agree to the Terms of Service and the Privacy Policy.**
-8. Click **Create Account**. The button briefly shows "Registering...".
+8. Click **Create Account**. The button briefly shows **Registering...**.
 
-## How to fill in the password
+## Password rules
 
-- At least 8 characters.
-- Only letters, digits, and symbols you can type directly on a keyboard; no Chinese characters, no spaces, and no accented letters.
-- The page does not require "must contain upper and lower case letters and digits", but it is a good idea to make the password stronger.
+Password rules are configured by the platform — **go by the hints under the password field**. These are the common ones,
+and the page shows whichever are actually enabled:
 
-:::tip You can reveal the password
-The eye icon on the right of the password field toggles between plain text and dots, so you can check what you typed.
+- At least N characters (N is set by the platform).
+- Include uppercase and lowercase letters and digits.
+- Include a special character.
+
+:::tip The two passwords must match
+If they differ, **Confirm Password** shows **Passwords do not match** and you cannot submit until they are identical.
 :::
 
-## About the mobile number
+## About the contact channel
 
-The mobile number is required and must be a valid number. Include the country code when you type it. If the format is wrong, the page shows "Please enter a valid mobile number" below the field when you submit.
+- Fill in the channel the platform opened; it is both your contact and where the code is sent.
+- A mobile number must be valid. A wrong format is reported under the field on submit; include the country code.
+- After you change the email or mobile number, any code already sent becomes invalid — send a new one.
+
+## The "Security verification" dialog
+
+After you click **Create Account**, if the platform decides this submission needs verification a **Security verification**
+window opens. Type the graphic code or drag the slider as prompted; once it passes, registration completes —
+you do not have to re-enter the form.
 
 ## The result of registration
 
-- Success: the page returns to the sign-in page automatically. Sign in with the account you just registered.
-- Failure: a red banner appears at the top of the page. Fix the problem it describes and submit again.
+| Result | What you see | Next step |
+| --- | --- | --- |
+| Success | The card turns into a green **Registration successful** notice with a **Go to login** link | Click **Go to login** and sign in with the new account |
+| Failure | A red notice above the form explains why | Fix it and submit again; your input is kept |
+| No channel available | **No registration methods are available. Contact your platform administrator.** | Ask your administrator to enable one |
+
+:::warning Success does not sign you in
+The page stays where it is: it does not redirect and does not log you in. Click **Go to login** and sign in once.
+:::
 
 ## After you register
 
-A newly registered account belongs to no tenant by default. On your first sign-in you need to create or join a tenant before you can enter the platform; see [Select / Register Tenant](/account/auth/select-tenant).
+A new account belongs to no tenant by default. On your first sign-in you need to create or join a tenant before you can use
+the platform; see [Select / Register Tenant](/account/auth/select-tenant).
 
 ## Related
 

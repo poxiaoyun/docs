@@ -1,6 +1,6 @@
 ---
 title: 'Parameter Settings'
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: 'Answers too rambling, too rigid or cut off mid-sentence? Know where the parameters are, which one to change and by how much.'
 ---
 
@@ -9,87 +9,90 @@ description: 'Answers too rambling, too rigid or cut off mid-sentence? Know wher
 When a model's answers are not right — too rambling, too rigid, or cut off mid-sentence — do not rush to switch models. Changing a few parameters is often enough. This page explains where the parameters are, what each one controls, and which to change for a given symptom.
 
 :::info This is not a standalone page
-There is no "debug" entry in the AIrouter top navigation. Parameters are adjusted on the [Playground](./experience.md) and [Comparison](./compare.md) pages, through the **Parameter Settings** dialog at the top. This page describes that dialog.
+There is no "debug" entry in the AIrouter top navigation. Parameters are adjusted on the [Chat](./experience.md) and [Comparison](./compare.md) pages, through the **Parameter Settings** dialog (or the **Parameter settings** panel on the right). This page describes both.
 :::
 
 ## Where to open the parameters
 
 | Page | How to open |
 | --- | --- |
-| **Playground** | Click the parameter icon in the row at the top of the conversation area (hover shows **Parameter Settings**). On a wide enough window you can also edit directly in the right-hand **Parameter settings** panel |
-| **Comparison** | Each column has its own parameter icon at the top; the two sides are **independent**, so you can set them separately |
+| **Chat** | Click **Playground** → **Chat** in the top nav, then click the parameter icon in the row at the top of the conversation area (hover shows **Parameter Settings**). On a wide enough window you can also edit directly in the right-hand **Parameter settings** panel |
+| **Comparison** | Click **Playground** → **Comparison**, then use the parameter icon at the top of each column; the two sides are **independent**, so you can set them separately |
 
-Within one page, the two entry points (the dialog and the right-hand panel) edit the same set of parameters — change one and the other follows.
+Both entry points on a page (the dialog and the right-hand panel) edit the same values: change one and the other follows, with exactly the same limits.
 
-:::info The sliders in the two entry points differ
-Right-hand panel: **Temperature** reaches `2`, and **Max Tokens** moves 128 per step.
-In the dialog: **Temperature** tops out at `1.999`, and **Max Tokens** moves 10 per step.
-Both edit the same value — only the dragging granularity differs, and the model receives the same number either way.
-:::
+![The Parameter Settings dialog, opened from the parameter icon in a narrow window; it holds System, Top P, Temperature, Max Tokens and Stop](/assets/screenshots/airouter/debug-01.png)
 
-![The parameter popover opened from the conversation header on a narrow window: System, Top P, Temperature, Max Tokens, Stop](/assets/screenshots/airouter/debug-01.png)
-
-Above is the popover form of **Parameters**: **System** (multi-line), **Top P**, **Temperature**, **Max Tokens** and **Stop** in that order, each slider paired with a number box for exact values. The popover covering part of the conversation is normal — close it when done.
+Above is the dialog form: from top to bottom **System** (multi-line), **Top P**, **Temperature**, **Max Tokens** and **Stop**, each slider with a number box for exact values. The dialog covers part of the conversation area — that is expected; close it when done.
 
 ## When changes take effect
 
 - Changes are **remembered immediately**; closing the dialog does not lose them.
-- But they only apply to **messages sent afterwards**. Messages already sent and answers already received are unaffected.
-- To undo a change, reopen the dialog and change it back; in the dialog, once **System** or **Stop** has content, a clear button appears at its top-right corner to wipe it in one click (the right-hand panel has no such button).
+- But they only apply to **messages sent afterwards**. Answers already sent and received are unaffected.
+- To undo, reopen the dialog and change the value back. The **System** and **Stop** boxes show a clear button once they contain text, so you can empty them in one click (the right-hand panel has no such button).
 
-## What the five parameters control
+## What the five parameters do
 
-| Parameter | Default | Allowed range | What it does |
+| Parameter | Default | Range | Effect |
 | --- | --- | --- | --- |
-| **System** | empty | Any text | The system prompt, which sets the model's persona and rules, for example "You are an AI assistant". Leave it empty to add nothing |
-| **Top P** | `0.8` | 0.1 ~ 1.0, step 0.1 | Controls the word-selection range; the larger the value, the more random the output |
-| **Temperature** | `0.7` | 0 ~ 1.999, step 0.1 | Controls randomness and diversity. Higher is more varied, lower is more consistent |
-| **Max Tokens** | `4096` | 0 ~ 32768, step 10 | The maximum number of tokens one reply may generate. `0` means unlimited |
-| **Stop** | empty | Any text | Generation stops as soon as this text is encountered. Empty means it does not apply |
+| **System** | Empty | Any text | The system prompt: persona and rules, e.g. "You are an AI assistant". Empty means none is added |
+| **Top P** | Unset | 0.1 to 1, step 0.1 | Controls the sampling pool; larger values mean more randomness |
+| **Temperature** | Unset | 0 to 2, step 0.1 | Controls randomness and diversity. Higher is more diverse, lower is more consistent |
+| **Max Tokens** | Unset | 0 to 32768, step 10 | Maximum tokens per reply. `0` means unlimited |
+| **Stop** | Empty | Any text | Generation stops as soon as this text appears. Empty means it does nothing |
 
-:::tip Two rules of thumb
-
-- **Temperature** and **Top P** both affect randomness, so change only one of them and leave the other at its default; otherwise it is hard to tell which one made the difference.
-- A number outside the allowed range is pulled back into it automatically (typing `2` for **Top P** becomes `1`), so you do not have to watch the bounds yourself.
-
+:::info What "unset" means
+**Top P**, **Temperature** and **Max Tokens** start empty — they are not pre-filled with 0.7 or 4096. An empty field is **not sent to the model**, so the model decides. Defaults differ per model, which is exactly why you only fill them in to override.
 :::
 
-![Widening the window past 1536px brings out the Model info and Parameters panel on the right](/assets/screenshots/airouter/debug-02.png)
+:::tip Two practical notes
+- **Temperature** and **Top P** both influence randomness. Change only one and leave the other empty, otherwise you cannot tell which one had the effect.
+- Out-of-range numbers are **not silently clamped**; the send is blocked with "Please correct the invalid generation parameters before sending." Adjust to a value in range and send again.
+:::
 
-On a wide window the right-hand **Model info** + **Parameters** panels appear automatically. The panel only exposes `Temperature`, `Max Tokens` and `Top P`; `System` and `Stop` live under **More parameters** at the bottom, and the key is switched with the **API Key / Access credential** dropdown at the top of the panel. It edits the same state as the popover, so a change in one shows up in the other.
+![At 1536px and wider, the Model information and Parameter settings panels appear to the right of the conversation](/assets/screenshots/airouter/debug-02.png)
 
-## When you see this, change that
+On a wide window the right side shows **Model information** plus **Parameter settings**. The panel only carries the `Temperature`, `Max Tokens` and `Top P` sliders; `System` and `Stop` live under **More parameters** at the bottom, and the key switches through the **API Key / credential** dropdown at the top. It edits the same values as the dialog, and the two stay in sync.
 
-| Symptom | What to do on this page |
+## Symptom → which parameter to change
+
+| Symptom | What to do here |
 | --- | --- |
-| The reply is truncated, stopping mid-sentence | Raise **Max Tokens** (up to 32768); `0` means unlimited |
-| Every answer is different and easily goes off topic | Lower **Temperature**, for example 0.1 ~ 0.3 |
-| The answer is too rigid and repeats itself | Raise **Temperature**, for example 0.8 ~ 1.2 |
-| You want it to always answer in a certain role or style | Write the role and requirements clearly in **System** |
-| It always stops right after a certain piece of text | Check whether **Stop** has content and clear it |
-| You want to know whether the model or the parameters are at fault | Go to [Comparison](./compare.md), pick the same model on both sides and change only one side's parameters |
-| Errors: too many requests, insufficient quota, invalid API key, context length exceeded | These are unrelated to parameters. The error text appears where the message would be on the conversation page; handle it using the common issues in [Playground](./experience.md) |
+| The reply is cut off mid-sentence | Raise **Max Tokens** (up to 32768); `0` means unlimited |
+| Answers differ every time and drift off topic | Lower **Temperature**, e.g. 0.1 to 0.3 |
+| Answers feel rigid and repeat themselves | Raise **Temperature**, e.g. 0.8 to 1.2 |
+| You want a fixed persona or style | Write the persona and requirements into **System** |
+| Generation always stops after a certain string | Check whether **Stop** contains something, and clear it |
+| You want to know if it is the model or the parameters | Go to [Comparison](./compare.md), pick the same model on both sides and change one side only |
+| Errors: too many requests, context length exceeded, invalid API key | Unrelated to parameters; match them in [Chat](./experience.md) common issues |
+| Errors: balance too low, plan credits used up, weekly quota used up | Also unrelated to parameters — billing issues. Check [Account](./billing.md), or buy a plan in [Subscribe](./subscribe.md) |
 
-## Tuning suggestions by scenario
+## Suggested settings by scenario
 
 | Scenario | Suggestion |
 | --- | --- |
-| Factual Q&A, answering from reference material | Set **Temperature** to 0.1 ~ 0.3 and lower **Top P** somewhat |
-| Writing code | Set **Temperature** to 0.2 ~ 0.4 and state the language and code style in **System** |
-| Creative writing, brainstorming | Set **Temperature** to 0.8 ~ 1.2 |
-| Answers never seem to finish | Raise **Max Tokens** |
-| You just want shorter answers | State the length or format in **System** — more direct than tuning parameters |
+| Factual Q&A, answering from documents | **Temperature** 0.1 to 0.3, and a lower **Top P** |
+| Writing code | **Temperature** 0.2 to 0.4, and state the language and code style in **System** |
+| Creative writing, brainstorming | **Temperature** 0.8 to 1.2 |
+| Answers never finish | Raise **Max Tokens** |
+| You just want shorter answers | Say the length or format in **System**; it works better than tuning parameters |
 
 :::warning Not every model honours these parameters
-The parameters are passed through into the call as they are, but **whether they take effect depends on the model**: some models do not support settings such as Temperature, or have their own limits on the values. The page does not block them, so if nothing changes after editing, try a model that supports the parameter first.
+Parameters are passed through as-is, but **whether they take effect depends on the model**: some do not support Temperature, or impose their own limits. The page only checks that values are in range; it does not adapt them per model. If nothing changes, try a model that supports the parameter.
+:::
+
+:::tip Parameters are not billing
+Tuning parameters changes style and length only; it **does not lower the price you pay**. To spend less, switch to a cheaper model (see [Prices](./prices.md)) or use plan credits.
 :::
 
 ## Confirm it worked
 
-After changing the parameters, send a new message and see whether the answer matches expectations: shorter, steadier, no longer truncated — that means it took effect. To verify one set of parameters repeatedly, fixing both sides in [Comparison](./compare.md) is the most direct way.
+Send a new message after the change and watch the answer: shorter, steadier, no longer truncated means it took effect. To verify the same set of parameters repeatedly, fix both sides in [Comparison](./compare.md) — it is the clearest A/B setup.
 
 ## Related
 
-- [Playground](./experience.md)
+- [Chat](./experience.md)
 - [Comparison](./compare.md)
 - [Models](./marketplace.md)
+- [Prices](./prices.md)
+- [Account](./billing.md)

@@ -1,6 +1,6 @@
 ---
 title: 'Gateway Settings'
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: 'Change the name, logo and description users see for the chat sub-system.'
 tags:
   - boss
@@ -21,7 +21,7 @@ If you change the product title to something else, that is the name users will s
 ## Before you start
 
 - Your account must be a **system administrator**.
-- Prepare the logo image: **PNG or SVG**, no larger than **128 KB**.
+- Prepare the logo image: **PNG or SVG**, no larger than **1 MB**.
 
 ## Set the name and logo
 
@@ -29,7 +29,7 @@ If you change the product title to something else, that is the name users will s
 
    | Setting | What to fill in | What happens when you change it |
    | --- | --- | --- |
-   | Logo | Upload a PNG or SVG, no larger than **128 KB** | Replaces the icon in the **Products** entry, on chat pages and on the splash screen |
+   | Logo | Upload a PNG or SVG, no larger than **1 MB** | Replaces the icon in the **Products** entry, on chat pages and on the splash screen |
    | Product Title | At most **10 characters**; defaults to the built-in product name | Replaces the entry name, plus the browser tab and navigation title of chat pages |
    | Product Description | At most **100 characters**, and it can wrap onto 4 lines | Replaces the product description text |
 
@@ -61,7 +61,7 @@ All three pages have exactly the same structure â€” a **Title and Logo** card â€
 
 | What you see | Likely cause | What to do |
 | --- | --- | --- |
-| The logo will not upload | It is not PNG/SVG, or it is larger than 128 KB | Use an image that meets the requirements |
+| The logo will not upload | It is not PNG/SVG, or it is larger than 1 MB | Use an image that meets the requirements |
 | Changing one place changed another product too | You may have edited the wrong page | Change each product on its own settings page |
 
 ## Related

@@ -1,6 +1,6 @@
 ---
 title: Announcements
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: Maintain the Moha Hub home page announcements — publish one, edit rich-text content, and set when it starts and stops showing.
 ---
 

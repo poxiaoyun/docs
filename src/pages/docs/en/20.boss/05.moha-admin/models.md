@@ -1,6 +1,6 @@
 ---
 title: Models
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: Unlist, recommend, edit or delete model repositories across the Moha Hub and take anything that should not be public off the user side.
 ---
 

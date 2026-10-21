@@ -1,6 +1,6 @@
 ---
 title: 'Logs'
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: 'Read instance and workspace logs: filter by time and content, follow live, and recover when the stream drops.'
 ---
 
@@ -109,5 +109,5 @@ The log system has a storage retention limit, and historical logs older than the
 :::
 
 ## Related
-- [AI diagnostics](/rune/console/diagnostics)
+- [Alerts](/rune/console/alerting)
 - [Inference](/rune/console/inference)

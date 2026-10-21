@@ -1,52 +1,60 @@
 ---
 title: 'Reset Password'
-updated: '2026-09-14'
-description: Where to click when you forget your password, what happens next, and why an administrator must reset it for now.
+updated: '2026-10-21'
+description: What this page actually says when you forget your password, and the three ways to get back in.
 ---
 
 # Reset Password
 
-When you forget your password you reach this page from "Forgot password?" on the sign-in page. This page explains what is on the screen, what happens when you click Send, and how to actually get your password changed today.
+When you forget your password you reach this page from **Forgot password?** on the sign-in page. One thing first:
+**this page does not reset passwords by itself.** It shows a single notice and a link back. This page explains exactly what is
+on screen and what your three real options are.
 
-:::warning Self-service reset is not available yet
-The screen is built, but it is not connected to email sending: after you enter your email and click **Send**, no email is actually sent and the page does not move on. To change your password, contact a platform administrator and have them reset it for you.
+:::warning There is no form here
+It is not a "type your email, receive a reset link" flow. There is no email field, no send button, and no email is ever sent.
+For what to do instead, read the next section.
 :::
 
 ## Getting here from the sign-in page
 
 1. Open the sign-in page.
 2. Click **Forgot password?** below the password field.
-3. The page moves to the forgot password screen.
+3. The page shows only three things:
 
-## What is on the page
-
-| Element | Description |
+| Element | Content |
 | --- | --- |
-| Title | Forgot password? |
-| Description | Please enter your email address. We will send a password reset link to your email. |
-| **Email** field | The email address you registered with |
-| **Send** button | Shows "Sending..." after you click it |
-| **Back to login** link | Returns to the sign-in page |
+| Title | **Forgot password?** |
+| Notice | **Self-service password recovery is not available. Contact your platform administrator to reset your password, or return to sign in using an enabled code or third-party method.** |
+| Link | **Back to login** |
 
-The page is just this one card, with no other entry points:
+![Reset password page: title, one-line notice that self-service recovery is unavailable, and the back-to-login link](/assets/screenshots/account/reset-password-01.png)
 
-![Reset password page: a card with a question-mark lock icon and the heading "Forgot password?", a line of explanation, the email field, the Send button and a back-to-sign-in link](/assets/screenshots/account/reset-password-01.png)
-
-## What actually happens now
-
-1. Type your email address into the **Email** field; if the format is wrong, the field shows "Please enter a valid email address" below it.
-2. Click **Send**.
-3. The page briefly shows "Sending...", then stops. **No email is sent, and there is no redirect or success message.**
-
-:::warning How to change your password today
-Contact a platform administrator directly, tell them your account and that you need a password reset, and they will handle it on their side.
+:::info Why the page still exists
+The link is kept so that, if you click it by mistake, you are told plainly that self-service reset is not offered
+instead of guessing among forms.
 :::
 
-## How to sign in after the password is changed
+## What to do instead
 
-Once an administrator has reset it, sign in with the new password on the sign-in page; see [Login](/account/auth/login).
+Pick whichever fits what you have access to:
+
+1. **Ask your platform administrator to reset it.** Tell them your username and that you need a new password. This always works.
+2. **Sign in with a code.** If the platform enabled **Email code** or **SMS code** sign-in, go back to the sign-in page, switch to that method,
+   and get in without a password. Then set a new one under **Personal settings → Security**.
+3. **Sign in with a third-party account.** If you linked one earlier, go back and click that provider's button.
+
+:::tip Recommended order
+Try options 2 and 3 first — nobody has to wait. Contact the administrator only when neither is available.
+:::
+
+## Change it yourself once you are in
+
+Once you can sign in, changing the password needs no administrator: click your avatar → **Personal settings** → **Security**,
+then click **Change password** on the **Password** row (accounts with no password yet show **Set password**).
+You fill in the old password, the new one, and the confirmation. See [Security](/account/iam/security) for the details.
 
 ## Related
 
 - [Login](/account/auth/login)
-- [Security Settings](/account/iam/security)
+- [Security](/account/iam/security)
+- [Multi-Factor Authentication (MFA)](/account/auth/mfa)

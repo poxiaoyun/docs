@@ -1,6 +1,6 @@
 ---
 title: Banners
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: Maintain the banners at the top of the Moha Hub home page — create one, upload an image, and set its link and active time.
 ---
 

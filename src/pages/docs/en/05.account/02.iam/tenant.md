@@ -1,141 +1,147 @@
 ---
 title: 'Tenant Management'
-updated: '2026-09-14'
-description: What a tenant is, how to view and switch your tenants, and how members are managed and added.
+updated: '2026-10-21'
+description: Where tenant details live, how to change them, how to manage members, and where quota and flavors actually are.
 ---
 
 # Tenant Management
 
-A tenant is **a company's isolated account space on the platform**. One company's people, computing power, data, and quota all live in the same tenant, and different tenants cannot see each other. This page explains how to see which tenants you belong to, how to switch, what changes after switching, and how someone adds you to a tenant.
+A tenant is **a company's isolated account space on the platform**. One company's people, computing power, data, and quota
+all live in the same tenant, and different tenants cannot see each other. This page explains where tenant details are shown
+and changed, how to manage members, and where the frequently misplaced "quota / flavors / workspaces" really live.
 
-:::tip A tenant is like a separate office building
-Each tenant is a building, and its rooms (workspaces), equipment (instances), and staff (members) all belong to that building. In different buildings you can be given different identities.
+:::tip A tenant is a self-contained office building
+Each tenant is a building; the rooms (workspaces), equipment (instances), and staff (members) all belong to it.
+You can hold a different role in each building.
 :::
 
 ## Before you start
 
-- What you can see and change depends on your role in the **current tenant**.
-- Tenant management is not a tab in the Personal Center; it has its own entry (see below).
+- What you can see and change depends on your role in the **current tenant**: editing details and managing members requires **Administrator**.
+- Enter a tenant first; the entry is not visible until you have selected one.
 
-## A few words to remember
+## Where this page lives
 
-| Term | Plain meaning |
-| --- | --- |
-| Tenant | A company's isolated account space on the platform |
-| Member | A user who has been added to this tenant |
-| Role | Your identity inside the tenant, which decides which features you can use |
+1. Click your avatar in the top-right corner to slide out the drawer.
+2. Click the **Tenant** row that carries the current tenant name.
+3. The page opens as a full page in **Tenant Management**, at an address like `/console/iam/tenants/{tenant}/overview`.
 
-## Which tenants I belong to, and how to switch
-
-1. Click your avatar in the top-right corner; a menu slides out from the right.
-2. The top of the menu shows your nickname, username, and email.
-3. One item in the menu is **Tenant**, followed by the name of your **current tenant**.
-4. To see or switch to another tenant, click **Switch Tenant** at the bottom of the menu.
-5. You reach the **Select your tenant** page; choose the tenant you want in the **Tenant** dropdown.
-6. Click **Enter Platform**.
-
-The dropdown lists **all** the tenants you can enter. If a tenant carries a **Disable** label, it has been deactivated and cannot be selected. If you belong to only one tenant, the platform takes you straight in and does not show this page.
-
-:::tip What if I have no tenant
-On the **Select your tenant** page, click **Create Tenant** at the bottom and fill in a name, email, and mobile number to create a new tenant for yourself. Once it is created you are its administrator.
+:::info It is not a personal settings tab
+Tenant management is company-level configuration; personal settings only manage you. To change company space, use
+**Switch Tenant** at the bottom of the drawer.
 :::
 
-## What is different after switching tenants
+## What you see once inside
 
-| What changes | Description |
-| --- | --- |
-| Menus | Only the features you have permission for in the new tenant are shown |
-| Data | Instances, storage volumes, members, and quota all become the new tenant's; the old tenant's data is no longer visible |
-| Role | The same person can have a different role in each tenant, and permissions change with it |
+The left navigation has a single group, **Tenant Management**, containing:
 
-Switching back to the previous tenant brings back the original data and permissions.
-
-## Opening tenant management
-
-1. Click your avatar in the top-right corner.
-2. Click **Tenant** in the menu (followed by the current tenant name).
-3. Tenant management opens with a row of tabs at the top.
-
-The **Overview** tab puts tenant information, compute resources, workspaces and members on one screen:
-
-![Tenant management overview: tabs for Overview, Members, Quota, Flavor and Workspace; a left card showing the tenant avatar, name, email, mobile number and creation time (email and mobile are redacted), and panels on the right for compute resources, workspace statistics, recent workspaces and the member list](/assets/screenshots/account/tenant-01.png)
-
-## What the tabs can do
-
-| Tab | Role needed | What you can do |
+| Entry | Who sees it | Content |
 | --- | --- | --- |
-| Overview | Administrator / Developer | See tenant information, members, quota, workspaces, and recent events |
-| Member | Administrator only | Add, modify, and delete members |
-| Quota | Administrator / Developer | View the computing quota for each cluster |
-| Flavor | Administrator / Developer | View the available computing flavors |
-| Workspace | Administrator / Developer | View the workspaces under the tenant |
+| **Overview** | Every member of the tenant | The overview page has two tabs: **Basic Info** and **Member** |
+| **Member** | Tenant administrators only | The member list, with add, edit, and remove |
 
-Exactly which tabs you see depends on the product you entered from and on your role. Tabs you lack permission for are not shown.
+If you came in from the AI Platform, an extra **Tenant Clusters** group appears in the left navigation, showing this tenant's
+resources on each cluster.
 
-## Viewing and editing tenant information
+## Overview: Basic Info
 
-The **Tenant Information** card on the left of the Overview tab shows the tenant avatar, tenant name, email, mobile number, and creation time.
+The **Basic Info** tab is a details card with these rows:
 
-1. Only an **Administrator** can edit. Click the pencil icon to the right of a field to start editing.
-2. Type the new value in the field.
+| Row | Description |
+| --- | --- |
+| Avatar | Click to upload a replacement; everyone in the tenant sees it |
+| **Tenant Name** | The company or team name on the platform |
+| **Email** | The tenant's contact address, not your sign-in email |
+| **Mobile Number** | The tenant's contact phone number |
+| **Created At** | Read-only |
 
-   | Setting | How to fill it in | What changes |
-   | --- | --- | --- |
-   | Tenant avatar | Click the avatar to upload and crop an image | Every member of the tenant sees the new avatar; it affects this tenant only |
-   | Tenant Name | Type a new name; it cannot be empty | The name members see in the avatar menu and on the tenant selection page changes |
-   | Email | The tenant's contact email, in a valid format | This changes the tenant's contact email, not your own sign-in email |
-   | Mobile Number | The tenant's contact number; it cannot be empty | This changes the tenant's contact number |
-   | Created At | Read-only | It cannot be changed |
+How to change them:
 
-3. Click **Confirm** to save, or **Cancel** to discard the change.
+1. On the row you want to change, click **Edit** at the end (only an administrator sees this action).
+2. A dialog titled **Edit {field}** opens with a single field. It cannot be empty, and the email and phone are format-checked.
+3. Click **Save**; a check mark on the button confirms it was stored.
 
 :::warning These changes affect the whole tenant
-Tenant information is shared by all members, so everyone sees your change. Make sure you are editing the **company's** information and not your own personal details.
+Tenant details are shared by every member — after saving, everyone sees the new value. Make sure you are editing
+**company** information, not your own (your own is under **Personal settings → General**).
 :::
 
-The Overview tab also shows member statistics, the member list, quota, workspaces, and **Recent Events** (the latest operations in reverse time order). Exactly which of these blocks appear depends on your role and on the product you entered from.
+![Tenant management overview: the Tenant Management group in the left navigation, the Basic Info and Member tabs, and the tenant details card](/assets/screenshots/account/tenant-01.png)
 
-## Managing members (Administrator only)
+## Overview: Member tab
+
+Clicking **Member** switches to the member list, which has four columns:
+
+| Column | Content |
+| --- | --- |
+| **Username** | The member's account name, with avatar and display name |
+| **Email** | The member's email address |
+| **Role** | The member's role in this tenant, shown as **Administrator**, **Developer**, **Member**, and so on |
+| **Joined At** | When they became a member |
+
+The list supports search and pagination; only an administrator can select several rows and **Remove selected members**.
+
+## Managing members (administrators only)
 
 ### Adding a member
 
-1. Open the **Member** tab.
-2. Click **Add Member** in the top-right corner.
-3. In the **User** dropdown, search for and select the person to add; options show a username with a nickname or email.
-4. In the **Role** dropdown, choose the role to give them.
-5. Click **Confirm**.
+1. In the left navigation click **Member**, then click **Add Member** in the top-right corner.
+2. On the form page, in the card **Member Info**, fill in two fields:
+
+   | Field | How to fill it |
+   | --- | --- |
+   | **User** | Search for an existing user by username; options read `username (display name or email)` |
+   | **Role** | Pick a role from the dropdown, supplied by the platform role list |
+
+3. Click **Confirm**.
+
+:::info There are no invitations
+The platform sends no invitation email and uses no invite codes. To add someone, have them register an account first,
+then find them here and add them.
+:::
 
 ### Changing a member's role
 
-Click the edit entry on that member's row in the member table, set the new role, and click **Confirm**.
+Click the edit action on that member's row to open the edit page. **User** cannot be changed; update **Role** and click **Confirm**.
 
-### Deleting a member
+### Removing members
 
-Tick the members to remove (multiple selections are allowed), click delete, and confirm in the dialog. The member table shows four columns by default: **Username**, **Email**, **Role**, and **Joined At**.
+| Action | How | Result |
+| --- | --- | --- |
+| Remove one | Click the delete action on the row and confirm | The member no longer belongs to this tenant |
+| Remove several | Select the rows, click **Remove selected members**, confirm | The dialog is titled **Remove the selected members** |
 
-:::warning Deleting a member takes effect immediately
-The person you remove no longer sees this tenant in the dropdown the next time they switch tenants. Before deleting, make sure they really no longer need access.
+:::warning You remove the membership, not the account
+The confirmation states: **Remove the selected tenant memberships. User accounts will remain available.**
+The removed person no longer sees this tenant in their dropdown; re-adding restores access.
 :::
 
-Member management lives on the **Members** tab, where the table has four columns by default: Username, Email, Role and Joined At.
+## Where quota, flavors, and workspaces are
 
-![Tenant management Members tab: a search box and Add Member button on top, and a table with Username, Email, Role and Joined At columns, with the email column redacted](/assets/screenshots/account/roles-01.png)
+**Not on this page.** They are cluster-scoped, one level deeper:
 
-## How someone adds me to a tenant
+1. Click **Tenant Clusters** in the left navigation.
+2. Click a cluster name in the list to open its details.
+3. The tabs **Overview / Quota / Flavor / Workspace** live there.
 
-There is no such thing as an "invite link". Joining a tenant means an administrator adds you:
+See [Tenant Clusters](/rune/console/tenant-clusters).
 
-1. Register your own platform account first.
-2. Give your **username** (or the email you registered with) to the tenant administrator.
-3. The administrator searches for you in **Tenant management → Member → Add Member**, picks a role, and clicks **Confirm**.
-4. After you sign in again, the tenant appears in the dropdown on the **Select your tenant** page; select it and click **Enter Platform**.
-
-:::tip The new tenant is not in the dropdown
-Sign out and sign in again so the page fetches your tenant list afresh.
+:::info Why it is split in two levels
+One tenant can hold resources on several clusters, and quota and flavor availability are counted per cluster.
+Flattening everything into one row of tabs would obscure which cluster a number belongs to.
 :::
+
+## Common questions
+
+| Symptom | Likely cause | What to do |
+| --- | --- | --- |
+| No **Member** entry in the left navigation | You are not an administrator in this tenant | Ask a tenant administrator, or have them grant you the role |
+| No **Edit** action on the details rows | Same reason: only administrators can edit | Same as above |
+| Cannot find "Quota" | Quota lives in the cluster details | **Tenant Clusters** → click a cluster name |
+| Just added but the tenant is missing | The tenant list is cached | Sign out and sign in again |
 
 ## Related
 
 - [Roles and Permissions](/account/auth/roles)
 - [Select / Register Tenant](/account/auth/select-tenant)
-- [Personal Center](/account/iam)
+- [Tenant Clusters](/rune/console/tenant-clusters)

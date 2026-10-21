@@ -1,135 +1,109 @@
 ---
-title: 'Security Settings'
-updated: '2026-09-14'
-description: How to change your password, email, mobile number, and multi-factor authentication, item by item.
+title: 'Security'
+updated: '2026-10-21'
+description: The two groups on the Security tab — Password and authentication, and Third-party sign-in — and what each one needs.
 ---
 
-# Security Settings
+# Security
 
-"Security Settings" is not a single tab. It is the four account-security items in the Personal Center: **Password**, **Email**, **Mobile Number**, and **Multi-factor Authentication**. This page covers where each one lives, what verification it needs, and what happens afterwards.
+**Security** is the second tab of personal settings, and it holds exactly two groups: **Password and authentication**
+and **Third-party sign-in**. Passwords, multi-factor authentication, and linking or unlinking third-party accounts all live
+here, and every change applies to your next sign-in.
 
-:::tip Doors and a spare key
-Your password is the key you open the door with; your email and mobile number are the contact details on file, used to recover the account if you forget the password; multi-factor authentication is a second lock on the door that only recognises your phone.
+:::tip Doors and spare keys
+The password is the key to the door; multi-factor authentication is a second lock that only accepts your phone;
+a third-party account is a spare key that still opens the door if the first one is lost.
 :::
 
 ## Before you start
 
-- You can use these as soon as you sign in; everything you change belongs to your own account.
-- Before changing your email or mobile number, make sure you can sign in to the **new email** or reach the **new mobile number**, because the verification code is sent to the new address.
-- Before turning on multi-factor authentication, install an authenticator app on your phone.
+- You can use it as soon as you sign in; everything here is your own account.
+- Remember the new password before you change it; install an authenticator app before you enable MFA.
+- To link a third-party account, you must be able to sign in to that account.
 
-## Where each of the four settings lives
+## What is on this page
 
-| Setting | Tab | What it is for |
-| --- | --- | --- |
-| Password | Password | The password you type when signing in |
-| Email | Email | Used to sign in, recover the account, and receive verification codes |
-| Mobile Number | Mobile Number | Used to sign in and to receive SMS verification codes |
-| Multi-factor Authentication | Multi-factor Authentication | A dynamic code in addition to your password when signing in |
+| Group | What it contains |
+| --- | --- |
+| **Password and authentication** | A **Password** row and a **Multi-factor Authentication** row, each with a status and an action at the end |
+| **Third-party sign-in** | One row per provider the platform has configured, with **Linked / Not linked** and a **Bind / Unlink** action |
 
-## Changing your password
+:::info Email and mobile number are not here
+Rebinding them happens in the row dialogs on the **General** tab; see [General](/account/iam/profile).
+:::
 
-1. Click your avatar in the top-right corner → **Settings**.
-2. Click the **Password** tab.
-3. Fill in the three fields:
+![Account security page: the Password and authentication group (password, multi-factor authentication) and the Third-party sign-in group](/assets/screenshots/account/security-01.png)
 
-   | Setting | How to fill it in | What changes |
+## Changing the password
+
+1. Click your avatar in the top-right corner → **Personal settings** → **Security**.
+2. On the **Password** row, click the action at the end. With a password set it reads **Change password**; on an account
+   that never had one it reads **Set password**. The description on the row states the current situation:
+   **Verify your current password to set a new one.** or **No password set yet — set one to sign in with a password.**
+3. Fill in the dialog:
+
+   | Field | When it appears | How to fill it |
    | --- | --- | --- |
-   | Old Password | The password you use now | A wrong value blocks submission |
-   | New Password | At least 8 characters, printable ASCII only | It cannot be the same as the old password |
-   | Confirm Password | Type the new password again | It must match the new password exactly |
+   | **Old Password** | Only when a password is already set | The password you use now; a wrong value blocks submission |
+   | **New Password** | Always | Follow the rules listed under the field; the platform configures them |
+   | **Confirm Password** | Always | Type the new password again; it must match exactly |
 
 4. Click **Save**.
 
-Rules for the new password: at least 8 characters, only letters, digits, and common symbols, with no Chinese characters, spaces, or accented letters.
-
-:::warning Changing your password does not sign you out
-After changing it you stay signed in and an **Updated successfully** message appears at the top of the page. Remember the new password right away; if you forget it, the only way back is the password recovery flow.
+:::warning Two common validation messages
+**New and old passwords cannot be the same** — pick one you have not used.
+**Passwords do not match** — the two entries differ, type them both again.
 :::
 
-The Password page has just three fields:
-
-![Password page: one card with Old Password, New Password and Confirm Password fields, then a Save button](/assets/screenshots/account/security-01.png)
-
-## Changing your email
-
-1. Click the **Email** tab.
-2. Type the new email address into the **Email** field.
-3. Click **Send code**, fetch the code from the new inbox, and type it into the **Verification Code** field.
-
-   | Setting | How to fill it in | What changes |
-   | --- | --- | --- |
-   | Email | The new address to rebind, in a valid format | The verification code is sent to this new address |
-   | Verification Code | The code received in the new inbox | The rebind succeeds only after it is verified |
-
-4. Click **Save**; the page shows **Updated successfully**.
-
-After you send an email code the button turns into a countdown such as `60s`, and you can click it again only when the countdown ends.
-
-The Email page requires a code first before the change is applied:
-
-![Email page: one card with the email field, the verification code field and a Send Code button, then a Save button](/assets/screenshots/account/security-02.png)
-
-## Changing your mobile number
-
-1. Click the **Mobile Number** tab.
-2. Type the new number into the **Mobile Number** field (6–16 digits).
-3. Click **Send code**, receive the SMS code, and type it in.
-
-   | Setting | How to fill it in | What changes |
-   | --- | --- | --- |
-   | Mobile Number | The new number to rebind, 6–16 digits | The SMS code is sent to this new number |
-   | Verification Code | The SMS code you received | The rebind succeeds only after it is verified |
-
-4. Click **Save**; the page shows **Updated successfully**.
-
-:::info You may need to pass a graphic code too
-If the platform considers the operation risky, a graphic verification code window opens when you click **Send code**. Type the characters from the image and click **Next** to continue sending.
+:::info Password rules are not fixed
+The hints under **New Password** come from the platform configuration and may include "at least N characters",
+"include uppercase, lowercase and digits", and "include a special character" — go by what you see.
+Changing the password does not sign you out.
 :::
 
-The Mobile Number page has the same layout as the email page; only the code is delivered by SMS:
+## Multi-factor authentication
 
-![Mobile number page: one card with the mobile number field, the verification code field and a Send Code button, then a Save button](/assets/screenshots/account/security-03.png)
+The **Multi-factor Authentication** row carries a status chip, **Not enabled** or **Enabled**. Its description is
+**Set up an authenticator to require an app-generated verification code when signing in.**
 
-## Turning on multi-factor authentication
+- When it is off, the action reads **Set up authenticator**.
+- When it is on, the action reads **Change authenticator**.
 
-Once multi-factor authentication (also called a second factor) is on, you enter a 6-digit number from your phone app, changing in real time, in addition to your password when signing in.
+Both open the same scan dialog. The steps, how to save the recovery codes, and how to pass the second step at sign-in
+are all in [Multi-Factor Authentication (MFA)](/account/auth/mfa).
 
-1. Click the **Multi-factor Authentication** tab. The page generates a QR code automatically.
-2. Open the authenticator app on your phone (the page uses Google Authenticator as its example; similar apps work too).
-3. Scan the QR code on the page with the app.
-
-   | Setting | How to fill it in | What changes |
-   | --- | --- | --- |
-   | QR code | Scan it with the authenticator app | Binds this phone to your account |
-   | Verification Code | The 6-digit number the app shows now | Binding succeeds only when it is correct |
-   | Recovery Code | Shown only once after a successful bind | Used to sign in if you lose your phone; copy it down on the spot |
-
-4. Type the 6-digit number currently shown in the app into the **Verification Code** field.
-5. Click **Bind**.
-6. On success the page shows **You have successfully enabled multi-factor authentication!** along with one **Recovery Code**.
-
-:::warning Save the recovery code on the spot
-The recovery code is shown only once, when binding succeeds, and the page gives you just one. If you lose your phone or switch to a new one without having written the code down, you will be locked out of signing in and will have to ask a platform administrator for help.
+:::warning There is no switch to turn it off
+The page can only set up or change the authenticator; MFA cannot be disabled here.
 :::
 
-After a successful bind, opening this tab again shows the enabled state directly, plus a **Reset** button. The page has no "turn off multi-factor authentication" switch; **Reset** only takes you back to the first step to bind once more.
+## Third-party sign-in
 
-When MFA is not yet bound, the page shows the QR code and a code field right away:
+This group lists the third-party sign-in methods the platform has configured, one row per provider, with **Linked** or **Not linked** on the right.
 
-![Multi-factor authentication page: a two-step progress bar, the QR code with a scan hint, then the verification code field and the Bind button](/assets/screenshots/account/mfa-01.png)
+| Status | Action | What happens |
+| --- | --- | --- |
+| **Not linked** | **Bind** | Opens that provider's consent page; after approving you return here and the row shows **Linked** |
+| **Linked** | **Unlink** | Opens a confirmation titled **Unlink {provider}**; confirming removes the link |
+
+:::warning Unlinking changes how you can sign in
+The confirmation states **You will no longer be able to sign in with this account.** If that is the only way you sign in,
+make sure you know your password or that code sign-in is enabled before you confirm.
+:::
+
+When no third-party method is configured, the group shows **No third-party sign-in methods are available**.
+Full details are in [Third-party sign-in](/account/iam/linked-accounts).
 
 ## Common questions
 
-| What you see | Likely cause | What to do |
+| Symptom | Likely cause | What to do |
 | --- | --- | --- |
-| No verification code arrives | The new email or mobile number is wrong, or mail and SMS are delayed | Check the new address, wait for the countdown to end, and try again |
-| **New and old passwords cannot be the same** | The new password equals the old one | Use a new password you have not used before |
-| **Passwords do not match** | The two new passwords you typed differ | Type the same new password twice |
-| It says the password is not compliant | Fewer than 8 characters, or it contains Chinese characters or spaces | Use a mix of letters, digits, and symbols, at least 8 characters long |
+| "New and old passwords cannot be the same" on submit | The new password equals the old one | Choose one you have not used |
+| "Passwords do not match" | The two entries differ | Type the same new password twice |
+| The new password keeps being rejected | It does not satisfy the rules listed under the field | Satisfy each hint (length, upper/lower case and digits, special character) |
+| No code when rebinding email or phone | The code goes to the **new** address | Check that the new address is correct; see [General](/account/iam/profile) |
 
 ## Related
 
 - [Multi-Factor Authentication (MFA)](/account/auth/mfa)
-- [Roles and Permissions](/account/auth/roles)
-- [User Profile](/account/iam/profile)
+- [Third-party sign-in](/account/iam/linked-accounts)
+- [General](/account/iam/profile)

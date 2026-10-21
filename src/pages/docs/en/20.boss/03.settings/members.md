@@ -1,6 +1,6 @@
 ---
 title: System Member
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: 'Add a platform administrator, change their role, and what to check before removing one.'
 tags:
   - boss
@@ -34,7 +34,7 @@ Each row shows:
 | Role | The member's system role, shown as a translated role name (for example "Administrator") |
 | Joined At | When they became a system member |
 
-On the right of each row there are **Edit** and **Delete** actions.
+On the right of each row there are **Edit** and **Delete** actions; selecting several rows also enables bulk deletion, and every deletion asks for confirmation.
 
 ![System members list: username, email, role and join time](/assets/screenshots/boss/settings-members-01.png)
 

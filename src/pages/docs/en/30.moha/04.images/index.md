@@ -1,6 +1,6 @@
 ---
 title: 'Mirror warehouse'
-updated: '2026-09-14'
+updated: '2026-10-21'
 author: Rune Docs Team
 description: 'What an image is, how it differs from a model or dataset, and where to enter the Images repository.'
 tags:
@@ -31,7 +31,7 @@ Click **Images** in the top navigation to open the image list page.
 | Image Scan | A check for known security vulnerabilities in this environment |
 | Visibility | Who can see it: Public, Internal or Private |
 
-![Create image form: the Image block (name, ID, organization, description) with a readme body field, then category, framework and members](/assets/screenshots/moha/create-image-01.png)
+![Create image form: image block (name / ID / organization / description), readme body, tags (category + accelerator) and members](/assets/screenshots/moha/create-image-01.png)
 
 The image form carries a **readme** body field, which becomes the Markdown text on the image detail page. Models and datasets have no such field — their body comes from the README in the repository root.
 
@@ -54,6 +54,7 @@ Images carry one filter dimension models and datasets do not — **Architecture*
 | I want to... | Go to |
 | --- | --- |
 | Browse which images exist | [Image List & Filters](/moha/images/gallery) |
+| Push an image you built | [Pushing images and managing tags](/moha/images/push) |
 | See which versions an image has | Open the image and go to the **Tags** tab |
 | Check an image for vulnerabilities | Click **Image Scan** on the **Tags** tab |
 | Change an image's visibility or description | Open the image and go to the **Settings** tab (needs maintain access) |
@@ -61,5 +62,6 @@ Images carry one filter dimension models and datasets do not — **Architecture*
 ## Related
 
 - [Image List & Filters](/moha/images/gallery)
+- [Pushing images and managing tags](/moha/images/push)
 - [Repository detail page structure](/moha/repository/detail)
 - [Models](/moha/models)
