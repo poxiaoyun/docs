@@ -56,6 +56,10 @@ const SITE = readSiteConfig();
 const SITE_NAME = SITE.name;
 const SITE_URL_LANG = LANG === 'en' ? 'en' : 'zh-CN';
 
+// sitemap 的 lastmod 兜底值：页面没写 frontmatter.updated 时用它，而不是干脆省略。
+// 缺 lastmod 的 URL 在 Google 那边等价于「从没变过」，新页面的抓取优先级会掉。
+const BUILD_DATE = new Date().toISOString().slice(0, 10);
+
 function readSiteConfig() {
   try {
     const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, 'public/global-config.json'), 'utf8'));
@@ -417,6 +421,24 @@ function walkMarkdown(dir, base = '', acc = []) {
     } else if (entry.name.endsWith('.md')) {
       acc.push(path.join(base, entry.name));
     }
+  }
+  return acc;
+}
+
+/**
+ * 列出产物目录下所有 index.html 对应的路由（相对路径，首页为空串）。
+ * 用于 sitemap 覆盖率自检：以**真实产物**为准，而不是以 collectPages 的结果为准 ——
+ * 后者只反映 markdown 输入，漏写模板或路由算错时它自己发现不了。
+ */
+function walkIndexHtml(dir, base = '', acc = []) {
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (!entry.isDirectory()) continue;
+
+    const full = path.join(dir, entry.name);
+    const rel = base ? `${base}/${entry.name}` : entry.name;
+
+    if (fs.existsSync(path.join(full, 'index.html'))) acc.push(rel);
+    walkIndexHtml(full, rel, acc);
   }
   return acc;
 }
@@ -883,12 +905,15 @@ function extractPageImages(html) {
  * sitemap 是最强的发现信号；带上 image:loc 后 Googlebot-Image / Bingbot 可以
  * 直接把 142 张图排进抓取队列，不必等爬完 177 个页面再逐个解析 <img>。
  * 对更依赖 sitemap 的 Bing 尤其有意义。
+ *
+ * 每条 URL 都必须有 lastmod：缺失时退回构建日期，而不是留空。
+ * 少一条 lastmod，搜索引擎就没有「这页变过」的依据，新内容会排在抓取队列后面。
  */
 function buildSitemap(pages) {
   const entries = pages
     .map((page) => {
       const url = `${SITE_URL}${page.route ? `/${page.route}` : ''}/`;
-      const lastmod = page.updated ? `<lastmod>${page.updated}</lastmod>` : '';
+      const lastmod = `<lastmod>${page.updated || BUILD_DATE}</lastmod>`;
       const images = (page.images || [])
         .map(
           (img) =>
@@ -1180,6 +1205,31 @@ function selfCheck(pages) {
     const xml = fs.readFileSync(sitemapPath, 'utf8');
     const locs = [...xml.matchAll(/<image:loc>([^<]+)<\/image:loc>/g)].map((m) => m[1]);
 
+    // 覆盖率自检：sitemap 的 URL 集合必须与预渲染出来的页面集合严格相等。
+    // 少一条 = 有页面搜不到入口；多一条 = 声明了打不开的地址（搜索引擎会记一笔软 404）。
+    // 这两类问题在构建日志里都看不见，而「漏页」恰恰是新增文档后最容易犯的错。
+    const xmlUrls = new Set([...xml.matchAll(/<url><loc>([^<]+)<\/loc>/g)].map((m) => m[1]));
+    const distUrls = new Set([
+      `${SITE_URL}/`,
+      ...walkIndexHtml(OUT_DIR).map((rel) => `${SITE_URL}/${rel}/`),
+    ]);
+
+    for (const url of distUrls) {
+      if (!xmlUrls.has(url)) problems.push(`sitemap: 缺少已生成的页面 ${url}`);
+    }
+
+    for (const url of xmlUrls) {
+      if (!distUrls.has(url)) problems.push(`sitemap: 声明了没有产物的页面 ${url}`);
+    }
+
+    // lastmod 必须逐条存在：没有它，搜索引擎没有「这页变过」的依据。
+    for (const block of xml.matchAll(/<url>([\s\S]*?)<\/url>/g)) {
+      if (!/<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/.test(block[1])) {
+        const pageUrl = /<loc>([^<]+)<\/loc>/.exec(block[1])?.[1] ?? '?';
+        problems.push(`sitemap: ${pageUrl} 缺少 lastmod`);
+      }
+    }
+
     if (locs.length === 0) {
       problems.push('sitemap: 一张图片都没声明 —— 图片收集逻辑失效了');
     }
@@ -1245,6 +1295,10 @@ function main() {
   }
 
   // 首页（根路径）：正文由 buildHomeMarkdown 生成，与 React 首页的可见内容对应。
+  // lastmod 取全站最新一页的 updated —— 首页聚合的是全站入口，有内容更新它就该算变过；
+  // 退一步用构建日期，也比完全没有 lastmod 强。
+  const latestUpdated = pages.reduce((acc, p) => (p.updated && p.updated > acc ? p.updated : acc), '');
+
   const homePage = {
     route: '',
     segs: [],
@@ -1252,6 +1306,7 @@ function main() {
     title: SITE_NAME,
     description: HOME_DESCRIPTION,
     content: buildHomeMarkdown(),
+    updated: latestUpdated || BUILD_DATE,
   };
 
   writeFile(path.join(OUT_DIR, 'index.html'), renderPage(homePage, tmpl, childrenByRoute));
