@@ -14,5 +14,9 @@ node_modules/
 # 本地临时产物（PDF 校验截图等，不入库）
 tmp/
 
+# 内部运维评估与排障记录（含内网地址/主机细节）。
+# 这个仓库是公开站点仓库，运行在 docs.poxiaoshi.cn，这类文件只留在本地，不入库。
+ops/
+
 # macOS
 .DS_Store
