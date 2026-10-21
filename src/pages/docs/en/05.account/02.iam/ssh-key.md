@@ -1,118 +1,122 @@
 ---
-title: 'SSH Key Management'
-updated: '2026-09-14'
-description: From generating an SSH key pair to pasting the public key here, and deleting keys you no longer use.
+title: 'SSH Key'
+updated: '2026-10-21'
+description: From generating an SSH key pair to adding the public key on the platform, and deleting keys you no longer use.
 ---
 
-# SSH Key Management
+# SSH Key
 
-An SSH key is a matched pair of "keys" that lets you connect to a Git repository or server without typing your password every time. The platform stores only the **public** key; the private key always stays on your own computer. This page takes you through the whole path from "generate a key pair" to "paste the public key here", and explains which actions cannot be undone.
+An SSH key is a matched pair of keys that lets you connect to a Git repository or a server without typing a password.
+The platform stores only the **public** key; the private key never leaves your computer. This page walks you from
+"generate a key pair" to "add the public key on the platform" and explains which actions cannot be undone.
 
 :::tip The public key is the lock, the private key is the key
-You hand the lock (public key) to the platform and keep the key (private key) yourself. Someone holding your lock still cannot open your door, but if the private key leaks, anyone can pretend to be you.
+You hand the lock (public key) to the platform and keep the key (private key) yourself. Someone holding the lock still
+cannot open your door, but if the private key leaks anyone can impersonate you.
 :::
 
 ## Before you start
 
 - This is a setting for your own account, so you can use it as soon as you sign in; no tenant role is needed.
-- You can store at most **5** public keys, and the same key cannot be added twice.
-- You need to be able to open a terminal on your computer: Terminal on macOS, PowerShell on Windows.
-- If you have generated a key before, there is no need to generate another one; just use your existing public key file.
+- You need a terminal: Terminal on macOS, PowerShell on Windows.
+- If you already have a key pair, do not generate a new one — use the existing public key file.
 
-## Telling the public and private keys apart
+## Public key versus private key
 
 | Term | Plain meaning |
 | --- | --- |
-| Public key | The file whose name ends in `.pub`; it may be shared, and it is the text you paste here |
-| Private key | The file without `.pub`; it is your real key and must never be sent to anyone |
-| Fingerprint | A short string computed from the public key, used to check that the record here matches your local key |
+| Public key | The file ending in `.pub`; safe to share, and the string you paste into the platform |
+| Private key | The file without `.pub`; your actual key, never send it to anyone |
+| Fingerprint | A short code derived from the public key, used to check that the platform record and your local key are the same |
 
 :::warning Paste the public key only
-The platform needs the public key. Pasting private key content is the same as handing over your key, and anyone could use it to impersonate you.
+The platform needs the public key. Pasting the private key hands over your key, and anyone can use it to impersonate you.
 :::
 
 ## Step 1: generate a key pair
 
-Run the command below in your terminal (the email is just a label, so use your own):
+Run this in your terminal (the email is only a comment, use your own):
 
 ```bash
 ssh-keygen -t ed25519 -C "your-email@example.com"
 ```
 
-Press Enter through the prompts; by default this creates two files: `~/.ssh/id_ed25519` (the private key) and `~/.ssh/id_ed25519.pub` (the public key). When it asks for a passphrase you can press Enter to leave it empty.
+Press Enter at each prompt. By default you get two files: `~/.ssh/id_ed25519` (private key) and `~/.ssh/id_ed25519.pub`
+(public key). When asked for a passphrase you may leave it empty.
 
-Print the public key content and copy it:
+Print the public key and copy it:
 
 ```bash
 cat ~/.ssh/id_ed25519.pub
 ```
 
-On Windows PowerShell use this instead:
+On Windows PowerShell use:
 
-```bash
+```powershell
 Get-Content ~/.ssh/id_ed25519.pub
 ```
 
-The public key is usually a **single line** that starts with `ssh-ed25519`, `ssh-rsa`, or `ecdsa-sha2-nistp256`.
+The public key is usually a **single line** starting with `ssh-ed25519`, `ssh-rsa`, or `ecdsa-sha2-nistp256`.
 
-## Step 2: paste the public key here
+## Step 2: add the public key on the platform
 
-1. Click your avatar in the top-right corner → **Settings**.
-2. Click the **SSH Keys** tab at the top.
-3. The add form sits at the top of the page. Fill in the two items below:
+1. Click your avatar in the top-right corner → **Personal settings**.
+2. Open the **Access keys** tab and find the **SSH Key** section below.
+3. Click **Add SSH Key** on the right of the section; a dialog with the same title opens.
+4. Fill in two fields:
 
-   | Setting | How to fill it in | What changes |
-   | --- | --- | --- |
-   | Key Name | For example `My work computer` | Just the name in the list, to help you tell keys apart; you can choose anything |
-   | Public Key | Paste the **whole line** you copied in the previous step | The platform registers this public key, and the matching private key can then connect without a password |
+   | Field | How to fill it |
+   | --- | --- |
+   | **Key Name** | The name shown in the list, for example `My work computer`. Required |
+   | **Public Key** | Paste the whole line you copied. The helper text below explains where the file usually lives |
 
-4. Click **Save**.
+5. Click **Add**.
 
-:::tip The name can fill itself in
-If you paste the public key before typing a name, the page fills the name in for you from the comment at the end of the key (usually the email you typed when generating it). The name cannot be empty; if the key has no comment at the end, just type one yourself.
+:::tip The name can fill itself
+If you paste the key while the name is still empty, the page fills in the comment at the end of the key (usually the email
+you typed when generating it). If there is no comment, type a name yourself.
 :::
 
-After you paste a public key, the page splits into two parts: the add form on top and the saved key cards below:
-
-![SSH key page: Key Name and Public Key fields with a Save button on top; below, one card per saved key showing its name, creation time, fingerprint and a Delete action](/assets/screenshots/account/ssh-key-01.png)
+![The SSH Key section on the Access keys page: the Add SSH Key action, and rows showing name, fingerprint, created time and delete](/assets/screenshots/account/ssh-key-01.png)
 
 ## Confirming the result
 
-- A green **SSH key added successfully** alert appears at the top of the page.
-- The form below is cleared and a new card appears in the list, showing the name, creation time, and fingerprint; if the public key has a comment, one more comment line is shown.
+- A green notice **SSH key added successfully** appears at the top.
+- The dialog closes and a new row appears with the name, fingerprint, and created time.
 
 ## Where the same key can be used
 
-| Situation | Works? | Advice |
+| Scenario | Works? | Advice |
 | --- | --- | --- |
-| One computer connecting to several platforms | Yes; add the same public key to each platform | The private key stays as it is |
-| Several computers sharing one identity | Yes, but you must copy the private key to every machine | Generating one key per computer is better |
-| A computer you no longer use | Delete its entry from the list | Other computers are unaffected |
+| One computer, several platforms | Yes, add the same public key to each | The private key stays as it is |
+| Several computers, one identity | Yes, but the private key must be copied to each machine | Generating one key per machine is safer |
+| A computer you stop using | Delete its row in the list | Other computers are unaffected |
 
-Generating a separate key on each computer has one advantage: if a device is lost, deleting only its entry revokes just that device instead of dragging the others down with it.
+One key per machine has an advantage: if a device is lost, deleting its row revokes just that device without touching the others.
 
 ## Deleting a key
 
-1. Find the card to delete in the **SSH Keys** list.
-2. Click **Delete** in the top-right corner of the card.
-3. A **Delete SSH Key** confirmation dialog opens; click **Confirm**.
+1. Find the row in the **SSH Key** list.
+2. Click **Delete** at the end of the row.
+3. A confirmation opens, titled **Delete SSH key {name}**, stating that the deletion cannot be undone.
+4. Confirm, and the top shows **SSH key deleted successfully**.
 
 :::warning Deleting cannot be undone
-After you delete it, this public key is removed from the platform and any connection using the matching private key stops working immediately. To use it again you must add it once more.
+The public key is removed from the platform and connections using the matching private key stop working immediately.
+To use it again you must add it once more.
 :::
 
 ## Common questions
 
-| What you see | Likely cause | What to do |
+| Symptom | Likely cause | What to do |
 | --- | --- | --- |
-| **Please enter public key** when you click Save | The public key field is empty | Go back to the terminal and copy the whole line of the `.pub` file again |
-| **Please enter key name** when you click Save | The name is empty and the public key has no comment at the end | Type a name yourself |
-| Adding a sixth key is rejected | One account can store at most 5 public keys | Delete the keys you no longer use, then add the new one |
-| Adding the same key again is rejected | That public key is already in the list | There is no need to add it twice; use the existing entry |
-| It says the key was added but you still cannot connect | The platform holds the public key, but the local private key is not its match | Compare the fingerprint on the key card with your local private key |
+| **Please enter key name** on submit | The name is empty and the key has no trailing comment | Type a name |
+| **Please enter public key** on submit | The public key field is empty | Copy the whole `.pub` file content again |
+| Added successfully but cannot connect | The platform holds a public key that does not match your private key | Compare the fingerprint in the list with your local key |
+| The private key is lost | The platform never stores it, so it cannot be recovered | Generate a new pair locally, add the new public key, delete the old row |
 
 ## Related
 
-- [IAM API Key (AK/SK)](/account/iam/api-key)
-- [Security Settings](/account/iam/security)
-- [Personal Center](/account/iam)
+- [API Key](/account/iam/api-key)
+- [Personal settings](/account/iam)
+- [Security](/account/iam/security)

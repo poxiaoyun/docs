@@ -414,17 +414,37 @@ GPU 清单只从 `accelerator_info` 读取（Monitoring 规范的消费约束）
 
 清单只从 `_info` 指标读取；某类没有任何样本时字段是 `null`，不是 `[]`。
 
-`pending-collector` 行没有 PromQL、不会被执行，快照里对应字段恒为 `null`；note 写明缺什么，并指向
-`specification/research/node-hardware-monitoring.md` 的对应期次（指标在 `Monitoring.md` 立约前不得消费）：
-
-| 键名 | 快照字段 | 缺的数据 | 对应研究期次 |
-| ---- | -------- | -------- | ------------ |
-| `memoryModules` | `memoryModules` | 内存条：条数、厂家、容量、频率 | P1b（DMI 内存条清单，需新增 root 只读采集端）；每条是否正常带内拿不到，依赖 BMC |
-| `psuStatus` | `psus` | 电源：个数、额定功率、工作状态 | P2 覆盖个数与状态；额定功率 P2 拿不到，备选路径待验证、尚无期次 |
-| `fanSpeed` | `fans` | 风扇：个数、转速、工作状态 | P2 |
-| `inletTemperature` | `inletTemperatureCelsius` | 进风温度 | P2 |
+当前**没有** `pending-collector` 行：内存槽位、电源、风扇、进风温度、主板、整机、物理盘都已在
+`specification/Monitoring.md` 立约，并由 `deploy/helm/telegraf` 的采集端产出。
+`Monitoring.md` 里仍列为**不可采**的只剩电源额定功率、物理盘 RAID 归属、单条内存健康与 CPU 实测频率。
 
 CPU 频率与硬盘容量没有指标行：它们不可采（见 Monitoring.md），对应字段在清单项里恒为 `null`。
+
+### 静态信息的缓存
+
+硬件清单类指标的来源链路有好几段可能空转：telegraf 的 exec 采集器超时或这一轮读不到固件表、
+Prometheus 的 5 分钟 lookback 卡在两次采集之间过期、BMC 丢包（实测 develop-02 的 iDRAC 丢包 60%）、
+apiserver 透传超时。任何一段空转，界面上的「主板型号 / 内存条 / 物理盘」就会闪成「无数据」，下一轮又回来。
+而这些信息本身不会变，闪动只会被读成"采集坏了"。
+
+所以清单表给**静态信息**加了一列 `cache`，在服务端内存里按序列（节点 + 设备）合并：
+
+| 档 | 覆盖的指标 | 窗口 | 为什么是这个长度 |
+| -- | ---------- | ---- | ---------------- |
+| `identity` | `serverInfo`、`cpuPerSocket`、`cpuTotalCores`、`memoryTotal`、`memorySlots`、`memorySlotOccupied`、`memorySlotCapacity`、`memorySlotSpeed`、`baseboard`、`systemInfo`、`gpuInfo`、`gpuMemoryTotal`、`fanInventory`、`psuInventory` | 24 小时 | 换主板、加内存、换电源都要关机，只有人动手才会变 |
+| `inventory` | `diskPerDevice`、`diskCapacity`、`diskPhysical`、`diskPhysicalCapacity`、`nicPerDevice` | 30 分钟 | 盘能被热插拔，窗口太长会显示出已经不存在的设备 |
+
+规则：
+
+- **只缓存「这台机器是什么」，不缓存「它现在怎么样」。** 状态、健康、温度、转速、速率、计数一律不缓存：
+  查询抖一下就把「电源 Slot.1 故障」显示成上一轮的正常值，恰好把最该报警的东西藏起来。
+  清单表用 `kind` 白名单强制这一点 —— 加了 `cache` 但 kind 是状态类时**模块加载即抛错**。
+- 合并粒度是**一条序列**（节点 + `idLabel` / `device_id`），不是整条指标：一台机器的样本缺失不影响另一台，
+  一台机器的新值也不会覆盖另一台的缓存。
+- 快照里如实标注：`status: 'cached'`、`observedTimestamp` 是那批样本**真实的**观测时间（不是本轮时刻）、
+  `oldestCachedTimestamp` 是最旧的一条。超过窗口回到 `stale` 并清空字段 —— 缓存不会永远撒谎。
+- 缓存只在进程内存里，不落盘。twin 重启后要重新积累一次成功观测，这期间字段是 `null`（不是旧值）。
+
 
 ## twin REST API
 

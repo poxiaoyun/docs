@@ -1,6 +1,6 @@
 ---
 title: Audit Logs
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: See who did what and when in Moha Hub — filter the records, inspect a detail view, and export them to a file.
 ---
 
@@ -32,7 +32,7 @@ There is a row of filters at the top of the page, showing **the last month up to
 | Resource Type | Pick one resource type, or **All Resources** |
 
 - If you set the start date after the end date, the end date is pushed later automatically, and vice versa, so an empty range never occurs.
-- Once the filters are set the list re-queries with the new conditions; you can also click **Query** to refresh manually, or **Reset** to restore the defaults.
+- Once the filters are set the list re-queries with the new conditions automatically; click **Reset** at the top right to restore the defaults (this page has no "Query" button).
 - Every time you change a filter, the list returns to page 1.
 
 :::info

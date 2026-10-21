@@ -1,6 +1,6 @@
 ---
 title: '集群管理'
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: 把一个 Kubernetes 集群接入平台：填 kubeconfig、测试连接、上线，并确认节点都上来了。
 ---
 
@@ -158,20 +158,21 @@ kubectl top nodes
 | 分组 | 子页 |
 | --- | --- |
 | 集群信息 | 集群信息、节点状态、加速卡信息 |
-| 资源管理 | 资源池、资源规格、租户配额 |
-| 运维管理 | 工作负载、存储集群、系统应用、调度器管理、日志管理 |
+| 资源管理 | 资源池、资源规格、租户资源 |
+| 运维管理 | 工作负载、存储集群、系统应用、调度视图、调度器管理、日志管理、告警 |
 
 其中：
 
-- **集群信息** 只看基础看板；**节点状态** 看机器，**加速卡信息** 看卡，详见 [节点与加速卡状态](/boss/rune-admin/nodes-gpu)。
-- **资源池 / 资源规格 / 租户配额** 是资源分配的地方，详见 [资源池](/boss/rune-admin/resource-pools)、[资源规格](/boss/rune-admin/flavors)、[租户配额](/boss/rune-admin/tenants)。
+- **集群信息** 看整个集群的基础看板；**节点状态** 看机器，**加速卡信息** 看卡，详见 [节点状态](/boss/rune-admin/node-status) 与 [加速卡信息](/boss/rune-admin/accelerator-status)。
+- **资源池 / 资源规格 / 租户资源** 是资源分配的地方，详见 [资源池](/boss/rune-admin/resource-pools)、[资源规格](/boss/rune-admin/flavors)、[租户资源](/boss/rune-admin/tenants)。
 - **工作负载** 按对象类型浏览集群里的各种资源，详见 [工作负载](/boss/rune-admin/resources)。
-- **存储集群** 和 **系统应用** 都是「一键部署中间件 / 存储」的入口，详见 [存储集群与运行时](/boss/rune-admin/storage-runtime) 与 [系统应用](/boss/rune-admin/systems)。
-- **调度器管理** 和 **日志管理** 详见 [日志与调度器](/boss/rune-admin/observability)。
+- **存储集群** 和 **系统应用** 都是「一键部署存储 / 中间件」的入口，详见 [存储集群](/boss/rune-admin/storage-cluster) 与 [系统应用](/boss/rune-admin/systems)。
+- **调度视图** 看任务卡在哪，**调度器管理** 改调度策略，详见 [调度视图](/boss/rune-admin/scheduling) 与 [调度器管理](/boss/rune-admin/schedulers)。
+- **日志管理** 查日志，**告警** 配告警规则，详见 [日志管理](/boss/rune-admin/logs) 与 [告警](/boss/rune-admin/alerts)。
 
-![集群详情里的「租户配额」子页：按租户列出配额类型、型号、资源池与已用 / 总量](/assets/screenshots/boss/cluster-quotas-01.png)
+![集群详情里的「租户资源」子页：按租户列出配额类型、型号、资源池与已用 / 总量](/assets/screenshots/boss/cluster-quotas-01.png)
 
-集群侧的这一页是按**租户**看配额横切面：同一份配额数据在 **租户资源** 里是从租户看，在这里是从集群看。截图里 `tenant-4k70tg` 的 CPU 配额是 `0 / 4`，表示还没用掉。
+集群侧的这一页是按**租户**看配额的横切面：同一份配额数据在 **租户资源** 里从集群看，在 **租户集群** 里从租户看。截图里 `tenant-4k70tg` 的 CPU 配额是 `0 / 4`，表示还没用掉。
 
 ## 结果确认
 
@@ -190,5 +191,6 @@ kubectl top nodes
 ## 相关
 
 - [集群信息](/boss/rune-admin/cluster-overview)
-- [节点与加速卡状态](/boss/rune-admin/nodes-gpu)
+- [节点状态](/boss/rune-admin/node-status)
+- [加速卡信息](/boss/rune-admin/accelerator-status)
 - [资源池](/boss/rune-admin/resource-pools)

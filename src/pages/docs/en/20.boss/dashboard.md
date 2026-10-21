@@ -1,12 +1,12 @@
 ---
 title: Home
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: What each number on the three Home cards means, where it leads, and how fresh the data is.
 ---
 
 # Home
 
-Home is the first screen you see after signing in to BOSS, and it gives you **the whole platform at a glance**. It is made of three cards: Moha Resources across the top, LLM Gateway Overview at the bottom left, and Platform Management at the bottom right. All three read from real endpoints — none of the numbers are sample data.
+Home is the first screen you see after signing in to BOSS, and it gives you **the whole platform at a glance**. It is made of three cards: Moha Resources across the top, Model Gateway Overview at the bottom left, and Platform Management at the bottom right. All three read from real endpoints — none of the numbers are sample data.
 
 :::tip How to use this page
 Treat it as your dashboard. Glance at it when you start work: is the **Attention Needed** list in the Platform Management card empty, and is the **Error Rate** on the gateway card close to 0? If something is red or flagged, click through and deal with it.
@@ -22,12 +22,12 @@ Treat it as your dashboard. Glance at it when you start work: is the **Attention
 | Card | What to look at | Data scope |
 | --- | --- | --- |
 | Moha Resources | Platform-wide totals and trending rankings for models, datasets, Spaces and images | Whole platform |
-| LLM Gateway Overview | Request volume, latency, token usage and error rate of model calls | Last 24 hours |
+| Model Gateway Overview | Request volume, latency, token usage and error rate of model calls | Last 24 hours |
 | Platform Management | Number of tenants, clusters and users, plus anything that needs your attention | Whole platform |
 
-![The three cards on the home page: Moha resources top left, LLM gateway overview bottom left, hot ranking and platform management on the right](/assets/screenshots/boss/dashboard-01.png)
+![The three cards on the home page: Moha resources top left, Model Gateway overview bottom left, hot ranking and platform management on the right](/assets/screenshots/boss/dashboard-01.png)
 
-This is the first screen after signing in. The four numbers in the top-left card (models / datasets / spaces / images) sit above a **Distribution** bar; the bottom-left **LLM gateway overview** shows the last 24 hours of requests, average latency, token consumption and error rate, followed by the traffic trend and model ranking; the hot ranking sits top right and platform management bottom right. The figures in the screenshot come from a demo environment — yours will be real.
+This is the first screen after signing in. The four numbers in the top-left card (models / datasets / spaces / images) sit above a **Distribution** bar; the bottom-left **Model Gateway overview** shows the last 24 hours of requests, average latency, token consumption and error rate, followed by the traffic trend and model ranking; the hot ranking sits top right and platform management bottom right. The figures in the screenshot come from a demo environment — yours will be real.
 
 ## Moha Resources card
 
@@ -63,9 +63,9 @@ This lists the most-downloaded resources recently. Each row shows the resource n
 The rows here cannot be opened; they are only for spotting trends. To manage a resource, use the matching menu under the **Asset Management** group.
 :::
 
-## LLM Gateway Overview card
+## Model Gateway Overview card
 
-The card title is **LLM Gateway Overview** and the subtitle is **Traffic and usage over the last 24 hours**. This screen is fixed to the **last 24 hours** — there is no time-range selector, and you cannot change it to something like the last 7 days.
+The card title is **Model Gateway Overview** and the subtitle is **Traffic and usage over the last 24 hours**. This screen is fixed to the **last 24 hours** — there is no time-range selector, and you cannot change it to something like the last 7 days.
 
 ### The four key numbers at the top
 

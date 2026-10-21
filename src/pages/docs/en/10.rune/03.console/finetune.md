@@ -1,6 +1,6 @@
 ---
 title: 'Training & Fine-tuning'
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: 'Submit your first fine-tuning task from scratch: pick a template, choose a model and dataset, mount shared storage, and collect the artifacts.'
 tags:
   - rune
@@ -32,9 +32,9 @@ Fine-tuning follows the same shape as inference: list page â†’ template picker â
 
 ![Fine-tuning list: the Create button sits in the top-right corner](/assets/screenshots/rune/finetune-01.png)
 
-This workspace has no fine-tuning tasks yet, so the list is empty. Once tasks exist, each row shows the name, training framework, resource flavor, status and creation time.
+This workspace has no fine-tuning tasks yet, so the list is empty. Once tasks exist, each row shows **name / training framework / resource flavor / status / created at / access** (the creator appears in small text below the time). The **access** column offers a button when the template provides a web UI.
 
-1. In the left **Workbench** group, click **Traning&Fine tuning**.
+1. In the left **Workbench** group, click **Training & Fine-tuning**.
 2. Click **Create Jobs** at the top right to open the template selection page.
 
 ![Fine-tuning template picker: one card per template with a framework tag, a version dropdown and a Deploy button](/assets/screenshots/rune/finetune-02.png)
@@ -88,7 +88,7 @@ After you submit, go back to the **Training & Fine-tuning** list:
 
 1. You can see the task, and its **Status** column first shows **Pending**, then changes to **Running**.
 2. When training finishes it becomes **Succeeded**; if something goes wrong along the way it becomes **Processing failed**.
-3. Click the task name to open the detail page: **Monitoring** for the metric curves, **Logging** for the training output, and **Events** to troubleshoot failures.
+3. Click the task name to open the detail page: **Monitoring** for the metric curves, **Logging** for the training output, **Events** to troubleshoot failures, and **Alerts** to attach alert rules to this task.
 
 :::tip How long will it take
 It depends on the model size, the amount of data, and the spec you chose, so no fixed duration can be given: LoRA on a small sample is clearly faster than full-parameter training. You can close the page during training; the task keeps running in the background.
@@ -111,7 +111,7 @@ From the row action menu in the list or the **Actions** menu on the detail page:
 | --- | --- |
 | Edit | Change the name, description, and parameters |
 | Start / Stop | Stopping releases compute resources; click **Start** again to resume |
-| Save as Task Template | Save the current configuration as a template for one-click reuse next time |
+| Save as Instance Preset | Save the current configuration as a preset for one-click reuse next time (see [Presets](/rune/resources/presets)) |
 | Delete | After a second confirmation, deletes the task; cannot be undone |
 
 ## FAQ
@@ -129,4 +129,5 @@ From the row action menu in the list or the **Actions** menu on the detail page:
 - [Storage](/rune/console/storage)
 - [Metrics](/rune/console/experiment)
 - [Evaluation Management](/rune/console/evaluation)
+- [Presets](/rune/resources/presets)
 - [Create Workloads](/rune/guide/workloads)

@@ -1,138 +1,146 @@
 ---
-title: Tenant Quotas
-updated: '2026-09-14'
-description: Hand out cluster CPU, memory and accelerator allowances to tenants and their workspaces.
+title: 'Tenant Resources'
+updated: '2026-10-21'
+description: Manage the tenants enabled on a cluster, review enablement requests, and grant quotas, flavor access and workspaces.
+tags:
+  - boss
+  - rune-admin
 ---
 
-# Tenant Quotas
+# Tenant Resources
 
-To use the platform's compute, a tenant (think of it as a company's own account space) must first be given an allowance. This page is where you hand out that allowance: you grant a usage cap for CPU, memory and accelerators at the "cluster + resource pool + resource item" level, and then subdivide the tenant's allowance down to its workspaces.
+**Tenant Resources** is tenant management seen from the cluster: which tenants are enabled on this cluster, who asked to be enabled, how much each may use, which flavors they may pick, and which workspaces exist.
 
-By the end of this page you can: assign resource quotas to a tenant, create a workspace, and subdivide the quota into workspaces.
+After reading this page you can review enablement requests, open a tenant, create quotas, grant flavor access and create workspaces.
 
-:::tip Three terms compared
+:::tip Tenant Resources versus Tenant Clusters
 
-- **Tenant** is a company's own account space.
-- **Workspace** is one office inside the building, shared by colleagues.
-- **Quota** is the spending cap you have for this month.
+- **AI Platform → Tenant Clusters** starts from a tenant and shows which clusters it is enabled on.
+- **Cluster → Tenant Resources** starts from a cluster and shows which tenants it hosts.
+
+Both are two views of the same enablement relationships.
 
 :::
 
 ## Before you start
 
-- You need a **System Administrator** account.
-- Prerequisite: the cluster is connected to the platform and a [Resource Pool](/boss/rune-admin/resource-pools) has already been created (a quota must pick a resource pool).
+- You need a **system administrator** account.
+- The tenant must already be enabled on this cluster, otherwise it does not appear on the **Enabled** tab.
+- At least one [resource pool](/boss/rune-admin/resource-pools) must exist, because quotas are granted from a pool.
 
 ## Getting there
 
-Click **AI Platform** in the top navigation bar, then click **Tenant Resource** under the **AI Platform** group in the left sidebar.
+1. Click **AI Platform** in the top bar, then **Cluster Management** in the sidebar.
+2. Open the target cluster.
+3. Click **Tenant Resources** under **Resource Management**.
 
-## Tenant list
+## Two tabs
+
+| Tab | Contents |
+| --- | --- |
+| Enabled | Tenants already enabled on this cluster |
+| Enablement Requests | Requests submitted by tenants, plus review records |
+
+### Enabled
 
 | Column | Meaning |
 | --- | --- |
-| Name | Avatar + tenant name + tenant ID; click to open the details, which start on **Quota** |
-| Quota | This tenant's quota usage per resource type, shown per cluster |
-| Created At | When the tenant was created |
+| Tenant | Tenant name and ID; click to open its in-cluster details |
+| Enablement status | Not Opened / Opening / Enabled / Failed |
+| Created at | When the enablement record was created |
 
-:::info The list has no actions column
+Row actions include **Configure** (open the tenant details) and deleting the enablement.
 
-Every operation is done after clicking the tenant name to open the details; the list itself only has the three columns above.
+### Enablement Requests
 
+| Column | Meaning |
+| --- | --- |
+| Tenant | The tenant that submitted the request |
+| Reason | What the tenant wrote as the justification |
+| Review status | Pending / Approved / Rejected |
+| Review note | The reason recorded during review |
+| Created at | — |
+
+Row actions:
+
+| Action | Effect |
+| --- | --- |
+| Approve | Opens the request and, after **Approve and enable**, the platform starts preparing cluster resources |
+| Reject | Requires a reason; the request leaves the enablement flow and the tenant may resubmit with an adjusted reason |
+| Delete request | Removes the request and its review record; it does **not** close or delete an existing enablement |
+
+:::warning Deleting a request is not disabling a tenant
+Deleting a request only clears the paperwork. To stop a tenant from using this cluster, work on the enablement under **Enabled**.
 :::
 
-![Tenant resources list: one row per tenant, with progress bars for CPU / memory / GPU / storage usage against quota](/assets/screenshots/boss/rune-tenant-list-01.png)
+## Four tabs in the tenant details
 
-**Tenant Resources** and **Tenant Management** cover the same tenants with different emphasis: here every row lays out four quota progress bars. `chart-test` shows CPU at `18core / 20core` (90%) with the bar turned amber — the kind of tenant worth checking for a quota increase.
+Opening an enabled tenant shows four tabs:
 
-## The two subpages in tenant details
-
-After entering a tenant, there are two subpages on the left:
-
-| Subpage | Purpose |
+| Tab | Purpose |
 | --- | --- |
-| Quota | Assign resource allowance to this tenant |
-| Workspace | Manage the workspaces under this tenant |
+| Overview | Name, ID, enablement status, enablement time, description, status message |
+| Quota | Grant capacity to this tenant |
+| Flavor Access | Which flavors this tenant may use in this cluster |
+| Workspace | Workspaces under this tenant and their quotas |
 
-## Assign a quota to a tenant
+![Tenant Resources: the tenant list on the left and the overview, quota, flavor access and workspace tabs on the right](/assets/screenshots/boss/rune-tenant-quota-01.png)
 
-1. In the tenant details, click **Quota** on the left.
-2. On the left of the toolbar, select a **Cluster** (the quota list follows when you switch clusters).
-3. Click **Create Quota** in the top right.
-4. Fill in the form:
+## Grant a quota
 
-| Form item | What to enter | Notes |
-| --- | --- | --- |
-| Cluster | Choose which cluster the resources go to | Selected at creation |
-| Resource Pool | Choose the pool to draw the allowance from | **Switching the cluster clears this, so pick it again** |
-| Resource | Fill in the allowance for each resource item one by one | Enter a limit per resource type; at least one item is required |
+1. Open the tenant and switch to **Quota**.
+2. Click **Create Quota** in the top-right corner.
+3. Fill in:
 
-5. Click **Confirm** to save.
+   | Field | How to fill it | Notes |
+   | --- | --- | --- |
+   | Resource pool | Pick the pool the capacity comes from | Switching pools reloads the resource items |
+   | Resources | Per item, set the limit and the guaranteed amount | Every item can carry a **limit** and a **guaranteed** value; at least one item is required |
 
-:::tip You do not pick a flavor here
+4. Click **OK**.
 
-A quota does not choose a ready-made flavor; instead you pick "cluster + resource pool + per-item resources". The selectable resource items are given dynamically by the platform for the current cluster and resource pool, and CPU / memory come with default values you can change directly.
+Each quota record can be **edited** or **deleted**, and the list can be filtered by **type / vendor / model**.
 
+:::tip A quota is not a flavor
+A quota is "pool + per-item ceiling". A [flavor](/boss/rune-admin/flavors) describes what one instance looks like; a quota describes how much the tenant may use in total.
 :::
 
-Each row in the quota list can be **Edit**ed or **Delete**d; the top of the list can also be filtered by **Type / Vendor / Model** to help you locate rows.
+## Flavor access
 
-![Tenant quota page: a cluster dropdown at the top, then a table of quota type, model, resource pool and used / total](/assets/screenshots/boss/rune-tenant-quota-01.png)
+The **Flavor Access** tab lists the flavors available to this tenant in this cluster, with the flavor, its resource pool and whether it is granted.
 
-Quotas are counted **per cluster**, hence the **Cluster** dropdown at the top (Beijing A here) — switching it swaps the whole table. A **Type** filter (CPU / memory / disk) sits on the left, and the **Quota** column reads as used / total, such as `0 / 3`.
+Only flavors marked **Globally available** can be used without extra grants. Flavors that **require tenant authorization** must be granted here, otherwise users cannot pick them. See [Flavor](/boss/rune-admin/flavors).
 
-## Create a workspace
+## Workspaces
 
-1. In the tenant details, click **Workspace** on the left.
-2. Click **Create Workspace** in the top right.
-3. Fill in the form:
+1. Switch to the **Workspace** tab.
+2. Click **Create Workspace**, fill in the name, cluster (fixed to this cluster) and description.
+3. Afterwards each workspace row offers **Quota**, **Edit** and **Delete**.
 
-| Form item | What to enter | Notes |
-| --- | --- | --- |
-| Name | e.g. "Algorithm Team 1" | Required; the ID below is generated automatically and can be adjusted by hand |
-| Cluster | Choose the owning cluster | Required; **cannot be changed when editing** (a lock indicator is shown) |
-| Description | Optional | One sentence about what it is for |
+Workspace quotas subdivide the tenant's total quota; open a workspace and use its **Quota** tab.
 
-4. Click **Confirm** to save.
+## Verify the result
 
-Each row in the workspace list can:
-
-| Action | Meaning |
+| What you want to confirm | Where to look |
 | --- | --- |
-| Quota | Jumps to this workspace's quota page |
-| Edit | Change the name or description (the cluster cannot be changed) |
-| Delete | Deletes the workspace, with a confirmation dialog |
+| A request was handled | The review status on the **Enablement Requests** tab |
+| The tenant is really enabled | Its status on the **Enabled** tab reads **Enabled** |
+| The quota took effect | A record appears on the **Quota** tab, and users can consume it when creating instances |
+| A flavor is selectable | It appears under **Flavor Access** and users can pick it |
 
-At the top left of the list you can filter by **Cluster**.
-
-![Workspaces inside a tenant: cluster, name, namespace, status and creation time](/assets/screenshots/boss/rune-tenant-workspace-01.png)
-
-This list also carries a **Cluster** dropdown, since a workspace belongs to a cluster, and shows every space the tenant owns there. The **Namespace** column is the underlying Kubernetes namespace (`dev` here), and **Status** must read `Ready` before the workspace is usable.
-
-## Subdivide the quota into workspaces
-
-After a tenant receives its total quota, you usually still need to share the allowance out among its workspaces:
-
-1. In the **Workspace** list, find the target workspace and click **Quota**.
-2. You enter the workspace details, which have two subpages: **Quota** and **Member**.
-3. On the **Quota** page, create a workspace quota the same way to split the tenant's allowance down.
-
-## Confirming the result
-
-- The **Quota** column in the tenant list shows the allowance usage per cluster.
-- The records you just created appear on the tenant details' **Quota** page.
-- The new workspace appears in the **Workspace** list with a normal status.
-
-## Common questions
+## FAQ
 
 | Symptom | Likely cause | What to do |
 | --- | --- | --- |
-| The resource pool drop-down is empty | No cluster is selected in the quota form, or that cluster has no resource pool | Select a cluster first; if there is no pool, go and create a [Resource Pool](/boss/rune-admin/resource-pools) |
-| The resource pool is cleared after switching clusters | This is intentional | Pick the target resource pool again |
-| The cluster is greyed out when editing a workspace | The cluster cannot be changed after creation | This is normal |
+| The resource pool dropdown is empty | The cluster has no resource pool yet | Create one in [Resource Pools](/boss/rune-admin/resource-pools) |
+| The tenant is missing from **Enabled** | It was never enabled, or enablement failed | Check **Enablement Requests**, or use **Open in Cluster** under **Tenant Clusters** |
+| Users cannot pick a flavor | The flavor requires authorization and this tenant has none | Grant it under **Flavor Access** |
+| Status stays "Opening" after approval | Resources are still being prepared, or provisioning failed | Wait and refresh; check the status message |
+| Quota save fails | It exceeds the pool's capacity, or no resource item was added | Lower the limit, or keep at least one item |
 
 ## Related
 
-- [Resource Pool](/boss/rune-admin/resource-pools)
-- [Flavor](/boss/rune-admin/flavors)
-- [Cluster](/boss/rune-admin/clusters)
+- [Tenant Clusters](/boss/rune-admin/tenant-clusters)
+- [Resource Pools](/boss/rune-admin/resource-pools)
+- [Flavors](/boss/rune-admin/flavors)
+- [Cluster Management](/boss/rune-admin/clusters)

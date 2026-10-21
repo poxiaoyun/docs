@@ -1,78 +1,93 @@
 ---
-title: 'User Profile'
-updated: '2026-09-14'
-description: What the profile page can change, how to change it, and whether you need to sign in again.
+title: 'General'
+updated: '2026-10-21'
+description: What the five rows on the General tab mean, how to change the avatar and nickname, and how to rebind email or mobile number.
 ---
 
-# User Profile
+# General
 
-The profile page is the **General** tab of the Personal Center, where you change your own **avatar** and **nickname**. Your username (the account name you sign in with) is read-only here; changing your password, email, or mobile number happens on the other tabs.
+**General** is the first tab of personal settings. It shows and changes your own identity details: avatar, nickname,
+email, and mobile number. The username (the account you sign in with) is read-only here. Passwords, the second factor
+and the interface look are on other tabs.
 
-:::tip A nickname is not a username
-The username is the account you sign in with and is unique in the system; the nickname is the name others see in member lists and the avatar menu, and you can change it any time.
+:::tip Nickname and username are different things
+The username is your login name, unique in the system and unchangeable. The nickname is what colleagues see in member lists
+and in the avatar drawer; you can change it whenever you like.
 :::
 
 ## Before you start
 
 - You can use it as soon as you sign in; no tenant role is needed.
-- Everything you change here affects only you and never touches your colleagues.
+- Before rebinding an email or mobile number, make sure you can open the **new** mailbox or receive messages on the **new**
+  number — the verification code goes to the new address.
 
-## Which tabs the Personal Center has
+## The rows on this page
 
-The page opens with a row of tabs at the top, each covering one kind of setting:
+| Row | What you can do | Notes |
+| --- | --- | --- |
+| **Avatar** | Click to upload | Takes effect immediately; no separate save |
+| **Username** | Read-only | The unique identifier in the system; there is no edit entry |
+| **Nickname** | **Change** at the end of the row | Edited in a dialog and saved there |
+| **Email** | **Change** at the end of the row (**Add** when nothing is bound) | Needs a code sent to the new mailbox; an unbound row shows **Not added** |
+| **Mobile Number** | **Change** at the end of the row (**Add** when nothing is bound) | Needs an SMS code sent to the new number; an unbound row shows **Not added** |
 
-| Tab | What you can change | Verification needed | Sign in again afterwards? |
-| --- | --- | --- | --- |
-| General | Avatar, nickname | No | No |
-| Password | Sign-in password | Old password | No |
-| Email | Rebind your email | Email verification code | No |
-| Mobile Number | Rebind your mobile number | SMS verification code | No |
-| Multi-factor Authentication | Turn on the second factor | The 6-digit code in your authenticator app | No |
+## How to open it
 
-For the detailed steps of password, email, mobile number, and multi-factor authentication, see [Security Settings](/account/iam/security).
+1. Click your avatar in the top-right corner → **Personal settings**.
+2. You start on **General**; after visiting another tab, click **General** to come back.
 
-## How to get there
+![General tab: avatar area on the left; username (read-only), nickname, email and mobile number rows on the right, each with a change action](/assets/screenshots/account/profile-01.png)
 
-1. Click your avatar in the top-right corner.
-2. In the menu that slides out, click **Settings**.
-3. You land on the **General** tab by default.
+## Changing the avatar
 
-The Basic Info page has your avatar on the left and your username plus nickname on the right:
+1. Click the avatar area and pick a local image.
+2. In the crop window, zoom and rotate until the framing looks right.
+3. Confirm the upload.
 
-![Basic Info page: avatar upload area on the left; username (greyed out with a lock icon) and nickname field on the right, with a Save button at the bottom](/assets/screenshots/account/profile-01.png)
+Requirements: a common image format (JPEG, PNG, WebP, and the like), **no larger than 3 MB**.
 
-## Changing your avatar and nickname
-
-1. On the **General** tab, fill in the two items below:
-
-   | Setting | How to fill it in | What changes |
-   | --- | --- | --- |
-   | Avatar | Click the avatar area on the left to upload an image, then scale or rotate it and crop in the dialog | Only your avatar changes; it takes effect as soon as the upload succeeds, and it updates everywhere your avatar is shown |
-   | Nickname | Type a new name in the **Nickname** field; it cannot be empty | This changes the name others see and does not affect signing in with your username |
-
-2. Click **Save**.
-
-Requirements for the avatar image:
-
-- Only `*.jpeg`, `*.jpg`, `*.png`, `*.webp`, `*.icon`, `*.bmp`, and `*.svg` are supported.
-- The size cannot exceed 3 MB.
-
-:::info No need to click Save after uploading an avatar
-An avatar takes effect the moment the upload succeeds, and an **Upload successfully** message appears at the top of the page. The nickname is different: you must click **Save** for it to take effect.
+:::info The avatar is saved on upload
+No save button is involved — once the upload succeeds every place that shows your avatar uses the new image.
 :::
+
+## Changing the nickname
+
+1. On the **Nickname** row, click **Change** at the end of the row.
+2. In the **Change display name** dialog, type the new name into **Nickname**. It cannot be empty.
+3. Click **Save**.
+
+The dialog closes and the nickname on the page updates; no need to sign in again.
+
+## Changing the email or mobile number
+
+1. On the **Email** or **Mobile Number** row, click **Change** (or **Add** when nothing is bound yet).
+2. The dialog has two fields:
+
+   | Field | How to fill it |
+   | --- | --- |
+   | **Email** or **Mobile Number** | The new address or number, in the right format; a mobile number needs its country code |
+   | **Verification Code** | Click **Send code** on the right and enter the code sent to the **new** address |
+
+3. Click **Save**.
+
+:::warning The code goes to the new address, not the old one
+So it does not matter that the old mailbox or phone cannot receive it — you only need access to the new one.
+:::
+
+## After saving
+
+- No "updated" toast appears. **The dialog closing and the value on the page changing** is the confirmation.
+- If the details were saved but refreshing the current session failed, a banner appears at the top:
+  **Changes were saved, but the current session could not be refreshed: …**, with a retry action.
+  **Do not submit again** — click retry; the data is already stored.
 
 ## Why the username cannot be changed
 
-The **Username** field is greyed out with a lock icon beside it. This is intentional — it is your unique identity in the system and the Personal Center has no entry to change it. If you really need to change it, contact a platform administrator.
-
-## Confirming the result
-
-- After you change the nickname and click **Save**, an **Updated successfully** message appears at the top of the page.
-- The nickname shown below the avatar on the left updates to the new value.
-- After you replace the avatar, the image is swapped in immediately.
+**Username** has no input and no edit entry by design: it is the unique identifier your account, memberships, and records
+are tied to. If it really must change, contact your platform administrator.
 
 ## Related
 
-- [Security Settings](/account/iam/security)
-- [Theme & Preferences](/account/iam/theme)
-- [Personal Center](/account/iam)
+- [Personal settings](/account/iam)
+- [Security](/account/iam/security)
+- [Preferences](/account/iam/preferences)

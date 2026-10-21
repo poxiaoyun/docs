@@ -1,6 +1,6 @@
 ---
 title: 'Development'
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: 'Open a browser-based dev environment, get into it from the console, and understand the difference between stop, restart, and delete.'
 tags:
   - rune
@@ -84,6 +84,47 @@ Once the instance status becomes **Running** or **Healthy**, there are three way
 First, whether the instance **Status** is Running or Healthy (the buttons are greyed out until it is ready). Second, whether you selected your SSH public key under **Authorized Users** at creation time; without it there is no SSH entry.
 :::
 
+## Save the current environment as an image
+
+Once you have an environment set up the way you like (packages installed, configuration changed), you do not have to rebuild it every time: you can **save the current container state as an image** and use that image for new instances.
+
+### Create an image from the Actions menu
+
+1. Open the Runebox instance detail page and click **Actions** in the top right.
+2. Click **Save current environment**.
+3. Confirm these fields in the dialog:
+
+   | Field | Notes |
+   | --- | --- |
+   | Source Pod | Pick one of the instance's pods; if there is none the dialog says "This instance has no available pods" |
+   | Source container | The container inside that pod to save |
+   | Source image | The image the container currently uses; read-only |
+   | Container runtime | The runtime used to build the image |
+   | Target image | Where to save it, for example `registry.example.com/team/my-dev` |
+   | Tag | The version tag for this save; an invalid format is rejected immediately |
+
+4. Click **Create image**. Once submitted, the dialog reports that the save job has been created; the job runs in the background and you can close the dialog.
+
+:::warning Your storage volumes are not in the image
+**Image snapshots** save only the **writable layer** of the selected container. Mounted storage volumes (PVCs), Secrets, ConfigMaps, and temporary directories (emptyDir) are not included.
+So the reusable combination is: code and data on a storage volume, environment and dependencies inside the container.
+Also, any keys or tokens sitting in the writable layer will be baked into the image, so clean them up first.
+:::
+
+### Follow progress on the Image snapshots tab
+
+The instance detail page has an **Image snapshots** tab (Runebox only) listing every save job for this instance:
+
+| Column | What to look at |
+| --- | --- |
+| Save job | The job name; click to open it |
+| Status | Pending / Running / Succeeded / Failed |
+| Created at | When it was started |
+| Duration | How long the save took |
+| Result | On success, the image and tag that were produced |
+
+Open a job to see the **environment save task detail**, with staged progress: **validate environment → build image → push image → clean up temporary resources**, each with its own logs. If the log stream drops, the page reconnects automatically.
+
 ## How stop, restart, and delete differ
 
 You operate an instance from the row action menu in the list or the **Actions** menu on the detail page. The three differ a lot, so do not click the wrong one:
@@ -92,6 +133,7 @@ You operate an instance from the row action menu in the list or the **Actions** 
 | --- | --- | --- | --- |
 | Stop | Releases compute resources and stops billing; the instance stays in the list | Files on a mounted storage volume survive; the temporary directory is lost | You will not use it for a while and want to save resources |
 | Start | Allocates resources again and runs the instance | Not affected | To continue using a previously stopped instance |
+| Save current environment | Saves the container's current state as an image; follow it on the **Image snapshots** tab | The running instance is not affected | When the environment is tuned and you want to freeze it into an image |
 | Delete | After a second confirmation, removes the instance and its related resources for good | **Cannot be undone**, except for files in a storage volume | When you are sure you no longer need it |
 
 :::tip How do I "restart"?

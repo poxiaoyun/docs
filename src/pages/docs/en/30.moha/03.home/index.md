@@ -1,6 +1,6 @@
 ---
 title: 'Home page and personal workbench'
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: 'What the Moha home workbench contains, what each of the five pages shows, and how to open an organization page.'
 tags:
   - moha
@@ -42,7 +42,7 @@ If **Joined Organization** is empty it shows **No Organizations**, which means y
 
 ![Top-right avatar menu: avatar and account name, Home, Personal settings, the tenant (Demo project), plus Switch tenant and Sign out at the bottom](/assets/screenshots/moha/avatar-menu-01.png)
 
-The menu has two layers: **Home / Personal settings** are personal, while the **tenant** row is the team. **Personal settings** opens the user centre, clicking the tenant name switches to that tenant's view, and **Switch tenant** at the bottom re-selects one when there is no default.
+The menu has two layers: **Home / Personal settings** are personal, while the **tenant** row is the team. **Personal settings** opens the Personal settings page, clicking the tenant name switches to that tenant's view, and **Switch tenant** at the bottom re-selects one when there is no default.
 
 ## Personal view and team view
 

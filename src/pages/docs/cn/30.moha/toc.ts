@@ -71,6 +71,7 @@ export const MOHA_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         children: [
           { title: '镜像仓库', path: '/moha/images' },
           { title: '镜像列表与筛选', path: '/moha/images/gallery' },
+          { title: '推送镜像与管理标签', path: '/moha/images/push' },
         ],
       },
       {
@@ -80,6 +81,8 @@ export const MOHA_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         product: 'moha',
         children: [
           { title: '空间', path: '/moha/spaces' },
+          { title: '创建空间', path: '/moha/spaces/create' },
+          { title: '发布、停止与重新发布', path: '/moha/spaces/operations' },
           { title: '空间列表与筛选', path: '/moha/spaces/list' },
         ],
       },

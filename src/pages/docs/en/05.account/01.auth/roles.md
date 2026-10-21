@@ -1,52 +1,89 @@
 ---
 title: 'Roles and Permissions'
-updated: '2026-09-14'
-description: What administrators, developers, and members can each do, and where to check your own role.
+updated: '2026-10-21'
+description: What administrators, developers, and members can each do, where to check your own role, and why some entries are hidden.
 ---
 
 # Roles and Permissions
 
-Your role decides which buttons you can use inside the current tenant. The same menu may be editable for an administrator and read-only for a developer, and the difference comes from the role you were given. After reading this page you will know what the three roles can do and where to find your own role.
+Your role decides which buttons you can use inside the current tenant. The same menu may be editable for an administrator
+and read-only for a developer, and the difference comes from the role you were given. After this page you will know what the
+three roles can do, where to find your own role, and why some entries are simply not shown.
 
 :::tip A comparison
-A role is like your access level in a company: an administrator has a card for a whole floor, a developer can enter the server room but not touch personnel files, and a member can only swipe into the public areas. Which menus you see and which buttons you can press all follow from it.
+A role is like your access level in a company: an administrator has a card for a whole floor, a developer can enter the server room
+but not touch personnel files, and a member can only swipe into the public areas. Which menus you see and which buttons you can press all follow from it.
 :::
+
+## Before you start
+
+- A role applies inside a tenant, so first confirm which tenant you are in.
+- To see the member list and your own role you must be an **Administrator** of that tenant; you cannot look up other people's roles.
 
 ## What the three roles can do
 
-| Role | What you can do | What you cannot do |
-| --- | --- | --- |
-| Administrator | Manage the tenant's workspaces, members, and quotas; take full action on instances, images, templates, and storage volumes | Only manage your own tenant; you cannot see other tenants |
-| Developer | Full control of instances (create, start, stop, delete, and more); view workspaces, images, and templates | Cannot manage members or quotas; images and templates are read-only; cannot create or modify workspaces |
-| Member | View workspaces, instances, and images | Cannot create or operate instances; cannot manage members, quotas, templates, or storage volumes |
+| Capability | Administrator | Developer | Member |
+| --- | :---: | :---: | :---: |
+| View workspaces | ✅ | ✅ | ✅ |
+| Create / edit / delete workspaces | ✅ | ❌ | ❌ |
+| View instances (inference, training and fine-tuning, development environments, and more) | ✅ | ✅ | ✅ |
+| Create / start / stop / delete instances | ✅ | ✅ | ❌ |
+| View images | ✅ | ✅ | ✅ |
+| Create / edit / delete images | ✅ | ❌ | ❌ |
+| View presets and flavors | ✅ | ✅ | ❌ |
+| Create / edit / delete presets and flavors | ✅ | ❌ | ❌ |
+| Manage members | ✅ | ❌ | ❌ |
+| Manage quotas | ✅ | ❌ | ❌ |
+| Create / delete storage volumes | ✅ | ❌ | ❌ |
 
 :::info System administrator
-There is one more special kind of administrator: an administrator who belongs to no tenant. The platform treats this account as a system administrator with all permissions. Usually only platform operations staff have such an account.
+An **Administrator** who belongs to no tenant and has no workspace scope is treated as a system administrator.
+That account has every permission and can enter the BOSS portal. Usually only platform operations staff hold one.
 :::
+
+## How roles and scopes combine
+
+There are only three roles; what differs is the **scope** they are assigned to:
+
+| Name you hear | What it really is | Main interface |
+| --- | --- | --- |
+| Platform administrator | An **Administrator** with no tenant scope | BOSS |
+| Tenant administrator | An **Administrator** inside one tenant | AI Platform |
+| Developer | A **Developer** inside one tenant | AI Platform |
+| Member | A **Member** inside one tenant | AI Platform |
+
+It follows that **one person can administer several tenants**: an administrator in company A may only be a member in company B.
 
 ## Where to see your own role
 
-1. Click your avatar in the top-right corner. In the menu that opens, click **Tenant**; the entry is followed by the name of your current tenant.
-2. Open tenant management and switch to the **Members** tab (only an administrator can see this tab).
-3. Find your own username in the member table; the **Role** column is your role in this tenant.
+1. Click your avatar in the top-right corner, then click the **Tenant** row that carries the current tenant name to open tenant management.
+2. In the left navigation click **Member** (only a tenant administrator sees this entry).
+3. Find your own username in the table; the **Role** column is your role in this tenant.
 
-If you are not an administrator and cannot see the **Members** tab, fall back to the member list on the **Overview** tab: the small text under each username is the role as well, it is just not laid out as a column. If neither place shows it, your current role is not allowed to see member information; in that case ask a tenant administrator to confirm your role.
+The member table has four columns: **Username / Email / Role / Joined At**, and the role column reads **Administrator**, **Developer**, or **Member**.
 
-The member table looks like this — the first column is **Username** and the third is **Role**:
+![Tenant management Member tab: search and Add Member above, a table with Username, Email, Role and Joined At columns below](/assets/screenshots/account/roles-01.png)
 
-![Tenant management Member tab: a search box and Add Member button on top, a table with Username, Email, Role and Joined At columns; the visible rows are Member, Developer and Administrator](/assets/screenshots/account/roles-01.png)
+:::warning If you cannot see "Member", you have no management rights
+**Member** appears only in a tenant administrator's left navigation. If it is missing, you are not an administrator in this tenant,
+and there is no other place to look your role up — ask a tenant administrator.
+:::
 
 ## Why a role change does not take effect immediately
 
-The platform reads your roles once when you sign in and keeps using that data to control menus and buttons afterwards. If an administrator has just changed your role, refresh the page or sign in again before the menus catch up.
+The page reads your roles once after sign-in and uses that data to control menus and buttons.
+If an administrator has just changed your role, **refresh the page or sign in again** before the menus catch up.
 
 ## A few rules to keep in mind
 
-- A role applies "inside one tenant". You may be an administrator in company A and only a member in company B.
 - If a menu is missing or a button does nothing, it is almost always a matter of insufficient permissions rather than a broken page.
+  The full capability matrix is in [Permissions reference](/reference/permissions).
+- If you are assigned a role outside **Administrator / Developer / Member** (a platform-defined role, for example), the interface falls back to
+  minimum privilege and hides nearly every menu and button. Ask an administrator to switch you to one of the three.
 - Changing your nickname or avatar never affects your role.
 
 ## Related
 
 - [Tenant Management](/account/iam/tenant)
 - [Permissions reference](/reference/permissions)
+- [Glossary](/guide/glossary)

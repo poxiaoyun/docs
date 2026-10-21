@@ -1,6 +1,6 @@
 ---
 title: 'Storage'
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: 'Manage storage volumes as network drives: create, expand, upload files, and import data from external sources.'
 tags:
   - rune
@@ -28,13 +28,13 @@ Think of a storage volume as a USB drive: the inference service, fine-tuning job
 
 ![Storage list: four stat cards on top (usage, volumes, files, storage types) with the volume table below](/assets/screenshots/rune/storage-01.png)
 
-Each row is one volume, with columns for name, status, storage cluster, usage, file count and read/write permission. Both volumes in this screenshot are still unattached, so their status reads **Unmounted**.
+Each row is one volume, with columns for name, status, **storage class**, usage, file count and read/write permission. Both volumes in this screenshot are still unattached, so their status reads **Unmounted**.
 
 ## Create a storage volume
 1. Click **Create Storage Volume** at the top right of the list.
 2. Fill in the form:
 
-   ![Create Storage Volume form: name, storage class, capacity, read/write permission, volume type and description](/assets/screenshots/rune/storage-02.png)
+   ![Create Storage Volume form: name, storage class, capacity, read/write permission, scenario and description](/assets/screenshots/rune/storage-02.png)
 
    | Field | What to enter | Notes |
    | --- | --- | --- |
@@ -42,7 +42,7 @@ Each row is one volume, with columns for name, status, storage cluster, usage, f
    | Storage Class | Pick one from the dropdown | Determines where files are actually stored; cannot be changed after creation |
    | Capacity | For example enter `20` and select `Gi` | Value must be at least 1; units are `Mi`, `Gi`, `Ti`, default `Gi` |
    | Read & Write Permission | Default **Read & Write** | If you choose **Read-only**, instances that mount it can read but cannot write |
-   | Volume Type | Default **Not Set** | Just a classification label; you can pick **Models** or **Datasets** to tell them apart. It does not affect behavior |
+   | Scenario | Default **Not Set** | Just a classification label; you can pick **Models** or **Datasets** to tell them apart. It does not affect behavior |
    | Description | Optional | One sentence about what this drive holds |
 
 3. Click **Confirm**.
@@ -56,15 +56,16 @@ Back in the **Storage** list you can see the new storage volume.
 ## What else the list offers
 - Four summary cards at the top: **Usage Rate** (used / total), **Total Volumes** (mounted and unmounted), **Total Files**, and **Storage Type**. These figures are for reference only and depend on whether the storage backend provides statistics.
 - A **Only Mounted** switch on the right of the toolbar, which shows only storage volumes currently used by instances.
+- Next to it, a **Show unsupported storage volumes** switch: by default only volumes with full support (S3 credentials and the file manager) are listed; turn it on to include the others.
 - Search by name, refresh, and select several rows to **Batch Delete**.
 
 What each list column means:
 
 | Column | Description |
 | --- | --- |
-| Name | The storage volume name, with a small icon showing the volume type (Models / Datasets); the description is below |
+| Name | The storage volume name, with a small icon showing the scenario (Models / Datasets); the description is below |
 | Status | Unmounted / Mounted; before it is ready, the creation status is shown |
-| Storage Cluster | Where the files actually live, that is the Storage Class you chose at creation |
+| Storage Class | The storage class chosen at creation; it decides which kind of storage the files actually live on |
 | Usage/Capacity | Used / capacity with a percentage; when usage is high, the **Expand** entry appears here |
 | Files | Total number of files inside |
 | Read & Write Permission | Read & Write / Read-only |

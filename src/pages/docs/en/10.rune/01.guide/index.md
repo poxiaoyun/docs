@@ -1,6 +1,6 @@
 ---
 title: 'Getting Started'
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: 'A three-step path for new users: prepare your account and resources, learn the workload types, then run one inference end to end.'
 tags:
   - rune
@@ -24,10 +24,12 @@ Prepare → understand → do it. After these three steps you will own an infere
 | 2 | [Create Workloads](/rune/guide/workloads) | Understand what inference, fine-tuning, and development environments are, and which to pick | When you want to create something but are unsure which type |
 | 3 | [Run your first inference](/rune/guide/inference) | Hand-hold you through deploying a model as a callable service | When you want to run the whole flow once from start to finish |
 
-## One thing to remember first: everything is an instance
+## One thing to remember first: most things are instances
 
 In Rune, an inference service, a training and fine-tuning job, a development service, an app instance, a metrics service, and an evaluation service are all the same kind of thing — an **instance**.
 Their list pages, creation flow, and detail views are identical; the only differences are which template you pick and which parameters you fill in.
+
+**Batch inference** in the Workbench is the one exception: it creates **jobs**, not instances. A job reads data from object storage, runs to completion, and has no endpoint of its own. See [Batch inference](/rune/console/batch-inference).
 
 :::info What this means for you
 Learn to create any one kind of instance and you can create the others. Step 3 uses an inference service only because its result is the most visible — once deployed you can call it straight from the browser.

@@ -1,6 +1,6 @@
 ---
 title: 'Apps'
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: 'Deploy general-purpose apps and understand the extra PVC list this instance type has.'
 tags:
   - rune
@@ -31,11 +31,11 @@ Pick from the shelf first, then manage the result in the app list.
 
 Start on the list page. This workspace already has one app instance:
 
-![App instance list: each row shows name, app, resource flavor, status, creator and creation time, with the create button in the top-right](/assets/screenshots/rune/app-01.png)
+![Application Instances list: each row shows name, application, resource flavor, status, creation time (creator in small text below) and alerts, with the create button in the top-right](/assets/screenshots/rune/app-01.png)
 
 The `test-app` row is **Paused**, meaning it was stopped manually; click **Start** in the row menu whenever you need it running again.
 
-1. In the left **Workbench** group, click **Apps**.
+1. In the left **Workbench** group, click **Application Instances**.
 2. Click **Create Apps** at the top right to open the template selection page.
 
 ![App template picker: one card per template with a tool tag, a version dropdown and a Deploy button](/assets/screenshots/rune/app-02.png)
@@ -72,7 +72,11 @@ App templates vary a lot in what they ask for. The blocks below are the most com
 | Command / Args | Usually leave empty | Only change it when the image already has a default startup method to override |
 | Environment Variables | Add them as `KEY=VALUE` | Configuration values the app needs |
 | Storage Mount | Choose a new or existing storage volume | Required when the app must persist data |
-| Autoscaling | Off by default | When on, replicas scale automatically with CPU / memory utilization |
+| Autoscaling | Off by default | When on, replicas scale automatically with CPU / memory utilization; only present when the template provides this field |
+
+:::info The table above is only the common set
+These are the blocks typical in general-purpose app templates; **which fields actually exist depends entirely on the template version you pick**. If a field is not on the form, the template does not need it.
+:::
 
 :::warning A wrong port makes the app unreachable
 The port must match the port the app actually listens on (many apps use `80`, others `8080` and so on). If it is wrong the instance still starts, but clicking **Access** will not open the page. If you are unsure, check the notes on the template detail page first.
@@ -80,17 +84,30 @@ The port must match the port the app actually listens on (many apps use `80`, ot
 
 ## Confirm it worked
 
-Back in the **Apps** list:
+Back in the **Application Instances** list:
 
 1. You can see the instance, and its **Status** column first shows **Pending** or **Installing**, then changes to **Running** or **Healthy**.
-2. Click the instance name to open the detail page; the **Overview** tab has basic information, the container group list, and the PVC List.
+2. Click the instance name to open the detail page; the **Overview** tab has basic information, the container group list, and the PVC list, and the **Alerts** tab lets you configure alert rules.
 3. When the app exposes an access entry, the external address appears in the access address area; open it to reach the app.
 
 :::warning What if the status shows "Processing failed"
 Common causes are an image pull failure, a wrong port, or insufficient quota. Open the detail page and check **Events** and **Logs**, fix the parameters, and click **Edit** to resubmit. You do not need to delete and recreate the instance.
 :::
 
-## What the PVC List is
+## The alerts column and tab
+
+Application Instances has one column the other types do not: **Alerts**, which shows whether any alert is firing for the instance; clicking it jumps to the **Alerts** tab of the detail page.
+
+The **Alerts** tab has two blocks:
+
+| Block | Content |
+| --- | --- |
+| Alert rules | Columns: rule name / condition / duration / notify interval / channels / status. **Add alert rule** in the top-right creates one; the row menu edits, pauses, resumes, or deletes it |
+| Alert history | Columns: rule name / status / severity / observed at / trigger count / summary; select rows to delete in bulk |
+
+How to configure a rule and where alerts are sent is covered in [Alerts](/rune/console/alerting).
+
+## What the PVC list is
 
 The **Overview** tab of an app instance has one extra section, the **PVC List**, which lists the persistent storage this app uses. It pairs with the **Storage Mount** you chose in the template: however many volumes you mounted, that is how many appear here, with their names and current status.
 

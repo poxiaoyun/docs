@@ -1,6 +1,6 @@
 ---
 title: 'Spaces'
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: 'What a Space is, how to browse and open one, and how to publish your own app online.'
 tags:
   - moha
@@ -62,23 +62,25 @@ A Space adds a **deploy configuration** block over a model: pick the SDK to use 
 2. Fill in the name, alias, description and visibility, and choose a license, domain and scene.
 3. In **Deploy Config**, choose the **Product SDK** (the app template), the **Deploy Workspace** (pick a **Region** first, then a **Workspace**) and a **Flavor**; add **Environment Variables** if you need them.
 4. After submitting, go into the Space's repository and push your application code.
-5. Back on the Space details page, click **Operations** at the top right, choose **Online**, then click **Confirm**.
+5. Back on the Space details page, click **Operations** on the right of the tab row, choose **Publish**, then click **Confirm**. Only an administrator of the Space can do this.
 6. Wait for the app interface to appear on the **Overview** tab. If it is not ready for a long time, click **Log** in the **Operations** menu to see the build output.
 
 ## Confirm it worked
 
 - Your new Space card appears in the Space list.
 - The app interface shows on the details page's **Overview** tab, which means the publish succeeded.
-- A status label at the top right shows the current running state; once published, the **Operations** menu contains **Stop**, **Restart** and **Log**.
+- A status label at the top shows the current running state; once published, the **Operations** menu contains **Stop**, **Republish** and **Log**.
 
 :::warning Stop releases resources
 
-**Stop** takes the app offline and releases the compute it was using, and the access address stops working. Click **Restart** when you need it again.
+**Stop** takes the app offline and releases the compute it was using, and the access address stops working. Click **Republish** when you need it again.
 
 :::
 
 ## Related
 
+- [Create a Space](/moha/spaces/create)
+- [Publishing, stopping and republishing](/moha/spaces/operations)
 - [Space List & Filters](/moha/spaces/list)
 - [Repository details page](/moha/repository/detail)
 - [Snapshot](/moha/repository/freezes)

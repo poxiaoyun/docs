@@ -1,6 +1,6 @@
 ---
 title: Moha 仓库管理
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: 平台管理员治理魔哈 Hub 的入口：管理全平台的模型、数据集、镜像、空间与运营内容。
 tags:
   - boss
@@ -41,11 +41,11 @@ tags:
 | [模型库](/boss/moha-admin/models) | 查看、下架、推荐、删除全平台的模型 | 资产管理 → 模型库 |
 | [数据集](/boss/moha-admin/datasets) | 查看、下架、推荐、删除全平台的数据集 | 资产管理 → 数据集 |
 | [镜像仓库](/boss/moha-admin/images) | 查看、下架、删除全平台的容器镜像 | 资产管理 → 镜像仓库 |
-| [Spaces](/boss/moha-admin/spaces) | 查看、下架、推荐、删除全平台的空间 | 资产管理 → 空间 |
+| [空间](/boss/moha-admin/spaces) | 查看、下架、推荐、删除全平台的空间 | 资产管理 → 空间 |
 | [镜像站](/boss/moha-admin/mirrors) | 把 HuggingFace / ModelScope 的内容同步进平台 | 数据同步 → 镜像站 |
 | [审计日志](/boss/moha-admin/audit) | 查谁在什么时候做了什么，并导出记录 | 安全审计 → 审计日志 |
 | [公告](/boss/moha-admin/announcements) | 维护魔哈 Hub 首页的公告 | 系统设置 → 公告 |
-| [Banner](/boss/moha-admin/banners) | 维护魔哈 Hub 首页顶部的轮播图 | 系统设置 → 轮播图 |
+| [轮播图](/boss/moha-admin/banners) | 维护魔哈 Hub 首页顶部的轮播图 | 系统设置 → 轮播图 |
 
 ## 你能做什么
 - **看全量数据**：四个资产管理页面都列出全平台所有组织的内容，包括被设为「个人」的私有仓库，这是普通用户在用户端看不到的。

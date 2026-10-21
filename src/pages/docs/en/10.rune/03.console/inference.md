@@ -1,6 +1,6 @@
 ---
 title: 'Inference Services'
-updated: '2026-09-14'
+updated: '2026-10-21'
 description: 'Deploy a model as an online service from scratch: pick a template, fill in parameters, wait for Healthy, and find the access address.'
 tags:
   - rune
@@ -33,6 +33,8 @@ The whole flow is three steps: list page → template picker → deploy form. St
 ![Inference list: status cards on top, search and filter toolbar below, and the Create Inference button in the top-right](/assets/screenshots/rune/inference-01.png)
 
 Every status card reads 0 and the list says "No inference services yet" — this workspace has never deployed a service, which is exactly what you see on your first visit.
+
+There are five status cards above the list: **total services / healthy / needs attention / paused / scaled to 0**. The table columns are **service / running status / model / resource flavor / access entry / created at** (the creator appears in small text below the time).
 
 1. In the **Workbench** group in the left sidebar, click **Inference**.
 2. Click **Create Inference** in the top-right to open the template picker.
@@ -92,28 +94,29 @@ After submitting, you return to the **Inference** list:
 
 1. The service appears, with the **Status** column first showing **Pending** or **Installing**.
 2. When the **Status** becomes **Running** or **Healthy**, the service is available.
-3. Click the service name to open the detail page: the **Overview** tab shows the basic info and the pod list, **Monitoring** shows resource curves, **Logging** shows runtime output, and **Events** helps you diagnose failures.
+3. Click the service name to open the detail page: the **Overview** tab shows the basic info and the pod list, **Monitoring** shows resource curves, **Logging** shows runtime output, **Events** helps you diagnose failures, and **Alerts** holds this service's alert rules.
 
 :::tip How long to wait
 There is no fixed duration; it depends on how fast the image is pulled and the model is downloaded: small models are quick, and large models load noticeably more slowly the first time. During this period the status stays at Pending / Installing, which is normal — do not submit again.
 :::
 
-## Find services in the list and delete them in bulk
+## Find services in the list and act in bulk
 
 Once you have a few services, use the toolbar above the list:
 
 | Control | How to use it |
 | --- | --- |
-| Search box | Search by **service name / model / template** |
-| **Status** | Switch between All / Healthy / Needs attention / Paused |
-| **Template** | Show only services deployed from one template |
-| **Resource** | Filter by the resource in use |
+| Search box | Search by **service name / model / application** |
+| **Status** | Switch between All / Healthy / Needs attention / Paused / Scaled to 0 |
+| **Application** | Show only services deployed from one application |
+| **Resource** | Filter by the resource in use (GPU / CPU) |
 | **Visibility** | Filter by the service's visibility (Public / Tenant visible / Private) |
+| **Registration status** | Show only services that are registered with the gateway, or only those that are not |
 
-To clean up several at once: tick the checkboxes at the start of the rows, then the toolbar shows a bin icon (**Batch Delete**) — click it and confirm.
+Tick the checkboxes at the start of the rows and the toolbar offers two bulk actions: **Batch Stop** and **Batch Delete**.
 
-:::warning There is no batch start/stop
-Bulk actions only support **delete**. Start, stop and scaling are per-service: use that row's action menu, or the **Actions** menu on the detail page.
+:::warning Starting and scaling are still per service
+Bulk actions cover **stop** and **delete** only. To start a service again or change its replica count, use that row's action menu or the **Actions** menu on the detail page.
 :::
 
 ## Where to get the access address
@@ -149,8 +152,8 @@ In the row action menu or the **Actions** menu on the detail page:
 | --- | --- |
 | Edit | Change the name, description, and template parameters |
 | Start / Stop | Stopping releases compute; click **Start** to resume |
-| Scale | Appears only when the template declares replicas; fill in a new replica count and click **Confirm** |
-| Save as Task Template | Save the current configuration as a template to reuse in one click |
+| Scale | Appears only when the instance has something that can be scaled; fill in a new replica count and click **Confirm** |
+| Save as Instance Preset | Save the current configuration as a preset to reuse in one click (see [Presets](/rune/resources/presets)) |
 | Decrypt model | For a deployed encrypted model, enter the decryption password and click **Decrypt** |
 | Delete | After a second confirmation, deletes the instance and releases resources; cannot be undone |
 

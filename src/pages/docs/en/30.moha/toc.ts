@@ -71,6 +71,7 @@ export const MOHA_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         children: [
           { title: 'Image Registry', path: '/moha/images' },
           { title: 'Image List & Filters', path: '/moha/images/gallery' },
+          { title: 'Push Images & Manage Tags', path: '/moha/images/push' },
         ],
       },
       {
@@ -80,6 +81,8 @@ export const MOHA_SIDEBAR_SECTIONS: DocsSidebarSection[] = [
         product: 'moha',
         children: [
           { title: 'Spaces Overview', path: '/moha/spaces' },
+          { title: 'Create a Space', path: '/moha/spaces/create' },
+          { title: 'Publish, Stop & Republish', path: '/moha/spaces/operations' },
           { title: 'Space List & Filters', path: '/moha/spaces/list' },
         ],
       },

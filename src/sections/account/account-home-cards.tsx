@@ -61,17 +61,17 @@ const CATEGORY_CARDS: CategoryCard[] = [
     color: '#7635DC',
   },
   {
-    title: '模板管理',
-    subtitle: 'Templates',
-    description: '使用预定义模板快速创建工作负载，支持自定义模板和模板共享。',
-    href: '/rune/resources/templates',
+    title: '我的预设',
+    subtitle: 'Presets',
+    description: '把调好的实例配置保存成预设，部署新实例时只需填预设 ID 就能复用。',
+    href: '/rune/resources/presets',
     color: '#00A76F',
   },
   {
     title: '配额管理',
     subtitle: 'Quotas',
     description: '查看和管理资源配额，了解 GPU/CPU 资源使用情况和限制。',
-    href: '/rune/resources/quotas',
+    href: '/rune/console/quota',
     color: '#FFAB00',
   },
 ];

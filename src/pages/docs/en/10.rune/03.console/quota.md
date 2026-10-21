@@ -1,7 +1,7 @@
 ---
 title: 'Quota'
-updated: '2026-09-14'
-description: 'Understand tenant and workspace quotas — how much you may spend this period and where to see what is left.'
+updated: '2026-10-21'
+description: 'Read tenant and workspace quota: how guaranteed quota differs from the quota limit, and what each usage state means.'
 tags:
   - rune
   - console
@@ -9,13 +9,14 @@ tags:
 
 # Quota
 
-A quota answers "**how much may I spend this period**". The platform splits cluster resources layer by layer through "resource pool → tenant → workspace", and creating an instance consumes the share that the current workspace received. Once the allowance is used up, you cannot create an instance even if the cluster still has idle machines.
+Quota answers "**how much resource can this tenant and this workspace use**". The platform hands cluster resources down in layers — resource pool → tenant → workspace — and creating an instance consumes the share allocated to the current workspace. Once that share is used up, an instance cannot be created even if the cluster still has idle machines.
 
-:::tip Quota in one sentence
-A quota is like the data allowance in a phone plan: the total is allocated from above, you should pay attention once you reach 80%, and creation fails once you hit the limit.
+:::tip Quota in one line
+Quota is like a mobile data plan: the total is handed down to you, you should pay attention as you approach the ceiling, and creating something fails when you reach it.
 :::
 
-## The quota hierarchy
+## How quota is layered
+
 ```mermaid
 graph TB
  A["Cluster resource pool"] --> B["Tenant quota"]
@@ -23,77 +24,107 @@ graph TB
  C --> D["Actual instance consumption"]
 ```
 
-If the upper layer does not give you an allocation, the lower layer cannot use it. So when instance creation fails, look at the workspace quota first rather than only checking whether the cluster has idle resources.
+If a higher layer does not give it to you, the lower layer cannot use it. So when instance creation fails, check the workspace quota first — do not just look at whether the cluster is idle.
+
+## Core concepts
+
+| Term | Plain explanation | Think of it as |
+| --- | --- | --- |
+| Guaranteed quota | The part of your share the platform guarantees you can use | The "guaranteed allowance" in a plan |
+| Quota limit | The ceiling of your share, normally greater than or equal to the guaranteed quota | The "cap" in a plan |
+| Resource pool | Which pool this share was carved out of | Which warehouse the goods came from |
+| Usage state | Where current usage sits: within guarantee / above guarantee / at limit / over limit / no quota | The marks on a fuel gauge |
 
 ## Before you start
-- Role: viewing quotas requires **Administrator** or **Developer**; creating a workspace quota requires a **tenant administrator**.
-- Region: select a **cluster** at the top of the page first. With no cluster selected, quotas are not queried.
 
-## View tenant quota
-1. Click **Account Center** in the top navigation.
-2. In the left **Account Center** group, click **Tenant** to open the tenant list.
-3. Open your tenant, then click **Quota** in the left **Tenant Management** group.
+- Viewing quota requires the **Administrator** or **Developer** role; changing a **workspace quota** is restricted to a **tenant administrator**.
+- Open the tenant from the avatar menu first, then go to **Tenant Clusters**, as shown below.
 
-![Tenant quota list: the cluster switcher sits in the header, and the table shows type, model, resource pool and used / total for each resource](/assets/screenshots/rune/quota-01.png)
+## Where to open quota
 
-This table is scoped to the currently selected cluster: accelerators, storage, CPU and memory each get a row, and the **Quota** column shows "used / total" with a progress bar underneath. The **Type** tabs (CPU / Disk / Memory) narrow it to one kind.
+Quota is not in the console's three sidebar groups. The path is "avatar → tenant → Tenant Clusters → cluster → Quota tab":
 
-The page shows the allowance for the currently selected cluster. Meaning of each column:
+1. Click the avatar in the top-right and click **Tenant <your tenant name>**.
+2. Click **Tenant Clusters** on the left to open the cluster list.
+3. Click the **cluster name** you want to inspect.
+4. Click the **Quota** tab at the top of the page.
+
+![Cluster detail, Quota tab: four tabs, filter bar, type/pool/quota columns and usage bars](/assets/screenshots/rune/quota-01.png)
+
+## Reading the tenant quota
+
+This tab is **read-only** and shows what this tenant has been given in this cluster.
 
 | Column | Description |
 | --- | --- |
-| Type | The resource category, for example CPU, Memory, GPU, VGPU |
-| Model | The accelerator card model |
-| Resource Pool | Which resource pool this allowance comes from |
-| Quota | "used / total" for each resource plus a progress bar; the closer to the limit, the more urgent the color |
+| Type | Resource family: CPU, memory, accelerator, shared GPU, storage, ephemeral storage, disk, and so on |
+| Resource pool | Which pool this share comes from |
+| Quota | Usage and capacity for each resource, drawn as a progress bar |
 
-Above the list there is also a filter bar that narrows by **Type → Model**, so you can look at just one kind of resource.
+The quota cell shows both the **guaranteed quota** and the **quota limit**, together with current usage. Usage states:
 
-:::tip Progress bar colors
-The progress bar shows the used ratio: above 80% it turns yellow, above 90% it turns red, warning you that the allowance is nearly used up.
+| Usage state | Meaning |
+| --- | --- |
+| Within guarantee | Usage is still below the guaranteed quota — the most comfortable state |
+| Above guarantee | Above the guaranteed quota but still within the limit; you can keep going |
+| At limit | Exactly full; the next create will fail |
+| Over limit | Above the limit (for example after scaling down); bring it down soon |
+| No quota | No quota at all has been allocated for this resource |
+
+The filter bar has only two controls: a **Type** dropdown and a search box. There is no "model" filter.
+
+:::tip Progress bar colours
+The bar shows the occupied ratio: the closer to the limit, the more alarming the colour. Yellow is your cue to clean up or request more quota.
 :::
 
-## View and adjust workspace quota
-A workspace quota is the share allocated to a particular workspace, and it is the layer tenant administrators work with most often.
+## Reading and adjusting workspace quota
 
-1. **Account Center** → **Tenant**, open your tenant, then click **Workspace** on the left.
-2. Open a workspace and click the **Quota** tab to see that workspace's allowance.
-3. If you are a **tenant administrator**, a **Create Quota** button appears in the top-right corner, and each row also has edit and delete actions.
+A workspace quota is the share allocated to one workspace, and it is the layer a tenant administrator touches most.
+
+1. Follow the path above to the cluster detail and click the **Workspace** tab.
+2. Click a workspace name to open it, then click the **Quota** tab.
+3. A **tenant administrator** sees **Create Quota** in the top right plus edit and delete on each row; other roles can only read.
 
 ### Create a workspace quota
-1. Click **Create Quota**.
-2. Under **Quota Config**, fill in:
 
-   | Form item | How to fill | Notes |
+1. Click **Create Quota**.
+2. Fill in the **quota configuration**:
+
+   | Field | What to do | Notes |
    | --- | --- | --- |
-   | Resource Pool | Select a resource pool | Which pool this allowance is carved out of |
-   | Resource | Add item by item: **Category** → **Resource** → **Model** → **Limit** | Click **Create Resource** for each item; the same resource cannot be added twice |
-   | Limit | Enter a quantity | Cannot exceed what the parent (tenant) can still allocate |
+   | Resource pool | Choose a resource pool | Which pool this share is carved out of |
+   | Category → Resource | Add items one by one | One resource per quota entry, so CPU, memory and GPU are separate entries; click **Create resource** for each |
+   | Model and allocation | Pick a model or "any model" | GPUs also take card count, memory and cores |
+   | Guaranteed quota / Quota limit | Enter numbers | Guaranteed ≤ limit, and must not exceed what the parent (tenant) can still allocate |
 
 3. Click **Confirm**.
 
-:::warning Insufficient quota causes creation failure
-Seeing "the cluster still has resources" on the page does not mean the current workspace can definitely deploy. What actually takes effect is the available allowance after layer-by-layer allocation. When the allowance is insufficient, ask a tenant administrator to adjust the workspace quota.
+:::warning Insufficient quota makes creation fail
+The page saying "the cluster still has resource" does not mean this workspace can deploy. What actually applies is the usable amount after layered allocation. If it is not enough, ask the tenant administrator to adjust the workspace quota.
 :::
 
-Before deleting a quota, confirm that no instance still depends on it; once deleted it cannot be brought back by undoing.
+Before deleting a quota, confirm no instance still depends on it; a deleted quota cannot be restored by undo.
 
 ## Common resource types
+
 | Type | Description |
 | --- | --- |
 | CPU | Compute cores |
 | Memory | Runtime memory |
-| GPU | Dedicated graphics cards |
-| VGPU | Graphics cards shared by splitting video memory or compute power |
+| GPU | Discrete graphics cards |
+| Shared GPU | Cards split by memory or compute |
 | Storage | Persistent capacity |
-| Ephemeral Storage | The temporary disk of an instance |
-| Disk | Disk resources |
+| Ephemeral storage | The instance's scratch disk |
+| Disk | Disk resource |
 
 ## Tips
-- Split into workspaces by team or project first, then allocate quotas, so the accounts are clearer.
-- Break GPUs down by model to avoid high-end cards being filled by low-priority tasks.
-- When an instance fails to be created, check the workspace quota first rather than only checking whether the cluster still has free resources.
+
+- Split workspaces by team or project first, then allocate quota — the books stay clearer.
+- Break GPUs down by model so high-end cards are not filled by low-priority jobs.
+- When instance creation fails, check the workspace quota rather than only whether the cluster is idle.
 
 ## Related
+
+- [Tenant Clusters](/rune/console/tenant-clusters)
 - [Flavor](/rune/console/flavor)
 - [Workspace](/rune/console/workspace)
