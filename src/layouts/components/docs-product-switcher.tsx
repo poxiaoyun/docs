@@ -4,6 +4,8 @@ import { useLocation, Link as RouterLink } from 'react-router';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
+import { useLangHref, splitLangPath } from 'src/utils/doc-lang';
+
 import { TOP_NAV_LINKS } from './global-top-nav';
 
 // ----------------------------------------------------------------------
@@ -19,6 +21,8 @@ export function DocsProductSwitcher() {
   const { pathname } = useLocation();
   const { i18n } = useTranslation();
   const locale = i18n.language.startsWith('en') ? 'en' : 'cn';
+  const { path: currentPath } = splitLangPath(pathname);
+  const langHref = useLangHref();
 
   return (
     <Box sx={{ px: 2.5, pt: 0.5, pb: 2 }}>
@@ -41,13 +45,13 @@ export function DocsProductSwitcher() {
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
         {TOP_NAV_LINKS.map((link) => {
           const isActive =
-            link.path === '/' ? pathname === link.path : pathname.startsWith(link.path);
+            link.path === '/' ? currentPath === link.path : currentPath.startsWith(link.path);
 
           return (
             <Box
               key={link.key}
               component={RouterLink}
-              to={link.path}
+              to={langHref(link.path)}
               aria-current={isActive ? 'page' : undefined}
               sx={{
                 px: 1.25,

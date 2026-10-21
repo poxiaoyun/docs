@@ -11,6 +11,8 @@ import Link from '@mui/material/Link';
 
 import { RouterLink } from 'src/routes/components';
 
+import { useLangHref } from 'src/utils/doc-lang';
+
 import { baseUri } from 'src/global-config';
 
 import { Image } from '../image';
@@ -53,6 +55,11 @@ export function Markdown({
     () => [...defaultRehypePlugins, ...(rehypePlugins ?? [])],
     [rehypePlugins]
   );
+
+  // 正文里的站内链接都要带上当前语言前缀，否则英文页点一条「相关阅读」就掉回中文。
+  // 放在这里统一处理，是因为 markdown 里的链接是相对路径 / 根路径混着写的，
+  // 只有解析器自己知道最终落到哪个地址。
+  const langHref = useLangHref();
 
   const allRemarkPlugins = useMemo(
     () => [...defaultRemarkPlugins, ...(remarkPlugins ?? [])],
@@ -103,13 +110,17 @@ export function Markdown({
         ? { target: '_blank', rel: 'noopener noreferrer' }
         : { component: RouterLink };
 
+      // 纯锚点（#xxx）不补前缀：它指向的是本页内的标题。
+      const finalHref =
+        isExternalURL || processedHref.startsWith('#') ? processedHref : langHref(processedHref);
+
       return (
-        <Link {...linkProps} href={processedHref} className={markdownClasses.content.link} {...aProps}>
+        <Link {...linkProps} href={finalHref} className={markdownClasses.content.link} {...aProps}>
           {aChildren}
         </Link>
       );
     }
-  }), [components, isIndex, currentPath]);
+  }), [components, isIndex, currentPath, langHref]);
 
   return (
     <MarkdownRoot className={mergeClasses([markdownClasses.root, className])} sx={sx}>

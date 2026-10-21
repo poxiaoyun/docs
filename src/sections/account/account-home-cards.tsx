@@ -8,6 +8,8 @@ import { alpha, useTheme } from '@mui/material/styles';
 
 import { RouterLink } from 'src/routes/components';
 
+import { useLangHref } from 'src/utils/doc-lang';
+
 import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
@@ -137,11 +139,12 @@ export function RuneHomeCards({ sx, ...other }: BoxProps) {
 
 function QuickStartCard({ card }: { card: QuickStartCard }) {
   const theme = useTheme();
+  const langHref = useLangHref();
 
   return (
     <Card
       component={RouterLink}
-      href={card.href}
+      href={langHref(card.href)}
       sx={{
         p: 3,
         height: '100%',
@@ -192,11 +195,12 @@ function QuickStartCard({ card }: { card: QuickStartCard }) {
 
 function CategoryCard({ card }: { card: CategoryCard }) {
   const theme = useTheme();
+  const langHref = useLangHref();
 
   return (
     <Card
       component={RouterLink}
-      href={card.href}
+      href={langHref(card.href)}
       sx={{
         p: 3,
         height: '100%',

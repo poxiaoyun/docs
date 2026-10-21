@@ -5,6 +5,8 @@ import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
+import { useLangHref, splitLangPath } from 'src/utils/doc-lang';
+
 // ----------------------------------------------------------------------
 
 export type TopNavLink = {
@@ -37,6 +39,11 @@ export function GlobalTopNav() {
   const { i18n } = useTranslation();
   const locale = i18n.language.startsWith('en') ? 'en' : 'cn';
   const siteTitle = locale === 'en' ? 'Docs Center' : '文档中心';
+
+  // 选中态要拿掉 /en 前缀再比：TOP_NAV_LINKS 是语言无关的，地址带前缀时
+  // 直接 startsWith 会让英文站所有栏目都判成未选中。
+  const { path: currentPath } = splitLangPath(pathname);
+  const langHref = useLangHref();
 
   // 选中态用 currentColor 混色，而不是写死的白色 —— 文档页是浅色底，
   // 白色 12% 压在近白背景上等于看不见；首页顶栏被强制成深色且文字变白，
@@ -97,7 +104,7 @@ export function GlobalTopNav() {
       >
         {TOP_NAV_LINKS.map((link) => {
           const isActive =
-            link.path === '/' ? pathname === link.path : pathname.startsWith(link.path);
+            link.path === '/' ? currentPath === link.path : currentPath.startsWith(link.path);
           const label = link.label[locale];
 
           return (
@@ -106,7 +113,7 @@ export function GlobalTopNav() {
               color="inherit"
               size="small"
               component={RouterLink}
-              to={link.path}
+              to={langHref(link.path)}
               sx={pillStyles(isActive)}
               aria-label={label}
             >

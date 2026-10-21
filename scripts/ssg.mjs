@@ -19,10 +19,13 @@
  * 环境变量
  * --------
  *   SSG_SITE_URL  站点权威地址，用于 canonical / og:url / sitemap（默认 https://docs.poxiaoshi.cn）
- *   SSG_LANG      用哪个语言目录的正文来静态化（默认 cn；cn/en 共用同一套 URL，
- *                 语言在运行时由 localStorage 决定，故只能索引默认语言）
  *   VITE_BASE_URL 与 vite.config.ts 保持一致，用于给站内链接补 base（默认 /docs）
  *   SSG_OUT       产物目录（默认 dist）
+ *
+ * 输出两种语言
+ * ------------
+ * 中文留在根路径，英文输出到 /en 下（见 LANGS），每个页面都带 hreflang 互指。
+ * 只有这样英文正文才有独立的可索引地址 —— 否则一个 URL 只能有一种语言进索引。
  *
  * 首屏配色引导脚本不在这里定义 —— 它在根目录 index.html 的 <!-- theme-bootstrap -->
  * 块里（那是唯一真源），本脚本只负责搬进每个预渲染页。原因见 extractThemeBootstrap。
@@ -45,7 +48,29 @@ import { visit } from 'unist-util-visit';
 const ROOT = process.cwd();
 const OUT_DIR = path.resolve(ROOT, process.env.SSG_OUT || 'dist');
 const CONTENT_DIR = path.join(ROOT, 'src/pages/docs');
-const LANG = process.env.SSG_LANG || 'cn';
+
+/**
+ * 支持的语言。
+ *
+ * prefix 决定 URL 形态：中文留根路径（既有外链、已收录 URL 一条都不动），英文挂 /en。
+ * 这是英文能被单独索引的前提 —— 一个 URL 只能有一种语言的正文进索引，
+ * 共用地址时英文无论写得多好，搜索引擎看到的永远是中文那份。
+ *
+ * **改 prefix 等于改全站英文 URL**，必须与 src/utils/doc-lang.ts 的 EN_PREFIX 同步。
+ */
+const LANGS = [
+  { code: 'cn', prefix: '', htmlLang: 'zh-CN', ogLocale: 'zh_CN', homeLabel: '文档首页' },
+  { code: 'en', prefix: '/en', htmlLang: 'en', ogLocale: 'en_US', homeLabel: 'Docs home' },
+];
+
+const langMeta = (code) => LANGS.find((l) => l.code === code) ?? LANGS[0];
+
+/**
+ * 英文入口页（/en）没有独立落地页，正文就是英文版概述。这个地址不进 sitemap，
+ * 只作为跳转壳存在：canonical 与 meta refresh 都指向真正的页面，避免与
+ * /en/introduction/ 形成两份相同内容。
+ */
+const EN_ENTRY_TARGET = 'introduction';
 
 const SITE_URL = (process.env.SSG_SITE_URL || 'https://docs.poxiaoshi.cn').replace(/\/+$/, '');
 // 与 vite.config.ts 的 DOCS_BASE_URL 同源：容器部署是 /docs，Pages 是 ""。
@@ -54,7 +79,6 @@ const BASE = RAW_BASE === '/' ? '' : RAW_BASE.replace(/\/+$/, '');
 
 const SITE = readSiteConfig();
 const SITE_NAME = SITE.name;
-const SITE_URL_LANG = LANG === 'en' ? 'en' : 'zh-CN';
 
 // sitemap 的 lastmod 兜底值：页面没写 frontmatter.updated 时用它，而不是干脆省略。
 // 缺 lastmod 的 URL 在 Google 那边等价于「从没变过」，新页面的抓取优先级会掉。
@@ -285,17 +309,30 @@ function splitHash(href) {
   return i >= 0 ? [href.slice(i), href.slice(0, i)] : ['', href];
 }
 
+/**
+ * 站内内容路径补语言前缀。
+ *
+ * 三种不补：没有前缀（中文）、已经带了（避免 /en/en/）、静态资源（图片是全站共用的
+ * 一份文件，/assets 不随语言复制）。
+ */
+function withLangHref(pathname, prefix) {
+  if (!prefix) return pathname;
+  if (pathname === prefix || pathname.startsWith(`${prefix}/`)) return pathname;
+  if (pathname.startsWith('/assets/')) return pathname;
+  return pathname === '/' ? prefix : `${prefix}${pathname}`;
+}
+
 /** 站内链接 -> 带 base 的绝对路径（保留尾斜杠，避免 GitHub Pages 多一次 301）。 */
-function toSiteHref(href, pageSegs, isIndex) {
+function toSiteHref(href, pageSegs, isIndex, prefix = '') {
   if (!href) return href;
   if (/^([a-z][a-z0-9+.-]*:)?\/\//i.test(href)) return href; // 外链
   if (href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) return href;
 
   const [hashPart, pathPart] = splitHash(href);
 
-  // 已经是绝对路径（含 /assets/...），只补 base
+  // 已经是绝对路径（含 /assets/...），只补 base 与语言前缀
   if (pathPart.startsWith('/')) {
-    return `${BASE}${pathPart}${hashPart}`;
+    return `${BASE}${withLangHref(pathPart, prefix)}${hashPart}`;
   }
 
   // 相对路径：以当前页 URL 的目录为基准，逐段剥 ^\d+\. 与 .md
@@ -311,7 +348,12 @@ function toSiteHref(href, pageSegs, isIndex) {
 
   if (parts[parts.length - 1] === 'index') parts.pop();
 
-  return `${BASE}/${parts.join('/')}/${hashPart}`;
+  const rel = parts.join('/');
+
+  // 相对链接是先拼出「语言无关的站内路径」，再补前缀 —— 顺序反过来会拼出 /en/en/xxx。
+  if (!prefix) return `${BASE}/${rel ? `${rel}/` : ''}${hashPart}`;
+
+  return `${BASE}${prefix}/${rel ? `${rel}/` : ''}${hashPart}`;
 }
 
 /** 图片 src：/assets/... 要补 base，其余原样。 */
@@ -322,14 +364,14 @@ function toAssetSrc(src) {
   return src;
 }
 
-function rewriteLinks({ pageSegs, isIndex }) {
+function rewriteLinks({ pageSegs, isIndex, prefix = '' }) {
   return (tree) => {
     visit(tree, 'element', (node) => {
       const props = node.properties;
       if (!props) return;
 
       if (node.tagName === 'a' && typeof props.href === 'string') {
-        props.href = toSiteHref(props.href, pageSegs, isIndex);
+        props.href = toSiteHref(props.href, pageSegs, isIndex, prefix);
       } else if (node.tagName === 'img' && typeof props.src === 'string') {
         props.src = toAssetSrc(props.src);
       }
@@ -388,14 +430,14 @@ const baseProcessor = unified()
   .use(rehypeRaw)
   .use(rehypeSlug);
 
-function renderMarkdown(markdown, pageSegs, isIndex) {
+function renderMarkdown(markdown, pageSegs, isIndex, prefix = '') {
   // 先把 markdown 完整走成 hast（remark-parse → remark-rehype → rehype-raw → rehype-slug），
   // 再单独跑一遍链接改写。两个坑：
   //   1. rewriteLinks 的参数逐页不同，不能挂到共用的 baseProcessor 上；
   //   2. 必须走完 remarkRehype/rehypeRaw 才拿得到 hast —— 只 parse 得到的是 mdast，
   //      直接序列化会把标题/列表/表格/强调等结构节点全丢掉，只剩纯文字。
   const hast = baseProcessor.runSync(baseProcessor.parse(markdown));
-  const linked = unified().use(rewriteLinks, { pageSegs, isIndex }).runSync(hast);
+  const linked = unified().use(rewriteLinks, { pageSegs, isIndex, prefix }).runSync(hast);
 
   return serialize(linked);
 }
@@ -443,8 +485,8 @@ function walkIndexHtml(dir, base = '', acc = []) {
   return acc;
 }
 
-function collectPages() {
-  const langDir = path.join(CONTENT_DIR, LANG);
+function collectPages(lang) {
+  const langDir = path.join(CONTENT_DIR, lang);
   const pages = [];
 
   for (const rel of walkMarkdown(langDir)) {
@@ -453,6 +495,7 @@ function collectPages() {
     const { content, data } = matter(raw);
 
     pages.push({
+      lang,
       route,
       segs: route ? route.split('/') : [],
       isIndex: path.basename(rel) === 'index.md',
@@ -612,33 +655,34 @@ function readTopNav() {
  * 栏目刻意渲染成 `<span>` 而不是 `<a>`：首屏它只是占位骨架，做成可点的会让用户在
  * 接管前后点到两套不同的东西；顺带也省掉了 BASE 前缀与尾斜杠的换算。
  */
-function renderHeader(route, nav) {
+function renderHeader(route, nav, lang = 'cn') {
   const pathname = route ? `/${route}` : '/';
 
   const items = nav.items
     .map((item) => {
       // 选中判据与 GlobalTopNav 保持一致：首页严格相等，其余按前缀匹配。
       const active = item.path === '/' ? pathname === '/' : pathname.startsWith(item.path);
-      return `<span${active ? ' data-active' : ''}>${escapeHtml(item.cn)}</span>`;
+      return `<span${active ? ' data-active' : ''}>${escapeHtml(item[lang] ?? item.cn)}</span>`;
     })
     .join('\n        ');
 
   return `    <header class="ssg-header">
-      <span class="ssg-header-brand">${escapeHtml(nav.title.cn)}</span>
+      <span class="ssg-header-brand">${escapeHtml(nav.title[lang] ?? nav.title.cn)}</span>
       <nav class="ssg-header-nav">
         ${items}
       </nav>
     </header>`;
 }
 
-function breadcrumb(route, title) {
+function breadcrumb(route, title, lang = 'cn') {
+  const langInfo = langMeta(lang);
   const segments = route ? route.split('/') : [];
-  const items = [{ name: '文档首页', url: `${SITE_URL}/` }];
+  const items = [{ name: langInfo.homeLabel, url: `${SITE_URL}${langInfo.prefix}/` }];
   let acc = '';
 
   for (const seg of segments) {
     acc += `/${seg}`;
-    items.push({ name: seg, url: `${SITE_URL}${acc}/` });
+    items.push({ name: seg, url: `${SITE_URL}${langInfo.prefix}${acc}/` });
   }
 
   if (items.length > 1) items[items.length - 1].name = title;
@@ -690,27 +734,56 @@ ${lines}
       </div>`;
 }
 
-function renderPage(page, tmpl, childrenByRoute) {
-  const { route, title, description, updated, content, segs, isIndex } = page;
-  const url = `${SITE_URL}${route ? `/${route}` : ''}/`;
+/** 同一路由在各语言下的地址，用于 hreflang 互指。 */
+function alternatesFor(route, routeLangs) {
+  const langs = routeLangs.get(route) || new Set(['cn']);
+  const suffix = route ? `/${route}` : '';
+  const list = LANGS.filter((l) => langs.has(l.code)).map((l) => ({
+    hreflang: l.htmlLang,
+    href: `${SITE_URL}${l.prefix}${suffix}/`,
+  }));
+
+  // x-default 给中文：不给搜索引擎留「不知道推哪个」的空档。
+  const fallback = list.find((a) => a.hreflang === 'zh-CN') || list[0];
+
+  if (fallback) list.push({ hreflang: 'x-default', href: fallback.href });
+
+  return list;
+}
+
+/** 这一页是否有另一种语言的版本（决定要不要写 og:locale:alternate）。 */
+function otherLangExists(alternates, langInfo) {
+  return alternates.some((a) => a.hreflang !== 'x-default' && a.hreflang !== langInfo.htmlLang);
+}
+
+function renderPage(page, tmpl, childrenByRoute, routeLangs) {  const { route, title, description, updated, content, segs, isIndex, lang } = page;
+  const langInfo = langMeta(lang);
+  const prefix = langInfo.prefix;
+  const url = `${SITE_URL}${prefix}${route ? `/${route}` : ''}/`;
   // canonical 一律自指。首页有自己独立的正文（见 buildHomeMarkdown），不再与
   // /introduction 共用内容，把首页的权重合并过去只会让首页自己进不了索引。
   const canonical = url;
+  const alternates = page.alternates || alternatesFor(route, routeLangs);
 
   // 首页用「站点名 + 定位」而不是「产品概述 | RUNE」：首页是品牌词与站点级检索的落点，
   // 其余页面沿用「页面标题 | 站点名」，与运行时 <Helmet> 的设置保持一致。
   const siteLevelTitle = SITE.subtitle ? `${SITE_NAME} 文档 · ${SITE.subtitle}` : `${SITE_NAME} 文档`;
   const pageTitle = route !== '' && title ? `${title} | ${SITE_NAME}` : siteLevelTitle;
-  const body = renderMarkdown(content, segs, isIndex);
+  const body = renderMarkdown(content, segs, isIndex, prefix);
 
   const children = childrenByRoute.get(route) || [];
   const childrenHtml = children.length
-    ? `<section class="ssg-children"><h2>本节包含 ${children.length} 个页面</h2><ul>${children
-        .map((c) => `<li><a href="${BASE}/${c.route}/">${escapeHtml(c.title || c.route)}</a></li>`)
+    ? `<section class="ssg-children"><h2>${
+        lang === 'en' ? `${children.length} pages in this section` : `本节包含 ${children.length} 个页面`
+      }</h2><ul>${children
+        .map(
+          (c) =>
+            `<li><a href="${BASE}${prefix}/${c.route}/">${escapeHtml(c.title || c.route)}</a></li>`
+        )
         .join('')}</ul></section>`
     : '';
 
-  const crumbs = breadcrumb(route, title || SITE_NAME);
+  const crumbs = breadcrumb(route, title || SITE_NAME, lang);
   const crumbHtml = crumbs
     .map((c, i) =>
       i === crumbs.length - 1
@@ -725,7 +798,7 @@ function renderPage(page, tmpl, childrenByRoute) {
     headline: pageTitle,
     ...(description ? { description } : {}),
     ...(updated ? { dateModified: updated } : {}),
-    inLanguage: SITE_URL_LANG,
+    inLanguage: langInfo.htmlLang,
     mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
     url: canonical,
     publisher: { '@type': 'Organization', name: SITE_NAME },
@@ -744,9 +817,18 @@ function renderPage(page, tmpl, childrenByRoute) {
     `<title>${escapeHtml(pageTitle)}</title>`,
     description ? `<meta name="description" content="${escapeAttr(description)}" />` : '',
     `<link rel="canonical" href="${canonical}" />`,
+    // hreflang 是「这两个地址是同一页的两种语言」的声明。缺了它，Google 会把
+    // 中英文当成两份各自独立的页面，英文版拿不到中文版已有的权重，也进不了
+    // 英文语种的检索结果。
+    ...alternates.map(
+      (a) => `<link rel="alternate" hreflang="${a.hreflang}" href="${a.href}" />`
+    ),
     `<meta property="og:type" content="article" />`,
     `<meta property="og:site_name" content="${escapeAttr(SITE_NAME)}" />`,
-    `<meta property="og:locale" content="${SITE_URL_LANG === 'en' ? 'en_US' : 'zh_CN'}" />`,
+    `<meta property="og:locale" content="${langInfo.ogLocale}" />`,
+    otherLangExists(alternates, langInfo)
+      ? `<meta property="og:locale:alternate" content="${lang === 'en' ? 'zh_CN' : 'en_US'}" />`
+      : '',
     `<meta property="og:title" content="${escapeAttr(pageTitle)}" />`,
     description ? `<meta property="og:description" content="${escapeAttr(description)}" />` : '',
     `<meta property="og:url" content="${canonical}" />`,
@@ -765,7 +847,7 @@ function renderPage(page, tmpl, childrenByRoute) {
   // 给它挂一个标记，让首屏壳也能钉成深色 —— 否则亮色主题下会先铺一屏浅色、React 接管时
   // 整屏翻黑，那是全屏级的跳变。其余页面跟随主题，不需要这个标记。
   return `<!doctype html>
-<html lang="${SITE_URL_LANG}"${route === '' ? ' data-ssg-home' : ''}>
+<html lang="${langInfo.htmlLang}"${route === '' ? ' data-ssg-home' : ''}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -778,7 +860,7 @@ ${tmpl.bootstrap}
 
   <body>
     <div id="root">
-${renderHeader(route, getTopNav())}
+${renderHeader(route, getTopNav(), lang)}
       <div class="ssg ssg-pending">
 ${renderSkeleton(route)}
         <nav class="ssg-crumb">${crumbHtml}</nav>
@@ -816,7 +898,7 @@ ${childrenHtml}
  */
 function renderNotFound(tmpl) {
   return `<!doctype html>
-<html lang="${SITE_URL_LANG}">
+<html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -835,6 +917,37 @@ ${tmpl.bootstrap}
 }
 
 // ----------------------------------------------------------------------
+
+/**
+ * 英文入口页（/en）。
+ *
+ * 英文站没有独立的门户落地页，入口就是英文版概述。这里不复制一份概述正文
+ * （那会与 /en/introduction/ 形成两份相同内容，两边互相稀释），而是写一个跳转壳：
+ * canonical 与 meta refresh 都指向真正的页面，SPA 起来后 viewer 也会做同样的跳转。
+ * 该地址不进 sitemap —— 它没有自己的内容，只是入口。
+ */
+function renderEnEntryStub(tmpl) {
+  const target = `${SITE_URL}/en/${EN_ENTRY_TARGET}/`;
+  const localTarget = `${BASE}/en/${EN_ENTRY_TARGET}/`;
+
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+${tmpl.bootstrap}
+    <title>English documentation | ${escapeHtml(SITE_NAME)}</title>
+    <link rel="canonical" href="${target}" />
+    <meta http-equiv="refresh" content="0; url=${localTarget}" />
+    ${tmpl.headTags.join('\n    ')}
+  </head>
+
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
+`;
+}
 
 function writeFile(target, content) {
   fs.mkdirSync(path.dirname(target), { recursive: true });
@@ -912,8 +1025,16 @@ function extractPageImages(html) {
 function buildSitemap(pages) {
   const entries = pages
     .map((page) => {
-      const url = `${SITE_URL}${page.route ? `/${page.route}` : ''}/`;
+      const url = `${SITE_URL}${page.prefix || ''}${page.route ? `/${page.route}` : ''}/`;
       const lastmod = `<lastmod>${page.updated || BUILD_DATE}</lastmod>`;
+      // sitemap 里的 hreflang 与页面 head 里的必须成对出现：只写在一边，
+      // 搜索引擎对「这两页是同一内容的两种语言」的判断会打折。
+      const alternates = (page.alternates || [])
+        .map(
+          (a) =>
+            `\n    <xhtml:link rel="alternate" hreflang="${a.hreflang}" href="${escapeHtml(a.href)}" />`
+        )
+        .join('');
       const images = (page.images || [])
         .map(
           (img) =>
@@ -923,13 +1044,14 @@ function buildSitemap(pages) {
         )
         .join('');
 
-      return `  <url><loc>${url}</loc>${lastmod}<changefreq>weekly</changefreq>${images}</url>`;
+      return `  <url><loc>${url}</loc>${lastmod}<changefreq>weekly</changefreq>${alternates}${images}</url>`;
     })
     .join('\n');
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
 ${entries}
 </urlset>
 `;
@@ -1138,13 +1260,17 @@ function selfCheck(pages) {
   };
 
   for (const page of pages) {
-    // 首页 route 为空，报错信息里给个能认出来的名字
-    const label = page.route || '(首页)';
+    // 首页 route 为空，报错信息里给个能认出来的名字；英文页要连前缀一起报，
+    // 否则中文 /rune 与英文 /en/rune 在日志里长得一模一样。
+    const label = `${page.prefix || ''}${page.route ? `/${page.route}` : ''}` || '(首页)';
 
     if (!page.title) problems.push(`${label}: frontmatter 缺 title`);
     if (!page.description) problems.push(`${label}: frontmatter 缺 description`);
 
-    const html = fs.readFileSync(path.join(OUT_DIR, page.route, 'index.html'), 'utf8');
+    const html = fs.readFileSync(
+      path.join(OUT_DIR, (page.prefix || '').replace(/^\//, ''), page.route, 'index.html'),
+      'utf8'
+    );
 
     for (const [, href] of html.matchAll(/<(?:a|img)\b[^>]*(?:href|src)="(\/[^"]*)"/g)) {
       if (!existsInDist(href)) problems.push(`${label}: 死链 ${href}`);
@@ -1168,6 +1294,37 @@ function selfCheck(pages) {
     ]) {
       const n = (html.match(re) || []).length;
       if (n !== 1) problems.push(`${page.route}: ${label} 出现 ${n} 次（应为 1）`);
+    }
+
+    // 语言维度。这三项任一错了都不会让页面报错，只会让英文内容悄悄退回
+    // 「中文页」的身份：html lang 不对，浏览器与搜索引擎都判错语言；
+    // hreflang 缺失，中英文被当成两份互不相干的页面；canonical 指错，
+    // 等于把自己的权重送给了另一个地址。
+    const expectedLang = langMeta(page.lang).htmlLang;
+
+    if (!html.includes(`<html lang="${expectedLang}"`)) {
+      problems.push(`${label}: html lang 不是 ${expectedLang}`);
+    }
+
+    const expectedCanonical = `${SITE_URL}${page.prefix || ''}${page.route ? `/${page.route}` : ''}/`;
+    const canonical = /rel="canonical" href="([^"]+)"/.exec(html)?.[1];
+
+    if (canonical !== expectedCanonical) {
+      problems.push(`${label}: canonical 指向 ${canonical ?? '(缺失)'}（应为 ${expectedCanonical}）`);
+    }
+
+    for (const alt of page.alternates || []) {
+      if (!html.includes(`hreflang="${alt.hreflang}" href="${alt.href}"`)) {
+        problems.push(`${label}: 缺少 hreflang=${alt.hreflang} → ${alt.href}`);
+      }
+    }
+
+    const hreflangCount = (html.match(/rel="alternate" hreflang="/g) || []).length;
+
+    if (hreflangCount !== (page.alternates || []).length) {
+      problems.push(
+        `${label}: hreflang ${hreflangCount} 条（应为 ${(page.alternates || []).length}）`
+      );
     }
 
     // 骨架的对照面：正文必须真的被藏起来。这条规则要是在 SSG_CSS 里被误删，页面上
@@ -1197,6 +1354,19 @@ function selfCheck(pages) {
     if (/ssg-skel/.test(html)) problems.push('404.html: 不应出现首屏骨架');
   }
 
+  // 英文入口跳转壳单独校验：它不在 pages 里，也不进 sitemap。
+  const enEntryPath = path.join(OUT_DIR, 'en', 'index.html');
+
+  if (fs.existsSync(enEntryPath)) {
+    const html = fs.readFileSync(enEntryPath, 'utf8');
+    const target = `${SITE_URL}/en/${EN_ENTRY_TARGET}/`;
+
+    if (!html.includes(`rel="canonical" href="${target}"`)) {
+      problems.push(`/en 入口页: canonical 未指向 ${target}`);
+    }
+    if (/ssg-skel/.test(html)) problems.push('/en 入口页: 不该有首屏骨架（它是跳转壳）');
+  }
+
   // image sitemap 自检。声明了却抓不到的图，搜索引擎会直接把它从图片索引里剔除 ——
   // 而这类问题在构建日志里同样完全看不出来，必须在这里拦住。
   const sitemapPath = path.join(OUT_DIR, 'sitemap.xml');
@@ -1211,7 +1381,11 @@ function selfCheck(pages) {
     const xmlUrls = new Set([...xml.matchAll(/<url><loc>([^<]+)<\/loc>/g)].map((m) => m[1]));
     const distUrls = new Set([
       `${SITE_URL}/`,
-      ...walkIndexHtml(OUT_DIR).map((rel) => `${SITE_URL}/${rel}/`),
+      ...walkIndexHtml(OUT_DIR)
+        // `en` 只是入口跳转壳，不是内容页：它 canonical 指向 /en/introduction/，
+        // 也不该出现在 sitemap 里，两边都不算。
+        .filter((rel) => rel !== 'en')
+        .map((rel) => `${SITE_URL}/${rel}/`),
     ]);
 
     for (const url of distUrls) {
@@ -1276,30 +1450,77 @@ function main() {
     );
   }
 
-  const pages = collectPages();
-  const childrenByRoute = buildChildrenIndex(pages);
+  // 先按语言各收一遍：hreflang 需要知道「同一个路由有哪些语言版本」，
+  // 两边都读完才渲染，否则先渲染的那一边写不出互指。
+  const pagesByLang = new Map(LANGS.map((l) => [l.code, collectPages(l.code)]));
+  const routeLangs = new Map();
 
-  console.log(`[ssg] 语言=${LANG}  base="${BASE}"  site=${SITE_URL}`);
-  console.log(`[ssg] 路由 ${pages.length} 个`);
+  for (const [code, list] of pagesByLang) {
+    for (const page of list) {
+      if (!routeLangs.has(page.route)) routeLangs.set(page.route, new Set());
+      routeLangs.get(page.route).add(code);
+    }
+  }
+
+  console.log(`[ssg] base="${BASE}"  site=${SITE_URL}  语言=${LANGS.map((l) => l.code).join('/')}`);
+
+  // 只有单语版本的路由不会有 hreflang 互指（也没法有）。目前两边 272 对完全对齐，
+  // 这里只告警不失败 —— 但一旦出现，说明某个语言漏了翻译，值得在构建日志里看见。
+  // 首页排除在外：它按设计只有中文（英文入口是 /en/introduction/）。
+  const singleLang = [...routeLangs.entries()]
+    .filter(([route, set]) => route !== '' && set.size < LANGS.length)
+    .map(([route]) => route);
+
+  if (singleLang.length) {
+    console.warn(`  ! ${singleLang.length} 个路由只有单语版本，不会有 hreflang 互指：`);
+    for (const route of singleLang.slice(0, 10)) console.warn(`    - ${route || '(首页)'}`);
+  }
 
   let written = 0;
+  const allPages = [];
 
-  for (const page of pages) {
-    const target = path.join(OUT_DIR, page.route, 'index.html');
-    const html = renderPage(page, tmpl, childrenByRoute);
+  for (const langInfo of LANGS) {
+    const pages = pagesByLang.get(langInfo.code);
+    const childrenByRoute = buildChildrenIndex(pages);
 
-    writeFile(target, html);
-    // 顺手收集本页图片供 image sitemap 用：复用刚渲染出的 HTML，避免为了取图再解析一遍 markdown
-    page.images = extractPageImages(html);
-    written += 1;
+    console.log(
+      `[ssg] ${langInfo.code}: ${pages.length} 页${langInfo.prefix ? `（前缀 ${langInfo.prefix}）` : ''}`
+    );
+
+    for (const page of pages) {
+      page.prefix = langInfo.prefix;
+      page.alternates = alternatesFor(page.route, routeLangs);
+
+      const html = renderPage(page, tmpl, childrenByRoute, routeLangs);
+      const target = path.join(
+        OUT_DIR,
+        langInfo.prefix.replace(/^\//, ''),
+        page.route,
+        'index.html'
+      );
+
+      writeFile(target, html);
+      // 顺手收集本页图片供 image sitemap 用：复用刚渲染出的 HTML，避免为了取图再解析一遍 markdown
+      page.images = extractPageImages(html);
+      written += 1;
+    }
+
+    allPages.push(...pages);
   }
+
+  const cnPages = pagesByLang.get('cn');
 
   // 首页（根路径）：正文由 buildHomeMarkdown 生成，与 React 首页的可见内容对应。
   // lastmod 取全站最新一页的 updated —— 首页聚合的是全站入口，有内容更新它就该算变过；
   // 退一步用构建日期，也比完全没有 lastmod 强。
-  const latestUpdated = pages.reduce((acc, p) => (p.updated && p.updated > acc ? p.updated : acc), '');
+  const latestUpdated = cnPages.reduce(
+    (acc, p) => (p.updated && p.updated > acc ? p.updated : acc),
+    ''
+  );
 
   const homePage = {
+    lang: 'cn',
+    prefix: '',
     route: '',
     segs: [],
     isIndex: false,
@@ -1307,10 +1528,19 @@ function main() {
     description: HOME_DESCRIPTION,
     content: buildHomeMarkdown(),
     updated: latestUpdated || BUILD_DATE,
+    // 首页是中文门户落地页，英文站没有对应的落地页（英文入口直接是 /en/introduction/）。
+    // 这里只声明自身，不编造一个内容并不对等的 hreflang 去误导搜索引擎。
+    alternates: [{ hreflang: 'zh-CN', href: `${SITE_URL}/` }],
   };
 
-  writeFile(path.join(OUT_DIR, 'index.html'), renderPage(homePage, tmpl, childrenByRoute));
+  const homeHtml = renderPage(homePage, tmpl, buildChildrenIndex(cnPages), routeLangs);
+
+  writeFile(path.join(OUT_DIR, 'index.html'), homeHtml);
+  homePage.images = extractPageImages(homeHtml);
   written += 1;
+
+  // 英文入口（/en）跳转壳：不进 sitemap，只负责把人和爬虫送到 /en/introduction/。
+  writeFile(path.join(OUT_DIR, 'en', 'index.html'), renderEnEntryStub(tmpl));
 
   // 未知路径走 404.html（GitHub Pages 只把「没有对应文件」的请求交给它，由 vite.config.ts
   // 的插件从 index.html 拷出）。这里整份重新生成，保证重复构建结果一致。
@@ -1322,7 +1552,7 @@ function main() {
 
   // 首页也要进 sitemap —— 它是最重要的入口，而 pages 只来自 markdown 文件，
   // 根路径一直缺席。sitemapEntries 同时作为自检的输入，首页因此也会被检查链接。
-  const sitemapEntries = [homePage, ...pages];
+  const sitemapEntries = [homePage, ...allPages];
 
   writeFile(path.join(OUT_DIR, 'sitemap.xml'), buildSitemap(sitemapEntries));
   // 首屏样式已经内联进每个页面的 head，这个文件眼下没人引用，留着是为了**过渡期**：
