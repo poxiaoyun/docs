@@ -1,6 +1,6 @@
 ---
 title: 'Rune intelligent computing platform'
-updated: '2026-10-21'
+updated: '2026-11-07'
 author: Rune Docs Team
 description: 'Start here: what the Rune platform does, what each sidebar menu is for, and which page a first-time user should open first.'
 tags:
@@ -10,7 +10,7 @@ tags:
 
 # Rune intelligent computing platform
 
-Rune is one AI workbench that strings together "prepare models and data → train and tune → deploy as a service → hand it to your team".
+The product page calls Rune the multi-tenant AI control plane of XiaoShi Cloud, with training, fine-tuning, inference and application instances on top. The homepage calls it the AI training-and-inference platform. 「Rune 智算平台」 in the docs nav and 「智算平台」 after sign-in are names already used in the interface. In these docs it strings together "prepare models and data → train and tune → deploy as a service → hand it to your team".
 After signing in you only need a browser: menus are on the left, and the top bar has two selectors — **Region** (which data center to use) and **Workspace** (which office to use).
 Most things you create on the platform are called an **instance**, and every instance is created the same way: pick a template, fill in a few fields, click **Confirm**.
 Read this page to learn what each menu does and where a first-time user should click first.

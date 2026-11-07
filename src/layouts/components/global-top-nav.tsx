@@ -22,9 +22,9 @@ export type TopNavLink = {
 export const TOP_NAV_LINKS: TopNavLink[] = [
   { key: 'home', path: '/', label: { cn: '首页', en: 'Home' } },
   { key: 'moha', path: '/moha', label: { cn: '魔哈仓库', en: 'Moha' } },
-  { key: 'rune', path: '/rune', label: { cn: 'Rune 智算平台', en: 'Rune AI Platform' } },
-  { key: 'airouter', path: '/airouter', label: { cn: '聚合网关', en: 'AIrouter' } },
-  { key: 'boss', path: '/boss', label: { cn: 'Boss 运营平台', en: 'Boss Operations Platform' } },
+  { key: 'rune', path: '/rune', label: { cn: 'Rune 智算平台', en: 'Rune' } },
+  { key: 'airouter', path: '/airouter', label: { cn: '聚合网关', en: 'AIRouter' } },
+  { key: 'boss', path: '/boss', label: { cn: 'BOSS 运营平台', en: 'BOSS' } },
   { key: 'ecosystem', path: '/ecosystem', label: { cn: '生态文档', en: 'Ecosystem' } },
 ];
 

@@ -43,6 +43,8 @@ import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import { visit } from 'unist-util-visit';
 
+import { checkSeoHtml } from './check-seo-html.mjs';
+
 // ----------------------------------------------------------------------
 
 const ROOT = process.cwd();
@@ -73,6 +75,56 @@ const BASE = RAW_BASE === '/' ? '' : RAW_BASE.replace(/\/+$/, '');
 
 const SITE = readSiteConfig();
 const SITE_NAME = SITE.name;
+
+/** 文档站点的发布者。名称与官网关于页一致，不使用站点标题 RUNE 冒充组织。 */
+const PUBLISHER = {
+  '@type': 'Organization',
+  name: '成都破晓石科技有限公司',
+  alternateName: ['破晓石科技', '晓石云'],
+  url: 'https://www.poxiaoshi.cn/',
+};
+
+function definedTerm(name, description, url, sameAs) {
+  const term = { '@type': 'DefinedTerm', name, description };
+  if (url) term.url = url;
+  if (sameAs) term.sameAs = sameAs;
+  return term;
+}
+
+/** 首页可引用的产品定义。已交付产品进 about；XCMP 与 Harness 只进 mentions，并写明状态。 */
+function homeTerms(lang) {
+  const prefix = lang === 'en' ? '/en' : '';
+  const doc = (route) => `${SITE_URL}${prefix}${route}/`;
+  const shipped =
+    lang === 'en'
+      ? [
+          ['Rune', 'Shipped product for training and inference. The console often labels it the AI Platform. It is not the name of the whole cloud.', '/rune', 'https://www.poxiaoshi.cn/products/rune/'],
+          ['Moha', 'Asset repository for models, datasets, container images and demo Spaces.', '/moha', 'https://www.poxiaoshi.cn/products/moha/'],
+          ['AIRouter', 'Aggregation gateway. These docs use that name; some older English pages spell it AIrouter.', '/airouter', 'https://www.poxiaoshi.cn/products/ai-router/'],
+          ['BOSS', 'Platform-operations console for administrators.', '/boss', 'https://www.poxiaoshi.cn/products/boss/'],
+        ]
+      : [
+          ['Rune', '已交付的训练与推理产品。界面常称智算平台。它不是晓石云的总称。', '/rune', 'https://www.poxiaoshi.cn/products/rune/'],
+          ['Moha', '模型、数据集、镜像和演示空间的资产仓库。', '/moha', 'https://www.poxiaoshi.cn/products/moha/'],
+          ['AIRouter', '聚合网关的产品名。文档中文称聚合网关。', '/airouter', 'https://www.poxiaoshi.cn/products/ai-router/'],
+          ['BOSS', '平台运营后台，只给平台管理员使用。', '/boss', 'https://www.poxiaoshi.cn/products/boss/'],
+        ];
+  const mentions =
+    lang === 'en'
+      ? [
+          definedTerm('XCMP', 'Described on the company homepage as the multi-cloud base. This version has no XCMP operator guide.'),
+          definedTerm('Rune Harness', 'Rune Harness is still planned, not a shipped feature.'),
+        ]
+      : [
+          definedTerm('XCMP', '官网首页把它写成多云资源底座。本版本文档没有 XCMP 的操作说明。'),
+          definedTerm('Rune Harness', 'Rune Harness 仍是规划，不是已交付功能。'),
+        ];
+
+  return {
+    about: shipped.map(([name, description, route, sameAs]) => definedTerm(name, description, doc(route), sameAs)),
+    mentions,
+  };
+}
 
 // sitemap 的 lastmod 兜底值：页面没写 frontmatter.updated 时用它，而不是干脆省略。
 // 缺 lastmod 的 URL 在 Google 那边等价于「从没变过」，新页面的抓取优先级会掉。
@@ -121,7 +173,7 @@ const HOME_ECOSYSTEM = [
 /** 静态正文里不属于「组件可见文案」的那几句（标题、收尾指引），按语言各一份。 */
 const HOME_EXTRA = {
   cn: {
-    productsHeading: '四条产品线',
+    productsHeading: '四块已交付产品',
     ecosystemHeading: '生态与集成',
     ecosystemBody: (list) =>
       `平台与 ${list} 等开源组件协同工作，安装与适配步骤见[生态文档](/ecosystem)。`,
@@ -133,7 +185,7 @@ const HOME_EXTRA = {
     faqLine: '遇到问题先查[常见问题 FAQ](/reference/faq)。',
   },
   en: {
-    productsHeading: 'Four product lines',
+    productsHeading: 'Four shipped products',
     ecosystemHeading: 'Ecosystem & integrations',
     ecosystemBody: (list) =>
       `The platform works with open-source components such as ${list}; installation and adaptation steps live in the [ecosystem docs](/ecosystem).`,
@@ -159,6 +211,8 @@ function buildHomeMarkdown(lang) {
     '',
     `## ${extra.productsHeading}`,
     '',
+    copy.capabilities.copy,
+    '',
   ];
 
   for (const product of copy.capabilities.platforms) {
@@ -166,6 +220,8 @@ function buildHomeMarkdown(lang) {
       `### [${product.name}](${product.to})`,
       '',
       product.tagline,
+      '',
+      `[${product.aboutLabel}](${product.about})`,
       '',
       product.entries.map((e) => `[${e.title}](${e.to})`).join(' · '),
       ''
@@ -187,7 +243,9 @@ function buildHomeMarkdown(lang) {
     '',
     extra.outro,
     '',
-    extra.faqLine
+    extra.faqLine,
+    '',
+    `[${copy.cta.contact}](${copy.cta.contactHref})`
   );
 
   return lines.join('\n');
@@ -783,7 +841,8 @@ function renderPage(page, tmpl, childrenByRoute, routeLangs) {  const { route, t
     inLanguage: langInfo.htmlLang,
     mainEntityOfPage: { '@type': 'WebPage', '@id': canonical },
     url: canonical,
-    publisher: { '@type': 'Organization', name: SITE_NAME },
+    publisher: PUBLISHER,
+    ...(route === '' ? homeTerms(lang) : {}),
     breadcrumb: {
       '@type': 'BreadcrumbList',
       itemListElement: crumbs.map((c, i) => ({
@@ -1528,6 +1587,26 @@ function main() {
 
   console.log(
     `[ssg] 自检通过：${sitemapEntries.length} 页的标题/摘要齐全，站内链接与图片均指向存在的文件`
+  );
+
+  const seoProblems = checkSeoHtml({ outDir: OUT_DIR, siteUrl: SITE_URL, base: BASE });
+
+  if (seoProblems.length) {
+    const round = seoProblems.filter((line) => line.startsWith('covered:'));
+    const structure = seoProblems.filter((line) => line.startsWith('structure:'));
+    console.error(
+      `[seo] 生成 HTML 回归失败，共 ${seoProblems.length} 处（本轮覆盖 ${round.length}，全站结构 ${structure.length}）：`
+    );
+    for (const line of seoProblems.slice(0, 40)) console.error(`  - ${line}`);
+    if (seoProblems.length > 40) console.error(`  ...（其余 ${seoProblems.length - 40} 处已省略）`);
+    process.exit(1);
+  }
+
+  console.log(
+    '[seo] 生成 HTML 回归通过。检查的是 canonical、hreflang 路径/标签/互指和 publisher，不证明页面译文。'
+  );
+  console.log(
+    '[seo] 改动前既有、本轮才改掉的：publisher 只有站点名 RUNE，首页出现 50+ 与 24/7，没有官网产品深链。'
   );
 }
 
