@@ -9,7 +9,9 @@
  *   covered:   本轮覆盖的首页、产品概述、术语表、公共导航，以及本轮新增的外链 / 状态句
  *   structure: 全站 canonical、hreflang 互指、publisher、base 前缀
  *
- * 缺翻译的路由不得写出对应语言的 hreflang。canonical 指向权威站点，不带容器 /docs 前缀。
+ * hreflang 只校验三件事：目标路径上有对应的 index.html、hreflang 标签值、两边互相指向。
+ * 它不阅读正文，不能证明英文页是中文页的翻译，也不能当作全站翻译验收。
+ * canonical 指向权威站点，不带容器 /docs 前缀。
  */
 
 import fs from 'node:fs';
@@ -129,7 +131,9 @@ export function checkSeoHtml({ outDir, siteUrl, base }) {
 
     if (byPublic.has(zhKey) && byPublic.has(enKey)) {
       for (const code of ['zh-CN', 'en', 'x-default']) {
-        if (!langs.has(code)) problems.push(`structure: ${label} 双语页缺少 hreflang=${code}`);
+        if (!langs.has(code)) {
+          problems.push(`structure: ${label} 两种语言文件都在，但缺少 hreflang=${code}（只查标签，不查译文）`);
+        }
       }
     }
 

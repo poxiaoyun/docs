@@ -10,7 +10,7 @@ tags:
 
 # Rune intelligent computing platform
 
-Rune is the training-and-inference product in XiaoShi Cloud, not the name of the whole platform. The docs navigation calls it Rune; after sign-in the interface often labels it the AI Platform. It strings together "prepare models and data → train and tune → deploy as a service → hand it to your team".
+The product page calls Rune the multi-tenant AI control plane of XiaoShi Cloud, with training, fine-tuning, inference and application instances on top. The homepage labels it the AI training-and-inference platform. 「Rune 智算平台」 in the docs nav and 「智算平台」 after sign-in are older interface names. A product line named Rune AI is not defined on those pages; that relationship is unconfirmed. In these docs it strings together "prepare models and data → train and tune → deploy as a service → hand it to your team".
 After signing in you only need a browser: menus are on the left, and the top bar has two selectors — **Region** (which data center to use) and **Workspace** (which office to use).
 Most things you create on the platform are called an **instance**, and every instance is created the same way: pick a template, fill in a few fields, click **Confirm**.
 Read this page to learn what each menu does and where a first-time user should click first.

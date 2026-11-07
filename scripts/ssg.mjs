@@ -1603,7 +1603,7 @@ function main() {
   }
 
   console.log(
-    '[seo] 生成 HTML 回归通过。本轮覆盖首页、产品概述、术语表与公共导航；全站同时检查 canonical、hreflang 互指和 publisher。'
+    '[seo] 生成 HTML 回归通过。检查的是 canonical、hreflang 路径/标签/互指和 publisher，不证明页面译文。'
   );
   console.log(
     '[seo] 改动前既有、本轮才改掉的：publisher 只有站点名 RUNE，首页出现 50+ 与 24/7，没有官网产品深链。'
