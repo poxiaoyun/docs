@@ -22,7 +22,10 @@ export function HomeCtaSection() {
   const langHref = useLangHref();
 
   return (
-    <Box component="section" sx={{ bgcolor: TOKENS.bgPage, color: TOKENS.text, py: { xs: 8, md: 12 } }}>
+    <Box
+      component="section"
+      sx={{ bgcolor: TOKENS.bgPage, color: TOKENS.text, py: { xs: 8, md: 12 } }}
+    >
       <SectionShell component={MotionViewport} sx={{ px: { xs: 3, md: 5 } }}>
         <Panel sx={{ px: { xs: 3, md: 6 }, py: { xs: 6, md: 8 }, overflow: 'hidden' }}>
           <Box
@@ -39,7 +42,12 @@ export function HomeCtaSection() {
             }}
           />
 
-          <Stack spacing={{ xs: 3, md: 4 }} alignItems="center" textAlign="center" sx={{ position: 'relative' }}>
+          <Stack
+            spacing={{ xs: 3, md: 4 }}
+            alignItems="center"
+            textAlign="center"
+            sx={{ position: 'relative' }}
+          >
             <m.div variants={varFade('inDown')}>
               <Typography
                 component="h2"
@@ -59,21 +67,50 @@ export function HomeCtaSection() {
 
             <m.div variants={varFade('inDown')}>
               <Typography
-                sx={{ color: TOKENS.textSubtle, fontSize: 'clamp(1rem, 1.3vw, 1.1rem)', lineHeight: 1.7, maxWidth: '34rem' }}
+                sx={{
+                  color: TOKENS.textSubtle,
+                  fontSize: 'clamp(1rem, 1.3vw, 1.1rem)',
+                  lineHeight: 1.7,
+                  maxWidth: '34rem',
+                }}
               >
                 {copy.cta.copy}
               </Typography>
             </m.div>
 
             <m.div variants={varFade('inUp')}>
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
-                <Button component={RouterLink} to={langHref('/rune')} sx={{ ...buttonSx('primary'), px: '2rem', py: '.9rem' }}>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems="center">
+                <Button
+                  component={RouterLink}
+                  to={langHref('/rune')}
+                  sx={{ ...buttonSx('primary'), px: '2rem', py: '.9rem' }}
+                >
                   {copy.cta.primary}
                 </Button>
-                <Button component={RouterLink} to={langHref('/moha')} sx={{ ...buttonSx('secondary'), px: '2rem', py: '.9rem' }}>
+                <Button
+                  component={RouterLink}
+                  to={langHref('/moha')}
+                  sx={{ ...buttonSx('secondary'), px: '2rem', py: '.9rem' }}
+                >
                   {copy.cta.secondary}
                 </Button>
               </Stack>
+            </m.div>
+
+            <m.div variants={varFade('inUp')}>
+              <Box
+                component="a"
+                href={copy.cta.contactHref}
+                rel="noopener noreferrer"
+                sx={{
+                  color: TOKENS.textDim,
+                  fontSize: '.85rem',
+                  textDecoration: 'underline',
+                  textUnderlineOffset: '.18em',
+                }}
+              >
+                {copy.cta.contact}
+              </Box>
             </m.div>
 
             <m.div variants={varFade('inUp')} style={{ width: '100%' }}>
@@ -81,11 +118,22 @@ export function HomeCtaSection() {
                 direction={{ xs: 'column', sm: 'row' }}
                 spacing={{ xs: 3, sm: 8 }}
                 justifyContent="center"
-                sx={{ pt: { xs: 4, md: 5 }, mt: { xs: 2, md: 3 }, borderTop: `1px solid ${TOKENS.borderFaint}` }}
+                sx={{
+                  pt: { xs: 4, md: 5 },
+                  mt: { xs: 2, md: 3 },
+                  borderTop: `1px solid ${TOKENS.borderFaint}`,
+                }}
               >
                 {copy.cta.stats.map((stat) => (
-                  <Stack key={stat.label} spacing={.5} alignItems="center">
-                    <Typography sx={{ fontSize: '1.9rem', fontWeight: 700, color: TOKENS.text, lineHeight: 1.1 }}>
+                  <Stack key={stat.label} spacing={0.5} alignItems="center">
+                    <Typography
+                      sx={{
+                        fontSize: '1.9rem',
+                        fontWeight: 700,
+                        color: TOKENS.text,
+                        lineHeight: 1.1,
+                      }}
+                    >
                       {stat.value}
                     </Typography>
                     <Typography

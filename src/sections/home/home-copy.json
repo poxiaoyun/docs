@@ -2,26 +2,28 @@
   "cn": {
     "meta": {
       "title": "RUNE 文档 · 晓石AI智算平台",
-      "description": "晓石 AI 平台官方文档中心：Rune 智算平台、魔哈仓库、聚合网关与 BOSS 运营平台的完整使用说明，含快速开始、控制台逐页指引与常见问题。"
+      "description": "晓石云文档：Rune（训练与推理）、Moha（模型、数据集与镜像）、AIRouter 聚合网关、BOSS 平台运营。Rune Harness 仍是规划，不是已交付功能。"
     },
     "hero": {
       "overline": "v2.0 文档开源",
       "titleLine1": "连接开发、运营与社区的",
       "titleLine2": "AI 平台",
-      "lead": "Rune 智算平台提供模型开发、推理与工作负载管理能力；配合 Boss 平台实现精细化运营，魔哈仓库打造开放的社区底座，全方位提升 AI 应用构建效能。",
+      "lead": "文档说明四块已交付产品：Rune 做训练与推理，Moha 管模型、数据集和镜像，AIRouter 是聚合网关，BOSS 做平台运营。",
       "primary": "开始使用",
-      "secondary": "探索魔哈模型库"
+      "secondary": "查看魔哈仓库"
     },
     "capabilities": {
-      "label": "CORE PLATFORM",
-      "title": "一切皆为现代化 AI 服务",
-      "copy": "强大的基座服务协同生态管理与高效运营，提供面向未来生产的算力、模型和集群管理体验。",
+      "label": "当前版本",
+      "title": "四块已交付产品",
+      "copy": "本版本文档没有 XCMP 的操作说明。Rune Harness 仍是规划，不是已交付功能。",
       "platforms": [
         {
           "name": "Rune 智算平台",
-          "tagline": "大规模 AI 推理与工作负载调度。无缝管理实例、镜像与存储计算一体化配额资源。",
+          "tagline": "训练、微调、推理、开发环境和应用实例在这一侧完成。登录后的界面常称智算平台。",
           "to": "/rune",
           "cta": "进入 Rune 文档",
+          "about": "https://www.poxiaoshi.cn/products/rune/",
+          "aboutLabel": "产品介绍",
           "entries": [
             { "title": "开始使用", "to": "/rune/guide" },
             { "title": "Rune 控制台", "to": "/rune/console" },
@@ -30,9 +32,11 @@
         },
         {
           "name": "魔哈仓库",
-          "tagline": "模型与数据集的社区仓库体系。实现优雅的版本流转与开源协作。",
+          "tagline": "模型、数据集、镜像和演示空间的资产仓库。顶栏称魔哈仓库，界面常称魔哈 Hub。",
           "to": "/moha",
           "cta": "进入魔哈文档",
+          "about": "https://www.poxiaoshi.cn/products/moha/",
+          "aboutLabel": "产品介绍",
           "entries": [
             { "title": "模型仓库", "to": "/moha/models" },
             { "title": "数据集", "to": "/moha/datasets" },
@@ -41,9 +45,11 @@
         },
         {
           "name": "聚合网关",
-          "tagline": "平台内置的网页版对话与模型调用入口。不用写代码就能和模型对话，也能为外部程序签发密钥，统一查看调用量与费用。",
+          "tagline": "产品名是 AIRouter。这里做网页对话、调用密钥和用量查看；界面上的默认名可以由管理员修改。",
           "to": "/airouter",
           "cta": "进入聚合网关文档",
+          "about": "https://www.poxiaoshi.cn/products/ai-router/",
+          "aboutLabel": "产品介绍",
           "entries": [
             { "title": "模型体验", "to": "/airouter/experience" },
             { "title": "API 密钥", "to": "/airouter/token" },
@@ -51,10 +57,12 @@
           ]
         },
         {
-          "name": "Boss 运营平台",
-          "tagline": "专为平台管理员设计，实现跨集群治理、租户网关审核和强效策略分发。",
+          "name": "BOSS 运营平台",
+          "tagline": "平台管理员使用的运营后台：账号、租户、集群、配额和网关配置。",
           "to": "/boss",
           "cta": "进入 BOSS 文档",
+          "about": "https://www.poxiaoshi.cn/products/boss/",
+          "aboutLabel": "产品介绍",
           "entries": [
             { "title": "首页", "to": "/boss/dashboard" },
             { "title": "大模型网关", "to": "/boss/gateway" },
@@ -132,40 +140,45 @@
       ]
     },
     "cta": {
-      "title": "准备好开始了吗？",
-      "copy": "立即探索 Rune、Boss 及 魔哈，开启您的 AI 平台之旅",
+      "title": "从文档开始",
+      "copy": "操作步骤在 Rune、Moha、AIRouter 和 BOSS 的文档里。商务咨询走官网联系页，本文档不收集表单。",
       "primary": "查看文档",
-      "secondary": "加入社区",
+      "secondary": "魔哈仓库",
+      "contact": "商务咨询见官网联系页",
+      "contactHref": "https://www.poxiaoshi.cn/contact/",
       "stats": [
-        { "value": "4", "label": "产品线" },
-        { "value": "50+", "label": "功能模块" },
-        { "value": "24/7", "label": "社区支持" }
+        { "value": "Rune", "label": "训练与推理" },
+        { "value": "Moha", "label": "模型·数据·镜像" },
+        { "value": "AIRouter", "label": "聚合网关" },
+        { "value": "BOSS", "label": "平台运营" }
       ]
     }
   },
   "en": {
     "meta": {
       "title": "RUNE Docs · XiaoShi AI Cloud Platform",
-      "description": "Official documentation for the XiaoShi AI platform: complete guides for the Rune compute platform, Moha Hub, the AIrouter gateway and the Boss operations platform, including quick start, page-by-page console walkthroughs and troubleshooting."
+      "description": "XiaoShi Cloud docs: Rune for training and inference, Moha for models, datasets and images, the AIRouter aggregation gateway, and BOSS for platform operations. Rune Harness is still planned, not a shipped feature."
     },
     "hero": {
       "overline": "v2.0 docs, open source",
       "titleLine1": "The AI platform connecting developers,",
       "titleLine2": "operations and community",
-      "lead": "Rune handles model development, inference and workload management. Boss adds fine-grained operations, and Moha Hub provides an open community foundation — so you can ship AI applications faster, end to end.",
+      "lead": "These docs cover four shipped products: Rune for training and inference, Moha for models, datasets and images, AIRouter as the aggregation gateway, and BOSS for platform operations.",
       "primary": "Get started",
-      "secondary": "Explore Moha models"
+      "secondary": "Open Moha"
     },
     "capabilities": {
-      "label": "CORE PLATFORM",
-      "title": "Everything a modern AI service needs",
-      "copy": "A resilient foundation that pairs ecosystem management with efficient operations — compute, models and cluster management built for production.",
+      "label": "This version",
+      "title": "Four shipped products",
+      "copy": "This version has no XCMP operator guide. Rune Harness is still planned, not a shipped feature.",
       "platforms": [
         {
-          "name": "Rune AI Platform",
-          "tagline": "Large-scale AI inference and workload scheduling. Manage instances, images and combined storage/compute quotas without friction.",
+          "name": "Rune",
+          "tagline": "Training, fine-tuning, inference, dev environments and application instances. After sign-in the interface often labels this the AI Platform.",
           "to": "/rune",
           "cta": "Open Rune docs",
+          "about": "https://www.poxiaoshi.cn/products/rune/",
+          "aboutLabel": "Product page",
           "entries": [
             { "title": "Getting started", "to": "/rune/guide" },
             { "title": "Rune console", "to": "/rune/console" },
@@ -173,10 +186,12 @@
           ]
         },
         {
-          "name": "Moha Hub",
-          "tagline": "A community repository for models and datasets, with clean version flow and open collaboration.",
+          "name": "Moha",
+          "tagline": "The asset repository for models, datasets, container images and demo Spaces. The docs nav says Moha; the console often says Moha Hub.",
           "to": "/moha",
           "cta": "Open Moha docs",
+          "about": "https://www.poxiaoshi.cn/products/moha/",
+          "aboutLabel": "Product page",
           "entries": [
             { "title": "Model repository", "to": "/moha/models" },
             { "title": "Datasets", "to": "/moha/datasets" },
@@ -184,10 +199,12 @@
           ]
         },
         {
-          "name": "AIrouter Gateway",
-          "tagline": "The built-in web chat and model API entry point. Talk to models without writing code, issue keys for your own services, and track usage and cost in one place.",
+          "name": "AIRouter",
+          "tagline": "The aggregation gateway: web chat, API keys and usage. The on-screen name can be changed by an administrator. Some older English pages spell it AIrouter.",
           "to": "/airouter",
           "cta": "Open gateway docs",
+          "about": "https://www.poxiaoshi.cn/products/ai-router/",
+          "aboutLabel": "Product page",
           "entries": [
             { "title": "Model playground", "to": "/airouter/experience" },
             { "title": "API keys", "to": "/airouter/token" },
@@ -195,10 +212,12 @@
           ]
         },
         {
-          "name": "Boss Operations Platform",
-          "tagline": "Built for platform administrators: cross-cluster governance, tenant gateway review and policy rollout.",
+          "name": "BOSS",
+          "tagline": "The operations console for platform administrators: accounts, tenants, clusters, quota and gateway settings.",
           "to": "/boss",
-          "cta": "Open Boss docs",
+          "cta": "Open BOSS docs",
+          "about": "https://www.poxiaoshi.cn/products/boss/",
+          "aboutLabel": "Product page",
           "entries": [
             { "title": "Dashboard", "to": "/boss/dashboard" },
             { "title": "LLM gateway", "to": "/boss/gateway" },
@@ -276,14 +295,17 @@
       ]
     },
     "cta": {
-      "title": "Ready to get started?",
-      "copy": "Explore Rune, Boss and Moha today and start your AI platform journey.",
+      "title": "Start from the docs",
+      "copy": "The procedures live in the Rune, Moha, AIRouter and BOSS docs. For a sales conversation, use the company contact page. These docs do not collect a form.",
       "primary": "Read the docs",
-      "secondary": "Join the community",
+      "secondary": "Moha repository",
+      "contact": "Contact page for a sales conversation",
+      "contactHref": "https://www.poxiaoshi.cn/contact/",
       "stats": [
-        { "value": "4", "label": "Product lines" },
-        { "value": "50+", "label": "Feature modules" },
-        { "value": "24/7", "label": "Community support" }
+        { "value": "Rune", "label": "Training and inference" },
+        { "value": "Moha", "label": "Models, data, images" },
+        { "value": "AIRouter", "label": "Aggregation gateway" },
+        { "value": "BOSS", "label": "Platform operations" }
       ]
     }
   }

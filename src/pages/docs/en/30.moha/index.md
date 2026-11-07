@@ -1,6 +1,6 @@
 ---
 title: 'Moha Repository'
-updated: '2026-09-14'
+updated: '2026-11-07'
 description: 'What Moha is, what you can host on it, where to start, and what repository, version and card mean.'
 tags:
   - moha
@@ -9,7 +9,7 @@ tags:
 
 # Moha Repository
 
-Moha is the platform's **hosting platform for models and datasets**. Upload a model you trained or a dataset you prepared, add a description, and share it with your team or the whole world. You can also search the hub for other people's work and download it directly.
+Moha is the platform's **asset repository** for models, datasets, container images and demo Spaces. The docs navigation calls it Moha; the console often says Moha Hub. Upload a model you trained or a dataset you prepared, add a description, and share it with your team or according to its visibility. You can also search the hub for other people's work and download it directly.
 
 You do not need to know anything about servers or storage. A few clicks on the page, or one copied command, moves anything from a few hundred MB to tens of GB.
 
