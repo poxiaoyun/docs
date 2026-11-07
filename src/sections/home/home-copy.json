@@ -2,13 +2,13 @@
   "cn": {
     "meta": {
       "title": "RUNE 文档",
-      "description": "本版操作说明覆盖 Rune、Moha、AIRouter 与 BOSS。官网首页把 Rune 写成 AI 训推平台，产品页把它写成晓石云的控制面。文档旧称「晓石 AI」与官网「晓石云」、以及「Rune AI」产品线的对应关系待确认。Rune Harness 仍是规划，不是已交付功能。"
+      "description": "本版操作说明覆盖 Rune、Moha、AIRouter 与 BOSS。官网首页把 Rune 标成 AI 训推平台，产品页把它写成晓石云的控制面。Rune Harness 仍是规划，不是已交付功能。"
     },
     "hero": {
       "overline": "v2.0 文档开源",
       "titleLine1": "四块已交付产品的",
       "titleLine2": "操作说明",
-      "lead": "Rune、Moha、AIRouter、BOSS 的步骤在各自文档里。官网首页把 Rune 标成 AI 训推平台；顶栏「Rune 智算平台」和登录后的「智算平台」是界面旧称。名为 Rune AI 的产品线是否存在，待确认。",
+      "lead": "Rune、Moha、AIRouter、BOSS 的步骤在各自文档里。官网首页把 Rune 标成 AI 训推平台，产品页把它写成晓石云的控制面。顶栏「Rune 智算平台」和登录后的「智算平台」是界面上的既有名称。",
       "primary": "开始使用",
       "secondary": "查看魔哈仓库"
     },
@@ -157,13 +157,13 @@
   "en": {
     "meta": {
       "title": "RUNE Docs",
-      "description": "This version documents Rune, Moha, AIRouter and BOSS. The homepage calls Rune an AI training-and-inference platform; the product page calls it the control plane of XiaoShi Cloud. How the docs name XiaoShi AI, the site name XiaoShi Cloud, and a Rune AI product line relate is unconfirmed. Rune Harness is still planned, not a shipped feature."
+      "description": "This version documents Rune, Moha, AIRouter and BOSS. The homepage calls Rune an AI training-and-inference platform; the product page calls it the control plane of XiaoShi Cloud. Rune Harness is still planned, not a shipped feature."
     },
     "hero": {
       "overline": "v2.0 docs, open source",
       "titleLine1": "Procedures for the four",
       "titleLine2": "shipped products",
-      "lead": "Steps for Rune, Moha, AIRouter and BOSS are in their own docs. The homepage labels Rune as the AI training-and-inference platform; “Rune 智算平台” in the nav and “智算平台” after sign-in are older interface names. A product line named Rune AI is not defined on the pages checked.",
+      "lead": "Steps for Rune, Moha, AIRouter and BOSS are in their own docs. The homepage calls Rune an AI training-and-inference platform; the product page calls it the control plane of XiaoShi Cloud. 「Rune 智算平台」 in the nav and 「智算平台」 after sign-in are names already used in the interface.",
       "primary": "Get started",
       "secondary": "Open Moha"
     },
