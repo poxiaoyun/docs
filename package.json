@@ -10,6 +10,7 @@
     "start": "node scripts/preview-docs.mjs",
     "start:vite": "vite preview",
     "build": "tsc && vite build && node scripts/ssg.mjs",
+    "seo:check": "node scripts/check-seo-html.mjs",
     "ssg": "node scripts/ssg.mjs",
     "lint": "eslint \"src/**/*.{js,jsx,ts,tsx}\"",
     "lint:fix": "eslint --fix \"src/**/*.{js,jsx,ts,tsx}\"",

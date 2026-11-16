@@ -25,7 +25,10 @@ export function HomeCapabilitiesSection() {
   const platforms = platformsOf(copy);
 
   return (
-    <Box component="section" sx={{ bgcolor: TOKENS.bgPage, color: TOKENS.text, py: { xs: 8, md: 12 } }}>
+    <Box
+      component="section"
+      sx={{ bgcolor: TOKENS.bgPage, color: TOKENS.text, py: { xs: 8, md: 12 } }}
+    >
       <SectionShell component={MotionViewport} sx={{ px: { xs: 3, md: 5 } }}>
         <SectionHead
           label={copy.capabilities.label}
@@ -75,9 +78,27 @@ export function HomeCapabilitiesSection() {
                   </Typography>
                 </Stack>
 
-                <Typography sx={{ color: TOKENS.textSubtle, fontSize: '.82rem', lineHeight: 1.7, mb: 3 }}>
+                <Typography
+                  sx={{ color: TOKENS.textSubtle, fontSize: '.82rem', lineHeight: 1.7, mb: 1.5 }}
+                >
                   {platform.tagline}
                 </Typography>
+
+                <Box
+                  component="a"
+                  href={platform.about}
+                  rel="noopener noreferrer"
+                  sx={{
+                    alignSelf: 'flex-start',
+                    mb: 2,
+                    color: TOKENS.textDim,
+                    fontSize: '.75rem',
+                    textDecoration: 'underline',
+                    textUnderlineOffset: '.15em',
+                  }}
+                >
+                  {platform.aboutLabel}
+                </Box>
 
                 <Stack sx={{ mt: 'auto' }}>
                   {platform.entries.map((entry, index) => (
@@ -95,7 +116,10 @@ export function HomeCapabilitiesSection() {
                         textDecoration: 'none',
                         color: TOKENS.textDefault,
                         transition: `color .18s ${TOKENS.easeStandard}`,
-                        '&:hover': { color: TOKENS.text, '& .entry-index': { color: platform.color } },
+                        '&:hover': {
+                          color: TOKENS.text,
+                          '& .entry-index': { color: platform.color },
+                        },
                       }}
                     >
                       <Typography sx={{ fontSize: '.8rem', color: 'inherit', minWidth: 0 }}>

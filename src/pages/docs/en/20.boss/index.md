@@ -1,6 +1,6 @@
 ---
 title: Overview
-updated: '2026-10-21'
+updated: '2026-11-07'
 author: Rune Docs Team
 description: What BOSS is for, what the eight top-level entries do, when the left sidebar switches groups, and which steps a platform administrator should take first.
 tags:
@@ -10,7 +10,7 @@ tags:
 
 # Overview
 
-BOSS (shown as **BOSS Platform** in the top-left corner) is the **platform-administrator-only** management console. It manages accounts, tenants, compute resources and platform-wide switches. The business-facing consoles are the **AI Platform** and **Moha Hub** — separate entries, separate menus, but the same data: the user you create here is the person who later signs in to the AI Platform.
+BOSS (shown as **BOSS Platform** in the top-left corner) is the **platform-operations** console, and only platform administrators use it. It manages accounts, tenants, compute resources and platform-wide switches. The business-facing consoles are the **AI Platform** and **Moha Hub** — separate entries, separate menus, but the same data: the user you create here is the person who later signs in to the AI Platform.
 
 After reading this page you will know where each of the eight top-level entries leads, why the left sidebar sometimes shrinks to two or three items, where the three cluster sub-menus come from, and what to do first when you take over a platform.
 

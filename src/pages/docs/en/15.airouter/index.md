@@ -1,17 +1,17 @@
 ---
-title: 'AIrouter'
-updated: '2026-10-21'
-description: 'Not sure what AIrouter is, where to open it, what its eight top entries do, or how to finish a first chat and a first purchase? Start here.'
+title: 'AIRouter'
+updated: '2026-11-07'
+description: 'What AIRouter, the aggregation gateway, is, where to open it, what its eight top entries do, and how to finish a first chat and a first purchase.'
 ---
 
-# AIrouter
+# AIRouter
 
-AIrouter is the platform's built-in **web entry point for using models**: chat with models, connect them to your own programs, check prices, buy plans and read your bill. On screen it appears as **Chat** by default; an administrator can change that name in the Boss console under **Gateway Settings**.
+**AIRouter** is the product name of the aggregation gateway, and the name these docs use. It is the platform's built-in **web entry point for using models**: chat with models, connect them to your own programs, check prices, buy plans and read your bill. On screen it appears as **Chat** by default; an administrator can change that name in the BOSS console under **Gateway Settings**. Some older English pages still spell it AIrouter; that is the same product, and it is not a reason to rename API paths or fields.
 
 This page answers three questions: where to get in, what each of the eight entries in the top row does, and what order to follow the first time. Every task has its own page for the details.
 
 :::tip An analogy
-The AI Platform is like an office building: utilities, rooms and access control all belong to it. AIrouter is a service counter inside the building — you walk up to a seat (a model) and ask your question, and you can also read the price list (Prices), buy a plan (Subscribe) and check your bill (Account) at the same counter. The models themselves are configured by the platform administrator; you just pick a ready-made one.
+The AI Platform is like an office building: utilities, rooms and access control all belong to it. AIRouter is a service counter inside the building — you walk up to a seat (a model) and ask your question, and you can also read the price list (Prices), buy a plan (Subscribe) and check your bill (Account) at the same counter. The models themselves are configured by the platform administrator; you just pick a ready-made one.
 :::
 
 ## How to get into AIrouter

@@ -1,6 +1,6 @@
 ---
 title: 'Getting Started Guide'
-updated: '2026-09-14'
+updated: '2026-11-07'
 description: 'Tells you what each of the three starter pages solves and in what order to read them, so you can run your first flow fast.'
 tags:
   - guide
@@ -9,7 +9,7 @@ tags:
 
 # Getting Started Guide
 
-This chapter is for people using XiaoShi AI for the first time. You do not need to learn Kubernetes first, and you do not need to know model terminology — after these three pages you will know what the platform is made of, what every word on the screen means, and where to click from sign-in to running your first model service.
+This chapter is for people reading these procedures for the first time. You do not need to learn Kubernetes first, and you do not need to know model terminology — after these three pages you will know what Rune, Moha, AIRouter and BOSS each do, what every word on the screen means, and where to click from sign-in to running your first model service.
 
 ## What each page solves
 

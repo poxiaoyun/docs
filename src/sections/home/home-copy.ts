@@ -21,6 +21,9 @@ export type HomePlatformCopy = {
   tagline: string;
   to: string;
   cta: string;
+  /** 已核验的官网产品页。只做名称对照，不带统计参数。 */
+  about: string;
+  aboutLabel: string;
   entries: { title: string; to: string }[];
 };
 
@@ -69,6 +72,9 @@ export type HomeCopy = {
     copy: string;
     primary: string;
     secondary: string;
+    /** 官网咨询页。文档本身不收集、不提交表单。 */
+    contact: string;
+    contactHref: string;
     stats: { value: string; label: string }[];
   };
 };
