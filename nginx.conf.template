@@ -7,6 +7,10 @@ server {
     listen ${LISTEN_PORT};
     server_name _;
 
+    # Keep directory redirects on the public origin behind the reverse proxy.
+    # SSG routes map to directories; adding a trailing slash must not expose the upstream host.
+    absolute_redirect off;
+
     root /usr/src/app/dist;
 
     add_header Cross-Origin-Opener-Policy "same-origin";
